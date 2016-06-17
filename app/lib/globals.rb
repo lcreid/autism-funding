@@ -1,6 +1,6 @@
   class Globals
     def self.site_name
-      "Autsim Funding"
+      "Autism Funding"
     end
     def self.company_name_short
       "Assist Packaging"
