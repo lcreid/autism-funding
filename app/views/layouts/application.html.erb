@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= Globals::site_name %></title>
+
+    <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
+
+
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid" style="background-color: #08088A">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><%#= link_to "menu 1" %></li>
+          <li><%#= link_to "menu 2" %></li>
+          <% if user_signed_in? %>
+            <li><%= link_to "My Profile", my_profile_index_path %></li>
+          <% end %>
+          <li><%#= link_to "My Profile", controller:"my_profile", action: "index" %></li>
+          <li><%#= link_to "Other Resources", controller:"other_resources", action: "index" %></li>
+          <li><%#= link_to "Other Resources", "/other_resources/index" %></li>
+          <li><%= link_to "Other Resources", other_resources_index_path %></li>
+          <li><%#= link_to "Procurement", controller:"info", action: "procurement"  %></li>
+          <li><%#= link_to "Services", controller:"info", action: "services"  %></li>
+          <li><%#= link_to "Request More Info", controller:"info_requests", action: "new"  %></li>
+          <li><%#= link_to "Request Info", controller:"req_contact", action: "contact_me"  %></li>
+          <li><%#= link_to "Contacts", controller:"reports", action: "contact_reports"  %></li>
+          <li><%#= link_to "About #{Globals::company_name_short}", controller:"info", action: "about"  %></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <% if user_signed_in? %>
+            <li><%= link_to current_user.email, edit_user_registration_path %></li>
+            <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
+          <% else %>
+            <li><%= link_to "Sign Up", new_user_registration_path %></li>
+            <li><%= link_to "Log in", new_user_session_path %></li>
+            <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+
+
+
+    <div class="container-fluid">
+      <%# ---- Notice or alert message from devise ---------------------------%>
+      <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
+      <% if alert  %><div class="alert alert-warning"><%= alert %></div><% end %>
+
+      <%= yield %>
+    </div>
+
+  </body>
+
+  <footer class="container-fluid">
+      <hr><br>
+      <%= Globals::site_name %> - helping parents manage funding for autistic children
+      <br><br>
+      This site has is sponsored by <%= Globals::sponsor_name %>, who are responsible for the development
+      and hosting of this site.
+      <br>
+      Please
+      visit <%= link_to Globals::sponsor_url, Globals::sponsor_url  %> to find out how <%= Globals::sponsor_name %> can
+      help you develop your application.
+      <br>
+      <br>
+    </p>
+    <p style="font-size:7pt; color: gray;">
+      <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
+      <br>
+      V01.00
+
+
+  </footer>
+
+</html>
