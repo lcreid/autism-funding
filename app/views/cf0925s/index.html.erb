@@ -1,1 +1,5 @@
 <h1>List of Requests to Pay</h1>
+
+<% @cf0925s.each do |cf0925| %>
+  <p><%= link_to cf0925.id, cf0925_path(cf0925) %></p>
+<% end %>
