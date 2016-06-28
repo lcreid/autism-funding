@@ -54,7 +54,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    puts Cf0925.all.inspect
     assert_not_nil(cf0925 = Cf0925.find_by(child_dob: '2002-05-14'))
     assert_redirected_to cf0925_path(cf0925)
   end
