@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622215120) do
+ActiveRecord::Schema.define(version: 20160701013926) do
 
   create_table "cf0925s", force: :cascade do |t|
     t.string   "agency_name"
@@ -58,20 +58,61 @@ ActiveRecord::Schema.define(version: 20160622215120) do
     t.datetime "updated_at",                                              null: false
   end
 
+  create_table "forms", force: :cascade do |t|
+    t.string   "form_name",        limit: 100, null: false
+    t.string   "form_description"
+    t.string   "file_name",        limit: 50,  null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
+
+  create_table "funded_people", force: :cascade do |t|
+    t.integer  "user_id"
+    t.date     "birthdate"
+    t.string   "name_first",  limit: 50
+    t.string   "name_last",   limit: 50
+    t.string   "name_middle", limit: 50
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.index ["user_id"], name: "index_funded_people_on_user_id"
+  end
+
+  create_table "province_codes", force: :cascade do |t|
+    t.string   "prov_code",     limit: 2
+    t.string   "not_supported", limit: 1
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.text     "province_name", limit: 25
+  end
+
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                             default: "", null: false
+    t.string   "encrypted_password",                default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",                     default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.integer  "province_code_id"
+    t.string   "role",                   limit: 15
+    t.string   "address_line_1",         limit: 40
+    t.string   "address_line_2",         limit: 40
+    t.string   "city",                   limit: 40
+    t.string   "postal_code",            limit: 6
+    t.string   "name_first",             limit: 50
+    t.string   "name_last",              limit: 50
+    t.string   "name_middle",            limit: 50
+    t.string   "phone_number",           limit: 10
+    t.string   "phone_extension",        limit: 10
+    t.string   "work_phone_number",      limit: 10
+    t.string   "work_phone_extension",   limit: 10
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["province_code_id"], name: "index_users_on_province_code_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

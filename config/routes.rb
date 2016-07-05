@@ -1,11 +1,15 @@
 Rails.application.routes.draw do
   #---- Website Root -----------------------------------------------------------
-  root 'welcome#index'
+  root 'welcome#indexa'
 
-  get 'welcome/index'
+#  get 'welcome/indexa' orginal
+  get 'welcome/index', to: 'welcome#index'
 
   get 'other_resources/index'
   get 'my_profile/index'
+  get 'my_profile/edit'
+  patch 'my_profile/update'
+  put 'my_profile/update'
 
   devise_for :users
 

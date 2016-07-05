@@ -6,7 +6,7 @@ class Cf0925 < ApplicationRecord
                     pdf_file,
                     {
                       parent_lst_name: parent_last_name,
-                      chld_lst_name: child_last_name,
+#                      chld_lst_name: child_last_name,
                       parent_Address: parent_address,
                       sp_name: service_provider_name,
                       agency_name: agency_name,
@@ -54,7 +54,7 @@ class Cf0925 < ApplicationRecord
                     flatten: true)
     # rescue PdfForms::PdftkError => e
     # puts e.to_s
-    # return false
+    # cp return false
     # end
     true
   end
