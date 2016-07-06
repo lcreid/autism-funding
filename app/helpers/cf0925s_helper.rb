@@ -1,16 +1,17 @@
 module Cf0925sHelper
   def show_field(field, width = 4)
-    "<div id=\"#{field}\" class=\".col-md-#{width}\">" \
-      "#{field.to_s.titlecase}: " \
+    "<div id=\"#{field}\" class=\"col-md-#{width}\">" \
+      "<small>#{field.to_s.titlecase}</small><br/>" \
       "<span class=\"value\">#{@cf0925.send(field)}</span>" \
     '</div>'
       .html_safe
   end
 
-  def form_row
-    '<div class="row">'.html_safe
-    yield
-    '</div>'.html_safe
+  def form_row(&block)
+    raise ArgumentError, 'Missing block' unless block_given?
+    ('<div class="row">' +
+      capture(&block) +
+      '</div>').html_safe
   end
 
   def form_field(field, width = 4)

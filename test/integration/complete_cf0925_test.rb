@@ -55,7 +55,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
 
-    assert_select 'p#service_provider_service_start .value',
+    assert_select '#service_provider_service_start .value',
                   form_field_values[:service_provider_service_start]
   end
 
