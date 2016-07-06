@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+bc:
+  prov_code: "BC"
+  #not_supported: MyString
+
+ab:
+  prov_code: "AB"
+  not_supported: "Y"
+
+ont:
+  prov_code: "ON"
+  not_supported: "Y"
