@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 5.0.0.rc1', '< 5.1'
 # Use sqlite3 as the database for Active Record
@@ -44,6 +43,8 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  # http://voormedia.github.io/rails-erd/install.html
+  gem 'rails-erd'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
