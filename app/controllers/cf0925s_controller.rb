@@ -3,10 +3,17 @@ class Cf0925sController < ApplicationController
     @cf0925s = Cf0925.all
   end
 
+  def new
+    @cf0925 = Cf0925.new
+  end
+
   def create
     @cf0925 = Cf0925.new(cf0925_params)
-    @cf0925.save
-    redirect_to cf0925_path(@cf0925)
+    if @cf0925.save
+      redirect_to cf0925_path(@cf0925)
+    else
+      render :new
+    end
   end
 
   def show

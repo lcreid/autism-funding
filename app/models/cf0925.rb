@@ -1,4 +1,9 @@
 class Cf0925 < ApplicationRecord
+  # validates :service_provider_service_start,
+  #           :service_provider_service_end,
+  #           presence: true
+  validate :start_date_before_end_date
+
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')
@@ -6,7 +11,7 @@ class Cf0925 < ApplicationRecord
                     pdf_file,
                     {
                       parent_lst_name: parent_last_name,
-#                      chld_lst_name: child_last_name,
+                      chld_lst_name: child_last_name,
                       parent_Address: parent_address,
                       sp_name: service_provider_name,
                       agency_name: agency_name,
@@ -71,5 +76,12 @@ class Cf0925 < ApplicationRecord
 
   def pdf_file
     "/tmp/cf0925_#{id}.pdf"
+  end
+
+  def start_date_before_end_date
+    # return if start_date.blank? || end_date.blank?
+
+    errors.add(:service_provider_service_end, 'must be after start date') if
+      service_provider_service_end < service_provider_service_start
   end
 end
