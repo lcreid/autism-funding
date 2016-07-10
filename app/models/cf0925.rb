@@ -59,7 +59,7 @@ class Cf0925 < ApplicationRecord
                     flatten: true)
     # rescue PdfForms::PdftkError => e
     # puts e.to_s
-    # cp return false
+    # return false
     # end
     true
   end

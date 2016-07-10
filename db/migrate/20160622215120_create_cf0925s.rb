@@ -1,4 +1,4 @@
-selclass CreateCf0925s < ActiveRecord::Migration[5.0]
+class CreateCf0925s < ActiveRecord::Migration[5.0]
   def change
     create_table :cf0925s do |t|
       t.string :agency_name
