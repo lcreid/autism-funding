@@ -7,9 +7,13 @@ Rails.application.routes.draw do
   get 'other_resources/index'
   get 'my_profile/index'
 
+  get 'home/index'
+
   devise_for :users
 
   resources :cf0925s
+
+  resources :funded_people
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
