@@ -3,6 +3,10 @@ class Cf0925 < ApplicationRecord
   #           :service_provider_service_end,
   #           presence: true
   validate :start_date_before_end_date
+  validates :payment,
+            presence: {
+              message: 'please choose either service provider or agency'
+            }
 
   def generate_pdf
     # begin
@@ -39,7 +43,7 @@ class Cf0925 < ApplicationRecord
                       SP_serv_amt: service_provider_service_amount,
                       SP_serv_end: format_date(service_provider_service_end),
                       ph_area_SP: service_provider_phone[0..2],
-                      sup_area_ph: service_provider_phone[0..2],
+                      sup_area_ph: supplier_phone[0..2],
                       phn_SP: service_provider_phone[3..-1],
                       sup_ph: supplier_phone[3..-1],
                       parent_city: parent_city,
@@ -51,8 +55,8 @@ class Cf0925 < ApplicationRecord
                       hm_phn_area: home_phone[0..2],
                       hm_phn: home_phone[3..-1],
                       chld_DOB: format_date(child_dob),
-                      chld_yn: child_in_care_of_ministry,
-                      Payment: payment,
+                      chld_yn: 'Choice1', # This comes from radio buttons
+                      Payment: 'Choice2', # This comes from radio buttons
                       wrk_phn_area: work_phone[0..2],
                       wrk_phn: work_phone[3..-1]
                     },
@@ -69,6 +73,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def item_total
+    return '' unless item_cost_1 && item_cost_2 && item_cost_3
     item_cost_1 +
       item_cost_2 +
       item_cost_3

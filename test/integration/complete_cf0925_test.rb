@@ -21,7 +21,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     parent_last_name: 'parent_last_name',
     parent_middle_name: 'parent_middle_name',
     parent_postal_code: 'parent_postal_code',
-    payment: 150,
+    payment: 'agency',
     service_provider_postal_code: 'service_provider_postal_code',
     service_provider_address: 'service_provider_address',
     service_provider_city: 'service_provider_city',
@@ -55,7 +55,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
 
-    assert_select '#service_provider_service_start .value',
+    assert_select '#service_provider_service_start',
                   @@form_field_values[:service_provider_service_start]
   end
 
@@ -81,19 +81,30 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'CF_0925 no agency auto-fill checkbox' do
-    skip
+  test 'CF_0925 agency checkbox disabled if no agency' do
+    skip 'Test for agency checkbox disabled.'
   end
 
   test 'CF_0925 agency checkbox required' do
-    skip
+    assert_no_difference('Cf0925.count') do
+      post '/cf0925s', params: { cf0925: @@form_field_values.reject { |k, _| k == :payment } }
+    end
+
+    assert_response :success
+    # The next assert is like it is because the render in the controller
+    # is rendering the new view, but from the create action in the controller,
+    # so the path is the path for create, which is /cf0925s.
+    assert_equal '/cf0925s', path
+    assert_select '.error-explanation li', 1 do |error|
+      assert_equal 'Payment please choose either service provider or agency', error.text
+    end
   end
 
   test 'CF_0925 autofill from user' do
-    skip
+    skip 'Autofill from user'
   end
 
   test 'CF_0925 autofill from child' do
-    skip
+    skip 'Autofill from child'
   end
 end
