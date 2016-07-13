@@ -1,0 +1,86 @@
+<%= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
+
+<div class="container">
+  <%= form_for @cf0925 do |f| %>
+    <h2>Section 1 Parent/Guardian Information</h2>
+    <%= form_row do %>
+      <%= form_field(f, :parent_first_name, 2) %>
+      <%= form_field(f, :parent_last_name, 2) %>
+      <%= form_field(f, :parent_middle_name, 2) %>
+      <%= form_field(f, :home_phone, 3) %>
+      <%= form_field(f, :work_phone, 3) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :parent_address, 6) %>
+      <%= form_field(f, :parent_city, 4) %>
+      <%= form_field(f, :parent_postal_code, 2) %>
+    <% end %>
+    <h2>Section 2 Child Information</h2>
+    <%= form_row do %>
+      <%= form_field(f, :child_first_name, 2) %>
+      <%= form_field(f, :child_last_name, 2) %>
+      <%= form_field(f, :child_middle_name, 2) %>
+      <%= form_field(f, :child_dob, 2) %>
+      <%= form_field(f, :child_in_care_of_ministry, 4) %>
+    <% end %>
+    <h2>Part A Services</h2>
+    <%= form_row do %>
+      <%= form_field(f, :service_provider_name, 8) %>
+      <%= form_field(f, nil, 4) do %>
+        <%= f.radio_button(:payment, 'Choice1') %>
+        <%= f.label('Service Provider') %>
+        <br/>
+        <%= f.radio_button(:payment, 'Choice2') %>
+        <%= f.label('Agency') %>
+      <% end %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :agency_name, 8) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :service_provider_address, 5) %>
+      <%= form_field(f, :service_provider_city, 3) %>
+      <%= form_field(f, :service_provider_postal_code, 2) %>
+      <%= form_field(f, :service_provider_phone, 2) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :service_provider_service_1, 6) %>
+      <%= form_field(f, :service_provider_service_start, 3) %>
+      <%= form_field(f, :service_provider_service_end, 3) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :service_provider_service_2, 6) %>
+        <%= form_field(f, :service_provider_service_fee, 2) %>
+        <%= form_field(f, :service_provider_service_hour, 2) %>
+        <%= form_field(f, :service_provider_service_amount, 2) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :service_provider_service_3, 6) %>
+    <% end %>
+    <h2>Part B Additional Expenses</h2>
+    <%= form_row do %>
+      <%= form_field(f, :supplier_name, 4) %>
+      <%= form_field(f, :supplier_contact_person, 5) %>
+      <%= form_field(f, :supplier_phone, 3) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :supplier_address, 6) %>
+      <%= form_field(f, :supplier_city, 4) %>
+      <%= form_field(f, :supplier_postal_code, 2) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :item_desp_1, 6) %>
+      <%= form_field(f, :item_cost_1, 2) %>
+      <%= form_field(f, :item_total, 4) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :item_desp_2, 6) %>
+      <%= form_field(f, :item_cost_2, 2) %>
+    <% end %>
+    <%= form_row do %>
+      <%= form_field(f, :item_desp_3, 6) %>
+      <%= form_field(f, :item_cost_3, 2) %>
+    <% end %>
+    <%= f.submit %>
+  <% end %>
+</div>

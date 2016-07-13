@@ -14,4 +14,9 @@ Vagrant.configure(2) do |config|
   # use host 0.0.0.0, not localhost, or the port forwarding won't work.
   # `jekyll serve -H 0.0.0.0 --force_polling`
   config.vm.network 'forwarded_port', guest: 4000, host: 4000
+  # This application requires the PDF Toolkit for the pdf-forms gem.
+  # https://github.com/jkraemer/pdf-forms
+  config.vm.provision 'shell',
+                      privileged: true,
+                      inline: 'apt-get install -y -q pdftk'
 end
