@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class CompleteCf0925Test < ActionDispatch::IntegrationTest
+  include TestSessionHelpers
+
   @@form_field_values = {
     agency_name: 'agency_name',
     child_dob: '2002-05-14',
@@ -45,6 +47,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
   }
 
   test 'CF_0925 child between 6 and 18' do
+    log_in
     get new_cf0925_path
     assert_response :success
     assert_difference('Cf0925.count') do
@@ -60,11 +63,13 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 start date after end date' do
+    log_in
     get new_cf0925_path
     assert_response :success
 
     # Make a bad date.
-    bad_date_params = @@form_field_values.merge(service_provider_service_end: '2016-05-31')
+    bad_date_params = @@form_field_values
+                      .merge(service_provider_service_end: '2016-05-31')
 
     assert_no_difference('Cf0925.count') do
       post '/cf0925s', params: { cf0925: bad_date_params }
@@ -86,8 +91,12 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 agency checkbox required' do
+    log_in
     assert_no_difference('Cf0925.count') do
-      post '/cf0925s', params: { cf0925: @@form_field_values.reject { |k, _| k == :payment } }
+      post '/cf0925s',
+           params: {
+             cf0925: @@form_field_values.reject { |k, _| k == :payment }
+           }
     end
 
     assert_response :success
@@ -96,7 +105,8 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     # so the path is the path for create, which is /cf0925s.
     assert_equal '/cf0925s', path
     assert_select '.error-explanation li', 1 do |error|
-      assert_equal 'Payment please choose either service provider or agency', error.text
+      assert_equal 'Payment please choose either service provider or agency',
+                   error.text
     end
   end
 

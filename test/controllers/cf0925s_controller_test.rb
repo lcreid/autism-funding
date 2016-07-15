@@ -1,12 +1,16 @@
 require 'test_helper'
 
 class Cf0925sControllerTest < ActionDispatch::IntegrationTest
+  include TestSessionHelpers
+
   test 'should get index' do
+    log_in
     get cf0925s_path
     assert_response :success
   end
 
   test 'Create a BC request to pay' do
+    log_in
     assert_difference('Cf0925.count') do
       post '/cf0925s', params: {
         cf0925: {
