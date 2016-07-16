@@ -1,0 +1,15 @@
+#### Test Data for phone_numbers table
+ph_1_of_1:
+ phone_number_type: home
+ phone_number: '2224567532'
+ user: has_one_phone
+
+ph_1_of_2:
+ phone_number_type: home
+ phone_number: '3214560987'
+ user: has_two_phone
+
+ph_2_of_2:
+ phone_number_type: work
+ phone_number: '4561970032'
+ user: has_two_phone

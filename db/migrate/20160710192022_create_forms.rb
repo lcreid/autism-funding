@@ -1,11 +1,10 @@
 class CreateForms < ActiveRecord::Migration[5.0]
   def change
     create_table :forms do |t|
-      t.references :province, foreign_key: true
-      t.string :form_name
+      t.references :province_code, foreign_key: true
+      t.text :file_name, limit: 50, null: false
       t.text :form_description
-      t.string :file_name
-
+      t.text :form_name, limit: 100, null: false
       t.timestamps
     end
   end

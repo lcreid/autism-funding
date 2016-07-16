@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 cf0925:
-  province: bc
+  province_code: bc
   form_name: Request to Pay
   form_description: Used to authorize payment to service provider.
   file_name: <%= File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf') %>
 
 two:
-  province: two
+  province_code: two
   form_name: MyString
   form_description: MyText
   file_name: MyString
