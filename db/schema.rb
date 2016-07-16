@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622215120) do
+ActiveRecord::Schema.define(version: 20160716142356) do
 
   create_table "cf0925s", force: :cascade do |t|
     t.string   "agency_name"
@@ -55,6 +55,18 @@ ActiveRecord::Schema.define(version: 20160622215120) do
     t.string   "work_phone"
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
+    t.integer  "form_id"
+    t.index ["form_id"], name: "index_cf0925s_on_form_id"
+  end
+
+  create_table "forms", force: :cascade do |t|
+    t.integer  "province_id"
+    t.string   "form_name"
+    t.text     "form_description"
+    t.string   "file_name"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["province_id"], name: "index_forms_on_province_id"
   end
 
   create_table "users", force: :cascade do |t|

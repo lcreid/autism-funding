@@ -49,7 +49,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
           supplier_name: 'supplier_name',
           supplier_phone: 'supplier_phone',
           supplier_postal_code: 'supplier_postal_code',
-          work_phone: 'work_phone'
+          work_phone: 'work_phone',
+          form_id: forms(:cf0925).id
         }
       }
     end
