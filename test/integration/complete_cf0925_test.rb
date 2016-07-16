@@ -100,9 +100,6 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is /cf0925s.
     assert_equal '/cf0925s', path
-    assert_select '.error-explanation li' do |errors|
-      errors.each { |e| puts e.to_s }
-    end
     assert_select '.error-explanation li', 1 do |error|
       assert_equal 'Payment please choose either service provider or agency', error.text
     end

@@ -13,8 +13,8 @@ class Cf0925 < ApplicationRecord
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')
-    pdftk.fill_form(File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf'),
-                    pdf_file,
+    pdftk.fill_form(form.file_name,
+                    pdf_output_file,
                     {
                       parent_lst_name: parent_last_name,
                       chld_lst_name: child_last_name,
@@ -81,7 +81,7 @@ class Cf0925 < ApplicationRecord
       item_cost_3
   end
 
-  def pdf_file
+  def pdf_output_file
     "/tmp/cf0925_#{id}.pdf"
   end
 
