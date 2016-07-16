@@ -1,15 +1,15 @@
 class PhoneNumber < ApplicationRecord
   # One record for each phone number
   # ----- Associations ---------------------------------------------------------
-  belongs_to :phone_number_type
   belongs_to :user
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :phone_number, format: {with:/\A *[2-9][0-9][0-9] *[2-9][0-9][0-9] *[0-9][0-9][0-9][0-9] *\z/,
           message: "Phone Number must be 10 digit, area code/exchange must not start with 1 or 0"}, allow_blank: true
 
-  validates :phone_extension, format: {without: /^[0-9] /,
-                  message: "Extension must be digits only"}, allow_blank: true
+  validates :phone_extension, format: {without: /\A[0-9] /, message: "Extension must be digits only"}, allow_blank: true
+
+  validates :phone_type, presence: true
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------
   before_save :clean_numbers

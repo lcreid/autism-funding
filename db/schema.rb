@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160710194154) do
+ActiveRecord::Schema.define(version: 20160716210132) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "province_code_id"
@@ -47,12 +47,6 @@ ActiveRecord::Schema.define(version: 20160710194154) do
     t.index ["user_id"], name: "index_funded_people_on_user_id"
   end
 
-  create_table "phone_number_types", force: :cascade do |t|
-    t.text     "phone_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "phone_numbers", force: :cascade do |t|
     t.integer  "phone_number_type_id"
     t.integer  "user_id"
@@ -60,6 +54,7 @@ ActiveRecord::Schema.define(version: 20160710194154) do
     t.text     "phone_number",         limit: 10
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
+    t.text     "phone_type",           limit: 25
     t.index ["phone_number_type_id"], name: "index_phone_numbers_on_phone_number_type_id"
     t.index ["user_id"], name: "index_phone_numbers_on_user_id"
   end
