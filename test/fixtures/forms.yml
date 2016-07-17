@@ -3,7 +3,7 @@
 cf0925:
   province_code: bc
   form_name: Request to Pay
-  form_description: Used to authorize payment to service provider.
+  form_description: Used to authorize payment to a service provider.
   file_name: <%= File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf') %>
 
 two:
