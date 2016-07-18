@@ -8,10 +8,7 @@ class Cf0925sController < ApplicationController
   end
 
   def create
-    # puts 'Form ID: ' + cf0925_params[:form_id]
-    # puts 'Form: ' + cf0925_params[:form]
     @cf0925 = Cf0925.new(cf0925_params)
-    puts "Where's my form?" unless @cf0925.form
     if @cf0925.save
       redirect_to cf0925_path(@cf0925)
     else
