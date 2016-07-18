@@ -17,8 +17,8 @@ test:
   <<: *default
   database: test
 
-production:
-  <<: *default
-  database: db/production.pg
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+# production:
+#   <<: *default
+#   database: db/production.pg
+#   username: <%= ENV['DATABASE_USERNAME'] %>
+#   password: <%= ENV['DATABASE_PASSWORD'] %>
