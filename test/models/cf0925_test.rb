@@ -7,6 +7,6 @@ class Cf0925Test < ActiveSupport::TestCase
     end
     rtp = cf0925s(:one)
     assert rtp.generate_pdf
-    assert File.exist?(rtp.pdf_file), "File #{rtp.pdf_file} not found"
+    assert File.exist?(rtp.pdf_output_file), "File #{rtp.pdf_output_file} not found"
   end
 end
