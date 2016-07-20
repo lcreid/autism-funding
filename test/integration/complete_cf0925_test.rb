@@ -47,7 +47,8 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
       supplier_phone: 'supplier_phone',
       supplier_postal_code: 'supplier_postal_code',
       work_phone: 'work_phone',
-      form_id: forms(:cf0925).id
+      form_id: forms(:cf0925).id,
+      funded_person_id: funded_people(:cf0925).id
     }
   end
 

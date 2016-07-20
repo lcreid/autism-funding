@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160716210132) do
+ActiveRecord::Schema.define(version: 20160720210817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,7 +72,9 @@ ActiveRecord::Schema.define(version: 20160716210132) do
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
     t.integer  "form_id"
+    t.integer  "funded_person_id"
     t.index ["form_id"], name: "index_cf0925s_on_form_id", using: :btree
+    t.index ["funded_person_id"], name: "index_cf0925s_on_funded_person_id", using: :btree
   end
 
   create_table "forms", force: :cascade do |t|
@@ -138,6 +140,7 @@ ActiveRecord::Schema.define(version: 20160716210132) do
   add_foreign_key "addresses", "province_codes"
   add_foreign_key "addresses", "users"
   add_foreign_key "cf0925s", "forms"
+  add_foreign_key "cf0925s", "funded_people"
   add_foreign_key "forms", "province_codes"
   add_foreign_key "funded_people", "users"
   add_foreign_key "phone_numbers", "users"

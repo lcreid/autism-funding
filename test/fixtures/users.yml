@@ -45,3 +45,10 @@ has_two_phone:
  name_first: 'Iva'
  name_middle: 'Para'
  name_last: 'Phones'
+
+cf0925:
+  email: cf0925@autism-funding.com
+  encrypted_password: secret7
+  name_first: Mr.
+  name_middle: Middle
+  name_last: '0925'
