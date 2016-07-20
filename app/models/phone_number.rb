@@ -5,7 +5,7 @@ class PhoneNumber < ApplicationRecord
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :phone_number, format: {with:/\A *[2-9][0-9][0-9] *[2-9][0-9][0-9] *[0-9][0-9][0-9][0-9] *\z/,
-          message: "Phone Number must be 10 digit, area code/exchange must not start with 1 or 0"}, allow_blank: true
+          message: "Phone Number must be 10 digit, area code/exchange must not start with 1 or 0"}, presence: true
 
   validates :phone_extension, format: {without: /\A[0-9] /, message: "Extension must be digits only"}, allow_blank: true
 
@@ -68,7 +68,12 @@ class PhoneNumber < ApplicationRecord
       unless phone_extension.blank?
         phone_extension.gsub!(/ /,"")
       end
+      unless phone_type.blank?
+        phone_type.strip!
+      end
+
     end
+
   #-----------------------------------------------------------------------------
   # ----- Private Methods -------------------------------------------------------
   #-----------------------------------------------------------------------------
