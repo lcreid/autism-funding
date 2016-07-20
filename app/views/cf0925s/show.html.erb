@@ -1,0 +1,83 @@
+<!-- <% @cf0925.attribute_names.each do |attribute| %>
+  <%= show_field(attribute) %>
+<% end %> -->
+<div class="container">
+  <h2>Section 1 Parent/Guardian Information</h2>
+  <%= form_row do %>
+    <%= show_field(:parent_first_name, 2) %>
+    <%= show_field(:parent_last_name, 2) %>
+    <%= show_field(:parent_middle_name, 2) %>
+    <%= show_field(:home_phone, 3) %>
+    <%= show_field(:work_phone, 3) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:parent_address, 6) %>
+    <%= show_field(:parent_city, 4) %>
+    <%= show_field(:parent_postal_code, 2) %>
+  <% end %>
+  <h2>Section 2 Child Information</h2>
+  <%= form_row do %>
+    <%= show_field(:child_first_name, 2) %>
+    <%= show_field(:child_last_name, 2) %>
+    <%= show_field(:child_middle_name, 2) %>
+    <%= show_field(:child_dob, 2) %>
+    <%= show_field(:child_in_care_of_ministry, 4) %>
+  <% end %>
+  <h2>Part A Services</h2>
+  <%= form_row do %>
+    <%= show_field(:service_provider_name) %>
+    <%= show_field(:payment) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:agency_name) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:service_provider_address, 5) %>
+    <%= show_field(:service_provider_city, 3) %>
+    <%= show_field(:service_provider_postal_code, 2) %>
+    <%= show_field(:service_provider_phone, 2) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:service_provider_address, 5) %>
+    <%= show_field(:service_provider_city, 3) %>
+    <%= show_field(:service_provider_postal_code, 2) %>
+    <%= show_field(:service_provider_phone, 2) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:service_provider_service_1) %>
+    <%= show_field(:service_provider_service_start) %>
+    <%= show_field(:service_provider_service_end) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:service_provider_service_2) %>
+      <%= show_field(:service_provider_service_fee) %>
+      <%= show_field(:service_provider_service_hour) %>
+      <%= show_field(:service_provider_service_amount) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:service_provider_service_3) %>
+  <% end %>
+  <h2>Part B Additional Expenses</h2>
+  <%= form_row do %>
+    <%= show_field(:supplier_name) %>
+    <%= show_field(:supplier_contact_person) %>
+    <%= show_field(:supplier_phone) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:supplier_address) %>
+    <%= show_field(:supplier_city) %>
+    <%= show_field(:supplier_postal_code) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:item_desp_1) %>
+    <%= show_field(:item_cost_1) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:item_desp_2) %>
+    <%= show_field(:item_cost_2) %>
+  <% end %>
+  <%= form_row do %>
+    <%= show_field(:item_desp_3) %>
+    <%= show_field(:item_cost_3) %>
+  <% end %>
+</div>

@@ -28,10 +28,10 @@ has_two_fp:
 
 
 has_no_phone:
-   email: 'user4@autism-funding.com'
-   encrypted_password: 'secret4'
-   name_first: 'Ime'
-   name_last: 'PhoneLess'
+ email: 'user4@autism-funding.com'
+ encrypted_password: 'secret4'
+ name_first: 'Ime'
+ name_last: 'PhoneLess'
 
 has_one_phone:
  email: 'user5@autism-funding.com'
@@ -45,8 +45,3 @@ has_two_phone:
  name_first: 'Iva'
  name_middle: 'Para'
  name_last: 'Phones'
-
-# column: value
-#
-#two: {}
-# column: value

@@ -44,3 +44,6 @@ bower.json
 
 # Ignore vagrant-related stuff
 .vagrant
+
+# Ignore folder with test PDF files
+pdf

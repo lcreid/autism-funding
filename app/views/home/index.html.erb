@@ -1,0 +1,15 @@
+<div class="container">
+  <%= render 'shared/notifications' %>
+  <div class="child">
+    <h1>Child Under 6 -- this is the name</h1>
+    <p>
+      Pending acceptance for funding.
+    </p>
+    <p><%= link_to 'Details', funded_person_path(1) %>
+  </div>
+  <div class="child">
+    <h1>Child 6 and Over</h1>
+    <%= render 'funded_people/status' %>
+    <p><%= link_to 'Details', funded_person_path(2) %>
+  </div>
+</div>
