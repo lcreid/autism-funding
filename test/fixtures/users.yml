@@ -4,8 +4,44 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+basic:
+ email: 'user@autism-funding.com'
+ encrypted_password: 'secret'
+
+has_no_fp:
+ email: 'user1@autism-funding.com'
+ encrypted_password: 'secret1'
+ name_first: 'Igotta'
+ name_last: 'Nobody'
+
+has_one_fp:
+ email: 'user2@autism-funding.com'
+ encrypted_password: 'secret2'
+ name_first: 'Hazonly'
+ name_last: 'Onefunp'
+
+has_two_fp:
+ email: 'user3@autism-funding.com'
+ encrypted_password: 'secret3'
+ name_first: 'Iva'
+ name_last: 'Pair'
+
+
+has_no_phone:
+   email: 'user4@autism-funding.com'
+   encrypted_password: 'secret4'
+   name_first: 'Ime'
+   name_last: 'PhoneLess'
+
+has_one_phone:
+ email: 'user5@autism-funding.com'
+ encrypted_password: 'secret5'
+ name_first: 'Gotonly'
+ name_last: 'Oneline'
+
+has_two_phone:
+ email: 'user6@autism-funding.com'
+ encrypted_password: 'secret6'
+ name_first: 'Iva'
+ name_middle: 'Para'
+ name_last: 'Phones'

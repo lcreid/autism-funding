@@ -53,4 +53,8 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.file_watcher = ActiveSupport::FileUpdateChecker
+
+  # LCR brought this over from config/application.rb
+  # Tests wouldn't run with it in application.rb
+  config.web_console.whitelisted_ips = '10.0.2.2'
 end

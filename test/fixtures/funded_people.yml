@@ -1,0 +1,18 @@
+# -- Test date for funded_people
+one_of_one:
+ birthdate: '19720101'
+ name_first: "Ima"
+ name_last: "Oneofone"
+ user: has_one_fp
+
+one_of_two:
+ birthdate: '19730101'
+ name_first: "Imaone"
+ name_last: "Oftwo"
+ user: has_two_fp
+
+two_of_two:
+ birthdate: '19740101'
+ name_first: "Imatwo"
+ name_last: "Oftwo"
+ user: has_two_fp
