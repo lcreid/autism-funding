@@ -1,0 +1,55 @@
+<h3>Invoices</h3>
+<div class="col-md-8">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Service Provider</th><th>Invoice Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          ABBA Learning
+        </td>
+        <td>
+          2016-05-18
+        </td>
+        <td>
+          280.00
+        </td>
+        <td>
+          Ministry Pay
+        </td>
+        <td>
+          <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
+          <%= link_to('Paid', '#', class: "btn btn-xs btn-primary", disabled: true) %>
+          <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Destructive Pathways
+        </td>
+        <td>
+          2016-03-07
+        </td>
+        <td>
+          360.00
+        </td>
+        <td>
+          Unpaid
+        </td>
+        <td>
+          <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
+          <%= link_to('Paid', '#', class: "btn btn-xs btn-primary") %>
+          <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+    </tfoot>
+  </table>
+</div>
+<div class="col-md-4">
+  <%= link_to('New Invoice', '#', class: 'btn btn-primary btn-block') %>
+</div>
