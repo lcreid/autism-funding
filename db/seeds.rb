@@ -13,4 +13,5 @@ ProvinceCode.new([
 Form.new(province_code: ProvinceCode.find_by(province_code: 'BC'),
          form_name: 'Request to Pay',
          form_description: 'Used to authorize payment to a service provider.',
-         file_name: File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf'))
+         file_name: File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf'),
+         class_name: 'Cf0925')

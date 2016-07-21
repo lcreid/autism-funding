@@ -10,6 +10,26 @@ class Cf0925 < ApplicationRecord
             presence: {
               message: 'please choose either service provider or agency'
             }
+  # We don't want to validate on these because the user should be able to
+  # enter and save partial records.
+  # validates :child_dob,
+  #           :child_first_name,
+  #           :child_last_name,
+  #           :child_middle_name,
+  #           :child_in_care_of_ministry,
+  #           :home_phone,
+  #           :parent_address,
+  #           :parent_city,
+  #           :parent_first_name,
+  #           :parent_last_name,
+  #           :parent_middle_name,
+  #           :parent_postal_code,
+  #           :work_phone,
+  #           presence: true
+
+  def after_initialize
+    self.form = Form.find_by(class_name: 'Cf0925')
+  end
 
   def generate_pdf
     # begin
