@@ -25,8 +25,9 @@ module TestSessionHelpers
   end
 
   # This one works for Capybara tests. I have no idea why the above doesn't.
-  def fill_in_login
-    user = User.create!(email: 'me@weenhanceit.com', password: 'password')
+  def fill_in_login(user =
+                    User.create!(email: 'me@weenhanceit.com',
+                                 password: 'password'))
     visit(new_user_session_path)
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'password'

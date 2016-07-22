@@ -58,3 +58,10 @@ has_one_address:
  name_first: 'Mehave'
  name_middle: 'Anna'
  name_last: 'Dress'
+
+cf0925:
+  email: cf0925@autism-funding.com
+  encrypted_password: secret7
+  name_first: Mr.
+  name_middle: Middle
+  name_last: '0925'

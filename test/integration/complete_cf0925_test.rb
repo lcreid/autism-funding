@@ -26,7 +26,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
       parent_last_name: 'parent_last_name',
       parent_middle_name: 'parent_middle_name',
       parent_postal_code: 'parent_postal_code',
-      payment: 'agency',
+      payment: 'Choice2',
       service_provider_postal_code: 'service_provider_postal_code',
       service_provider_address: 'service_provider_address',
       service_provider_city: 'service_provider_city',
@@ -47,7 +47,8 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
       supplier_phone: 'supplier_phone',
       supplier_postal_code: 'supplier_postal_code',
       work_phone: 'work_phone',
-      form_id: forms(:cf0925).id
+      form_id: forms(:cf0925).id,
+      funded_person_id: funded_people(:cf0925).id
     }
   end
 
@@ -114,11 +115,43 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'CF_0925 autofill from user' do
-    skip 'Autofill from user'
-  end
+  test 'CF_0925 autofill from user and child' do
+    fill_in_login
+    # TODO: Make this follow links when we nail down the UI.
+    visit new_cf0925_path
 
-  test 'CF_0925 autofill from child' do
-    skip 'Autofill from child'
+    {
+      agency_name: 'agency_name',
+      item_cost_1: 10,
+      item_cost_2: 20,
+      item_cost_3: 30,
+      item_desp_1: 'Tablet',
+      item_desp_2: 'Phone',
+      item_desp_3: 'Notebook',
+      service_provider_postal_code: 'N1N 1N1',
+      service_provider_address: '22222 Main St.',
+      service_provider_city: 'Vancouver',
+      service_provider_phone: '555-555-2345',
+      service_provider_name: 'Joe B. Consultant',
+      service_provider_service_1: 'Behaviour consulting',
+      service_provider_service_amount: 2000,
+      service_provider_service_end: '2017-05-31',
+      service_provider_service_fee: 150,
+      service_provider_service_hour: 'hour',
+      service_provider_service_start: '2016-06-01',
+      supplier_address: '11111 Main St.',
+      supplier_city: 'Vancouver',
+      supplier_name: 'ABBA Learning',
+      supplier_phone: '555-555-1234',
+      supplier_postal_code: 'N0N 0N0',
+      work_phone: '555-555-5555'
+    }.each do |k, v|
+      fill_in 'cf0925_' + k.to_s, with: v
+    end
+    choose 'cf0925_payment_choice2'
+
+    click_button 'Create Cf0925'
+    assert_equal 200, status_code
+    # TODO: Test that I end up at the child's page
   end
 end
