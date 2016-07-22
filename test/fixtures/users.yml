@@ -45,3 +45,16 @@ has_two_phone:
  name_first: 'Iva'
  name_middle: 'Para'
  name_last: 'Phones'
+
+has_no_address:
+ email: 'user7@autism-funding.com'
+ encrypted_password: 'secret7'
+ name_first: 'Igottanoad'
+ name_last: 'Ress'
+
+has_one_address:
+ email: 'user8@autism-funding.com'
+ encrypted_password: 'secret7'
+ name_first: 'Mehave'
+ name_middle: 'Anna'
+ name_last: 'Dress'

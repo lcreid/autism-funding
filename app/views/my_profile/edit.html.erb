@@ -1,0 +1,73 @@
+<h1>Edit My Data</h1>
+<br>
+
+<% if ! current_user.valid? %>
+  <% current_user.errors.messages.each do |m| %>
+    <br>An error: [<%= m %>]  <% end %>
+  <br>
+<% end %>
+
+<%= form_for current_user, url: my_profile_update_path  do |f| %>
+<table>
+  <tr>
+    <td><%= f.label :name_first %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_first %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :name_middle %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_middle %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :name_last %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_last %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :address_line_1 %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :address_line_1 %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :address_line_2 %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :address_line_2 %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :city %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :city %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :province_code %></td>
+    <td>&nbsp;<%= current_user.province_code_id %></td>
+    <td><%= f.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, prompt: true  %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :postal_code %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :postal_code %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :home_phone_number %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :home_phone_number %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :work_phone_number %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :work_phone_number %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :work_phone_extension %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :work_phone_extension %></td>
+  </tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr>
+    <td colspan="2" style="text-align: center">
+      <%= f.submit %>
+    </td>
+  </table>
+  <% end %>

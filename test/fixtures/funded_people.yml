@@ -1,4 +1,5 @@
-# -- Test date for funded_people
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# -- Test data for funded_people
 one_of_one:
  birthdate: '19720101'
  name_first: "Ima"

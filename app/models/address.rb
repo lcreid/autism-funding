@@ -1,12 +1,12 @@
 class Address < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
-  belongs_to :province_code
+  belongs_to :province_code, optional: true
   belongs_to :user
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :user_id, presence: true
-  validates :province_code_id, presence: true
+  #validates :province_code_id, presence: true
   validates :postal_code, format: {with:/\A *[a-zA-Z][0-9][a-zA-Z] *[0-9][a-zA-Z][0-9] *\z/,
           message: "Postal Code must be of the format ANA NAN"}, allow_blank: true
 
@@ -17,6 +17,7 @@ class Address < ApplicationRecord
 
 
   # ----- Public Methods -------------------------------------------------------
+
   def get_address delimiter:  " "
     clean_address
     #-- Initialize variables -----------------------------

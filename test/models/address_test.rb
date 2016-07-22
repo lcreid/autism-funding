@@ -6,14 +6,12 @@ class AddressTest < ActiveSupport::TestCase
   # => b) tests that the new Address object instance is of the class Address
   # => c) tests that a address instance is invalid if user is not set
   # => d) tests that a address instance is invalid if postal code is invalid
-  # => e) tests that a address instance is invalid if user is not set and province code  set
   # => f) tests that a user instance is valid if user set and province code set
   # => g) ensure a save is successful if valid? is true
   testName = "01 Check Address can be created and saved"
   #puts "-- Test: #{testName} -----------------------------------"
   test testName do
     valid_user = users(:basic)
-    valid_province_code = province_codes(:ont)
     valid_postal_code = " A2A 3F7 "
     invalid_postal_code = " AxA 3F7 "
 
@@ -28,26 +26,17 @@ class AddressTest < ActiveSupport::TestCase
     # 01.c .....................................................................
     the_address.user = nil
     the_address.postal_code = valid_postal_code
-    the_address.province_code = valid_province_code
     assert_not the_address.valid?, "01.c: the_address should not be valid (No user)"
-
-    # 01.d .....................................................................
-    the_address.user = valid_user
-    the_address.postal_code = valid_postal_code
-    the_address.province_code = nil
-    assert_not the_address.valid?, "01.d: the_address should not be valid (No province_code)"
 
     # 01.e .....................................................................
     the_address.user = valid_user
     the_address.postal_code = invalid_postal_code
-    the_address.province_code = valid_province_code
-    assert_not the_address.valid?, "01.e: the_address should not be valid (Invalid postal code)"
+    assert_not the_address.valid?, "01.d: the_address should not be valid (Invalid postal code)"
 
     # 01.f .....................................................................
     the_address.user = valid_user
     the_address.postal_code = valid_postal_code
-    the_address.province_code = valid_province_code
-    assert the_address.valid?, "01.f: the_address should be valid ( user, valid postal code and province code present)"
+    assert the_address.valid?, "01.f: the_address should be valid ( user and valid postal code)"
 
     # 01.g .....................................................................
     assert the_address.save, "Save of an valid instance should succeed"
