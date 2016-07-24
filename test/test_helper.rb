@@ -50,3 +50,9 @@ class ActionDispatch::IntegrationTest
   end
 end
 # End Capybara
+
+# Support Devise controller tests (only)
+class ActionController::TestCase
+  include Devise::Test::ControllerHelpers
+end
+# End Devise

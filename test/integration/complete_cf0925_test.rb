@@ -48,16 +48,17 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
       supplier_postal_code: 'supplier_postal_code',
       work_phone: 'work_phone',
       form_id: forms(:cf0925).id,
-      funded_person_id: funded_people(:cf0925).id
+      funded_person_id: (@funded_person = funded_people(:cf0925)).id
     }
   end
 
   test 'CF_0925 child between 6 and 18' do
     log_in
-    get new_cf0925_path
+    get new_funded_person_cf0925_path(@funded_person)
     assert_response :success
     assert_difference('Cf0925.count') do
-      post '/cf0925s', params: { cf0925: @form_field_values }
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: @form_field_values }
     end
 
     assert_response :redirect
@@ -70,21 +71,22 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
 
   test 'CF_0925 start date after end date' do
     log_in
-    get new_cf0925_path
+    get new_funded_person_cf0925_path(@funded_person)
     assert_response :success
 
     # Make a bad date.
     bad_date_params = @form_field_values.merge(service_provider_service_end: '2016-05-31')
 
     assert_no_difference('Cf0925.count') do
-      post '/cf0925s', params: { cf0925: bad_date_params }
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_date_params }
     end
 
     assert_response :success
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
-    # so the path is the path for create, which is /cf0925s.
-    assert_equal '/cf0925s', path
+    # so the path is the path for create, which is like the post above.
+    assert_equal funded_person_cf0925s_path(@funded_person), path
     assert_select '.error-explanation li', 1 do |error|
       assert_equal 'Service provider service end must be after start date',
                    error.text
@@ -98,7 +100,7 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
   test 'CF_0925 agency checkbox required' do
     log_in
     assert_no_difference('Cf0925.count') do
-      post '/cf0925s',
+      post funded_person_cf0925s_path(@funded_person),
            params: {
              cf0925: @form_field_values.reject { |k, _| k == :payment }
            }
@@ -107,8 +109,8 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     assert_response :success
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
-    # so the path is the path for create, which is /cf0925s.
-    assert_equal '/cf0925s', path
+    # so the path is the path for create, which is like the post above.
+    assert_equal funded_person_cf0925s_path(@funded_person), path
     assert_select '.error-explanation li', 1 do |error|
       assert_equal 'Payment please choose either service provider or agency',
                    error.text
@@ -118,10 +120,10 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
   test 'CF_0925 autofill from user and child' do
     fill_in_login
     # TODO: Make this follow links when we nail down the UI.
-    visit new_cf0925_path
+    visit new_funded_person_cf0925_path(@funded_person)
 
     {
-      agency_name: 'agency_name',
+      agency_name: 'autofill user and child',
       item_cost_1: 10,
       item_cost_2: 20,
       item_cost_3: 30,
@@ -150,8 +152,14 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     end
     choose 'cf0925_payment_choice2'
 
-    click_button 'Create Cf0925'
+    assert_difference 'Cf0925.count' do
+      click_button 'Create Cf0925'
+    end
     assert_equal 200, status_code
-    # TODO: Test that I end up at the child's page
+    assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
+           'Could not find record')
+    assert_equal cf0925_path(rtp), current_path
+    assert page.has_link?('Print')
+    skip 'Need JavaScript to disable above link'
   end
 end

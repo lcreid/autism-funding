@@ -22,3 +22,9 @@ cf0925:
   name_first: cf
   name_last: '0925'
   user: cf0925
+
+minimum_printable:
+  birthdate: 2005-11-11
+  name_first: Minimum
+  name_last: Printable
+  user: minimum_printable

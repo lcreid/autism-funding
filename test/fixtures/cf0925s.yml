@@ -25,7 +25,7 @@ one:
   parent_last_name: parent_last_name
   parent_middle_name: parent_middle_name
   parent_postal_code: parent
-  payment: 100
+  payment: Choice1
   service_provider_postal_code: servic
   service_provider_address: service_provider_address
   service_provider_city: service_provider_city
@@ -48,3 +48,30 @@ one:
   work_phone: work_phone
   form: cf0925
   funded_person: cf0925
+
+minimum_printable:
+  child_dob: "2002-04-01"
+  child_first_name: child_first_name
+  child_last_name: child_last_name
+  home_phone: home_phone
+  parent_address: parent_address
+  parent_city: parent_city
+  parent_first_name: parent_first_name
+  parent_last_name: parent_last_name
+  parent_postal_code: parent
+  service_provider_postal_code: servic
+  service_provider_address: service_provider_address
+  service_provider_city: service_provider_city
+  service_provider_phone: service_provider_phone
+  service_provider_name: service_provider_name
+  service_provider_service_1: service_provider_service_1
+  service_provider_service_2: service_provider_service_2
+  service_provider_service_3: service_provider_service_3
+  service_provider_service_amount: 3000
+  service_provider_service_end: "2017-04-30"
+  service_provider_service_fee: 120.00
+  service_provider_service_hour: hour
+  service_provider_service_start: "2016-05-01"
+  work_phone: work_phone
+  form: cf0925
+  funded_person: minimum_printable
