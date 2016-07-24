@@ -7,6 +7,10 @@ Rails.application.routes.draw do
 
   get 'other_resources/index'
   get 'my_profile/index'
+  get 'my_profile/edit'
+  patch 'my_profile/update'
+  put 'my_profile/update'
+
 
   devise_for :users
 

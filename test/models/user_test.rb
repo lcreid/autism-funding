@@ -181,4 +181,198 @@ test testName do
 
 end     ## -- end test --
 
+#-----------------------------------------------------------------------------
+#  Test 05
+# => a) tests that new user has no related addresses
+# => b) tests that new user get_address returns a nil
+# => c) tests that users(:has_no_address) has no related addresses
+# => d) tests that users(:has_no_address).my_address returns an instance of class Address
+# => e) tests that users(:has_no_address).my_address returns an instance with a correct user_id
+# => f) tests that users(:has_no_address).my_address returns an Address instance that is a blank address
+# => g) tests that users(:has_no_address) now has one related address
+# => h) tests that users(:has_one_address) has 1 related address
+# => i) tests that users(:has_one_address).my_address returns an instance of class Address
+# => j) tests that users(:has_no_address).my_address returns an instance with a correct user_id
+# => k) tests that users(:has_one_address).my_address returns expected Address data
+testName = "05 Check Relationship with Address and my_address"
+#puts "-- Test: #{testName} -----------------------------------"
+test testName do
+  # 05.a .....................................................................
+  the_user = User.new
+  assert_equal 0,the_user.addresses.size, "05.a: Instance [#{the_user.my_name}] should have no addresses"
+
+  # 05.b .....................................................................
+  assert_nil the_user.my_address, "05.b: Instance [#{the_user.my_name}.my_address] should return nil as no id has been created"
+
+  # 05.c .....................................................................
+  the_user = users(:has_no_address)
+  assert_equal 0,the_user.addresses.size, "05.c: Instance [#{the_user.my_name}] should have 0 addresses"
+
+  # 05.d .....................................................................
+  the_address = the_user.my_address
+  assert_instance_of Address, the_address, "05.d:  [#{the_user.my_name}.my_address] should return instance of class Address"
+
+  # 05.e .....................................................................
+  assert_equal the_user.id,the_address.user_id, "05.e: Instance [#{the_user.my_name}],my_address has an incorrect user_id"
+
+  # 05.f .....................................................................
+  expected = ""
+  assert_equal expected, the_address.get_full_address(blank_address: ""), "05.f: Instance [#{the_user.my_name}],my_address is not a blank address"
+
+  # 05.g .....................................................................
+  assert_equal 1,the_user.addresses.size, "05.g: Instance [#{the_user.my_name}] should now have 1 addresses"
+
+  # 05.h .....................................................................
+  the_user = users(:has_one_address)
+  assert_equal 1,the_user.addresses.size, "05.h: Instance [#{the_user.my_name}] should have 1 address"
+
+  # 05.i .....................................................................
+  the_address = the_user.my_address
+  assert_instance_of Address, the_address, "05.i:  [#{the_user.my_name}.my_address] should return instance of class Address"
+
+  # 05.j .....................................................................
+  assert_equal the_user.id,the_address.user_id, "05.j: Instance [#{the_user.my_name}.my_address has an incorrect user_id"
+
+  # 05.k .....................................................................
+  expected = Address.find_by( user_id: the_user.id).get_full_address
+  assert_equal expected, the_address.get_full_address, "05.k: Instance [#{the_user.my_name}].my_address is not correct"
+end     ## -- end test --
+
+#-----------------------------------------------------------------------------
+#  Test 06
+# => a) tests that new user has no related phone_numbers
+# => b) tests that new user my_home_phone returns a nil
+# => c) tests that users(:has_no_phone) has no related addresses
+# => d) tests that users(::has_no_phone).my_home_phone returns an instance of class PhoneNumber
+# => e) tests that users(::has_no_phone).my_home_phone returns an instance with a correct user_id
+# => f) tests that users(::has_no_phone).my_home_phone returns a PhoneNumber instance that has a nil phone_number
+# => g) tests that users(::has_no_phone).my_home_phone returns a PhoneNumber instance that has the correct phone_type
+# => h) tests that users(:has_no_address) now has one related phone number
+# => i) tests that users(:has_two_phone) has 2 related phone numbers
+# => j) tests that users(:has_two_phone).my_home_phone returns an instance of class PhoneNumber
+# => k) tests that users(:has_two_phone).my_home_phone returns an instance with a correct user_id
+# => l) tests that users(:has_two_phone).my_home_phone returns expected Phone data
+# => m) tests that users(:has_two_phone).my_home_phone returns expected phone type
+testName = "06 Check my_home_phone"
+#puts "-- Test: #{testName} -----------------------------------"
+test testName do
+  test_phone_type = "Home"
+  # 06.a .....................................................................
+  the_user = User.new
+  assert_equal 0,the_user.phone_numbers.size, "06.a: Instance [#{the_user.my_name}] should have no phone_numbers"
+
+  # 06.b .....................................................................
+  assert_nil the_user.my_home_phone, "06.b: Instance [#{the_user.my_name}.my_home_phone] should return nil as no id has been created"
+
+  # 06.c .....................................................................
+  the_user = users(:has_no_phone)
+  assert_equal 0,the_user.phone_numbers.size, "06.c: Instance [#{the_user.my_name}] should have 0 phone_numbers"
+
+  # 06.d .....................................................................
+  the_phone_number = the_user.my_home_phone
+  assert_instance_of PhoneNumber, the_phone_number, "06.d:  [#{the_user.my_name}.my_home_phone] should return instance of class APhoneNumber"
+
+  # 06.e .....................................................................
+  assert_equal the_user.id,the_phone_number.user_id, "06.e: Instance [#{the_user.my_name}],my_home_phone has an incorrect user_id"
+
+  # 06.f .....................................................................
+  assert_nil the_phone_number.phone_number, "06.f: Instance [#{the_user.my_name}],my_home_phone is not a blank phone number"
+
+  # 06.g .....................................................................
+  expected = test_phone_type
+  assert_equal expected, the_phone_number.phone_type, "06.g: Instance [#{the_user.my_name}],my_home_phone should have the correct type"
+
+  # 06.h .....................................................................
+  assert_equal 1,the_user.phone_numbers.size, "06.h: Instance [#{the_user.my_name}] should now have 1 phone number"
+
+  # 06.i .....................................................................
+  the_user = users(:has_two_phone)
+  assert_equal 2,the_user.phone_numbers.size, "06.i: Instance [#{the_user.my_name}] should have 2 phone numbers"
+
+  # 06.j .....................................................................
+  the_phone_number = the_user.my_home_phone
+  assert_instance_of PhoneNumber, the_phone_number, "06.j:  [#{the_user.my_name}.my_home_number] should return instance of class PhoneNumber"
+
+  # 06.k .....................................................................
+  assert_equal the_user.id,the_phone_number.user_id, "06.k: Instance [#{the_user.my_name}.my_home_phone has an incorrect user_id"
+
+  # 06.l .....................................................................
+  expected = PhoneNumber.find_by( user_id: the_user.id, phone_type: test_phone_type).full_number
+  assert_equal expected, the_phone_number.full_number, "06.l: Instance [#{the_user.my_name}].my_home_number phone_number is not correct"
+
+  # 06.m .....................................................................
+  expected = test_phone_type
+  assert_equal expected, the_phone_number.phone_type, "06.m: Instance [#{the_user.my_name}],my_home_phone should have the correct type"
+
+end     ## -- end test --
+
+#-----------------------------------------------------------------------------
+#  Test 07
+# => a) tests that new user has no related phone_numbers
+# => b) tests that new user my_work_phone returns a nil
+# => c) tests that users(:has_no_phone) has no related addresses
+# => d) tests that users(::has_no_phone).my_work_phone returns an instance of class PhoneNumber
+# => e) tests that users(::has_no_phone).my_work_phone returns an instance with a correct user_id
+# => f) tests that users(::has_no_phone).my_work_phone returns a PhoneNumber instance that has a nil phone_number
+# => g) tests that users(::has_no_phone).my_work_phone returns a PhoneNumber instance that has the correct phone_type
+# => h) tests that users(:has_no_address) now has one related phone number
+# => i) tests that users(:has_two_phone) has 2 related phone numbers
+# => j) tests that users(:has_two_phone).my_work_phone returns an instance of class PhoneNumber
+# => k) tests that users(:has_two_phone).my_work_phone returns an instance with a correct user_id
+# => l) tests that users(:has_two_phone).my_work_phone returns expected Phone data
+# => m) tests that users(:has_two_phone).my_work_phone returns expected phone type
+testName = "07 Check my_work_phone"
+#puts "-- Test: #{testName} -----------------------------------"
+test testName do
+  test_phone_type = "Work"
+  # 07.a .....................................................................
+  the_user = User.new
+  assert_equal 0,the_user.phone_numbers.size, "07.a: Instance [#{the_user.my_name}] should have no phone_numbers"
+
+  # 07.b .....................................................................
+  assert_nil the_user.my_work_phone, "07.b: Instance [#{the_user.my_name}.my_work_phone] should return nil as no id has been created"
+
+  # 07.c .....................................................................
+  the_user = users(:has_no_phone)
+  assert_equal 0,the_user.phone_numbers.size, "07.c: Instance [#{the_user.my_name}] should have 0 phone_numbers"
+
+  # 07.d .....................................................................
+  the_phone_number = the_user.my_work_phone
+  assert_instance_of PhoneNumber, the_phone_number, "07.d:  [#{the_user.my_name}.my_work_phone] should return instance of class APhoneNumber"
+
+  # 07.e .....................................................................
+  assert_equal the_user.id,the_phone_number.user_id, "07.e: Instance [#{the_user.my_name}],my_work_phone has an incorrect user_id"
+
+  # 07.f .....................................................................
+  assert_nil the_phone_number.phone_number, "07.f: Instance [#{the_user.my_name}],my_work_phone is not a blank phone number"
+
+  # 07.g .....................................................................
+  expected = test_phone_type
+  assert_equal expected, the_phone_number.phone_type, "07.g: Instance [#{the_user.my_name}],my_work_phone should have the correct type"
+
+  # 07.h .....................................................................
+  assert_equal 1,the_user.phone_numbers.size, "07.h: Instance [#{the_user.my_name}] should now have 1 phone number"
+
+  # 07.i .....................................................................
+  the_user = users(:has_two_phone)
+  assert_equal 2,the_user.phone_numbers.size, "07.i: Instance [#{the_user.my_name}] should have 2 phone numbers"
+
+  # 07.j .....................................................................
+  the_phone_number = the_user.my_work_phone
+  assert_instance_of PhoneNumber, the_phone_number, "07.j:  [#{the_user.my_name}.my_home_number] should return instance of class PhoneNumber"
+
+  # 07.k .....................................................................
+  assert_equal the_user.id,the_phone_number.user_id, "07.k: Instance [#{the_user.my_name}.my_work_phone has an incorrect user_id"
+
+  # 07.l .....................................................................
+  expected = PhoneNumber.find_by( user_id: the_user.id, phone_type: test_phone_type).full_number
+  assert_equal expected, the_phone_number.full_number, "07.l: Instance [#{the_user.my_name}].my_home_number phone_number is not correct"
+
+  # 07.m .....................................................................
+  expected = test_phone_type
+  assert_equal expected, the_phone_number.phone_type, "07.m: Instance [#{the_user.my_name}],my_work_phone should have the correct type"
+
+end     ## -- end test --
+
+
 end
