@@ -1,14 +1,15 @@
 <h1>Edit My Data</h1>
 <br>
-
-<% if ! current_user.valid? %>
-  <% current_user.errors.messages.each do |m| %>
-    <br>An error: [<%= m %>]  <% end %>
+<% unless flash[:save_errors].nil? %>
+  <div style = "width: 80%; color: black; background-color: #FFE6E6; border: 5px double red; padding: 5px; margin-left: 20px;">
+    <%= flash[:save_errors].html_safe %>
+  </div>
   <br>
 <% end %>
+<%#= debug(params) %>
 
 <%= form_for current_user, url: my_profile_update_path  do |f| %>
-<table>
+<table style="width: 60%;">
   <tr>
     <td><%= f.label :name_first %></td>
     <td>&nbsp;</td>
@@ -24,49 +25,55 @@
     <td>&nbsp;</td>
     <td><%= f.text_field :name_last %></td>
   </tr>
+  <tr><td colspan="3">&nsbsp;</td></tr>
+  <tr><td colspan="3">Address</td></tr>
+  <%= fields_for @my_address do |ma| %>
   <tr>
-    <td><%= f.label :address_line_1 %></td>
+    <td><%= ma.label :address_line_1 %></td>
     <td>&nbsp;</td>
-    <td><%= f.text_field :address_line_1 %></td>
+    <td><%= ma.text_field :address_line_1 %></td>
   </tr>
   <tr>
-    <td><%= f.label :address_line_2 %></td>
+    <td><%= ma.label :address_line_2 %></td>
     <td>&nbsp;</td>
-    <td><%= f.text_field :address_line_2 %></td>
+    <td><%= ma.text_field :address_line_2 %></td>
   </tr>
   <tr>
-    <td><%= f.label :city %></td>
+    <td><%= ma.label :city %></td>
     <td>&nbsp;</td>
-    <td><%= f.text_field :city %></td>
+    <td><%= ma.text_field :city %></td>
   </tr>
   <tr>
-    <td><%= f.label :province_code %></td>
-    <td>&nbsp;<%= current_user.province_code_id %></td>
-    <td><%= f.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, prompt: true  %></td>
+    <td><%= ma.label :province_code %></td>
+    <td>&nbsp;<%= @my_address.province_code_id %></td>
+    <td><%= ma.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, prompt: true  %></td>
   </tr>
   <tr>
-    <td><%= f.label :postal_code %></td>
+    <td><%= ma.label :postal_code %></td>
     <td>&nbsp;</td>
-    <td><%= f.text_field :postal_code %></td>
+    <td><%= ma.text_field :postal_code %></td>
   </tr>
+  <% end %>
+  <tr><td colspan="3">&nsbsp;</td></tr>
+  <tr><td colspan="3">Phone Numbers</td></tr>
+  <%= fields_for :home_phone_number, @home_phone do |mp| %>
+    <tr>
+      <td>Home: </td>
+      <td>&nbsp;</td>
+      <td><%= mp.text_field :phone_number %></td>
+    </tr>
+  <% end %>
+
+  <%= fields_for :work_phone_number, @work_phone do |mp| %>
+    <tr>
+      <td>Work</td>
+      <td>&nbsp;</td>
+      <td><%= mp.text_field :phone_number %> Extension <%= mp.text_field :phone_extension %></td>
+    </tr>
+  <% end %>
+  <tr><td colspan="3">&nbsp;</td></tr>
   <tr>
-    <td><%= f.label :home_phone_number %></td>
-    <td>&nbsp;</td>
-    <td><%= f.text_field :home_phone_number %></td>
-  </tr>
-  <tr>
-    <td><%= f.label :work_phone_number %></td>
-    <td>&nbsp;</td>
-    <td><%= f.text_field :work_phone_number %></td>
-  </tr>
-  <tr>
-    <td><%= f.label :work_phone_extension %></td>
-    <td>&nbsp;</td>
-    <td><%= f.text_field :work_phone_extension %></td>
-  </tr>
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr>
-    <td colspan="2" style="text-align: center">
+    <td colspan="3" style="text-align: center">
       <%= f.submit %>
     </td>
   </table>
