@@ -9,4 +9,10 @@ class Cf0925Test < ActiveSupport::TestCase
     assert rtp.generate_pdf
     assert File.exist?(rtp.pdf_output_file), "File #{rtp.pdf_output_file} not found"
   end
+
+  test 'not printable' do
+    rtp = cf0925s(:minimum_printable)
+    rtp.parent_last_name = nil
+    assert !rtp.printable?, 'should be not printable'
+  end
 end
