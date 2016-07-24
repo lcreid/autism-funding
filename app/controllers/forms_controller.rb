@@ -1,5 +1,5 @@
 class FormsController < ApplicationController
   def index
-    @forms = Cf0925.all
+    @forms = current_user.forms.all
   end
 end

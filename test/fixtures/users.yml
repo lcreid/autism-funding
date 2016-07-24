@@ -59,3 +59,9 @@ minimum_printable:
   name_first: Minimum
   name_middle: Parent
   name_last: Printable
+
+forms:
+  email: forms@weenhanceit.com
+  encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
+  name_first: forms_first
+  name_last: forms_last

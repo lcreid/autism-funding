@@ -18,13 +18,19 @@ two_of_two:
  user: has_two_fp
 
 cf0925:
-  birthdate: 2007-10-11
+  birthdate: '2007-10-11'
   name_first: cf
   name_last: '0925'
   user: cf0925
 
 minimum_printable:
-  birthdate: 2005-11-11
+  birthdate: '2005-11-11'
   name_first: Minimum
   name_last: Printable
   user: minimum_printable
+
+forms:
+  birthdate: '2013-12-27'
+  name_first: Junior
+  name_last: Forms
+  user: forms
