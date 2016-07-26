@@ -77,4 +77,14 @@
       <%= f.submit %>
     </td>
   </table>
+  <h2>Funded People</h2>
+    <fieldset>
+      <%= f.fields_for :funded_people do |builder| %>
+        <%= render partial: 'cf0925s/child_info', locals: { f: builder } %>
+        <div class="col-md-1"><%= link_to 'Delete', '#', class: "btn btn-danger btn-xs" %></div>
+      <% end %>
+    </fieldset>
+    <div class="row">
+      <%= link_to '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>'.html_safe, '', class: 'btn' %>
+    </div>
   <% end %>
