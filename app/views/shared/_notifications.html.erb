@@ -1,20 +1,22 @@
 <!-- <%# if @flash.any? %> -->
-<div class="notifications bg-info">
-  <h1>Notifications</h1>
-  <ul class="list-unstyled">
-  <!-- <%# model.errors.full_messages.each do |msg| %>
-    <li><%# msg %></li>
-  <%# end %> -->
-    <li>This is a notification about a new feature.</li>
-    <li>This is one about system availability.</li>
-    <li>
-      The notification box only appears
-      if there are notifications to show.
-    </li>
-    <li>
-      Some notifications might be system wide.
-      Others might be user-specific.
-    </li>
-  </ul>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h1 class="panel-title">Notifications</h1>
+    </div>
+    <div class="panel-body">
+        <ul class="list-unstyled">
+            <!-- <%# model.errors.full_messages.each do |msg| %>
+              <li><%# msg %></li>
+            <%# end %> -->
+            <li>This is a notification about a new feature.</li>
+            <li>This is one about system availability.</li>
+            <li>
+                The notification box only appears if there are notifications to show.
+            </li>
+            <li>
+                Some notifications might be system wide. Others might be user-specific.
+            </li>
+        </ul>
+    </div>
 </div>
 <!-- <%# end %> -->

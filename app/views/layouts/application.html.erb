@@ -1,112 +1,116 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= Globals::site_name %></title>
+    <head>
+        <title><%= Globals::site_name %></title>
 
-    <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
+        <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
 
+        <%= csrf_meta_tags %>
 
-    <%= csrf_meta_tags %>
+        <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+        <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+        <%= javascript_include_tag 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
 
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
+    </head>
 
-  </head>
+    <body>
 
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid" style="background-color: #08088A">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
-        </div>
-        <ul class="nav navbar-nav">
-          <li><%#= link_to "menu 1" %></li>
-          <li><%#= link_to "menu 2" %></li>
-          <% if user_signed_in? %>
-            <li><%= link_to "My Profile", my_profile_index_path %></li>
-          <% end %>
-          <li><%#= link_to "My Profile", controller:"my_profile", action: "index" %></li>
-          <li><%#= link_to "Other Resources", controller:"other_resources", action: "index" %></li>
-          <li><%#= link_to "Other Resources", "/other_resources/index" %></li>
-          <li><%= link_to "Other Resources", other_resources_index_path %></li>
-          <li><%#= link_to "Procurement", controller:"info", action: "procurement"  %></li>
-          <li><%#= link_to "Services", controller:"info", action: "services"  %></li>
-          <li><%#= link_to "Request More Info", controller:"info_requests", action: "new"  %></li>
-          <li><%#= link_to "Request Info", controller:"req_contact", action: "contact_me"  %></li>
-          <li><%#= link_to "Contacts", controller:"reports", action: "contact_reports"  %></li>
-          <li><%#= link_to "About #{Globals::company_name_short}", controller:"info", action: "about"  %></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <% if user_signed_in? %>
-            <li><%= link_to current_user.email, edit_user_registration_path %></li>
-            <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
-          <% else %>
-            <li><%= link_to "Sign Up", new_user_registration_path %></li>
-            <li><%= link_to "Log in", new_user_session_path %></li>
-            <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
-          <% end %>
-        </ul>
-      </div>
-    </nav>
-
-    <div class="container">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h3>Prototype D</h3>
-                <ul>
-                    <li>
-                        One page per child. (We would manage the single-child case via redirects to skip the "select a child" page.)
-                    </li>
-                    <li>
-                        Make the whole approach less "table-driven" and more around the person's tasks.
-                    </li>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid" style="background-color: #08088A">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><%#= link_to "menu 1" %></li>
+                    <li><%#= link_to "menu 2" %></li>
+                    <% if user_signed_in? %>
+                    <li><%= link_to "My Profile", my_profile_index_path %></li>
+                    <% end %>
+                    <li><%#= link_to "My Profile", controller:"my_profile", action: "index" %></li>
+                    <li><%#= link_to "Other Resources", controller:"other_resources", action: "index" %></li>
+                    <li><%#= link_to "Other Resources", "/other_resources/index" %></li>
+                    <li><%= link_to "Other Resources", other_resources_index_path %></li>
+                    <li><%#= link_to "Procurement", controller:"info", action: "procurement"  %></li>
+                    <li><%#= link_to "Services", controller:"info", action: "services"  %></li>
+                    <li><%#= link_to "Request More Info", controller:"info_requests", action: "new"  %></li>
+                    <li><%#= link_to "Request Info", controller:"req_contact", action: "contact_me"  %></li>
+                    <li><%#= link_to "Contacts", controller:"reports", action: "contact_reports"  %></li>
+                    <li><%#= link_to "About #{Globals::company_name_short}", controller:"info", action: "about"  %></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <% if user_signed_in? %>
+                    <li><%= link_to current_user.email, edit_user_registration_path %></li>
+                    <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
+                <% else %>
+                    <li><%= link_to "Sign Up", new_user_registration_path %></li>
+                    <li><%= link_to "Log in", new_user_session_path %></li>
+                    <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
+                    <% end %>
                 </ul>
             </div>
-        </div>
-    </div>
+        </nav>
 
-    <div class="container">
-      <%# ---- Notice or alert message from devise ---------------------------%>
-      <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
-      <% if alert  %><div class="alert alert-warning"><%= alert %></div><% end %>
-
-      <%= yield %>
-    </div>
-
-  </body>
-
-  <footer class="container">
-    <hr><br>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <p>
-            <%= Globals::site_name %> - helping parents manage funding for autistic children
-          </p>
+        <div class="container">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Prototype D</h3>
+              </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            One page per child. (We would manage the single-child case via redirects to skip the "select a child" page.)
+                        </li>
+                        <li>
+                            Make the whole approach less "table-driven" and more around the person's tasks.
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-          <p>
-            This site has is sponsored by <%= Globals::sponsor_name %>, who are responsible for the development
-            and hosting of this site.
-          </p>
-          <p>
-            Please
-            visit <%= link_to Globals::sponsor_url, Globals::sponsor_url  %> to find out how <%= Globals::sponsor_name %> can
-            help you develop your application.
-          </p>
+
+        <div class="container">
+            <%# ---- Notice or alert message from devise ---------------------------%>
+            <% if notice %>
+            <div class="alert alert-info"><%= notice %></div><% end %>
+            <% if alert  %>
+            <div class="alert alert-warning"><%= alert %></div><% end %>
+
+            <%= yield %>
         </div>
-        <div class="col-md-4">
-          <p class="small-letters">
-            <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
-            <br>
-            V00.10
-          </p>
+
+    </body>
+
+    <footer class="container">
+        <hr><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p>
+                    <%= Globals::site_name %>
+                    - helping parents manage funding for autistic children
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p>
+                    This site has is sponsored by
+                    <%= Globals::sponsor_name %>, who are responsible for the development and hosting of this site.
+                </p>
+                <p>
+                    Please visit
+                    <%= link_to Globals::sponsor_url, Globals::sponsor_url  %>
+                    to find out how
+                    <%= Globals::sponsor_name %>
+                    can help you develop your application.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p class="small-letters">
+                    <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
+                    <br>
+                    V00.10
+                </p>
+            </div>
         </div>
-      </div>
-    </div>
-  </footer>
+    </footer>
 
 </html>
