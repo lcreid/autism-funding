@@ -52,24 +52,23 @@
       </div>
     </nav>
 
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <h3>Prototype D</h3>
-            <ul>
-                <li>
-                    One page per child.
-                    (We would manage the single-child case
-                    via redirects to skip the "select a child" page.)
-                </li>
-                <li>
-                    Make the whole approach less "table-driven"
-                    and more around the person's tasks.
-                </li>
-            </ul>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h3>Prototype D</h3>
+                <ul>
+                    <li>
+                        One page per child. (We would manage the single-child case via redirects to skip the "select a child" page.)
+                    </li>
+                    <li>
+                        Make the whole approach less "table-driven" and more around the person's tasks.
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container">
       <%# ---- Notice or alert message from devise ---------------------------%>
       <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
       <% if alert  %><div class="alert alert-warning"><%= alert %></div><% end %>
@@ -79,7 +78,7 @@
 
   </body>
 
-  <footer class="container-fluid">
+  <footer class="container">
     <hr><br>
     <div class="container">
       <div class="row">
