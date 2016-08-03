@@ -1,7 +1,10 @@
 <%= render 'shared/notifications' %>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h1 class="panel-title">Child 6 and Over</h1>
+        <h1 class="panel-title">
+            Child 6 and Over
+            <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
+        </h1>
     </div>
     <div class="panel-body">
         <%= render 'status' %>
@@ -15,8 +18,8 @@
                         <p>
                             When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
                         </p>
-                        <%= link_to('New Invoice', '#', class: 'btn btn-primary btn-block') %>
-                        <%= link_to('All Invoices', funded_person_all_invoices_path(1)) %>
+                        <p><%= link_to('New Invoice', '#', class: 'btn btn-primary btn-block') %></p>
+                        <p><%= link_to('All Invoices', funded_person_all_invoices_path(1)) %></p>
                     </div>
                 </div>
             </div>
@@ -59,7 +62,9 @@
                             </div>
                         </div>
                         <div class="row">
-                          <%= link_to('All Forms', funded_person_all_forms_path(1)) %>
+                          <div class="col-md-12">
+                              <%= link_to('All Forms', funded_person_all_forms_path(1)) %>
+                          </div>
                         </div>
                     </div>
                 </div>
