@@ -11,6 +11,7 @@
             </div>
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
+                  <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
                     <p>
                         Pending acceptance for funding.
                     </p>
@@ -109,6 +110,7 @@
             </div>
             <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                 <div class="panel-body">
+                    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option><option>2014-2015</option><option>2013-2014</option>"), class: "pull-right" %>
                     <%= render 'status' %>
                     <%= render 'invoices' %>
                     <div class="row">
