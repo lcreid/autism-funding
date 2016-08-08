@@ -19,25 +19,21 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid" style="background-color: #08088A">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
-        </div>
+        <% unless user_signed_in? %>
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
+          </div>
+        <% end %>
+
         <ul class="nav navbar-nav">
-          <li><%#= link_to "menu 1" %></li>
-          <li><%#= link_to "menu 2" %></li>
-          <% if user_signed_in? %>
-            <li><%= link_to "My Profile", my_profile_index_path %></li>
+          <% hash_for_menu.keys.sort.each do |key| %>
+            <% the_title = key[2..-1] %>
+            <% the_seq = key[0..1] %>
+            <% the_link = hash_for_menu[key] %>
+            <% unless the_seq == '__' %>
+              <li><%= link_to the_title, the_link %></li>
+            <% end %>
           <% end %>
-          <li><%#= link_to "My Profile", controller:"my_profile", action: "index" %></li>
-          <li><%#= link_to "Other Resources", controller:"other_resources", action: "index" %></li>
-          <li><%#= link_to "Other Resources", "/other_resources/index" %></li>
-          <li><%= link_to "Other Resources", other_resources_index_path %></li>
-          <li><%#= link_to "Procurement", controller:"info", action: "procurement"  %></li>
-          <li><%#= link_to "Services", controller:"info", action: "services"  %></li>
-          <li><%#= link_to "Request More Info", controller:"info_requests", action: "new"  %></li>
-          <li><%#= link_to "Request Info", controller:"req_contact", action: "contact_me"  %></li>
-          <li><%#= link_to "Contacts", controller:"reports", action: "contact_reports"  %></li>
-          <li><%#= link_to "About #{Globals::company_name_short}", controller:"info", action: "about"  %></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <% if user_signed_in? %>

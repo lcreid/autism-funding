@@ -8,7 +8,7 @@ class Address < ApplicationRecord
   validates :user_id, presence: true
   #validates :province_code_id, presence: true
   validates :postal_code, format: {with:/\A *[a-zA-Z][0-9][a-zA-Z] *[0-9][a-zA-Z][0-9] *\z/,
-          message: "Postal Code must be of the format ANA NAN"}, allow_blank: true
+          message: " - must be of the format ANA NAN"}, allow_blank: true
 
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------

@@ -130,11 +130,11 @@ class UserTest < ActiveSupport::TestCase
     expected = "#{test_first} #{test_middle} #{test_last}"
     assert_equal expected, the_user.my_name, "02.k: my_name did not return expected name"
 
-    # 02.h .....................................................................
-    assert the_user.valid?, "02.h: User instance should be valid when name added"
+    # 02.l .....................................................................
+    assert the_user.valid?, "02.l: User instance should be valid when name added"
 
-    # 02.i .....................................................................
-    assert the_user.save, "02.i: Save of an valid instance should succeed"
+    # 02.m .....................................................................
+    assert the_user.save, "02.m: Save of an valid instance should succeed"
   end     ## -- end test --
 
 #-----------------------------------------------------------------------------

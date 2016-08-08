@@ -9,6 +9,7 @@ class User < ApplicationRecord
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
   has_many :funded_people
+  accepts_nested_attributes_for :funded_people, :allow_destroy => true , :reject_if => :all_blank
   has_many :phone_numbers
   #accepts_nested_attributes_for :phone_numbers
 

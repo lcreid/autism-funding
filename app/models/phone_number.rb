@@ -7,7 +7,7 @@ class PhoneNumber < ApplicationRecord
   validates :phone_number,
             format: {
               with: /\A *[2-9][0-9][0-9] *[2-9][0-9][0-9] *[0-9][0-9][0-9][0-9] *\z/,
-              message: 'Phone Number must be 10 digit, ' \
+              message: '- must be 10 digit, ' \
                        'area code/exchange must not start with 1 or 0'
             },
             allow_blank: true
@@ -15,7 +15,7 @@ class PhoneNumber < ApplicationRecord
   validates :phone_extension,
             format: {
               without: /[^0-9 ]/,
-              message: 'Extension must be digits only'
+              message: '- must be digits only'
             },
             allow_blank: true
 
