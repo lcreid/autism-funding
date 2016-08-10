@@ -1,0 +1,90 @@
+<h1>Edit My Data</h1>
+<br>
+<% unless flash[:save_errors].nil? %>
+  <div style = "width: 80%; color: black; background-color: #FFE6E6; border: 5px double red; padding: 5px; margin-left: 20px;">
+    <%= flash[:save_errors].html_safe %>
+  </div>
+  <br>
+<% end %>
+<%#= debug(params) %>
+
+<%= form_for current_user, url: my_profile_update_path  do |f| %>
+<table style="width: 60%;">
+  <tr>
+    <td><%= f.label :name_first %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_first %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :name_middle %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_middle %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :name_last %></td>
+    <td>&nbsp;</td>
+    <td><%= f.text_field :name_last %></td>
+  </tr>
+  <tr><td colspan="3">&nsbsp;</td></tr>
+  <tr><td colspan="3">Address</td></tr>
+  <%= fields_for @my_address do |ma| %>
+  <tr>
+    <td><%= ma.label :address_line_1 %></td>
+    <td>&nbsp;</td>
+    <td><%= ma.text_field :address_line_1 %></td>
+  </tr>
+  <tr>
+    <td><%= ma.label :address_line_2 %></td>
+    <td>&nbsp;</td>
+    <td><%= ma.text_field :address_line_2 %></td>
+  </tr>
+  <tr>
+    <td><%= ma.label :city %></td>
+    <td>&nbsp;</td>
+    <td><%= ma.text_field :city %></td>
+  </tr>
+  <tr>
+    <td><%= ma.label :province_code %></td>
+    <td>&nbsp;<%= @my_address.province_code_id %></td>
+    <td><%= ma.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, prompt: true  %></td>
+  </tr>
+  <tr>
+    <td><%= ma.label :postal_code %></td>
+    <td>&nbsp;</td>
+    <td><%= ma.text_field :postal_code %></td>
+  </tr>
+  <% end %>
+  <tr><td colspan="3">&nsbsp;</td></tr>
+  <tr><td colspan="3">Phone Numbers</td></tr>
+  <%= fields_for :home_phone_number, @home_phone do |mp| %>
+    <tr>
+      <td>Home: </td>
+      <td>&nbsp;</td>
+      <td><%= mp.text_field :phone_number %></td>
+    </tr>
+  <% end %>
+
+  <%= fields_for :work_phone_number, @work_phone do |mp| %>
+    <tr>
+      <td>Work</td>
+      <td>&nbsp;</td>
+      <td><%= mp.text_field :phone_number %> Extension <%= mp.text_field :phone_extension %></td>
+    </tr>
+  <% end %>
+  <tr><td colspan="3">&nbsp;</td></tr>
+  <tr>
+    <td colspan="3" style="text-align: center">
+      <%= f.submit %>
+    </td>
+  </table>
+  <h2>Funded People</h2>
+    <fieldset>
+      <%= f.fields_for :funded_people do |builder| %>
+        <%= render partial: 'cf0925s/child_info', locals: { f: builder } %>
+        <div class="col-md-1"><%= link_to 'Delete', '#', class: "btn btn-danger btn-xs" %></div>
+      <% end %>
+    </fieldset>
+    <div class="row">
+      <%= link_to '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>'.html_safe, '', class: 'btn' %>
+    </div>
+  <% end %>

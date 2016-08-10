@@ -1,4 +1,7 @@
 class Cf0925 < ApplicationRecord
+  belongs_to :form
+  belongs_to :funded_person
+
   # validates :service_provider_service_start,
   #           :service_provider_service_end,
   #           presence: true
@@ -8,11 +11,60 @@ class Cf0925 < ApplicationRecord
               message: 'please choose either service provider or agency'
             }
 
+  before_validation :set_form
+
+  # We don't want to validate on these because the user should be able to
+  # enter and save partial records.
+  # validates :child_dob,
+  #           :child_first_name,
+  #           :child_last_name,
+  #           :child_middle_name,
+  #           :child_in_care_of_ministry,
+  #           :home_phone,
+  #           :parent_address,
+  #           :parent_city,
+  #           :parent_first_name,
+  #           :parent_last_name,
+  #           :parent_middle_name,
+  #           :parent_postal_code,
+  #           :work_phone,
+  #           presence: true
+
+  def printable?
+    child_dob &&
+      child_first_name &&
+      child_last_name &&
+      home_phone &&
+      parent_address &&
+      parent_city &&
+      parent_first_name &&
+      parent_last_name &&
+      parent_postal_code &&
+      service_provider_postal_code &&
+      service_provider_address &&
+      service_provider_city &&
+      service_provider_phone &&
+      service_provider_name &&
+      service_provider_service_1 &&
+      service_provider_service_2 &&
+      service_provider_service_3 &&
+      service_provider_service_amount &&
+      service_provider_service_end &&
+      service_provider_service_fee &&
+      service_provider_service_hour &&
+      service_provider_service_start &&
+      work_phone
+  end
+
+  def set_form
+    form || self.form = Form.find_by!(class_name: 'Cf0925')
+  end
+
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')
-    pdftk.fill_form(File.join(Rails.root, 'app/assets/pdf_forms/cf_0925.pdf'),
-                    pdf_file,
+    pdftk.fill_form(form.file_name,
+                    pdf_output_file,
                     {
                       parent_lst_name: parent_last_name,
                       chld_lst_name: child_last_name,
@@ -79,7 +131,7 @@ class Cf0925 < ApplicationRecord
       item_cost_3
   end
 
-  def pdf_file
+  def pdf_output_file
     "/tmp/cf0925_#{id}.pdf"
   end
 

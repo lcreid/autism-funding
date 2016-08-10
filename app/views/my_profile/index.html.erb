@@ -1,5 +1,48 @@
-This is what I've got for <%= current_user.email %>
+<h2>My Profile</h2>
+<%= link_to "edit", my_profile_edit_path %>
 <br><br>
-<span style="font-size: 9pt">
-  Ok,Ok, I admit it.  I've got nothing
-</span>
+<div class="row">
+  <div class="col-sm-3 col-md-3">
+    &nbsp;
+  </div>
+  <div class="col-sm-9 col-md-9">
+    <%= current_user.my_name %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3 col-md-3">
+    Address
+  </div>
+  <div class="col-sm-9 col-md-9">
+    <%= @my_address.get_html_address.html_safe %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3 col-md-3">
+    Email
+  </div>
+  <div class="col-sm-9 col-md-9">
+    <%= current_user.email %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3 col-md-3">
+    Home Phone Number
+  </div>
+  <div class="col-sm-9 col-md-9">
+    <%= @home_phone.full_number %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3 col-md-3">
+    Work Phone Number
+  </div>
+  <div class="col-sm-9 col-md-9">
+    <%= @work_phone.full_number %>
+  </div>
+</div>
+<br><br>
+<h2>My Funded People</h2>
+<br>
+<br>I have this many funded people: <%= current_user.funded_people.size %> <%#= current_user.province_codes.province_code %>
+<br>

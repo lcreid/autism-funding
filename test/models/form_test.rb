@@ -1,7 +1,7 @@
 require 'test_helper'
-class FormTest < ActiveSupport::TestCase
-  test "eg" do
 
-    assert true, "This is an example test that should pass"
-  end
+class FormTest < ActiveSupport::TestCase
+  # test "the truth" do
+  #   assert true
+  # end
 end

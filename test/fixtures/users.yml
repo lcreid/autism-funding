@@ -45,3 +45,36 @@ has_two_phone:
  name_first: 'Iva'
  name_middle: 'Para'
  name_last: 'Phones'
+
+has_no_address:
+ email: 'user7@autism-funding.com'
+ encrypted_password: 'secret7'
+ name_first: 'Igottanoad'
+ name_last: 'Ress'
+
+has_one_address:
+ email: 'user8@autism-funding.com'
+ encrypted_password: 'secret7'
+ name_first: 'Mehave'
+ name_middle: 'Anna'
+ name_last: 'Dress'
+
+cf0925:
+  email: cf0925@autism-funding.com
+  encrypted_password: secret7
+  name_first: Mr.
+  name_middle: Middle
+  name_last: '0925'
+
+minimum_printable:
+  email: minimum_printable@autism-funding.com
+  encrypted_password: secret8
+  name_first: Minimum
+  name_middle: Parent
+  name_last: Printable
+
+forms:
+  email: forms@weenhanceit.com
+  encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
+  name_first: forms_first
+  name_last: forms_last

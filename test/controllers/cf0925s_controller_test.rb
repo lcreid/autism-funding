@@ -3,16 +3,22 @@ require 'test_helper'
 class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   include TestSessionHelpers
 
-  test 'should get index' do
+  def setup
     log_in
-    get cf0925s_path
+    @funded_person = FundedPerson.create!(birthdate: '2010-06-14',
+                                          name_first: 'first',
+                                          name_last: 'last',
+                                          user: controller.current_user)
+  end
+
+  test 'should get index' do
+    get funded_person_cf0925s_path(@funded_person)
     assert_response :success
   end
 
   test 'Create a BC request to pay' do
-    log_in
     assert_difference('Cf0925.count') do
-      post '/cf0925s', params: {
+      post funded_person_cf0925s_path(@funded_person), params: {
         cf0925: {
           agency_name: 'agency_name',
           child_dob: '2002-05-14',
@@ -53,7 +59,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
           supplier_name: 'supplier_name',
           supplier_phone: 'supplier_phone',
           supplier_postal_code: 'supplier_postal_code',
-          work_phone: 'work_phone'
+          work_phone: 'work_phone',
+          form_id: forms(:cf0925).id,
+          funded_person_id: funded_people(:cf0925).id
         }
       }
     end

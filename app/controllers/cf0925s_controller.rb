@@ -5,10 +5,12 @@ class Cf0925sController < ApplicationController
 
   def new
     @cf0925 = Cf0925.new
+    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
   end
 
   def create
     @cf0925 = Cf0925.new(cf0925_params)
+    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
     if @cf0925.save
       redirect_to cf0925_path(@cf0925)
     else
