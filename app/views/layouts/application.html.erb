@@ -59,10 +59,10 @@
                 <div class="panel-body">
                     <ul>
                         <li>
-                            One page per child. (We would manage the single-child case via redirects to skip the "select a child" page.)
+                            Make the whole approach less "table-driven" and more around the person's tasks.
                         </li>
                         <li>
-                            Make the whole approach less "table-driven" and more around the person's tasks.
+                          Updated with feedback 2016-08-10 combine accordion with Prototype E.
                         </li>
                     </ul>
                 </div>
@@ -76,9 +76,10 @@
             <% if alert  %>
             <div class="alert alert-warning"><%= alert %></div><% end %>
 
-            <%= yield %>
         </div>
-
+        <div class="container">
+          <%= yield %>
+        </div>
     </body>
 
     <footer class="container">
