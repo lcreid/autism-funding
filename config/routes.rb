@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get 'static/non_supported'
+
+  get 'static/contact_us'
+
+  get 'static/bc_instructions'
+
   #---- Website Root -----------------------------------------------------------
   root 'home#index'
   get 'home/index'
