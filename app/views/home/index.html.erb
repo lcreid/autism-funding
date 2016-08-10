@@ -5,97 +5,13 @@
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Child Under 6 -- this is the name
+                    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
                 </a>
             </h4>
         </div>
         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
-              <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
-                <p>
-                    Pending acceptance for funding.
-                </p>
-                <%= render 'invoices' %>
-                <div class="row">
-                    <div class="col-md-8">
-                        <h3>Forms History</h3>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Form</th>
-                                    <th>Date of Last Activity</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        Request to Pay
-                                    </td>
-                                    <td>
-                                        2016-07-18
-                                    </td>
-                                    <td>
-                                        Not Complete
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary", disabled: true) %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Reimbursement of Autism Expenses
-                                    </td>
-                                    <td>
-                                        2016-03-07
-                                    </td>
-                                    <td>
-                                        Ready to Print
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Request to Pay
-                                    </td>
-                                    <td>
-                                        2015-07-29
-                                    </td>
-                                    <td>
-                                        Printed
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot></tfoot>
-                        </table>
-                    </div>
-                    <div class="col-md-4 forms-list">
-                        <h3>Forms</h3>
-                        <ul class="list-unstyled">
-                            <li>
-                                <%= link_to('Autism Agreement', '#', class: 'btn btn-primary btn-block', disabled: true) %>
-                            </li>
-                            <li>
-                                <!-- The null string next should be the link to create a new RTP under this child -->
-                                <%= link_to('Request to Pay', '', class: 'btn btn-primary btn-block') %>
-                            </li>
-                            <li>
-                                <%= link_to('Reimbursement of Autism Expenses', '#', class: 'btn btn-primary btn-block') %>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+              <%= render partial: "funded_people/show_body" %>
             </div>
         </div>
     </div>
@@ -104,95 +20,13 @@
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                     Child 6 and Over
+                    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option><option>2014-2015</option><option>2013-2014</option>"), class: "pull-right" %>
                 </a>
             </h4>
         </div>
         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
             <div class="panel-body">
-                <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option><option>2014-2015</option><option>2013-2014</option>"), class: "pull-right" %>
-                <%= render 'status' %>
-                <%= render 'invoices' %>
-                <div class="row">
-                    <div class="col-md-8">
-                        <h3>Forms History</h3>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Form</th>
-                                    <th>Date of Last Activity</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        Request to Pay
-                                    </td>
-                                    <td>
-                                        2016-07-18
-                                    </td>
-                                    <td>
-                                        Not Complete
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary", disabled: true) %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Reimbursement of Autism Expenses
-                                    </td>
-                                    <td>
-                                        2016-03-07
-                                    </td>
-                                    <td>
-                                        Ready to Print
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Request to Pay
-                                    </td>
-                                    <td>
-                                        2015-07-29
-                                    </td>
-                                    <td>
-                                        Printed
-                                    </td>
-                                    <td>
-                                        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Print', '#', class: "btn btn-xs btn-primary") %>
-                                        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot></tfoot>
-                        </table>
-                    </div>
-                    <div class="col-md-4 forms-list">
-                        <h3>Forms</h3>
-                        <ul class="list-unstyled">
-                            <li>
-                                <%= link_to('Autism Agreement', '#', class: 'btn btn-primary btn-block', disabled: true) %>
-                            </li>
-                            <li>
-                                <!-- The null string next should be the link to create a new RTP under this child -->
-                                <%= link_to('Request to Pay', '', class: 'btn btn-primary btn-block') %>
-                            </li>
-                            <li>
-                                <%= link_to('Reimbursement of Autism Expenses', '#', class: 'btn btn-primary btn-block') %>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+              <%= render partial: "funded_people/show_body" %>
             </div>
         </div>
     </div>
