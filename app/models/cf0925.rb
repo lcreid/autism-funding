@@ -2,9 +2,9 @@ class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person
 
-  # validates :service_provider_service_start,
-  #           :service_provider_service_end,
-  #           presence: true
+  validates :service_provider_service_start,
+            :service_provider_service_end,
+            presence: true
   validate :start_date_before_end_date
   validates :payment,
             presence: {
@@ -140,7 +140,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def start_date_before_end_date
-    # return if start_date.blank? || end_date.blank?
+    return if service_provider_service_start.blank? || service_provider_service_end.blank?
 
     errors.add(:service_provider_service_end, 'must be after start date') if
       service_provider_service_end < service_provider_service_start
