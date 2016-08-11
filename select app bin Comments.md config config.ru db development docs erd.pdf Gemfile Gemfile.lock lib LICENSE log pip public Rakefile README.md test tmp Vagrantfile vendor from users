@@ -1,5 +1,0 @@
- id |      email       |                      encrypted_password                      | reset_password_token | reset_password_sent_at | remember_created_at | sign_in_count |     current_sign_in_at     |      last_sign_in_at       | current_sign_in_ip | last_sign_in_ip |         created_at         |         updated_at         | name_first | name_last | name_middle | role 
-----+------------------+--------------------------------------------------------------+----------------------+------------------------+---------------------+---------------+----------------------------+----------------------------+--------------------+-----------------+----------------------------+----------------------------+------------+-----------+-------------+------
-  1 | phil@carrillo.ca | $2a$11$H09CI/nizgM0B3Myw4xIzuqVx7mvPLTaWDFztMAH5wr.xekOM.oNG |                      |                        |                     |            15 | 2016-08-05 01:00:42.362268 | 2016-08-04 21:37:20.906906 | 10.0.2.2           | 10.0.2.2        | 2016-07-20 21:50:31.948265 | 2016-08-05 01:00:42.363814 | Phil       | Carrillo  | M.          | 
-(1 row)
-
