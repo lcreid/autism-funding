@@ -9,9 +9,9 @@ class User < ApplicationRecord
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
   has_many :funded_people
-  accepts_nested_attributes_for :funded_people, :allow_destroy => true , :reject_if => :all_blank
+  accepts_nested_attributes_for :funded_people, allow_destroy: true, reject_if: :all_blank
   has_many :phone_numbers
-  #accepts_nested_attributes_for :phone_numbers
+  # accepts_nested_attributes_for :phone_numbers
 
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
@@ -38,6 +38,11 @@ class User < ApplicationRecord
 
   def my_work_phone
     my_phone 'Work'
+  end
+
+  def supported?
+    my_address.province_code &&
+      !(my_address.province_code.not_supported == 'Y')
   end
 
   private
