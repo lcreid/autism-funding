@@ -154,6 +154,52 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'CF_0925 start date must exist' do
+    get new_funded_person_cf0925_path(@funded_person)
+    assert_response :success
+
+    # Make a bad date.
+    bad_date_params = @form_field_values.merge(service_provider_service_start: '')
+
+    assert_no_difference('Cf0925.count') do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_date_params }
+    end
+
+    assert_response :success
+    # The next assert is like it is because the render in the controller
+    # is rendering the new view, but from the create action in the controller,
+    # so the path is the path for create, which is like the post above.
+    assert_equal funded_person_cf0925s_path(@funded_person), path
+    assert_select '.error-explanation li', 1 do |error|
+      assert_equal "Service provider service start can't be blank",
+                   error.text
+    end
+  end
+
+  test 'CF_0925 end date must exist' do
+    get new_funded_person_cf0925_path(@funded_person)
+    assert_response :success
+
+    # Make a bad date.
+    bad_date_params = @form_field_values.merge(service_provider_service_end: '')
+
+    assert_no_difference('Cf0925.count') do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_date_params }
+    end
+
+    assert_response :success
+    # The next assert is like it is because the render in the controller
+    # is rendering the new view, but from the create action in the controller,
+    # so the path is the path for create, which is like the post above.
+    assert_equal funded_person_cf0925s_path(@funded_person), path
+    assert_select '.error-explanation li', 1 do |error|
+      assert_equal "Service provider service end can't be blank",
+                   error.text
+    end
+  end
+
   test 'CF_0925 agency checkbox disabled if no agency' do
     skip 'Test for agency checkbox disabled.'
   end
