@@ -40,37 +40,37 @@
     </div>
     <div class="panel-body">
       <%= form_row do %>
-      <%= form_field(f, :service_provider_name, 8) %>
-      <%= form_field(f, nil, 4) do %>
-      <%= f.radio_button(:payment, 'Choice1') %>
-      <%= f.label('Service Provider') %>
-      <br/>
-      <%= f.radio_button(:payment, 'Choice2') %>
-      <%= f.label('Agency') %>
-      <% end %>
-      <% end %>
-      <%= form_row do %>
-      <%= form_field(f, :agency_name, 8) %>
+        <%= form_field(f, :service_provider_name, 8) %>
+        <%= form_field(f, nil, 4) do %>
+        <%= f.radio_button(:payment, 'Choice1') %>
+        <%= f.label('Service Provider') %>
+        <br/>
+        <%= f.radio_button(:payment, 'Choice2') %>
+        <%= f.label('Agency') %>
+        <% end %>
       <% end %>
       <%= form_row do %>
-      <%= form_field(f, :service_provider_address, 5) %>
-      <%= form_field(f, :service_provider_city, 3) %>
-      <%= form_field(f, :service_provider_postal_code, 2) %>
-      <%= form_field(f, :service_provider_phone, 2) %>
+        <%= form_field(f, :agency_name, 8) %>
       <% end %>
       <%= form_row do %>
-      <%= form_field(f, :service_provider_service_1, 6) %>
-      <%= form_field(f, :service_provider_service_start, 3) %>
-      <%= form_field(f, :service_provider_service_end, 3) %>
+        <%= form_field(f, :service_provider_address, 5) %>
+        <%= form_field(f, :service_provider_city, 3) %>
+        <%= form_field(f, :service_provider_postal_code, 2) %>
+        <%= form_field(f, :service_provider_phone, 2) %>
+      <% end %>
+        <%= form_row do %>
+        <%= form_field(f, :service_provider_service_1, 6) %>
+        <%= wrap_date_field(f, :service_provider_service_start, 3) %>
+        <%= wrap_date_field(f, :service_provider_service_end, 3) %>
       <% end %>
       <%= form_row do %>
-      <%= form_field(f, :service_provider_service_2, 6) %>
-      <%= form_field(f, :service_provider_service_fee, 2) %>
-      <%= form_field(f, :service_provider_service_hour, 2) %>
-      <%= form_field(f, :service_provider_service_amount, 2) %>
+        <%= form_field(f, :service_provider_service_2, 6) %>
+        <%= form_field(f, :service_provider_service_fee, 2) %>
+        <%= form_field(f, :service_provider_service_hour, 2) %>
+        <%= form_field(f, :service_provider_service_amount, 2) %>
       <% end %>
       <%= form_row do %>
-      <%= form_field(f, :service_provider_service_3, 6) %>
+        <%= form_field(f, :service_provider_service_3, 6) %>
       <% end %>
     </div>
   </div>
