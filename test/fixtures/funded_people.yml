@@ -35,3 +35,17 @@ forms:
   name_first: Junior
   name_last: Forms
   user: forms
+
+sixteen_year_old:
+  birthdate: '2000-05-11'
+  name_first: Sixteen
+  name_middle: Year
+  name_last: Two-Kids
+  user: dual_child_parent
+
+four_year_old:
+  birthdate: '2012-02-12'
+  name_first: Four
+  name_middle: Year
+  name_last: Two-Kids
+  user: dual_child_parent

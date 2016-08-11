@@ -30,6 +30,10 @@ class Cf0925 < ApplicationRecord
   #           :work_phone,
   #           presence: true
 
+  def user
+    funded_person.user
+  end
+
   def printable?
     child_dob &&
       child_first_name &&

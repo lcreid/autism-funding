@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><%= Globals::site_name %></title>
+        <title><%= Globals::site_name %> <%= yield(:title) %></title>
 
         <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
 

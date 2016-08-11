@@ -1,3 +1,4 @@
+<% title("All Children") %>
 <div class="alert alert-warning">
   <span class="glyphicon glyphicon-star-empty"></span>
   The forms and funding found in this area are only availble to residents of
@@ -5,36 +6,5 @@
 </div>
 <%= render 'shared/notifications' %>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-            <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Child Under 6 -- this is the name
-                    <!-- TODO: fill this in. -->
-                    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
-                </a>
-            </h4>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-            <div class="panel-body">
-              <%= render partial: "funded_people/show_body" %>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingTwo">
-            <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Child 6 and Over
-                    <!-- TODO: fill this in. -->
-                    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option><option>2014-2015</option><option>2013-2014</option>"), class: "pull-right" %>
-                </a>
-            </h4>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-            <div class="panel-body">
-              <%= render partial: "funded_people/show_body" %>
-            </div>
-        </div>
-    </div>
+  <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
 </div>

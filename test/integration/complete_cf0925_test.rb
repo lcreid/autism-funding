@@ -1,9 +1,10 @@
 require 'test_helper'
 
-class CompleteCf0925Test < ActionDispatch::IntegrationTest
+class CompleteCf0925Test < CapybaraTest
   include TestSessionHelpers
 
   fixtures :forms
+  fixtures :funded_people
 
   def setup
     @form_field_values = {
@@ -52,71 +53,6 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     }
   end
 
-  test 'CF_0925 child between 6 and 18' do
-    log_in
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
-    assert_difference('Cf0925.count') do
-      post funded_person_cf0925s_path(@funded_person),
-           params: { cf0925: @form_field_values }
-    end
-
-    assert_response :redirect
-    follow_redirect!
-    assert_response :success
-
-    assert_select '#service_provider_service_start',
-                  @form_field_values[:service_provider_service_start]
-  end
-
-  test 'CF_0925 start date after end date' do
-    log_in
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
-
-    # Make a bad date.
-    bad_date_params = @form_field_values.merge(service_provider_service_end: '2016-05-31')
-
-    assert_no_difference('Cf0925.count') do
-      post funded_person_cf0925s_path(@funded_person),
-           params: { cf0925: bad_date_params }
-    end
-
-    assert_response :success
-    # The next assert is like it is because the render in the controller
-    # is rendering the new view, but from the create action in the controller,
-    # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal 'Service provider service end must be after start date',
-                   error.text
-    end
-  end
-
-  test 'CF_0925 agency checkbox disabled if no agency' do
-    skip 'Test for agency checkbox disabled.'
-  end
-
-  test 'CF_0925 agency checkbox required' do
-    log_in
-    assert_no_difference('Cf0925.count') do
-      post funded_person_cf0925s_path(@funded_person),
-           params: {
-             cf0925: @form_field_values.reject { |k, _| k == :payment }
-           }
-    end
-
-    assert_response :success
-    # The next assert is like it is because the render in the controller
-    # is rendering the new view, but from the create action in the controller,
-    # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal 'Payment please choose either service provider or agency',
-                   error.text
-    end
-  end
-
   test 'CF_0925 autofill from user and child' do
     fill_in_login
     # TODO: Make this follow links when we nail down the UI.
@@ -159,7 +95,30 @@ class CompleteCf0925Test < ActionDispatch::IntegrationTest
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
     assert_equal cf0925_path(rtp), current_path
-    assert page.has_link?('Print')
+    assert_link 'Print'
     skip 'Need JavaScript to disable above link'
+  end
+
+  test 'RTP for dual-child parent' do
+    user = users(:dual_child_parent)
+
+    fill_in_login user
+    assert_title(Globals.site_name + ' All Children')
+
+    assert_selector '.child .name', count: 2 do |child|
+      assert_equal 'Sixteen Old Two-Kids', child[0].text
+      assert_equal 'Four Old Two-Kids', child[1].text
+    end
+    within '.child:first' do
+      click_link 'New Request to Pay'
+    end
+
+    assert_content 'Section 1 Parent/Guardian Information'
+
+    # assert_field works on the label, so if you don't have a label, it won't
+    # work. It also doesn't use the ID, but rather the "for=" attribute.
+    assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
+    assert_field 'cf0925_parent_first_name', with: 'I'
+    assert_field 'cf0925_child_first_name', with: 'Sixteen'
   end
 end

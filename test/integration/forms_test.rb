@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FormsTest < ActionDispatch::IntegrationTest
+class FormsTest < CapybaraTest
   include TestSessionHelpers
 
   fixtures :cf0925s, :forms
