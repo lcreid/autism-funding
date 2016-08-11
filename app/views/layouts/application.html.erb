@@ -1,94 +1,112 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= Globals::site_name %></title>
+    <head>
+        <title><%= Globals::site_name %> <%= yield(:title) %></title>
 
-    <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
+        <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
 
+        <%= csrf_meta_tags %>
 
-    <%= csrf_meta_tags %>
+        <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+        <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+        <%= javascript_include_tag 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
 
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
+    </head>
 
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid" style="background-color: #08088A">
-        <% unless user_signed_in? %>
+    <body>
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid" style="background-color: #08088A">
+          <% unless user_signed_in? %>
           <div class="navbar-header">
             <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
           </div>
-        <% end %>
+          <% end %>
 
-        <ul class="nav navbar-nav">
-          <% hash_for_menu.keys.sort.each do |key| %>
+          <ul class="nav navbar-nav">
+            <% hash_for_menu.keys.sort.each do |key| %>
             <% the_title = key[2..-1] %>
             <% the_seq = key[0..1] %>
             <% the_link = hash_for_menu[key] %>
             <% unless the_seq == '__' %>
-              <li><%= link_to the_title, the_link %></li>
+            <li><%= link_to the_title, the_link %></li>
             <% end %>
-          <% end %>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <% if user_signed_in? %>
+            <% end %>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <% if user_signed_in? %>
             <li><%= link_to current_user.email, edit_user_registration_path %></li>
             <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
-          <% else %>
+            <% else %>
             <li><%= link_to "Sign Up", new_user_registration_path %></li>
             <li><%= link_to "Log in", new_user_session_path %></li>
             <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
-          <% end %>
-        </ul>
-      </div>
-    </nav>
-
-
-
-    <div class="container-fluid">
-      <%# ---- Notice or alert message from devise ---------------------------%>
-      <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
-      <% if alert  %><div class="alert alert-warning"><%= alert %></div><% end %>
-
-      <%= yield %>
-    </div>
-
-  </body>
-
-  <footer class="container-fluid">
-    <hr><br>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <p>
-            <%= Globals::site_name %> - helping parents manage funding for autistic children
-          </p>
+            <% end %>
+          </ul>
         </div>
-        <div class="col-md-4">
-          <p>
-            This site has is sponsored by <%= Globals::sponsor_name %>, who are responsible for the development
-            and hosting of this site.
-          </p>
-          <p>
-            Please
-            visit <%= link_to Globals::sponsor_url, Globals::sponsor_url  %> to find out how <%= Globals::sponsor_name %> can
-            help you develop your application.
-          </p>
+      </nav>
+
+        <div class="container">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Prototype E</h3>
+              </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            Make the whole approach less "table-driven" and more around the person's tasks.
+                        </li>
+                        <li>
+                          Updated with feedback 2016-08-10 combine accordion with Prototype E.
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-          <p class="small-letters">
-            <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
-            <br>
-            V00.10
-          </p>
+
+        <div class="container">
+            <%# ---- Notice or alert message from devise ---------------------------%>
+            <% if notice %>
+            <div class="alert alert-info"><%= notice %></div><% end %>
+            <% if alert  %>
+            <div class="alert alert-warning"><%= alert %></div><% end %>
+
         </div>
-      </div>
-    </div>
-  </footer>
+        <div class="container">
+          <%= yield %>
+        </div>
+    </body>
+
+    <footer class="container">
+        <hr><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p>
+                    <%= Globals::site_name %>
+                    - helping parents manage funding for autistic children
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p>
+                    This site has is sponsored by
+                    <%= Globals::sponsor_name %>, who are responsible for the development and hosting of this site.
+                </p>
+                <p>
+                    Please visit
+                    <%= link_to Globals::sponsor_url, Globals::sponsor_url  %>
+                    to find out how
+                    <%= Globals::sponsor_name %>
+                    can help you develop your application.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <p class="small-letters">
+                    <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
+                    <br>
+                    V00.10
+                </p>
+            </div>
+        </div>
+    </footer>
 
 </html>

@@ -18,7 +18,8 @@ module Cf0925sHelper
       if block_given?
         capture(&block)
       else
-        f.text_field field, placeholder: field
+        f.label(field, class: 'hide-label') +
+          f.text_field(field, placeholder: field)
       end
     end
   end

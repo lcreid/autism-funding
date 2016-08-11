@@ -16,13 +16,7 @@
       <%= form_field(f, :parent_postal_code, 2) %>
     <% end %>
     <h2>Section 2 Child Information</h2>
-    <%= form_row do %>
-      <%= form_field(f, :child_first_name, 2) %>
-      <%= form_field(f, :child_last_name, 2) %>
-      <%= form_field(f, :child_middle_name, 2) %>
-      <%= form_field(f, :child_dob, 2) %>
-      <%= form_field(f, :child_in_care_of_ministry, 4) %>
-    <% end %>
+    <%= render partial: 'child_info', locals: { f: f } %>
     <h2>Part A Services</h2>
     <%= form_row do %>
       <%= form_field(f, :service_provider_name, 8) %>

@@ -38,9 +38,10 @@ end
 # Added for Capybara
 require 'capybara/rails'
 
-class ActionDispatch::IntegrationTest
+class CapybaraTest < ActionDispatch::IntegrationTest
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
+  include Capybara::Assertions
 
   # Reset sessions and driver between tests
   # Use super wherever this method is redefined in your individual test classes

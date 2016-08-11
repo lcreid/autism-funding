@@ -1,20 +1,10 @@
-<div class="container">
-  <div class="alert alert-warning">
-    <span class="glyphicon glyphicon-star-empty"></span>
-    The forms and funding found in this area are only availble to residents of
-    British Columbia
-  </div>
-  <%= render 'shared/notifications' %>
-  <div class="child">
-    <h1>Child Under 6 -- this is the name</h1>
-    <p>
-      Pending acceptance for funding.
-    </p>
-    <p><%= link_to 'Details', funded_person_path(1) %>
-  </div>
-  <div class="child">
-    <h1>Child 6 and Over</h1>
-    <%= render 'funded_people/status' %>
-    <p><%= link_to 'Details', funded_person_path(2) %>
-  </div>
+<% title("All Children") %>
+<div class="alert alert-warning">
+  <span class="glyphicon glyphicon-star-empty"></span>
+  The forms and funding found in this area are only availble to residents of
+  British Columbia
+</div>
+<%= render 'shared/notifications' %>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
 </div>
