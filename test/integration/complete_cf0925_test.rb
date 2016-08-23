@@ -81,8 +81,7 @@ class CompleteCf0925Test < CapybaraTest
       supplier_city: 'Vancouver',
       supplier_name: 'ABBA Learning',
       supplier_phone: '555-555-1234',
-      supplier_postal_code: 'N0N 0N0',
-      work_phone: '555-555-5555'
+      supplier_postal_code: 'N0N 0N0'
     }.each do |k, v|
       fill_in 'cf0925_' + k.to_s, with: v
     end
@@ -117,8 +116,13 @@ class CompleteCf0925Test < CapybaraTest
 
     # assert_field works on the label, so if you don't have a label, it won't
     # work. It also doesn't use the ID, but rather the "for=" attribute.
-    assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
-    assert_field 'cf0925_parent_first_name', with: 'I'
-    assert_field 'cf0925_child_first_name', with: 'Sixteen'
+    # This was for when the fields were fillable. We decided you have to go
+    # back to the profile page to do that.
+    # assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
+    # assert_field 'cf0925_parent_first_name', with: 'I'
+    # assert_field 'cf0925_child_first_name', with: 'Sixteen'
+    assert_selector '#parent_last_name', text: 'Two-Kids'
+    assert_selector '#parent_first_name', text: 'I'
+    assert_selector '#child_first_name', text: 'Sixteen'
   end
 end

@@ -1,9 +1,13 @@
 module Cf0925sHelper
-  def show_field(field, width = 4)
+  def show_field(field, width = 4, opts = {}, &block)
     wrap_field(width) do
-      content_tag(:small, field.to_s.titlecase) +
+      content_tag(:small, format_label(field, opts)) +
         content_tag(:br) +
-        content_tag(:span, @cf0925.send(field), id: field, class: 'value')
+        if block_given?
+          capture(&block)
+        else
+          content_tag(:span, @cf0925.send(field), id: field, class: 'value')
+        end
     end
   end
 
@@ -14,13 +18,16 @@ module Cf0925sHelper
     end
   end
 
-  def form_field(f, field, width = 4, &block)
+  def form_field(f, field, width = 4, opts = {}, &block)
     wrap_field(width) do
       if block_given?
-        capture(&block)
+        a = capture(&block)
+        a.prepend(content_tag(:small, format_label(field, opts)) +
+                  content_tag(:br)) if field
+        a
       else
         f.label(field, class: 'hide-label') +
-          f.text_field(field, placeholder: field)
+          f.text_field(field, placeholder: format_label(field, opts))
       end
     end
   end
@@ -35,5 +42,27 @@ module Cf0925sHelper
     wrap_field(width) do
       f.date_field(field)
     end
+  end
+
+  def child_field(_f, field, width = 4, &block)
+    show_field(field, width, lstrip: 'Child', &block)
+  end
+
+  def parent_field(_f, field, width = 4, &block)
+    show_field(field, width, lstrip: 'Parent', &block)
+  end
+
+  def service_provider_field(f, field, width = 4, opts = {}, &block)
+    form_field(f, field, width, { lstrip: 'Service Provider' }.merge(opts), &block)
+  end
+
+  def supplier_field(f, field, width = 4, opts = {}, &block)
+    form_field(f, field, width, { lstrip: 'Supplier' }.merge(opts), &block)
+  end
+
+  def format_label(field, opts = {})
+    label = field.class == String ? field : field.to_s.titlecase
+    label = label.sub(/\A#{opts[:lstrip]}\s*/, '') if opts[:lstrip]
+    label
   end
 end
