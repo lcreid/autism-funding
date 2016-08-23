@@ -49,8 +49,15 @@
       </h3>
     </div>
     <div class="panel-body">
+      <p>
+        Complete this section
+        to authorize payment
+        to a service provider
+        who is providing autism intervention
+        for the child.
+      </p>
       <%= form_row do %>
-        <%= service_provider_field(f, :service_provider_name, 8) %>
+        <%= service_provider_field(f, :service_provider_name, 8, lstrip: '') %>
         <%= service_provider_field(f, "Payment to be provided to:", 4) do %>
         <%= f.radio_button(:payment, 'Choice1') %>
         <%= f.label('Service Provider') %>
@@ -87,12 +94,25 @@
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h3 class="panel-title">
-        Part B Additional Expenses
+        Part B Additional Expenses:
+        <small>
+          Travel, Training, Equipment, and Supplies
+        </small>
       </h3>
     </div>
     <div class="panel-body">
+      <p>
+        Complete this section
+        to authorize payment
+        to a supplier
+        for expenses related to travel,
+        training,
+        equipment
+        or materials
+        directly on behalf of a parent or guardian.
+      </p>
       <%= form_row do %>
-      <%= supplier_field(f, :supplier_name, 4) %>
+      <%= supplier_field(f, :supplier_name, 4, lstrip: '') %>
       <%= supplier_field(f, :supplier_contact_person, 5) %>
       <%= supplier_field(f, :supplier_phone, 3) %>
       <% end %>
@@ -116,5 +136,5 @@
       <% end %>
     </div>
   </div>
-  <%= f.submit %>
+  <%= f.submit 'Save' %>
 <% end %>

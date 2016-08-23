@@ -52,12 +52,12 @@ module Cf0925sHelper
     show_field(field, width, lstrip: 'Parent', &block)
   end
 
-  def service_provider_field(f, field, width = 4, &block)
-    form_field(f, field, width, lstrip: 'Service Provider', &block)
+  def service_provider_field(f, field, width = 4, opts = {}, &block)
+    form_field(f, field, width, { lstrip: 'Service Provider' }.merge(opts), &block)
   end
 
-  def supplier_field(f, field, width = 4, &block)
-    form_field(f, field, width, lstrip: 'Supplier', &block)
+  def supplier_field(f, field, width = 4, opts = {}, &block)
+    form_field(f, field, width, { lstrip: 'Supplier' }.merge(opts), &block)
   end
 
   def format_label(field, opts = {})
