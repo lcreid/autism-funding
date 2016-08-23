@@ -1,7 +1,7 @@
 module Cf0925sHelper
-  def show_field(field, width = 4, &block)
+  def show_field(field, width = 4, opts = {}, &block)
     wrap_field(width) do
-      content_tag(:small, format_label(field)) +
+      content_tag(:small, format_label(field, opts)) +
         content_tag(:br) +
         if block_given?
           capture(&block)
@@ -18,15 +18,16 @@ module Cf0925sHelper
     end
   end
 
-  def form_field(f, field, width = 4, &block)
+  def form_field(f, field, width = 4, opts = {}, &block)
     wrap_field(width) do
       if block_given?
-        a = content_tag(:small, format_label(field)) +
-            content_tag(:br) if field
-        (a || '') + capture(&block)
+        a = capture(&block)
+        a.prepend(content_tag(:small, format_label(field, opts)) +
+                  content_tag(:br)) if field
+        a
       else
         f.label(field, class: 'hide-label') +
-          f.text_field(field, placeholder: field)
+          f.text_field(field, placeholder: format_label(field, opts))
       end
     end
   end
@@ -44,14 +45,24 @@ module Cf0925sHelper
   end
 
   def child_field(_f, field, width = 4, &block)
-    show_field(field, width, &block)
+    show_field(field, width, lstrip: 'Child', &block)
   end
 
   def parent_field(_f, field, width = 4, &block)
-    show_field(field, width, &block)
+    show_field(field, width, lstrip: 'Parent', &block)
   end
 
-  def format_label(label)
-    label.class == String ? label : label.to_s.titlecase
+  def service_provider_field(f, field, width = 4, &block)
+    form_field(f, field, width, lstrip: 'Service Provider', &block)
+  end
+
+  def supplier_field(f, field, width = 4, &block)
+    form_field(f, field, width, lstrip: 'Supplier', &block)
+  end
+
+  def format_label(field, opts = {})
+    label = field.class == String ? field : field.to_s.titlecase
+    label = label.sub(/\A#{opts[:lstrip]}\s*/, '') if opts[:lstrip]
+    label
   end
 end
