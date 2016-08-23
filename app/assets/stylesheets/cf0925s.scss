@@ -4,3 +4,9 @@
 .hide-label {
   display: none;
 }
+
+.new_cf0925, .edit_cf0925 {
+  & input[type=text] {
+      width: 100%;
+    }
+}
