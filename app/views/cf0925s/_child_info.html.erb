@@ -1,9 +1,9 @@
 <%= form_row do %>
-  <%= form_field(f, :child_first_name, 2) %>
-  <%= form_field(f, :child_middle_name, 2) %>
-  <%= form_field(f, :child_last_name, 2) %>
-  <%= wrap_date_field(f, :child_dob, 2) %>
-  <%= form_field(f, nil, 2) do %>
+  <%= child_field(f, :child_first_name, 2) %>
+  <%= child_field(f, :child_middle_name, 2) %>
+  <%= child_field(f, :child_last_name, 2) %>
+  <%= child_field(f, :child_dob, 2) %>
+  <%= child_field(f, "Is this child in the care of the ministry?", 2) do %>
   <%= f.radio_button(:child_in_care_of_ministry, 'Choice1') %>
   <%= f.label('Yes') %>
   <br/>
