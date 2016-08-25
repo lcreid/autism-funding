@@ -88,7 +88,7 @@ class CompleteCf0925Test < CapybaraTest
     choose 'cf0925_payment_choice2'
 
     assert_difference 'Cf0925.count' do
-      click_button 'Create Cf0925'
+      click_button 'Save'
     end
     assert_equal 200, status_code
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
