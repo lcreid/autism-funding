@@ -48,8 +48,8 @@ module Cf0925sHelper
     show_field(field, width, lstrip: 'Child', &block)
   end
 
-  def parent_field(_f, field, width = 4, &block)
-    show_field(field, width, lstrip: 'Parent', &block)
+  def parent_field(f, field, width = 4, &block)
+    form_field(f, field, width, lstrip: 'Parent', &block)
   end
 
   def service_provider_field(f, field, width = 4, opts = {}, &block)

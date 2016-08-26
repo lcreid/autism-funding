@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-md-10">
+    <%= form_row do %>
+      <%= parent_field(parent, :name_first, 2) %>
+      <%= parent_field(parent, :name_middle, 2) %>
+      <%= parent_field(parent, :name_last, 2) %>
+      <%= parent_field(parent, :home_phone, 3) %>
+      <%= parent_field(parent, :work_phone, 3) %>
+    <% end %>
+    <%= form_row do %>
+      <%= parent_field(parent, :address, 6) %>
+      <%= parent_field(parent, :city, 4) %>
+      <%= parent_field(parent, :postal_code, 2) %>
+    <% end %>
+  </div>
+</div>

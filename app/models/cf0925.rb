@@ -1,6 +1,7 @@
 class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person
+  accepts_nested_attributes_for :funded_person
 
   validates :service_provider_service_start,
             :service_provider_service_end,

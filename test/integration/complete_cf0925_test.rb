@@ -118,11 +118,32 @@ class CompleteCf0925Test < CapybaraTest
     # work. It also doesn't use the ID, but rather the "for=" attribute.
     # This was for when the fields were fillable. We decided you have to go
     # back to the profile page to do that.
-    # assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
-    # assert_field 'cf0925_parent_first_name', with: 'I'
+    assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
+    assert_field 'cf0925_parent_first_name', with: 'I'
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
-    assert_selector '#parent_last_name', text: 'Two-Kids'
-    assert_selector '#parent_first_name', text: 'I'
+    # assert_selector '#parent_last_name', text: 'Two-Kids'
+    # assert_selector '#parent_first_name', text: 'I'
     assert_selector '#child_first_name', text: 'Sixteen'
+  end
+
+  test 'Change parent info' do
+    fill_in_login(user = users(:forms))
+    click_link 'New Request to Pay'
+    assert_difference 'Cf0925.count' do
+      assert_no_difference 'User.count' do
+        fill_in 'Middle Name', with: 'Charles'
+        # I shouldn't really need the following.
+        fill_in 'cf0925_service_provider_service_start', with: '2016-08-01'
+        fill_in 'cf0925_service_provider_service_end', with: '2016-09-30'
+        choose 'cf0925_payment_choice1'
+        click_button 'Save'
+      end
+    end
+    puts "Middle name from user: #{user.name_middle}"
+    user.reload
+    puts "Middle name from user: #{user.name_middle}"
+    assert Cf0925.find_by(service_provider_service_start: '2016-08-01')
+    assert Cf0925.find_by(parent_middle_name: 'Charles')
+    assert User.find_by(name_middle: 'Charles')
   end
 end
