@@ -5,6 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :addresses
+  accepts_nested_attributes_for :addresses
+
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s

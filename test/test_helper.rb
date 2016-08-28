@@ -22,6 +22,7 @@ module TestSessionHelpers
            },
            commit: 'Log in'
          }
+    user
   end
 
   # This one works for Capybara tests. I have no idea why the above doesn't.
