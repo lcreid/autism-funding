@@ -47,3 +47,6 @@ bower.json
 
 # Ignore folder with test PDF files
 pdf
+
+# Ignore ERD diagrams
+erd.pdf

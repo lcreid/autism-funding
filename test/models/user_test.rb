@@ -369,38 +369,47 @@ class UserTest < ActiveSupport::TestCase
   end ## -- end test --
 
   test 'edit and save one user' do
-    skip 'I started to test nested attributes, but it is a rat hole.'
-    # These are no difference because we pre-create address and phone
-    # TODO: Review the above implementation approach.
+    # skip 'I started to test nested attributes, but it is a rat hole.'
     user_hash = {
       name_first: '1',
       name_last: '2',
-      addresses: [{
-        address_line_1: '123456789 Street St',
-        city: 'Some City',
-        province_code_id: province_codes(:bc).id,
-        postal_code: 'S0S 0S0'
-      }],
-      # phone_numbers: [
-      #   {
-      #     phone_number: '5555555555'
-      #   },
-      #   {
-      #     phone_number: '6666666666'
-      #   }
-      # ]
+      addresses_attributes: {
+        a: {
+          address_line_1: '123456789 Street St',
+          city: 'Some City',
+          province_code_id: province_codes(:bc).id,
+          postal_code: 'S0S 0S0'
+        }
+      },
+      phone_numbers_attributes: {
+        home: {
+          phone_number: '5555555555',
+          phone_type: 'home'
+        },
+        work: {
+          phone_number: '6666666666',
+          phone_type: 'work'
+        }
+      }
     }
-    user = User.new(email: 'me@weenhanceit.com')
-    assert_no_difference 'User.count' do
-      assert_no_difference 'Address.count' do
-        assert_no_difference 'PhoneNumber.count' do
-          user.update(user_hash)
+    user = User.new(email: email = 'me@weenhanceit.com',
+                    password: 'password')
+    # These are no difference because we pre-create address and phone
+    # TODO: Review the above implementation approach.
+    assert_difference 'User.count' do
+      assert_difference 'Address.count' do
+        assert_difference 'PhoneNumber.count', 2 do
+          assert user.update(user_hash), -> { user.errors.inspect }
         end
       end
     end
-    user.reload
-    user_hash.each do |k, _v|
-      assert_equal user_hash[k], user.send(k)
-    end
+
+    assert retrieved_user = User.find_by(email: email)
+    assert_equal user_hash[:name_last], retrieved_user.name_last
+    assert_equal user_hash[:addresses_attributes][:a][:city], retrieved_user.my_address.city
+    # user_hash.each do |k, _v|
+    #   fixed_key = k.to_s.sub(/_attributes\Z/, '').to_sym
+    #   assert_equal user_hash[k], user.send(fixed_key)
+    # end
   end
 end

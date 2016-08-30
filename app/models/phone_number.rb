@@ -1,7 +1,9 @@
 class PhoneNumber < ApplicationRecord
   # One record for each phone number
   # ----- Associations ---------------------------------------------------------
-  belongs_to :user
+  # You have to provide inverse_of on User for nested attributes to work.
+  # Doing it here just in case.
+  belongs_to :user, inverse_of: :phone_numbers
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :phone_number,
