@@ -75,27 +75,13 @@
 
   <div class="row">
     <%= fields_for :home_phone_number, @home_phone do |mp| %>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Home:", class: 'control-label' %>
-          <%= mp.text_field :phone_number, class: 'form-control' %>
-        </div>
-      </div>
+      <%= render partial: 'phone_numbers/form',
+                 locals: { phone_number: mp, f: f, type: :home } %>
     <% end %>
     <div class="col-md-1"></div>
     <%= fields_for :work_phone_number, @work_phone do |mp| %>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= f.label "Work:", class: 'control-label' %>
-          <%= mp.text_field :phone_number, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-1">
-        <div class="form-group">
-          <%= f.label "Ext:", class: 'control-label' %>
-          <%= mp.text_field :phone_extension, class: 'form-control' %>
-        </div>
-      </div>
+      <%= render partial: 'phone_numbers/form',
+                 locals: { phone_number: mp, f: f, type: :work } %>
     <% end %>
     <div class="col-md-6"></div>
   </div>

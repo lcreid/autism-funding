@@ -1,16 +1,33 @@
-<div class="row">
+<div class="row parent-test">
   <div class="col-md-10">
     <%= form_row do %>
-      <%= parent_field(parent, :name_first, 2) %>
-      <%= parent_field(parent, :name_middle, 2) %>
-      <%= parent_field(parent, :name_last, 2) %>
-      <%= parent_field(parent, :home_phone, 3) %>
-      <%= parent_field(parent, :work_phone, 3) %>
+      <%= parent_field(form, :parent_first_name, 2) %>
+      <%= parent_field(form, :parent_middle_name, 2) %>
+      <%= parent_field(form, :parent_last_name, 2) %>
+      <%#= parent_phone_field(parent, :home, parent.object.my_home_phone, 3) %>
+      <%#= parent_phone_field(parent, :work, parent.object.my_work_phone, 3) %>
+      <%= parent.fields_for [parent.object.my_home_phone, parent.object.my_work_phone] do |phone| %>
+        <%# puts "phone: " + phone.inspect %>
+        <%= render partial: 'phone_numbers/form',
+               locals: { f: form, type: phone.index == 0? :home : :work, phone_number: phone } %>
+      <% end %>
     <% end %>
     <%= form_row do %>
-      <%= parent_field(parent, :address, 6) %>
-      <%= parent_field(parent, :city, 4) %>
-      <%= parent_field(parent, :postal_code, 2) %>
+      <%= parent_field(form, :parent_address, 6) %>
+      <%= parent_field(form, :parent_city, 4) %>
+      <%= parent_field(form, :parent_postal_code, 2) %>
     <% end %>
+    <%#= form_row do %>
+      <%#= parent_field(parent, :name_first, 2) %>
+      <%#= parent_field(parent, :name_middle, 2) %>
+      <%#= parent_field(parent, :name_last, 2) %>
+      <%#= parent_field(parent, :home_phone, 3) %>
+      <%#= parent_field(parent, :work_phone, 3) %>
+    <%# end %>
+    <%#= form_row do %>
+      <%#= parent_field(parent, :address, 6) %>
+      <%#= parent_field(parent, :city, 4) %>
+      <%#= parent_field(parent, :postal_code, 2) %>
+    <%# end %>
   </div>
 </div>

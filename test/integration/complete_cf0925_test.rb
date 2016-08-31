@@ -126,24 +126,45 @@ class CompleteCf0925Test < CapybaraTest
     assert_selector '#child_first_name', text: 'Sixteen'
   end
 
+  address = '9999 Secondary St'
+  middle_name = 'Charles'
+  phone_number = '(999) 999-9999'
+
   test 'Change parent info' do
-    fill_in_login(user = users(:forms))
+    fill_in_login(users(:forms))
     click_link 'New Request to Pay'
     assert_difference 'Cf0925.count' do
       assert_no_difference 'User.count' do
-        fill_in 'Middle Name', with: 'Charles'
-        # I shouldn't really need the following.
-        fill_in 'cf0925_service_provider_service_start', with: '2016-08-01'
-        fill_in 'cf0925_service_provider_service_end', with: '2016-09-30'
-        choose 'cf0925_payment_choice1'
-        click_button 'Save'
+        assert_difference 'PhoneNumber.count' do
+          fill_in 'Middle Name', with: middle_name
+          within '.parent-test' do
+            fill_in 'Address', with: address
+            # puts 'Phones: ' + all(:fillable_field, 'Phone').inspect
+            # all(:fillable_field, 'Home Phone').each do |e|
+            #   puts e[:id]
+            # end
+            fill_in 'Home Phone', with: phone_number
+          end
+          # I shouldn't really need the following.
+          fill_in 'cf0925_service_provider_service_start', with: '2016-08-01'
+          fill_in 'cf0925_service_provider_service_end', with: '2016-09-30'
+          choose 'cf0925_payment_choice1'
+          click_button 'Save'
+        end
       end
     end
-    puts "Middle name from user: #{user.name_middle}"
-    user.reload
-    puts "Middle name from user: #{user.name_middle}"
-    assert Cf0925.find_by(service_provider_service_start: '2016-08-01')
-    assert Cf0925.find_by(parent_middle_name: 'Charles')
-    assert User.find_by(name_middle: 'Charles')
+    # puts "Middle name from user: #{user.name_middle}"
+    # user.reload
+    # puts "Middle name from user: #{user.name_middle}"
+    assert PhoneNumber.find_by(phone_number: phone_number),
+           'PhoneNumber not updated'
+    assert Cf0925.find_by(home_phone_number: phone_number),
+           'Phone in RTP not updated'
+    assert User.find_by(name_middle: middle_name), 'Parent not updated'
+    assert Cf0925.find_by(service_provider_service_start: '2016-08-01'),
+           'RTP not updated'
+    assert Cf0925.find_by(parent_middle_name: middle_name), 'RTP not updated'
+    assert Address.find_by(address_line_1: address), 'Address not updated'
+    assert Cf0925.find_by(parent_address: address), 'Address in RTP not updated'
   end
 end

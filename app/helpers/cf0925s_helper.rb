@@ -52,6 +52,13 @@ module Cf0925sHelper
     form_field(f, field, width, lstrip: 'Parent', &block)
   end
 
+  def parent_phone_field(f, field, phone_number, _width = 3)
+    f.fields_for :phone_number, phone_number do |phone|
+      render partial: 'phone_numbers/form',
+             locals: { f: f, type: field, phone_number: phone }
+    end
+  end
+
   def service_provider_field(f, field, width = 4, opts = {}, &block)
     form_field(f, field, width, { lstrip: 'Service Provider' }.merge(opts), &block)
   end

@@ -10,7 +10,8 @@
           </h3>
         </div>
         <div class="panel-body">
-          <%= render partial: 'parent_info', locals: { parent: parent } %>
+          <%# parent and form needed below just during refactoring. %>
+          <%= render partial: 'parent_info', locals: { parent: parent, form: f } %>
         </div>
       </div>
       <div class="panel panel-primary">

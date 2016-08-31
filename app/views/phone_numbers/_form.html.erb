@@ -1,0 +1,16 @@
+<div class="col-md-2">
+  <p><%= type.to_s.titlecase %></p>
+  <div class="form-group">
+    <%= phone_number.label :phone_number, type.to_s.titlecase + " Phone", class: 'control-label' %>
+    <%= phone_number.text_field :phone_number, class: 'form-control' %>
+    <%#= phone_number.hidden_field :phone_type, value: type.to_s.titlecase %>
+  </div>
+</div>
+<div class="col-md-1">
+  <% if type == :work %>
+    <div class="form-group">
+      <%= phone_number.label "Ext:", class: 'control-label' %>
+      <%= phone_number.text_field :phone_extension, class: 'form-control' %>
+    </div>
+  <% end %>
+</div>
