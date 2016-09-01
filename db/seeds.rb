@@ -58,7 +58,7 @@ frms = {\
 ## Ensure each form is found in the table and update the data
 frms.keys.each do |c|
   rec = Form.find_by class_name: c
-  rec = Form.new(class_name: p) if rec.nil?
+  rec = Form.new(class_name: c) if rec.nil?
   rec.file_name = frms[c]['file_name']
   rec.form_name = frms[c]['form_name']
   rec.form_description = frms[c]['form_description']
