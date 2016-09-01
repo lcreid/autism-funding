@@ -12,6 +12,7 @@ class Cf0925sController < ApplicationController
   end
 
   def create
+    # puts pp(params.as_json)
     @cf0925 = Cf0925.new(cf0925_params)
     @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
     if @cf0925.save
