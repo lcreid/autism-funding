@@ -11,25 +11,48 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
                                           user: controller.current_user)
 
     @form_field_values = {
+      'funded_person_attributes' => {
+        'id' => @funded_person.id,
+        'user_attributes' => {
+          # 'id' => @funded_person.user.id,
+          'name_first' => 'parent_first_name',
+          'name_middle' => 'parent_middle_name',
+          'name_last' => 'parent_last_name',
+          'phone_numbers_attributes' => {
+            '0' => {
+              # 'user_id' => @funded_person.user.id,
+              'phone_number' => '8888888888',
+              'phone_type' => 'Home'
+            },
+            '1' => {
+              # 'user_id' => @funded_person.user.id,
+              'phone_number' => '7777777777',
+              'phone_type' => 'Work',
+              'phone_extension' => ''
+            }
+          },
+          'addresses_attributes' => {
+            '0' => {
+              # 'user_id' => @funded_person.user.id,
+              'address_line_1' => 'parent_address',
+              'city' => 'parent_city',
+              'postal_code' => 'A0A 0A0'
+            }
+          }
+        }
+      },
       agency_name: 'agency_name',
       child_dob: '2002-05-14',
       child_first_name: 'child_first_name',
       child_last_name: 'child_last_name',
       child_middle_name: 'child_middle_name',
       child_in_care_of_ministry: false,
-      home_phone: 'home_phone',
       item_cost_1: 10,
       item_cost_2: 20,
       item_cost_3: 30,
       item_desp_1: 'item_desp_1',
       item_desp_2: 'item_desp_2',
       item_desp_3: 'item_desp_3',
-      parent_address: 'parent_address',
-      parent_city: 'parent_city',
-      parent_first_name: 'parent_first_name',
-      parent_last_name: 'parent_last_name',
-      parent_middle_name: 'parent_middle_name',
-      parent_postal_code: 'parent_postal_code',
       payment: 'Choice2',
       service_provider_postal_code: 'service_provider_postal_code',
       service_provider_address: 'service_provider_address',
@@ -50,7 +73,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
       supplier_name: 'supplier_name',
       supplier_phone: 'supplier_phone',
       supplier_postal_code: 'supplier_postal_code',
-      work_phone: 'work_phone',
       form_id: forms(:cf0925).id,
       funded_person_id: (@funded_person = funded_people(:cf0925)).id
     }
@@ -65,25 +87,48 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Cf0925.count') do
       post funded_person_cf0925s_path(@funded_person), params: {
         cf0925: {
+          'funded_person_attributes' => {
+            'id' => @funded_person.id,
+            'user_attributes' => {
+              # 'id' => @funded_person.user.id,
+              'name_first' => 'parent_first_name',
+              'name_middle' => 'parent_middle_name',
+              'name_last' => 'parent_last_name',
+              'phone_numbers_attributes' => {
+                '0' => {
+                  # 'user_id' => @funded_person.user.id,
+                  'phone_number' => '8888888888',
+                  'phone_type' => 'Home'
+                },
+                '1' => {
+                  # 'user_id' => @funded_person.user.id,
+                  'phone_number' => '7777777777',
+                  'phone_type' => 'Work',
+                  'phone_extension' => ''
+                }
+              },
+              'addresses_attributes' => {
+                '0' => {
+                  # 'user_id' => @funded_person.user.id,
+                  'address_line_1' => 'parent_address',
+                  'city' => 'parent_city',
+                  'postal_code' => 'A0A 0A0'
+                }
+              }
+            }
+          },
           agency_name: 'agency_name',
           child_dob: '2002-05-14',
           child_first_name: 'child_first_name',
           child_last_name: 'child_last_name',
           child_middle_name: 'child_middle_name',
           child_in_care_of_ministry: false,
-          home_phone: 'home_phone',
           item_cost_1: 10,
           item_cost_2: 20,
           item_cost_3: 30,
           item_desp_1: 'item_desp_1',
           item_desp_2: 'item_desp_2',
           item_desp_3: 'item_desp_3',
-          parent_address: 'parent_address',
-          parent_city: 'parent_city',
-          parent_first_name: 'parent_first_name',
-          parent_last_name: 'parent_last_name',
-          parent_middle_name: 'parent_middle_name',
-          parent_postal_code: 'parent_postal_code',
           payment: 150,
           service_provider_postal_code: 'service_provider_postal_code',
           service_provider_address: 'service_provider_address',
@@ -104,7 +149,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
           supplier_name: 'supplier_name',
           supplier_phone: 'supplier_phone',
           supplier_postal_code: 'supplier_postal_code',
-          work_phone: 'work_phone',
           form_id: forms(:cf0925).id,
           funded_person_id: funded_people(:cf0925).id
         }
