@@ -11,9 +11,14 @@ class User < ApplicationRecord
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
   has_many :funded_people, inverse_of: :user
-  accepts_nested_attributes_for :funded_people, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :funded_people,
+                                allow_destroy: true,
+                                reject_if: :all_blank
   has_many :phone_numbers, inverse_of: :user
-  accepts_nested_attributes_for :phone_numbers, reject_if: proc { |attributes| attributes[:phone_number].blank? }
+  accepts_nested_attributes_for :phone_numbers,
+                                reject_if: proc { |attributes|
+                                  attributes[:phone_number].blank?
+                                }
 
   def my_name
     my_name = "#{name_first} #{name_middle}".strip

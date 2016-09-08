@@ -136,7 +136,8 @@ class CompleteCf0925Test < CapybaraTest
     assert_difference 'Cf0925.count' do
       assert_no_difference 'User.count' do
         # assert_difference 'PhoneNumber.count' do
-        fill_in 'Middle Name', with: middle_name
+        # FIXME: Label should be Middle Name even if field is Name Middle
+        fill_in 'Name Middle', with: middle_name
         within '.parent-test' do
           fill_in 'Address', with: address
           # puts 'Phones: ' + all(:fillable_field, 'Phone').inspect

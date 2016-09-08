@@ -1,9 +1,9 @@
 <div class="row parent-test">
   <div class="col-md-10">
     <%= form_row do %>
-      <%= parent_field(form, :parent_first_name, 2) %>
-      <%= parent_field(form, :parent_middle_name, 2) %>
-      <%= parent_field(form, :parent_last_name, 2) %>
+      <%= parent_field(parent, :name_first, 2) %>
+      <%= parent_field(parent, :name_middle, 2) %>
+      <%= parent_field(parent, :name_last, 2) %>
       <%#= parent_phone_field(parent, :home, parent.object.my_home_phone, 3) %>
       <%#= parent_phone_field(parent, :work, parent.object.my_work_phone, 3) %>
       <%# OK. I think the below works. What is the learning?
@@ -32,9 +32,12 @@
       <% end %>
     <% end %>
     <%= form_row do %>
-      <%= parent_field(form, :parent_address, 6) %>
-      <%= parent_field(form, :parent_city, 4) %>
-      <%= parent_field(form, :parent_postal_code, 2) %>
+      <%= parent.fields_for :addresses, [@cf0925.funded_person.user.addresses.first] do |addresses_form| %>
+        <%= parent.hidden_field :id %>
+        <%= parent_field(addresses_form, :address_line_1, 6) %>
+        <%= parent_field(addresses_form, :city, 4) %>
+        <%= parent_field(addresses_form, :postal_code, 2) %>
+      <% end %>
     <% end %>
     <%#= form_row do %>
       <%#= parent_field(parent, :name_first, 2) %>

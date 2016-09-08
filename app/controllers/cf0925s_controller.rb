@@ -22,6 +22,7 @@ class Cf0925sController < ApplicationController
     pp(user_params.as_json)
     user.update(user_params)
     puts "Middle name: #{user.name_middle}"
+    puts "Address: #{user.addresses.first.as_json}"
     copy_parent_to_form
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # puts 'User save failed' unless user.save
@@ -65,7 +66,13 @@ class Cf0925sController < ApplicationController
         :name_first,
         :name_middle,
         :name_last,
-        phone_numbers_attributes: phone_attributes
+        phone_numbers_attributes: phone_attributes,
+        addresses_attributes: [
+          :id,
+          :address_line_1,
+          :city,
+          :postal_code
+        ]
       #     ]
       #   ]
       )
