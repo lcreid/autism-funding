@@ -8,7 +8,8 @@ class PhoneNumber < ApplicationRecord
   # ----- validations ----------------------------------------------------------
   validates :phone_number,
             format: {
-              with: /\A *[2-9][0-9][0-9] *[2-9][0-9][0-9] *[0-9][0-9][0-9][0-9] *\z/,
+              # with: /\A *[2-9][0-9][0-9] *[2-9][0-9][0-9] *[0-9][0-9][0-9][0-9] *\z/,
+              with: /\A\s*\(?[2-9]\d{2}\)?[-. \t]*[2-9]\d{2}[-. \t]*\d{4}\s*\z/,
               message: '- must be 10 digit, ' \
                        'area code/exchange must not start with 1 or 0'
             },
@@ -35,6 +36,10 @@ class PhoneNumber < ApplicationRecord
       ret = "(#{area_code}) #{exchange_subscriber_number}#{extension_number}"
     end
     ret
+  end
+
+  def formatted_phone_number
+    full_number
   end
 
   def area_code
@@ -79,9 +84,9 @@ class PhoneNumber < ApplicationRecord
   protected
 
   def clean_numbers
-    phone_number.delete!(' ') unless phone_number.blank?
-    phone_extension.delete!(' ') unless phone_extension.blank?
-    phone_type.strip! unless phone_type.blank?
+    self.phone_number = phone_number.gsub(/[\(\)-. \t]/, '') unless phone_number.blank?
+    self.phone_extension = phone_extension.delete(' ') unless phone_extension.blank?
+    self.phone_type = phone_type.strip unless phone_type.blank?
   end
   #-----------------------------------------------------------------------------
   # ----- Private Methods ------------------------------------------------------
