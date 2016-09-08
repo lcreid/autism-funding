@@ -100,13 +100,10 @@ class Address < ApplicationRecord
   protected
 
   def clean_address
-    unless postal_code.blank?
-      postal_code.delete!(' ')
-      postal_code.upcase!
-    end
-    address_line_1.strip! unless address_line_1.blank?
-    address_line_2.strip! unless address_line_2.blank?
-    city.strip! unless city.blank?
+    self.postal_code = postal_code.delete(' ').upcase unless postal_code.blank?
+    self.address_line_1 = address_line_1.strip unless address_line_1.blank?
+    self.address_line_2 = address_line_2.strip unless address_line_2.blank?
+    self.city = city.strip unless city.blank?
   end
   #-----------------------------------------------------------------------------
 
