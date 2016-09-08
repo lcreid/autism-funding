@@ -1,9 +1,10 @@
 class FundedPerson < ApplicationRecord
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
-  belongs_to :user
+  belongs_to :user, inverse_of: :funded_people
+  accepts_nested_attributes_for :user
 
-  has_many :cf0925s
+  has_many :cf0925s, inverse_of: :funded_person
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :birthdate, presence: true
@@ -17,25 +18,27 @@ class FundedPerson < ApplicationRecord
     my_name = 'no name defined' if my_name == ''
     my_name
   end
+
   #-----------------------------------------------------------------------------
-  def my_dob frm_str="%Y-%m-%d"
-    if birthdate.nil?
-      my_dob = 'undefined'
-    else
-      my_dob = birthdate.strftime(frm_str)
-    end
+  def my_dob(frm_str = '%Y-%m-%d')
+    my_dob = if birthdate.nil?
+               'undefined'
+             else
+               birthdate.strftime(frm_str)
+             end
     my_dob
   end
 
   # ----- Validation Methods ---------------------------------------------------
   def birthdate_cannot_be_in_the_future
     if birthdate.present? && birthdate > Date.today
-      errors.add(:birthdate," - can't be in the future")
+      errors.add(:birthdate, " - can't be in the future")
     end
   end
+
   def must_define_at_least_one_name
     if my_name == 'no name defined'
-      errors.add(:name," - must define at least one name")
+      errors.add(:name, ' - must define at least one name')
     end
   end
   #-----------------------------------------------------------------------------

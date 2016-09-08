@@ -73,6 +73,13 @@ class PhoneNumberTest < ActiveSupport::TestCase
     # 01.i .....................................................................
     assert the_phone.save, '01.i: Save of an valid instance should succeed'
 
+    ['(604) 376-0000', '604.376.0000', '604-376-0000'].each do |number|
+      the_phone.user = test_user
+      the_phone.phone_number = number
+      the_phone.phone_extension = ''
+      the_phone.phone_type = test_phone_type
+      assert the_phone.valid?, "#{number} should be valid. #{the_phone.errors.full_messages}"
+    end
   end #-- end test --------------------------------------------------------
 
   #-----------------------------------------------------------------------------
@@ -93,13 +100,13 @@ class PhoneNumberTest < ActiveSupport::TestCase
     the_phone = PhoneNumber.new
     the_phone.phone_number = test_invalid_phone_number
     the_phone.phone_extension = test_invalid_phone_extension
-    expected = "(???) ???-???? x???"
+    expected = '(???) ???-???? x???'
     assert_equal expected, the_phone.full_number, '02.a: full_number does not return error formatted phone number'
 
     # 01.b .....................................................................
     the_phone = PhoneNumber.new
     the_phone.phone_number = nil
-    expected = ""
+    expected = ''
     assert_equal expected, the_phone.full_number, '02.b: full_number does not return \'\' when not phone number and extension supplied'
 
     # 01.b .....................................................................
@@ -108,15 +115,21 @@ class PhoneNumberTest < ActiveSupport::TestCase
     the_phone.phone_extension = test_valid_phone_extension
     expected = test_full_phone_number
     assert_equal expected, the_phone.full_number, '02.c: full_number does not return properly formatted phone number'
-
   end #-- end test --------------------------------------------------------
 
+  test 'Formatted phone number round trip' do
+    phone_number = '(999) 999-9999'
+    pn = PhoneNumber.new
+    pn.user = User.new(email: 'a@weenhanceit.com')
+    pn.phone_type = 'Cell'
+    pn.phone_number = phone_number
+    pn.phone_number.freeze
+    assert pn.save, "Couldn't save phone number: #{pn.errors.full_messages}"
+    assert_equal phone_number, pn.formatted_phone_number
+    pn.reload
+    assert_equal phone_number, pn.formatted_phone_number
+  end
 end
-
-
-
-
-
 
 #    the_phone.valid?
 #    puts ""

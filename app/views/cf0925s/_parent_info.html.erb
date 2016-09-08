@@ -1,0 +1,54 @@
+<div class="row parent-test">
+  <div class="col-md-10">
+    <%= form_row do %>
+      <%= parent_field(parent, :name_first, 2) %>
+      <%= parent_field(parent, :name_middle, 2) %>
+      <%= parent_field(parent, :name_last, 2) %>
+      <%#= parent_phone_field(parent, :home, parent.object.my_home_phone, 3) %>
+      <%#= parent_phone_field(parent, :work, parent.object.my_work_phone, 3) %>
+      <%# OK. I think the below works. What is the learning?
+          By putting in the method name, you cause the form builder to use
+          it in the element id and name, so you get unique IDs. But the form
+          builder must look only at attributes, rather than all methods, when
+          looking for the value, so you also have to explicitly provide the
+          object.
+
+          My guess is that nested attributes won't work out of the box with this,
+          because it doesn't use the standard collection approach. So an
+          approach that uses the collection order by the way you want them to
+          be, while hacky, might work more smoothly.
+      %>
+      <%= parent.fields_for :phone_numbers, [
+            @cf0925.funded_person.user.my_home_phone,
+            @cf0925.funded_person.user.my_work_phone
+          ] do |phone_form| %>
+        <%#= "parent object: " + parent.object.inspect %>
+        <%#= "phone_form object: " + phone_form.object.inspect %>
+        <%= render partial: 'phone_numbers/form',
+                   locals: {
+                     f: phone_form
+                   } %>
+      <% end %>
+    <% end %>
+    <%= form_row do %>
+      <%= parent.fields_for :addresses, [@cf0925.funded_person.user.addresses.first] do |addresses_form| %>
+        <%= parent.hidden_field :id %>
+        <%= parent_field(addresses_form, :address_line_1, 6) %>
+        <%= parent_field(addresses_form, :city, 4) %>
+        <%= parent_field(addresses_form, :postal_code, 2) %>
+      <% end %>
+    <% end %>
+    <%#= form_row do %>
+      <%#= parent_field(parent, :name_first, 2) %>
+      <%#= parent_field(parent, :name_middle, 2) %>
+      <%#= parent_field(parent, :name_last, 2) %>
+      <%#= parent_field(parent, :home_phone, 3) %>
+      <%#= parent_field(parent, :work_phone, 3) %>
+    <%# end %>
+    <%#= form_row do %>
+      <%#= parent_field(parent, :address, 6) %>
+      <%#= parent_field(parent, :city, 4) %>
+      <%#= parent_field(parent, :postal_code, 2) %>
+    <%# end %>
+  </div>
+</div>

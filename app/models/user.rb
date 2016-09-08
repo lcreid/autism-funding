@@ -4,14 +4,21 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :addresses
+  has_many :addresses, inverse_of: :user
+  accepts_nested_attributes_for :addresses
+
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
-  has_many :funded_people
-  accepts_nested_attributes_for :funded_people, allow_destroy: true, reject_if: :all_blank
-  has_many :phone_numbers
-  # accepts_nested_attributes_for :phone_numbers
+  has_many :funded_people, inverse_of: :user
+  accepts_nested_attributes_for :funded_people,
+                                allow_destroy: true,
+                                reject_if: :all_blank
+  has_many :phone_numbers, inverse_of: :user
+  accepts_nested_attributes_for :phone_numbers,
+                                reject_if: proc { |attributes|
+                                  attributes[:phone_number].blank?
+                                }
 
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
