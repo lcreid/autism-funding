@@ -1,8 +1,10 @@
 <%= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
 
 <%= form_for([@cf0925.funded_person, @cf0925]) do |f| %>
-  <%= f.fields_for @cf0925.funded_person do |child| %>
-    <%= child.fields_for @cf0925.funded_person.user do |parent| %>
+  <%= f.fields_for :funded_person_attributes, @cf0925.funded_person do |child| %>
+    <%= child.hidden_field :id %>
+    <%= child.fields_for :user_attributes, @cf0925.funded_person.user do |parent| %>
+      <%= parent.hidden_field :id %>
       <div class="panel panel-primary">
         <div class="panel-heading">
           <h3 class="panel-title">

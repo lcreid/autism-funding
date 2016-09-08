@@ -1,10 +1,10 @@
 class FundedPerson < ApplicationRecord
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
-  belongs_to :user
+  belongs_to :user, inverse_of: :funded_people
   accepts_nested_attributes_for :user
 
-  has_many :cf0925s
+  has_many :cf0925s, inverse_of: :funded_person
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :birthdate, presence: true

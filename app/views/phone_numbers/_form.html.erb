@@ -1,16 +1,18 @@
 <div class="col-md-2">
-  <%#= phone_number.object.inspect %>
+  <%# puts phone_form.inspect %>
+  <%# puts phone_form.object.inspect %>
+  <%= phone_form.hidden_field :user_id %>
   <div class="form-group">
-    <%= phone_number.label :phone_number, type.to_s.titlecase + " Phone", class: 'control-label' %>
-    <%= phone_number.text_field :phone_number, class: 'form-control' %>
-    <%= phone_number.hidden_field :phone_type, value: type.to_s.titlecase %>
+    <%= phone_form.label :phone_number, phone_form.object.phone_type + " Phone", class: 'control-label' %>
+    <%= phone_form.text_field :phone_number, class: 'form-control' %>
+    <%= phone_form.hidden_field :phone_type, value: phone_form.object.phone_type %>
   </div>
 </div>
 <div class="col-md-1">
-  <% if type == :work %>
+  <% if phone_form.object.phone_type == "Work" %>
     <div class="form-group">
-      <%= phone_number.label "Ext:", class: 'control-label' %>
-      <%= phone_number.text_field :phone_extension, class: 'form-control' %>
+      <%= phone_form.label "Ext:", class: 'control-label' %>
+      <%= phone_form.text_field :phone_extension, class: 'form-control' %>
     </div>
   <% end %>
 </div>

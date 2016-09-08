@@ -14,21 +14,21 @@
           object.
 
           My guess is that nested attributes won't work out of the box with this,
-          because it doesn't use the standard collection apporach. So an
+          because it doesn't use the standard collection approach. So an
           approach that uses the collection order by the way you want them to
           be, while hacky, might work more smoothly.
       %>
-      <%= parent.fields_for :my_home_phone, parent.object.my_home_phone do |phone| %>
+      <%= parent.fields_for :phone_numbers, [
+            @cf0925.funded_person.user.my_home_phone,
+            @cf0925.funded_person.user.my_work_phone
+          ] do |phone_form| %>
         <%#= "parent object: " + parent.object.inspect %>
-        <%#= "phone object: " + phone.object.inspect %>
+        <%#= "phone_form object: " + phone_form.object.inspect %>
         <%= render partial: 'phone_numbers/form',
-               locals: { f: form, type: :home, phone_number: phone } %>
-      <% end %>
-      <%= parent.fields_for :my_work_phone, parent.object.my_work_phone do |phone| %>
-        <%#= "parent object: " + parent.object.inspect %>
-        <%#= "phone object: " + phone.object.inspect %>
-        <%= render partial: 'phone_numbers/form',
-               locals: { f: form, type: :work, phone_number: phone } %>
+                   locals: {
+                     f: form,
+                     phone_form: phone_form
+                   } %>
       <% end %>
     <% end %>
     <%= form_row do %>
