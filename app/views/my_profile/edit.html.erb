@@ -76,12 +76,12 @@
   <div class="row">
     <%= fields_for :home_phone_number, @home_phone do |mp| %>
       <%= render partial: 'phone_numbers/form',
-                 locals: { phone_number: mp, f: f, type: :home } %>
+                 locals: { phone_number: mp, f: mp, type: :home } %>
     <% end %>
     <div class="col-md-1"></div>
     <%= fields_for :work_phone_number, @work_phone do |mp| %>
       <%= render partial: 'phone_numbers/form',
-                 locals: { phone_number: mp, f: f, type: :work } %>
+                 locals: { phone_number: mp, f: mp, type: :work } %>
     <% end %>
     <div class="col-md-6"></div>
   </div>

@@ -19,16 +19,18 @@ class Cf0925sController < ApplicationController
     @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
     user = @cf0925.funded_person.user
     # puts "User has #{user.phone_numbers.size} phone numbers"
-    pp(user_params.as_json)
+    # pp(user_params.as_json)
     user.update(user_params)
-    puts "Middle name: #{user.name_middle}"
-    puts "Address: #{user.addresses.first.as_json}"
+    # puts "Middle name: #{user.name_middle}"
+    # puts "Address: #{user.addresses.first.as_json}"
     copy_parent_to_form
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # puts 'User save failed' unless user.save
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # user.phone_numbers.each(&:save)
     # puts user.errors.full_messages
+    # puts 'Cf0925 save failed' unless @cf0925.save
+    # puts @cf0925.errors.full_messages
     if @cf0925.save && user.save
       redirect_to cf0925_path(@cf0925)
     else

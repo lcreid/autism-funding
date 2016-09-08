@@ -118,8 +118,9 @@ class CompleteCf0925Test < CapybaraTest
     # work. It also doesn't use the ID, but rather the "for=" attribute.
     # This was for when the fields were fillable. We decided you have to go
     # back to the profile page to do that.
-    assert_field 'cf0925_parent_last_name', with: 'Two-Kids'
-    assert_field 'cf0925_parent_first_name', with: 'I'
+    # FIXME: Change word order in label.
+    assert_field 'Name Last', with: 'Two-Kids'
+    assert_field 'Name First', with: 'I'
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
     # assert_selector '#parent_last_name', text: 'Two-Kids'
     # assert_selector '#parent_first_name', text: 'I'
@@ -128,7 +129,7 @@ class CompleteCf0925Test < CapybaraTest
 
   address = '9999 Secondary St'
   middle_name = 'Charles'
-  phone_number = '3063748486'
+  phone_number = '(999) 999-9999'
 
   test 'Change parent info' do
     fill_in_login(users(:forms))
@@ -157,9 +158,9 @@ class CompleteCf0925Test < CapybaraTest
     # puts "Middle name from user: #{user.name_middle}"
     # user.reload
     # puts "Middle name from user: #{user.name_middle}"
-    assert PhoneNumber.find_by(phone_number: phone_number),
+    assert PhoneNumber.find_by(phone_number: '9999999999'),
            'PhoneNumber not updated'
-    assert Cf0925.find_by(home_phone: '(306) 374-8486'),
+    assert Cf0925.find_by(home_phone: phone_number),
            'Phone in RTP not updated'
     assert User.find_by(name_middle: middle_name), 'Parent not updated'
     assert Cf0925.find_by(service_provider_service_start: '2016-08-01'),
