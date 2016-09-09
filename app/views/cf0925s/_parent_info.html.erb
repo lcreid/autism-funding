@@ -13,10 +13,12 @@
           looking for the value, so you also have to explicitly provide the
           object.
 
-          My guess is that nested attributes won't work out of the box with this,
-          because it doesn't use the standard collection approach. So an
-          approach that uses the collection order by the way you want them to
-          be, while hacky, might work more smoothly.
+          I couldn't get nested attributes to work out of the box. So an
+          approach that uses the collection ordered by the way you want them to
+          be, while hacky, works more smoothly.
+
+          You can do two different rows explicitly, but then you have multiple
+          elements with the same HTML ID, which causes grief and doesn't work.
       %>
       <%= parent.fields_for :phone_numbers, [
             @cf0925.funded_person.user.my_home_phone,
@@ -32,10 +34,12 @@
     <% end %>
     <%= form_row do %>
       <%= parent.fields_for :addresses, [@cf0925.funded_person.user.addresses.first] do |addresses_form| %>
-        <%= parent.hidden_field :id %>
-        <%= parent_field(addresses_form, :address_line_1, 6) %>
-        <%= parent_field(addresses_form, :city, 4) %>
-        <%= parent_field(addresses_form, :postal_code, 2) %>
+        <div class="parent-address-fields" %>
+          <%= parent.hidden_field :id %>
+          <%= parent_field(addresses_form, :address_line_1, 6) %>
+          <%= parent_field(addresses_form, :city, 4) %>
+          <%= parent_field(addresses_form, :postal_code, 2) %>
+        </div>
       <% end %>
     <% end %>
     <%#= form_row do %>

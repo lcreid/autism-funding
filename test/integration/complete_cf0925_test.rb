@@ -127,11 +127,40 @@ class CompleteCf0925Test < CapybaraTest
     assert_selector '#child_first_name', text: 'Sixteen'
   end
 
-  address = '9999 Secondary St'
-  middle_name = 'Charles'
-  phone_number = '(999) 999-9999'
-
   test 'Change parent info' do
+    create_a_cf0925
+  end
+
+  test 'Edit an existing CF0925' do
+    create_a_cf0925
+
+    click_link 'Edit'
+    new_city = 'Vernon'
+    within '.parent-address-fields' do
+      fill_in 'City', with: new_city
+    end
+    assert_no_difference 'Cf0925.count' do
+      assert_no_difference 'FundedPerson.count' do
+        assert_no_difference 'User.count' do
+          assert_no_difference 'Address.count' do
+            assert_no_difference 'PhoneNumber.count' do
+              click_button 'Save'
+            end
+          end
+        end
+      end
+    end
+
+    assert Address.find_by(city: new_city), "City in address not #{new_city}"
+  end
+
+  private
+
+  def create_a_cf0925
+    address = '9999 Secondary St'
+    middle_name = 'Charles'
+    phone_number = '(999) 999-9999'
+
     fill_in_login(users(:forms))
     click_link 'New Request to Pay'
     assert_difference 'Cf0925.count' do
