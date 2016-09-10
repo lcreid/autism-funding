@@ -1,0 +1,23 @@
+<%# I could do this as a separate partial for each type of form, but the
+    buttons would be the same for all partials. I could handle that with
+    helpers, but I don't really need to do it yet, so just render the same
+    partial for all form types, and ensure that all form types have the
+    methods or attributes needed by this partial. %>
+<tr class="static-form-record">
+    <td><%= form.form.form_name %></td>
+    <td><%= form.service_provider_name %></td>
+    <td class="text-right">
+        <%= form.updated_at.to_date.to_formatted_s(:iso8601) %>
+    </td>
+    <td class="text-right">
+      <%= number_to_currency(form.service_provider_service_amount) %>
+    </td>
+    <td>
+      <%= form.status %>
+    </td>
+    <td>
+        <%= link_to('Edit', '#', class: "btn btn-xs btn-primary") %>
+        <%= link_to('Print', '#', class: "btn btn-xs btn-primary") %>
+        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
+    </td>
+</tr>
