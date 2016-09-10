@@ -80,4 +80,5 @@
   <%= link_to 'Print',
               cf0925_path(@cf0925, :pdf),
               class: "btn#{@cf0925.printable? ? '': ' disabled'}" %>
+  <%= link_to "Edit", edit_cf0925_path(@cf0925), class: "btn" %>
 </div>

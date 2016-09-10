@@ -3,12 +3,27 @@ class Cf0925sController < ApplicationController
     @cf0925s = Cf0925.all
   end
 
+  def show
+    @cf0925 = Cf0925.find(params[:id])
+  end
+
+  # The canonical way of new and create with shallow routes is to have an
+  # instance variable for both objects in new and create, but only have an
+  # instance variable for the object from this controller in edit and update.
+  # http://stackoverflow.com/questions/9772588/when-using-shallow-routes-different-routes-require-different-form-for-arguments
   def new
     @cf0925 = Cf0925.new
-    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
+    @cf0925.funded_person =
+      @funded_person =
+        FundedPerson.find(params[:funded_person_id])
 
     copy_parent_to_form
     copy_child_to_form
+  end
+
+  def edit
+    @cf0925 = Cf0925.find(params[:id])
+    # puts @cf0925.funded_person.inspect
   end
 
   def create
@@ -16,7 +31,10 @@ class Cf0925sController < ApplicationController
     # pp(cf0925_params.as_json)
     @cf0925 = Cf0925.new(cf0925_params)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
+    @cf0925.funded_person =
+      @funded_person =
+        FundedPerson.find(params[:funded_person_id])
+    # TODO: Do I really need to save user separately?
     user = @cf0925.funded_person.user
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # pp(user_params.as_json)
@@ -38,8 +56,17 @@ class Cf0925sController < ApplicationController
     end
   end
 
-  def show
+  def update
     @cf0925 = Cf0925.find(params[:id])
+    @cf0925.update(cf0925_params)
+    user = @cf0925.funded_person.user
+    user.update(user_params)
+
+    if @cf0925.save && user.save
+      redirect_to cf0925_path(@cf0925)
+    else
+      render :new
+    end
   end
 
   private

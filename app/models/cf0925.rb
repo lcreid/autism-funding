@@ -31,38 +31,8 @@ class Cf0925 < ApplicationRecord
   #           :work_phone,
   #           presence: true
 
-  def user
-    funded_person.user
-  end
-
-  def printable?
-    child_dob &&
-      child_first_name &&
-      child_last_name &&
-      home_phone &&
-      parent_address &&
-      parent_city &&
-      parent_first_name &&
-      parent_last_name &&
-      parent_postal_code &&
-      service_provider_postal_code &&
-      service_provider_address &&
-      service_provider_city &&
-      service_provider_phone &&
-      service_provider_name &&
-      service_provider_service_1 &&
-      service_provider_service_2 &&
-      service_provider_service_3 &&
-      service_provider_service_amount &&
-      service_provider_service_end &&
-      service_provider_service_fee &&
-      service_provider_service_hour &&
-      service_provider_service_start &&
-      work_phone
-  end
-
-  def set_form
-    form || self.form = Form.find_by!(class_name: 'Cf0925')
+  def format_date(date)
+    date
   end
 
   def generate_pdf
@@ -125,10 +95,6 @@ class Cf0925 < ApplicationRecord
     true
   end
 
-  def format_date(date)
-    date
-  end
-
   def item_total
     return '' unless item_cost_1 && item_cost_2 && item_cost_3
     item_cost_1 +
@@ -140,10 +106,49 @@ class Cf0925 < ApplicationRecord
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  def printable?
+    child_dob &&
+      child_first_name &&
+      child_last_name &&
+      home_phone &&
+      parent_address &&
+      parent_city &&
+      parent_first_name &&
+      parent_last_name &&
+      parent_postal_code &&
+      service_provider_postal_code &&
+      service_provider_address &&
+      service_provider_city &&
+      service_provider_phone &&
+      service_provider_name &&
+      service_provider_service_1 &&
+      service_provider_service_2 &&
+      service_provider_service_3 &&
+      service_provider_service_amount &&
+      service_provider_service_end &&
+      service_provider_service_fee &&
+      service_provider_service_hour &&
+      service_provider_service_start &&
+      work_phone
+  end
+
+  def set_form
+    form || self.form = Form.find_by!(class_name: 'Cf0925')
+  end
+
   def start_date_before_end_date
     return if service_provider_service_start.blank? || service_provider_service_end.blank?
 
     errors.add(:service_provider_service_end, 'must be after start date') if
       service_provider_service_end < service_provider_service_start
+  end
+
+  def status
+    return 'Ready to Print' if printable?
+    'Not Complete'
+  end
+
+  def user
+    funded_person.user
   end
 end
