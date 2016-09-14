@@ -78,7 +78,8 @@ module Cf0925sHelper
       if cf0925.printable?
         link_to 'Print',
                 cf0925_path(cf0925, :pdf),
-                class: classes
+                class: classes,
+                target: '_blank'
       else
         content_tag :button, 'Print', class: classes + ' disabled'
       end

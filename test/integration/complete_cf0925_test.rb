@@ -102,7 +102,12 @@ class CompleteCf0925Test < CapybaraTest
     assert_current_path cf0925_path(rtp)
     # puts "RTP printable?: #{rtp.printable?}"
     # pp rtp.as_json
-    assert_link 'Print'
+    if ENV['TEST_PDF_GENERATION']
+      click_link 'Print'
+      assert_current_path cf0925_path(rtp, :pdf)
+    else
+      puts 'Skipped PDF generation. To include: `export TEST_PDF_GENERATION=1`'
+    end
   end
 
   test 'RTP for dual-child parent' do

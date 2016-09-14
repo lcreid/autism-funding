@@ -108,6 +108,13 @@ class Cf0925 < ApplicationRecord
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  def client_pdf_file_name
+    child_last_name + '-' +
+      child_first_name + '-' +
+      id.to_s +
+      '.pdf'
+  end
+
   def printable?
     valid?(:printable) &&
       !child_dob.blank? &&

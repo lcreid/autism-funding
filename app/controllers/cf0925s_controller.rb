@@ -5,6 +5,17 @@ class Cf0925sController < ApplicationController
 
   def show
     @cf0925 = Cf0925.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        @cf0925.generate_pdf
+        send_file @cf0925.pdf_output_file,
+                  disposition: :inline,
+                  type: :pdf,
+                  filename: @cf0925.client_pdf_file_name
+      end
+    end
   end
 
   # The canonical way of new and create with shallow routes is to have an
