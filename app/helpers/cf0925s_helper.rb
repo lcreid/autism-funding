@@ -73,13 +73,15 @@ module Cf0925sHelper
     label
   end
 
-  def print_button(cf0925)
+  def print_button(cf0925, opts = {})
+    classes = 'btn btn-primary'
+    classes += ' ' + opts[:class] if opts[:class]
     if cf0925.printable?
       link_to 'Print',
               cf0925_path(cf0925, :pdf),
-              class: 'btn'
+              class: classes
     else
-      content_tag :span, 'Print', class: 'btn'
+      content_tag :button, 'Print', class: classes + ' disabled'
     end
   end
 end
