@@ -93,7 +93,7 @@ class CompleteCf0925Test < CapybaraTest
     assert_equal 200, status_code
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
-    assert_equal cf0925_path(rtp), current_path
+    assert_current_path cf0925_path(rtp)
     assert_link 'Print'
     skip 'Need JavaScript to disable above link'
   end
@@ -196,6 +196,9 @@ class CompleteCf0925Test < CapybaraTest
         # end
       end
     end
+
+    assert has_link? 'Home'
+    assert has_link? 'Edit'
     # puts "Middle name from user: #{user.name_middle}"
     # user.reload
     # puts "Middle name from user: #{user.name_middle}"
