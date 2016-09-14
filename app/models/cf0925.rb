@@ -5,12 +5,14 @@ class Cf0925 < ApplicationRecord
 
   validates :service_provider_service_start,
             :service_provider_service_end,
-            presence: true
-  validate :start_date_before_end_date
+            presence: true,
+            on: :printable
+  validate :start_date_before_end_date, on: :printable
   validates :payment,
             presence: {
               message: 'please choose either service provider or agency'
-            }
+            },
+            on: :printable
 
   before_validation :set_form
 
@@ -106,30 +108,35 @@ class Cf0925 < ApplicationRecord
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  def client_pdf_file_name
+    child_last_name + '-' +
+      child_first_name + '-' +
+      id.to_s +
+      '.pdf'
+  end
+
   def printable?
-    child_dob &&
-      child_first_name &&
-      child_last_name &&
-      home_phone &&
-      parent_address &&
-      parent_city &&
-      parent_first_name &&
-      parent_last_name &&
-      parent_postal_code &&
-      service_provider_postal_code &&
-      service_provider_address &&
-      service_provider_city &&
-      service_provider_phone &&
-      service_provider_name &&
-      service_provider_service_1 &&
-      service_provider_service_2 &&
-      service_provider_service_3 &&
-      service_provider_service_amount &&
-      service_provider_service_end &&
-      service_provider_service_fee &&
-      service_provider_service_hour &&
-      service_provider_service_start &&
-      work_phone
+    valid?(:printable) &&
+      !child_dob.blank? &&
+      !child_first_name.blank? &&
+      !child_last_name.blank? &&
+      (!home_phone.blank? || !work_phone.blank?) &&
+      !parent_address.blank? &&
+      !parent_city.blank? &&
+      !parent_first_name.blank? &&
+      !parent_last_name.blank? &&
+      !parent_postal_code.blank? &&
+      !service_provider_postal_code.blank? &&
+      !service_provider_address.blank? &&
+      !service_provider_city.blank? &&
+      !service_provider_phone.blank? &&
+      !service_provider_name.blank? &&
+      !service_provider_service_1.blank? &&
+      !service_provider_service_amount.blank? &&
+      !service_provider_service_end.blank? &&
+      !service_provider_service_fee.blank? &&
+      !service_provider_service_hour.blank? &&
+      !service_provider_service_start.blank?
   end
 
   def set_form

@@ -1,6 +1,6 @@
 # -- Test Fixtures for province_codes
 ab:
-  province_code: 'AG'
+  province_code: 'AB'
   province_name: 'Alberta'
   not_supported: 'Y'
 

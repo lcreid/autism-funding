@@ -72,4 +72,29 @@ module Cf0925sHelper
     label = label.sub(/\A#{opts[:lstrip]}\s*/, '') if opts[:lstrip]
     label
   end
+
+  def print_button(cf0925, opts = {})
+    cf0925_button(opts) do |classes|
+      if cf0925.printable?
+        link_to 'Print',
+                cf0925_path(cf0925, :pdf),
+                class: classes,
+                target: '_blank'
+      else
+        content_tag :button, 'Print', class: classes + ' disabled'
+      end
+    end
+  end
+
+  def edit_button(cf0925, opts = {})
+    cf0925_button(opts) do |classes|
+      link_to 'Edit', edit_cf0925_path(cf0925), class: classes
+    end
+  end
+
+  def cf0925_button(opts)
+    classes = 'btn btn-primary'
+    classes += ' ' + opts[:class] if opts[:class]
+    yield classes
+  end
 end
