@@ -161,7 +161,7 @@ class CompleteCf0925Test < CapybaraTest
     assert Address.find_by(city: new_city), "City in address not #{new_city}"
   end
 
-  test 'put a form in the list' do
+  test 'put a form in the list and edit it' do
     fill_in_login(users(:forms))
     # TODO: Change the navigation to give an easier way to the list.
     # visit home_index_path
@@ -171,6 +171,9 @@ class CompleteCf0925Test < CapybaraTest
     assert_content 'Ready to Print'
     assert_content 'service_provider_name'
     assert_content '$3,000'
+
+    click_link 'Edit'
+    assert_button 'Save'
   end
 
   private
