@@ -54,9 +54,15 @@ class CompleteCf0925Test < CapybaraTest
   end
 
   test 'CF_0925 autofill from user and child' do
-    fill_in_login
+    fill_in_login(user = users(:minimum_printable))
     # TODO: Make this follow links when we nail down the UI.
-    visit new_funded_person_cf0925_path(@funded_person)
+    visit new_funded_person_cf0925_path(user.funded_people.first)
+
+    assert_difference 'Cf0925.count' do
+      click_button 'Save'
+    end
+    assert has_no_link?('Print'), "Shouldn't have 'Print' link"
+    click_link 'Edit'
 
     {
       agency_name: 'autofill user and child',
@@ -87,15 +93,16 @@ class CompleteCf0925Test < CapybaraTest
     end
     choose 'cf0925_payment_choice2'
 
-    assert_difference 'Cf0925.count' do
+    assert_no_difference 'Cf0925.count' do
       click_button 'Save'
     end
     assert_equal 200, status_code
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
     assert_current_path cf0925_path(rtp)
+    # puts "RTP printable?: #{rtp.printable?}"
+    # pp rtp.as_json
     assert_link 'Print'
-    skip 'Need JavaScript to disable above link'
   end
 
   test 'RTP for dual-child parent' do

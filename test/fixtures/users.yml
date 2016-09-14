@@ -68,7 +68,7 @@ cf0925:
 
 minimum_printable:
   email: minimum_printable@autism-funding.com
-  encrypted_password: secret8
+  encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
   name_first: Minimum
   name_middle: Parent
   name_last: Printable

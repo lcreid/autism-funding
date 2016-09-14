@@ -42,6 +42,7 @@ class Cf0925sController < ApplicationController
     # puts "Middle name: #{user.name_middle}"
     # puts "Address: #{user.addresses.first.as_json}"
     copy_parent_to_form
+    copy_child_to_form
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # puts 'User save failed' unless user.save
     # puts "User has #{user.phone_numbers.size} phone numbers"
@@ -61,6 +62,8 @@ class Cf0925sController < ApplicationController
     @cf0925.update(cf0925_params)
     user = @cf0925.funded_person.user
     user.update(user_params)
+    copy_parent_to_form
+    copy_child_to_form
 
     if @cf0925.save && user.save
       redirect_to cf0925_path(@cf0925)
@@ -130,9 +133,11 @@ class Cf0925sController < ApplicationController
   # end
   #
   def copy_child_to_form
+    # puts "Before: #{@cf0925.child_dob}"
     @cf0925.child_last_name = @cf0925.funded_person.name_last
     @cf0925.child_first_name = @cf0925.funded_person.name_first
     @cf0925.child_middle_name = @cf0925.funded_person.name_middle
     @cf0925.child_dob = @cf0925.funded_person.my_dob
+    # puts "After: #{@cf0925.child_dob}"
   end
 end

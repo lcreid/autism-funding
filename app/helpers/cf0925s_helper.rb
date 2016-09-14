@@ -72,4 +72,14 @@ module Cf0925sHelper
     label = label.sub(/\A#{opts[:lstrip]}\s*/, '') if opts[:lstrip]
     label
   end
+
+  def print_button(cf0925)
+    if cf0925.printable?
+      link_to 'Print',
+              cf0925_path(cf0925, :pdf),
+              class: 'btn'
+    else
+      content_tag :span, 'Print', class: 'btn'
+    end
+  end
 end

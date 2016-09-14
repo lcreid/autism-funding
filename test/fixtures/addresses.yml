@@ -1,7 +1,14 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 # -- Test data for addresses
 ad_1_of_1:
- address_line_1: "ad_1_of_1"
- city: 'Anytown'
- province_code: province_codes(:ont)
- user: has_one_address
+  address_line_1: "ad_1_of_1"
+  city: 'Anytown'
+  province_code: ont
+  user: has_one_address
+
+minimum_printable:
+  address_line_1: Minimum Printable St
+  city: Min Print Ville
+  postal_code: S0S 0S0
+  province_code: bc
+  user: minimum_printable

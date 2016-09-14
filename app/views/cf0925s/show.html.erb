@@ -77,8 +77,6 @@
     <%= show_field(:item_desp_3) %>
     <%= show_field(:item_cost_3) %>
   <% end %>
-  <%= link_to 'Print',
-              cf0925_path(@cf0925, :pdf),
-              class: "btn#{@cf0925.printable? ? '': ' disabled'}" %>
+  <%= print_button(@cf0925) %>
   <%= link_to "Edit", edit_cf0925_path(@cf0925), class: "btn" %>
 </div>
