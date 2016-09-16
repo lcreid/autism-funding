@@ -45,10 +45,10 @@
       <%= form_row do %>
         <%= service_provider_field(f, :service_provider_name, 8, lstrip: '') %>
         <%= service_provider_field(f, "Payment to be provided to:", 4) do %>
-        <%= f.radio_button(:payment, 'Choice1') %>
+        <%= f.radio_button(:payment, 'provider') %>
         <%= f.label('Service Provider') %>
         <br/>
-        <%= f.radio_button(:payment, 'Choice2') %>
+        <%= f.radio_button(:payment, 'agency') %>
         <%= f.label('Agency') %>
         <% end %>
       <% end %>

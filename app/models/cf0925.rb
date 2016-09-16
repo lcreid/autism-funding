@@ -84,8 +84,8 @@ class Cf0925 < ApplicationRecord
                       hm_phn_area: home_phone[1..3],
                       hm_phn: home_phone[5..-1],
                       chld_DOB: format_date(child_dob),
-                      chld_yn: 'Choice1', # This comes from radio buttons
-                      Payment: 'Choice2', # This comes from radio buttons
+                      chld_yn: translate_care_of_ministry_to_pdf_field, # This comes from radio buttons
+                      Payment: translate_payment_to_pdf_field, # This comes from radio buttons
                       wrk_phn_area: work_phone[1..3],
                       wrk_phn: work_phone[5..-1]
                     },
@@ -157,5 +157,13 @@ class Cf0925 < ApplicationRecord
 
   def user
     funded_person.user
+  end
+
+  def translate_payment_to_pdf_field
+    payment == 'provider' ? 'Choice2' : 'Choice1'
+  end
+
+  def translate_care_of_ministry_to_pdf_field
+    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
   end
 end
