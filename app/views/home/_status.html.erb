@@ -5,4 +5,11 @@
   <div class="col-md-2">
     Total funding for year: $6,000
   </div>
+  <div class="col-md-2">
+    Out of pocket: $0
+  </div>
+  <div class="col-md-2">
+    <!-- TODO: properly fill in the years and make them do something. -->
+    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
+  </div>
 </div>
