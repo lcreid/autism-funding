@@ -27,7 +27,7 @@ class CompleteCf0925Test < CapybaraTest
       parent_last_name: 'parent_last_name',
       parent_middle_name: 'parent_middle_name',
       parent_postal_code: 'parent_postal_code',
-      payment: 'Choice2',
+      payment: 'agency',
       service_provider_postal_code: 'service_provider_postal_code',
       service_provider_address: 'service_provider_address',
       service_provider_city: 'service_provider_city',
@@ -91,7 +91,7 @@ class CompleteCf0925Test < CapybaraTest
     }.each do |k, v|
       fill_in 'cf0925_' + k.to_s, with: v
     end
-    choose 'cf0925_payment_choice2'
+    choose 'cf0925_payment_agency'
 
     assert_no_difference 'Cf0925.count' do
       click_button 'Save'
@@ -206,7 +206,7 @@ class CompleteCf0925Test < CapybaraTest
         # I shouldn't really need the following.
         fill_in 'cf0925_service_provider_service_start', with: '2016-08-01'
         fill_in 'cf0925_service_provider_service_end', with: '2016-09-30'
-        choose 'cf0925_payment_choice1'
+        choose 'cf0925_payment_provider'
         click_button 'Save'
         # end
       end

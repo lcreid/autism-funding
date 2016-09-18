@@ -1,19 +1,19 @@
 <div class="child">
   <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="headingOne">
+      <div class="panel-heading" role="tab" id="heading-<%= funded_person.id %>">
           <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<%= funded_person.id %>" aria-expanded="true" aria-controls="collapse-<%= funded_person.id %>">
                   <span class="name">
                     <%# The object name in the partial is named after the partial,
                         not the singular of the object for the collection. %>
                     <%= funded_person.my_name %>
                   </span>
-                  <!-- TODO: fill this in. -->
+                  <!-- TODO: properly fill in the years and make them do something. -->
                   <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
               </a>
           </h4>
       </div>
-      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div id="collapse-<%= funded_person.id %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-<%= funded_person.id %>">
           <div class="panel-body">
             <%= render partial: "funded_people/show_body", locals: { funded_person: funded_person } %>
           </div>

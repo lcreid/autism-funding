@@ -73,21 +73,21 @@ class Cf0925 < ApplicationRecord
                       SP_serv_end: format_date(service_provider_service_end),
                       ph_area_SP: service_provider_phone[0..2],
                       sup_area_ph: supplier_phone[0..2],
-                      phn_SP: service_provider_phone[3..-1],
-                      sup_ph: supplier_phone[3..-1],
+                      phn_SP: service_provider_phone[4..-1],
+                      sup_ph: supplier_phone[4..-1],
                       parent_city: parent_city,
                       parent_PC: parent_postal_code,
                       parent_fst_name: parent_first_name,
                       chld_fst_name: child_first_name,
                       parent_mid_name: parent_middle_name,
                       chld_mid_name: child_middle_name,
-                      hm_phn_area: home_phone[0..2],
-                      hm_phn: home_phone[3..-1],
+                      hm_phn_area: home_phone[1..3],
+                      hm_phn: home_phone[5..-1],
                       chld_DOB: format_date(child_dob),
-                      chld_yn: 'Choice1', # This comes from radio buttons
-                      Payment: 'Choice2', # This comes from radio buttons
-                      wrk_phn_area: work_phone[0..2],
-                      wrk_phn: work_phone[3..-1]
+                      chld_yn: translate_care_of_ministry_to_pdf_field, # This comes from radio buttons
+                      Payment: translate_payment_to_pdf_field, # This comes from radio buttons
+                      wrk_phn_area: work_phone[1..3],
+                      wrk_phn: work_phone[5..-1]
                     },
                     flatten: true)
     # rescue PdfForms::PdftkError => e
@@ -157,5 +157,13 @@ class Cf0925 < ApplicationRecord
 
   def user
     funded_person.user
+  end
+
+  def translate_payment_to_pdf_field
+    payment == 'provider' ? 'Choice2' : 'Choice1'
+  end
+
+  def translate_care_of_ministry_to_pdf_field
+    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
   end
 end
