@@ -24,7 +24,9 @@ class MyProfileTest < CapybaraTest
     # assert_equal 0, User.find_by(email: email).addresses.size
 
     assert_equal '/', current_path
-    click_link 'My Profile'
+    within 'nav' do
+      click_link 'My Profile'
+    end
     assert_equal '/my_profile/index', current_path
     click_link 'edit'
 

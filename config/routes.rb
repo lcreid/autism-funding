@@ -25,7 +25,13 @@ Rails.application.routes.draw do
     get :all_forms
     get :all_invoices
     resources :cf0925s
+#    resources :cf0925_invoices
     resources :filled_in_forms
   end
+
+  resources :cf0925s, shallow: true do
+    resources :invoices
+  end
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

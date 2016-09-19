@@ -4,6 +4,15 @@
   The forms and funding found in this area are only availble to residents of
   British Columbia
 </div>
+<%  if @funded_people.count == 0 %>
+  <div class="alert alert-warning">
+    <span class="glyphicon glyphicon-star-empty"></span>
+    You have not defined any funded children in your profile, so your home page is blank
+    <br><br>
+    You may enter your funded children in <%= link_to 'My Profile', my_profile_index_path %>.  Edit
+    your profile and include any funded children.
+  </div>
+<% end %>
 <%= render 'shared/notifications' %>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
