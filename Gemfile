@@ -39,6 +39,7 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'capybara'
   gem 'minitest-capybara'
+  gem 'poltergeist'
 end
 
 group :development do

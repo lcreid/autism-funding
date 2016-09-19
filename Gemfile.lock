@@ -108,6 +108,10 @@ GEM
       safe_shell (>= 1.0.3, < 2.0)
     pg (0.18.4)
     pkg-config (1.1.7)
+    poltergeist (1.10.0)
+      capybara (~> 2.1)
+      cliver (~> 0.3.1)
+      websocket-driver (>= 0.2.0)
     puma (3.5.2)
     rack (2.0.1)
     rack-test (0.6.3)
@@ -203,6 +207,7 @@ DEPENDENCIES
   minitest-capybara
   pdf-forms
   pg
+  poltergeist
   puma (~> 3.0)
   rails (>= 5.0.0, < 5.1)
   rails-erd
