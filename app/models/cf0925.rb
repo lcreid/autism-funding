@@ -33,6 +33,15 @@ class Cf0925 < ApplicationRecord
   #           :work_phone,
   #           presence: true
 
+  ##
+  # Return the fiscal year of the RTP, defined as the fiscal year of the
+  # start date for service. It should be a validation that the start and
+  # end dates are in the same fiscal year.
+  def fiscal_year
+    return nil unless service_provider_service_start
+    funded_person.fiscal_year(service_provider_service_start)
+  end
+
   def format_date(date)
     date
   end
