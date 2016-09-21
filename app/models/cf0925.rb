@@ -1,5 +1,5 @@
 class Cf0925 < ApplicationRecord
-  include FiscalYear
+  include Helpers::FiscalYear
 
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s

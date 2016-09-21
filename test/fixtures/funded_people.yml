@@ -74,3 +74,18 @@ leap_day:
   birthdate: '2004-02-29'
   name_first: Leap
   name_last: Day
+
+no_fiscal_years:
+  birthdate: '2007-10-31'
+  name_first: No
+  name_last: Years
+
+one_fiscal_year:
+  birthdate: '2009-12-01'
+  name_first: One
+  name_last: Year
+
+two_fiscal_years:
+  birthdate: '2003-06-15'
+  name_first: Two
+  name_last: Years

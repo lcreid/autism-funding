@@ -41,7 +41,17 @@ class FundedPerson < ApplicationRecord
     start_of_first_fiscal_year = birthdate.next_month.beginning_of_month
     start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
     start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
-    start_of_fiscal_year...start_of_fiscal_year.next_year
+    FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+  end
+
+  ##
+  # Return a list of fiscal years for which there is some sort of activity
+  # for the FundedPerson.
+  # TODO: Add other sources of paperwork as they become available (Invoice).
+  def fiscal_years
+    cf0925s.map(&:fiscal_year)
+           .uniq(&:range)
+           .sort # { |x, y| x.range.first <=> y.range.first }
   end
 
   def must_define_at_least_one_name

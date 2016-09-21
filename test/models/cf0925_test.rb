@@ -19,6 +19,6 @@ class Cf0925Test < ActiveSupport::TestCase
   test 'fiscal year' do
     rtp = cf0925s(:one)
     assert_equal Date.new(2016, 5, 1)...Date.new(2017, 5, 1),
-                 rtp.fiscal_year
+                 rtp.fiscal_year.range
   end
 end
