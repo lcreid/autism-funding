@@ -49,3 +49,28 @@ four_year_old:
   name_middle: Year
   name_last: Two-Kids
   user: dual_child_parent
+
+beginning_of_year:
+  birthdate: '2009-01-01'
+  name_first: Beginning
+  name_last: Year
+
+end_of_year:
+  birthdate: '2011-12-31'
+  name_first: End
+  name_last: Year
+
+beginning_of_month:
+  birthdate: '2007-04-01'
+  name_first: Beginning
+  name_last: Month
+
+end_of_month:
+  birthdate: '2008-04-30'
+  name_first: End
+  name_last: Month
+
+leap_day:
+  birthdate: '2004-02-29'
+  name_first: Leap
+  name_last: Day

@@ -36,6 +36,14 @@ class FundedPerson < ApplicationRecord
     end
   end
 
+  def fiscal_year(date)
+    date = date.to_date unless date.is_a?(Date)
+    start_of_first_fiscal_year = birthdate.next_month.beginning_of_month
+    start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
+    start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
+    start_of_fiscal_year...start_of_fiscal_year.next_year
+  end
+
   def must_define_at_least_one_name
     if my_name == 'no name defined'
       errors.add(:name, ' - must define at least one name')
