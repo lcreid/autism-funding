@@ -62,7 +62,7 @@ class CompleteCf0925Test < CapybaraTest
       click_button 'Save'
     end
     assert has_no_link?('Print'), "Shouldn't have 'Print' link"
-    click_link 'Edit'
+    # click_link 'Edit' No longer needed since we stay on edit page
 
     {
       agency_name: 'autofill user and child',
@@ -99,7 +99,7 @@ class CompleteCf0925Test < CapybaraTest
     assert_equal 200, status_code
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
-    assert_current_path cf0925_path(rtp)
+    assert_current_path edit_cf0925_path(rtp)
     # puts "RTP printable?: #{rtp.printable?}"
     # pp rtp.as_json
     if ENV['TEST_PDF_GENERATION']
@@ -108,6 +108,8 @@ class CompleteCf0925Test < CapybaraTest
     else
       puts 'Skipped PDF generation. To include: `export TEST_PDF_GENERATION=1`'
     end
+    click_link_or_button 'Home'
+    assert_current_path home_index_path
   end
 
   test 'RTP for dual-child parent' do
@@ -146,7 +148,7 @@ class CompleteCf0925Test < CapybaraTest
   test 'Edit an existing CF0925' do
     create_a_cf0925
 
-    click_link 'Edit'
+    # click_link 'Edit'
     new_city = 'Vernon'
     within '.parent-address-fields' do
       fill_in 'City', with: new_city
@@ -213,7 +215,7 @@ class CompleteCf0925Test < CapybaraTest
     end
 
     assert has_link? 'Home'
-    assert has_link? 'Edit'
+    # assert has_link? 'Edit'
     # puts "Middle name from user: #{user.name_middle}"
     # user.reload
     # puts "Middle name from user: #{user.name_middle}"

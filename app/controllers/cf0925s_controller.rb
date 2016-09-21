@@ -13,7 +13,7 @@ class Cf0925sController < ApplicationController
         send_file @cf0925.pdf_output_file,
                   disposition: :inline,
                   type: :pdf,
-                  filename: @cf0925.client_pdf_file_name
+                  filename: @cf0925client_pdf_file_name
       end
     end
   end
@@ -62,7 +62,8 @@ class Cf0925sController < ApplicationController
     # puts 'Cf0925 save failed' unless @cf0925.save
     # puts @cf0925.errors.full_messages
     if @cf0925.save && user.save
-      redirect_to cf0925_path(@cf0925)
+      # TODO: why can't I just render :edit here?
+      redirect_to edit_cf0925_path(@cf0925)
     else
       render :new
     end
@@ -77,9 +78,10 @@ class Cf0925sController < ApplicationController
     copy_child_to_form
 
     if @cf0925.save && user.save
-      redirect_to cf0925_path(@cf0925)
+      # TODO: why can't I just render :edit here?
+      redirect_to edit_cf0925_path(@cf0925)
     else
-      render :new
+      render :edit
     end
   end
 

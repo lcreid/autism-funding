@@ -153,7 +153,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # FundedPerson.all.each { |funded_person| puts "#{funded_person.name_last}: #{funded_person.my_dob}" }
     # Cf0925.all.each { |rtp| puts "#{rtp.funded_person.name_last}: #{rtp.funded_person.my_dob}" }
     assert_not_nil(cf0925 = Cf0925.find_by(child_dob: '2010-06-14'))
-    assert_redirected_to cf0925_path(cf0925)
+    assert_redirected_to edit_cf0925_path(cf0925)
   end
 
   test 'CF_0925 child between 6 and 18' do
@@ -168,13 +168,14 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
 
-    assert_select '#service_provider_service_start',
+    assert_select '#cf0925_service_provider_service_start[value=?]',
                   @form_field_values[:service_provider_service_start]
   end
 
   test 'CF_0925 start date after end date' do
     get new_funded_person_cf0925_path(@funded_person)
     assert_response :success
+    assert_equal path, new_funded_person_cf0925_path(@funded_person)
 
     # Make a bad date.
     bad_date_params = @form_field_values.merge(service_provider_service_end: '2016-05-31')

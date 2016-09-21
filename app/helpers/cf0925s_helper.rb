@@ -92,6 +92,12 @@ module Cf0925sHelper
     end
   end
 
+  def home_button(opts = {})
+    cf0925_button(opts) do |classes|
+      link_to 'Home', home_index_path, class: classes
+    end
+  end
+
   def cf0925_button(opts)
     classes = 'btn btn-primary'
     classes += ' ' + opts[:class] if opts[:class]
