@@ -1,4 +1,6 @@
 class Cf0925 < ApplicationRecord
+  include Helpers::FiscalYear
+
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
   # accepts_nested_attributes_for :funded_person
@@ -32,6 +34,8 @@ class Cf0925 < ApplicationRecord
   #           :parent_postal_code,
   #           :work_phone,
   #           presence: true
+  # It should be a validation that the start and end dates are in the same
+  # fiscal year.
 
   def format_date(date)
     date
@@ -165,5 +169,11 @@ class Cf0925 < ApplicationRecord
 
   def translate_care_of_ministry_to_pdf_field
     child_in_care_of_ministry ? 'Choice1' : 'Choice2'
+  end
+
+  private
+
+  def start_date
+    service_provider_service_start
   end
 end

@@ -19,7 +19,7 @@ two_of_two:
  user: has_two_fp
 
 cf0925:
-  birthdate: '2007-10-11'
+  birthdate: '2002-04-01'
   name_first: cf
   name_last: '0925'
   user: cf0925
@@ -49,3 +49,43 @@ four_year_old:
   name_middle: Year
   name_last: Two-Kids
   user: dual_child_parent
+
+beginning_of_year:
+  birthdate: '2009-01-01'
+  name_first: Beginning
+  name_last: Year
+
+end_of_year:
+  birthdate: '2011-12-31'
+  name_first: End
+  name_last: Year
+
+beginning_of_month:
+  birthdate: '2007-04-01'
+  name_first: Beginning
+  name_last: Month
+
+end_of_month:
+  birthdate: '2008-04-30'
+  name_first: End
+  name_last: Month
+
+leap_day:
+  birthdate: '2004-02-29'
+  name_first: Leap
+  name_last: Day
+
+no_fiscal_years:
+  birthdate: '2007-10-31'
+  name_first: No
+  name_last: Years
+
+one_fiscal_year:
+  birthdate: '2009-12-01'
+  name_first: One
+  name_last: Year
+
+two_fiscal_years:
+  birthdate: '2003-06-15'
+  name_first: Two
+  name_last: Years
