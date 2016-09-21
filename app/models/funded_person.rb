@@ -50,7 +50,7 @@ class FundedPerson < ApplicationRecord
   # TODO: Add other sources of paperwork as they become available (Invoice).
   def fiscal_years
     cf0925s.map(&:fiscal_year)
-           .uniq(&:range)
+           .uniq # (&:range)
            .sort # { |x, y| x.range.first <=> y.range.first }
   end
 
