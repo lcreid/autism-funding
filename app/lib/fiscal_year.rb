@@ -11,16 +11,20 @@ class FiscalYear
     nil
   end
 
-  # def ==(other)
-  #   return @range == other if other.is_a? Range
-  #   return @range == other.range if other.is_a? FiscalYear
-  #   false
-  # end
-  #
-  # def eql?(other)
-  #   self == other
-  # end
-  #
+  def ==(other)
+    return @range == other if other.is_a? Range
+    return @range == other.range if other.is_a? FiscalYear
+    false
+  end
+
+  def eql?(other)
+    self == other
+  end
+
+  def hash
+    @range.hash
+  end
+
   ##
   # Show the fiscal year as 'YYYY-YYYY', or just 'YYYY' if the fiscal year
   # is the calendar year.
