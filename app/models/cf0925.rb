@@ -3,6 +3,7 @@ class Cf0925 < ApplicationRecord
 
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
+  has_many :invoices
   # accepts_nested_attributes_for :funded_person
 
   validates :service_provider_service_start,

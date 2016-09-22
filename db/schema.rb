@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160919190012) do
+ActiveRecord::Schema.define(version: 20160921192114) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,16 +101,20 @@ ActiveRecord::Schema.define(version: 20160919190012) do
 
   create_table "invoices", force: :cascade do |t|
     t.integer  "cf0925_id"
-    t.decimal  "invoice_amount",     precision: 7, scale: 2
+    t.decimal  "invoice_amount",        precision: 7, scale: 2
     t.date     "invoice_date"
     t.string   "notes"
     t.date     "service_end"
     t.date     "service_start"
     t.string   "supplier_name"
-    t.string   "supplier_reference"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.string   "invoice_reference"
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.integer  "funded_person_id"
+    t.text     "agency_name"
+    t.text     "service_provider_name"
     t.index ["cf0925_id"], name: "index_invoices_on_cf0925_id", using: :btree
+    t.index ["funded_person_id"], name: "index_invoices_on_funded_person_id", using: :btree
   end
 
   create_table "phone_numbers", force: :cascade do |t|
@@ -159,5 +163,6 @@ ActiveRecord::Schema.define(version: 20160919190012) do
   add_foreign_key "forms", "province_codes"
   add_foreign_key "funded_people", "users"
   add_foreign_key "invoices", "cf0925s"
+  add_foreign_key "invoices", "funded_people"
   add_foreign_key "phone_numbers", "users"
 end

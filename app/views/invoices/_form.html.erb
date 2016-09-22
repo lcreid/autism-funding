@@ -1,0 +1,126 @@
+<%#= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
+
+<%= form_for([@funded_person,@invoice]) do |f| %>
+  <%#= f.fields_for :funded_person_attributes, @cf0925.funded_person do |child| %>
+    <%#= child.hidden_field :id %>
+    <%#= child.fields_for :user_attributes, @cf0925.funded_person.user do |parent| %>
+      <%#= parent.hidden_field :id %>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            Date and Supplier
+          </h3>
+        </div>
+        <div class="panel-body">
+          <%## parent and form needed below just during refactoring. %>
+          <%#= render partial: 'parent_info', locals: { parent: parent, form: f } %>
+        </div>
+      </div>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            Section 2 Child Information
+          </h3>
+        </div>
+        <div class="panel-body">
+          <%#= render partial: 'child_info', locals: { f: f } %>
+        </div>
+      </div>
+    <%# end %>
+  <%# end %>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        Part A Services
+      </h3>
+    </div>
+    <div class="panel-body">
+      <p>
+        Complete this section
+        to authorize payment
+        to a service provider
+        who is providing autism intervention
+        for the child.
+      </p>
+      <%#= form_row do %>
+        <%#= service_provider_field(f, :service_provider_name, 8, lstrip: '') %>
+        <%#= service_provider_field(f, "Payment to be provided to:", 4) do %>
+        <%#= f.radio_button(:payment, 'provider') %>
+        <%#= f.label('Service Provider') %>
+        <br/>
+        <%#= f.radio_button(:payment, 'agency') %>
+        <%#= f.label('Agency') %>
+        <%# end %>
+      <%# end %>
+      <%#= form_row do %>
+        <%#= service_provider_field(f, :agency_name, 8) %>
+      <%# end %>
+      <%#= form_row do %>
+        <%#= service_provider_field(f, :service_provider_address, 5) %>
+        <%#= service_provider_field(f, :service_provider_city, 3) %>
+        <%#= service_provider_field(f, :service_provider_postal_code, 2) %>
+        <%#= service_provider_field(f, :service_provider_phone, 2) %>
+      <%# end %>
+        <%#= form_row do %>
+        <%#= service_provider_field(f, :service_provider_service_1, 6) %>
+        <%#= wrap_date_field(f, :service_provider_service_start, 3) %>
+        <%#= wrap_date_field(f, :service_provider_service_end, 3) %>
+      <%# end %>
+      <%#= form_row do %>
+        <%#= service_provider_field(f, :service_provider_service_2, 6) %>
+        <%#= service_provider_field(f, :service_provider_service_fee, 2) %>
+        <%#= service_provider_field(f, :service_provider_service_hour, 2) %>
+        <%#= service_provider_field(f, :service_provider_service_amount, 2) %>
+      <%# end %>
+      <%#= form_row do %>
+        <%#= service_provider_field(f, :service_provider_service_3, 6) %>
+      <%# end %>
+    </div>
+  </div>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        Part B Additional Expenses:
+        <small>
+          Travel, Training, Equipment, and Supplies
+        </small>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <p>
+        Complete this section
+        to authorize payment
+        to a supplier
+        for expenses related to travel,
+        training,
+        equipment
+        or materials
+        directly on behalf of a parent or guardian.
+      </p>
+      <%#= form_row do %>
+      <%#= supplier_field(f, :supplier_name, 4, lstrip: '') %>
+      <%#= supplier_field(f, :supplier_contact_person, 5) %>
+      <%#= supplier_field(f, :supplier_phone, 3) %>
+      <%# end %>
+      <%#= form_row do %>
+      <%#= supplier_field(f, :supplier_address, 6) %>
+      <%#= supplier_field(f, :supplier_city, 4) %>
+      <%#= supplier_field(f, :supplier_postal_code, 2) %>
+      <%# end %>
+      <%#= form_row do %>
+      <%#= supplier_field(f, :item_desp_1, 6) %>
+      <%#= supplier_field(f, :item_cost_1, 2) %>
+      <%#= supplier_field(f, :item_total, 4) %>
+      <%# end %>
+      <%#= form_row do %>
+      <%#= supplier_field(f, :item_desp_2, 6) %>
+      <%#= supplier_field(f, :item_cost_2, 2) %>
+      <%# end %>
+      <%#= form_row do %>
+      <%#= supplier_field(f, :item_desp_3, 6) %>
+      <%#= supplier_field(f, :item_cost_3, 2) %>
+      <%# end %>
+    </div>
+  </div>
+  <%#= f.submit 'Save' %>
+<% end %>
