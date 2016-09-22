@@ -10,6 +10,8 @@
   </div>
   <div class="col-md-2">
     <!-- TODO: properly fill in the years and make them do something. -->
-    <%= select_tag "Year", raw("<option>2016-2017</option><option>2015-2016</option>"), class: "pull-right" %>
+    <%= select_tag "Year",
+                   options_from_collection_for_select(funded_person.fiscal_years, :to_s, :to_s),
+                   class: "pull-right" %>
   </div>
 </div>
