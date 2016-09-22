@@ -5,6 +5,7 @@ class FundedPerson < ApplicationRecord
   accepts_nested_attributes_for :user
 
   has_many :cf0925s, inverse_of: :funded_person
+  has_many :invoices
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validates :birthdate, presence: true
