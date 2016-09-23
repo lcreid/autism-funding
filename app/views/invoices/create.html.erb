@@ -1,0 +1,16 @@
+I am the creator!
+
+<br><br>
+<div style="width: 60%; border: double 1pt red;">
+  <br>
+    All params: <%= debug(params) %>
+  <br>
+  <br>
+    permitted: <%= debug(params.required(:invoice).permit(:funded_person_id, :service_start)) %>
+  <br>
+
+  <br>
+    try: <%= debug(params.required(:invoice).permit(:funded_person_id, :service_start)) %>
+  <br>
+
+</div>

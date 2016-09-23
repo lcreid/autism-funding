@@ -1,0 +1,63 @@
+                          Prefix Verb   URI Pattern                                                    Controller#Action
+                    invoices_new GET    /invoices/new(.:format)                                        invoices#new
+            static_non_supported GET    /static/non_supported(.:format)                                static#non_supported
+               static_contact_us GET    /static/contact_us(.:format)                                   static#contact_us
+          static_bc_instructions GET    /static/bc_instructions(.:format)                              static#bc_instructions
+                            root GET    /                                                              home#index
+                      home_index GET    /home/index(.:format)                                          home#index
+                   welcome_index GET    /welcome/index(.:format)                                       welcome#index
+           other_resources_index GET    /other_resources/index(.:format)                               other_resources#index
+                my_profile_index GET    /my_profile/index(.:format)                                    my_profile#index
+                 my_profile_edit GET    /my_profile/edit(.:format)                                     my_profile#edit
+               my_profile_update PATCH  /my_profile/update(.:format)                                   my_profile#update
+                                 PUT    /my_profile/update(.:format)                                   my_profile#update
+                new_user_session GET    /users/sign_in(.:format)                                       devise/sessions#new
+                    user_session POST   /users/sign_in(.:format)                                       devise/sessions#create
+            destroy_user_session DELETE /users/sign_out(.:format)                                      devise/sessions#destroy
+                   user_password POST   /users/password(.:format)                                      devise/passwords#create
+               new_user_password GET    /users/password/new(.:format)                                  devise/passwords#new
+              edit_user_password GET    /users/password/edit(.:format)                                 devise/passwords#edit
+                                 PATCH  /users/password(.:format)                                      devise/passwords#update
+                                 PUT    /users/password(.:format)                                      devise/passwords#update
+        cancel_user_registration GET    /users/cancel(.:format)                                        devise/registrations#cancel
+               user_registration POST   /users(.:format)                                               devise/registrations#create
+           new_user_registration GET    /users/sign_up(.:format)                                       devise/registrations#new
+          edit_user_registration GET    /users/edit(.:format)                                          devise/registrations#edit
+                                 PATCH  /users(.:format)                                               devise/registrations#update
+                                 PUT    /users(.:format)                                               devise/registrations#update
+                                 DELETE /users(.:format)                                               devise/registrations#destroy
+                           forms GET    /forms(.:format)                                               forms#index
+         funded_person_all_forms GET    /funded_people/:funded_person_id/all_forms(.:format)           funded_people#all_forms
+      funded_person_all_invoices GET    /funded_people/:funded_person_id/all_invoices(.:format)        funded_people#all_invoices
+           funded_person_cf0925s GET    /funded_people/:funded_person_id/cf0925s(.:format)             cf0925s#index
+                                 POST   /funded_people/:funded_person_id/cf0925s(.:format)             cf0925s#create
+        new_funded_person_cf0925 GET    /funded_people/:funded_person_id/cf0925s/new(.:format)         cf0925s#new
+                     edit_cf0925 GET    /cf0925s/:id/edit(.:format)                                    cf0925s#edit
+                          cf0925 GET    /cf0925s/:id(.:format)                                         cf0925s#show
+                                 PATCH  /cf0925s/:id(.:format)                                         cf0925s#update
+                                 PUT    /cf0925s/:id(.:format)                                         cf0925s#update
+                                 DELETE /cf0925s/:id(.:format)                                         cf0925s#destroy
+          funded_person_invoices GET    /funded_people/:funded_person_id/invoices(.:format)            invoices#index
+                                 POST   /funded_people/:funded_person_id/invoices(.:format)            invoices#create
+       new_funded_person_invoice GET    /funded_people/:funded_person_id/invoices/new(.:format)        invoices#new
+                    edit_invoice GET    /invoices/:id/edit(.:format)                                   invoices#edit
+                         invoice GET    /invoices/:id(.:format)                                        invoices#show
+                                 PATCH  /invoices/:id(.:format)                                        invoices#update
+                                 PUT    /invoices/:id(.:format)                                        invoices#update
+                                 DELETE /invoices/:id(.:format)                                        invoices#destroy
+   funded_person_filled_in_forms GET    /funded_people/:funded_person_id/filled_in_forms(.:format)     filled_in_forms#index
+                                 POST   /funded_people/:funded_person_id/filled_in_forms(.:format)     filled_in_forms#create
+new_funded_person_filled_in_form GET    /funded_people/:funded_person_id/filled_in_forms/new(.:format) filled_in_forms#new
+             edit_filled_in_form GET    /filled_in_forms/:id/edit(.:format)                            filled_in_forms#edit
+                  filled_in_form GET    /filled_in_forms/:id(.:format)                                 filled_in_forms#show
+                                 PATCH  /filled_in_forms/:id(.:format)                                 filled_in_forms#update
+                                 PUT    /filled_in_forms/:id(.:format)                                 filled_in_forms#update
+                                 DELETE /filled_in_forms/:id(.:format)                                 filled_in_forms#destroy
+                   funded_people GET    /funded_people(.:format)                                       funded_people#index
+                                 POST   /funded_people(.:format)                                       funded_people#create
+               new_funded_person GET    /funded_people/new(.:format)                                   funded_people#new
+              edit_funded_person GET    /funded_people/:id/edit(.:format)                              funded_people#edit
+                   funded_person GET    /funded_people/:id(.:format)                                   funded_people#show
+                                 PATCH  /funded_people/:id(.:format)                                   funded_people#update
+                                 PUT    /funded_people/:id(.:format)                                   funded_people#update
+                                 DELETE /funded_people/:id(.:format)                                   funded_people#destroy
