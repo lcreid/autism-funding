@@ -157,43 +157,43 @@ class FundedPersonTest < ActiveSupport::TestCase
   test 'Fiscal year beginning of year' do
     child = funded_people(:beginning_of_year)
     assert_equal Time.new(2009, 2, 1).to_date...Time.new(2010, 2, 1).to_date,
-                 child.fiscal_year(Time.new(2010, 1, 1)).range
+                 child.fiscal_year(Time.new(2010, 1, 1))
   end
 
   test 'Fiscal year end of year' do
     child = funded_people(:end_of_year)
     assert_equal Time.new(2013, 1, 1).to_date...Time.new(2014, 1, 1).to_date,
-                 child.fiscal_year(Time.new(2013, 1, 1)).range
+                 child.fiscal_year(Time.new(2013, 1, 1))
   end
 
   test 'Fiscal year beginning of month' do
     child = funded_people(:beginning_of_month)
     assert_equal Time.new(2009, 5, 1).to_date...Time.new(2010, 5, 1).to_date,
-                 child.fiscal_year(Time.new(2010, 1, 1)).range
+                 child.fiscal_year(Time.new(2010, 1, 1))
   end
 
   test 'Fiscal year end of month' do
     child = funded_people(:end_of_month)
     assert_equal Time.new(2016, 5, 1).to_date...Time.new(2017, 5, 1).to_date,
-                 child.fiscal_year(Time.new(2016, 12, 31)).range
+                 child.fiscal_year(Time.new(2016, 12, 31))
   end
 
   test 'Fiscal year end of month on birthday' do
     child = funded_people(:end_of_month)
     assert_equal Time.new(2015, 5, 1).to_date...Time.new(2016, 5, 1).to_date,
-                 child.fiscal_year(Time.new(2016, 4, 30)).range
+                 child.fiscal_year(Time.new(2016, 4, 30))
   end
 
   test 'Leap year on birthday no leap day' do
     child = funded_people(:leap_day)
     assert_equal Time.new(2008, 3, 1).to_date...Time.new(2009, 3, 1).to_date,
-                 child.fiscal_year(Time.new(2009, 2, 28)).range
+                 child.fiscal_year(Time.new(2009, 2, 28))
   end
 
   test 'Leap year on birthday leap day' do
     child = funded_people(:leap_day)
     assert_equal Time.new(2007, 3, 1).to_date...Time.new(2008, 3, 1).to_date,
-                 child.fiscal_year(Time.new(2008, 2, 29)).range
+                 child.fiscal_year(Time.new(2008, 2, 29))
   end
 
   test 'fiscal years list' do
