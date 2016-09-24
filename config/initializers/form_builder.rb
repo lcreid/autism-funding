@@ -6,7 +6,9 @@ module ActionView
       ##
       # Create a place to put error messages for a field.
       def error_message_for(field_name)
+        # puts "Message?: #{field_name}: #{object.errors[field_name]}"
         if object.errors[field_name].present?
+          puts "User prompted for: #{field_name}: #{object.errors[field_name]}"
           model_name = object.class.name.downcase
           id_of_element           = "error_#{model_name}_#{field_name}"
           target_elem_id          = "#{model_name}_#{field_name}"

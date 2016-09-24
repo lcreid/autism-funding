@@ -36,7 +36,7 @@ class Cf0925sController < ApplicationController
     @cf0925 = Cf0925.find(params[:id])
     # puts @cf0925.funded_person.inspect
     # Get the missing fields, aka help info, for the object
-    @cf0925.valid?(:printable)
+    @cf0925.printable?
   end
 
   def create
@@ -65,12 +65,12 @@ class Cf0925sController < ApplicationController
     # puts @cf0925.errors.full_messages
     if @cf0925.save && user.save
       # Get the missing fields, aka help info, for the object
-      @cf0925.valid?(:printable)
+      # @cf0925.printable? FIXME: Useless since we're redirecting
       # TODO: why can't I just render :edit here?
       redirect_to edit_cf0925_path(@cf0925)
     else
       # Get the missing fields, aka help info, for the object
-      @cf0925.valid?(:printable)
+      @cf0925.printable?
       render :new
     end
   end
@@ -85,12 +85,12 @@ class Cf0925sController < ApplicationController
 
     if @cf0925.save && user.save
       # Get the missing fields, aka help info, for the object
-      @cf0925.valid?(:printable)
+      # @cf0925.printable? FIXME: Useless since we're redirecting
       # TODO: why can't I just render :edit here?
       redirect_to edit_cf0925_path(@cf0925)
     else
       # Get the missing fields, aka help info, for the object
-      @cf0925.valid?(:printable)
+      @cf0925.printable?
       render :edit
     end
   end

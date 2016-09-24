@@ -26,11 +26,12 @@ module Cf0925sHelper
         a = capture(&block)
         a.prepend(content_tag(:small, format_label(field, opts)) +
                   content_tag(:br)) if field
-        a
       else
-        f.label(field, class: 'hide-label') +
-          f.text_field(field, placeholder: format_label(field, opts))
+        a = f.label(field, class: 'hide-label') +
+            f.text_field(field, placeholder: format_label(field, opts))
       end
+      logger.debug 'about to add error message...'
+      a + f.error_message_for(field)
     end
   end
 
