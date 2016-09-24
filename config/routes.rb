@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 
   resources :funded_people, shallow: true do
     get :all_forms
-    get :all_invoices
+#    get :all_invoices
     resources :cf0925s
     resources :invoices
     resources :filled_in_forms
