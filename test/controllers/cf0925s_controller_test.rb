@@ -185,16 +185,12 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_date_params }
     end
 
-    assert_response :redirect
-    skip "I don't know how to show status of invalid, but saved, record"
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal 'Service provider service end must be after start date',
-                   error.text
-    end
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_match(/Service provider service end must be after start date/, body)
   end
 
   test 'CF_0925 start date must exist' do
@@ -209,16 +205,13 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_date_params }
     end
 
-    assert_response :redirect
-    skip "I don't know how to show status of invalid, but saved, record"
+    # skip "I don't know how to show status of invalid, but saved, record"
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal "Service provider service start can't be blank",
-                   error.text
-    end
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_match(/Service provider service start can&#39;t be blank/, body)
   end
 
   test 'CF_0925 end date must exist' do
@@ -233,16 +226,13 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_date_params }
     end
 
-    assert_response :redirect
-    skip "I don't know how to show status of invalid, but saved, record"
+    # skip "I don't know how to show status of invalid, but saved, record"
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal "Service provider service end can't be blank",
-                   error.text
-    end
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_match(/Service provider service end can&#39;t be blank/, body)
   end
 
   test 'CF_0925 agency checkbox disabled if no agency' do
@@ -257,15 +247,12 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            }
     end
 
-    assert_response :redirect
-    skip "I don't know how to show status of invalid, but saved, record"
+    # skip "I don't know how to show status of invalid, but saved, record"
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_equal funded_person_cf0925s_path(@funded_person), path
-    assert_select '.error-explanation li', 1 do |error|
-      assert_equal 'Payment please choose either service provider or agency',
-                   error.text
-    end
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_match(/Payment please choose either service provider or agency/, body)
   end
 end
