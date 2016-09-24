@@ -38,6 +38,13 @@ class Cf0925 < ApplicationRecord
   # It should be a validation that the start and end dates are in the same
   # fiscal year.
 
+  def client_pdf_file_name
+    child_last_name + '-' +
+      child_first_name + '-' +
+      id.to_s +
+      '.pdf'
+  end
+
   def format_date(date)
     date
   end
@@ -113,13 +120,6 @@ class Cf0925 < ApplicationRecord
     "/tmp/cf0925_#{id}.pdf"
   end
 
-  def client_pdf_file_name
-    child_last_name + '-' +
-      child_first_name + '-' +
-      id.to_s +
-      '.pdf'
-  end
-
   def printable?
     valid?(:printable) &&
       !child_dob.blank? &&
@@ -148,6 +148,10 @@ class Cf0925 < ApplicationRecord
     form || self.form = Form.find_by!(class_name: 'Cf0925')
   end
 
+  def start_date
+    service_provider_service_start
+  end
+
   def start_date_before_end_date
     return if service_provider_service_start.blank? || service_provider_service_end.blank?
 
@@ -173,8 +177,4 @@ class Cf0925 < ApplicationRecord
   end
 
   private
-
-  def start_date
-    service_provider_service_start
-  end
 end
