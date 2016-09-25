@@ -1,4 +1,6 @@
 class Invoice < ApplicationRecord
+  include Helpers::FiscalYear
+
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
@@ -13,15 +15,15 @@ class Invoice < ApplicationRecord
   def invoice_from
     invoice_from = ''
     del = ''
-    if ! service_provider_name.blank?
+    unless service_provider_name.blank?
       invoice_from = "#{invoice_from}#{del}#{service_provider_name}"
       del = ' / '
     end
-    if ! supplier_name.blank?
+    unless supplier_name.blank?
       invoice_from = "#{invoice_from}#{del}#{supplier_name}"
       del = ' / '
     end
-    if ! agency_name.blank?
+    unless agency_name.blank?
       invoice_from = "#{invoice_from}#{del}#{agency_name}"
       del = ' / '
     end
@@ -30,15 +32,17 @@ class Invoice < ApplicationRecord
     invoice_from
   end
 
+  def start_date
+    service_start
+  end
 
   #-----------------------------------------------------------------------------
   # ----- Protected Methods ----------------------------------------------------
 
-#  protected
+  #  protected
 
   #-----------------------------------------------------------------------------
 
   # ----- Private Methods -------------------------------------------------------
   #-----------------------------------------------------------------------------
-
 end

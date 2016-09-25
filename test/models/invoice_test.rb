@@ -23,9 +23,9 @@ class InvoiceTest < ActiveSupport::TestCase
 
     # 01.c .....................................................................
     assert_not the_inv.valid?, '01.c: Invoice instance should be invalid with no FundedPerson set'
-#    the_inv.errors.messages.each do |m|
-#     puts "**Line: #{__LINE__}: An error: #{m}"
-#    end
+    #    the_inv.errors.messages.each do |m|
+    #     puts "**Line: #{__LINE__}: An error: #{m}"
+    #    end
 
     # 01.d .....................................................................
     the_inv.funded_person = the_funded_person
@@ -60,14 +60,14 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv.service_provider_name = test_service_provider
     the_inv.supplier_name = nil
     the_inv.agency_name = nil
-    expected = "#{test_service_provider}"
+    expected = test_service_provider.to_s
     assert_equal expected, the_inv.invoice_from, '02.b: invoice_from did not return expected name'
 
     # 02.c .....................................................................
     the_inv.service_provider_name = nil
     the_inv.supplier_name = test_supplier
     the_inv.agency_name = nil
-    expected = "#{test_supplier}"
+    expected = test_supplier.to_s
     assert_equal expected, the_inv.invoice_from, '02.c: invoice_from did not return expected name'
 
     # 02.d .....................................................................
@@ -81,7 +81,7 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv.service_provider_name = nil
     the_inv.supplier_name = nil
     the_inv.agency_name = test_agency
-      expected = "#{test_agency}"
+    expected = test_agency.to_s
     assert_equal expected, the_inv.invoice_from, '02.e: invoice_from did not return expected name'
 
     # 02.f .....................................................................
@@ -111,4 +111,9 @@ class InvoiceTest < ActiveSupport::TestCase
     # 02.j .....................................................................
     assert the_inv.save, '02.j: Save of an valid instance should succeed'
   end ## -- end test --
+
+  test 'fiscal year' do
+    invoice = invoices(:fiscal_year)
+    assert_equal '2015-2016', invoice.fiscal_year.to_s
+  end
 end
