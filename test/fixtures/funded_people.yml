@@ -92,3 +92,9 @@ two_fiscal_years:
   name_first: Two
   name_last: Years
   user: years
+
+invoice_and_form:
+  birthdate: '2003-06-15'
+  name_first: Invoice
+  name_last: Form
+  # user: years

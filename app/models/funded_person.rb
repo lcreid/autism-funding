@@ -50,9 +50,8 @@ class FundedPerson < ApplicationRecord
   # for the FundedPerson.
   # TODO: Add other sources of paperwork as they become available (Invoice).
   def fiscal_years
-    cf0925s.map(&:fiscal_year)
-           .uniq # (&:range)
-           .sort # { |x, y| x.range.first <=> y.range.first }
+    (cf0925s.map(&:fiscal_year) | invoices.map(&:fiscal_year))
+      .sort # { |x, y| x.range.first <=> y.range.first }
   end
 
   def must_define_at_least_one_name
