@@ -16,3 +16,15 @@ fiscal_year:
   funded_person: two_fiscal_years
   agency_name:
   service_provider_name: service_provider_name
+
+invoice_adds_fiscal_year:
+  invoice_amount: 200
+  invoice_date: '2017-03-01'
+  notes:
+  service_end: '2017-02-28'
+  service_start: '2017-02-01'
+  supplier_name:
+  invoice_reference:
+  funded_person: invoice_and_form
+  agency_name:
+  service_provider_name: service_provider_name

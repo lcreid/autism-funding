@@ -209,6 +209,12 @@ class FundedPersonTest < ActiveSupport::TestCase
     assert_equal %w(2015-2016 2016-2017), child.fiscal_years.map(&:to_s)
     assert_equal 2, child.fiscal_years.count
   end
+
+  test 'fiscal year with form and invoice' do
+    child = funded_people(:invoice_and_form)
+    assert_equal 2, child.fiscal_years.count
+    assert_equal %w(2015-2016 2016-2017), child.fiscal_years.map(&:to_s)
+  end
 end
 
 # the_fp.errors.messages.each do |m|

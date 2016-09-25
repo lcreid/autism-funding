@@ -231,3 +231,31 @@ two_fiscal_years_2:
   work_phone: work_phone
   form: cf0925
   funded_person: two_fiscal_years
+
+invoice_and_form:
+  agency_name: agency_name
+  child_dob: "2003-06-15"
+  child_first_name: Two
+  child_last_name: Years
+  child_in_care_of_ministry: false
+  home_phone: home_phone
+  parent_address: parent_address
+  parent_city: parent_city
+  parent_first_name: parent_first_name
+  parent_last_name: parent_last_name
+  parent_postal_code: parent
+  payment: provider
+  service_provider_postal_code: servic
+  service_provider_address: service_provider_address
+  service_provider_city: service_provider_city
+  service_provider_phone: service_provider_phone
+  service_provider_name: service_provider_name
+  service_provider_service_1: service_provider_service_1
+  service_provider_service_amount: 2000
+  service_provider_service_end: "2015-08-30"
+  service_provider_service_fee: 120.00
+  service_provider_service_hour: hour
+  service_provider_service_start: "2015-07-01"
+  work_phone: work_phone
+  form: cf0925
+  funded_person: invoice_and_form
