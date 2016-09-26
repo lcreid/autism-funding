@@ -1,4 +1,4 @@
-<%= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
+<%#= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
 
 <%= form_for([@funded_person, @cf0925]) do |f| %>
   <%= f.fields_for :funded_person_attributes, @cf0925.funded_person do |child| %>
@@ -45,11 +45,12 @@
       <%= form_row do %>
         <%= service_provider_field(f, :service_provider_name, 8, lstrip: '') %>
         <%= service_provider_field(f, "Payment to be provided to:", 4) do %>
-        <%= f.radio_button(:payment, 'provider') %>
-        <%= f.label('Service Provider') %>
-        <br/>
-        <%= f.radio_button(:payment, 'agency') %>
-        <%= f.label('Agency') %>
+          <%= f.radio_button(:payment, 'provider') %>
+          <%= f.label('Service Provider') %>
+          <br/>
+          <%= f.radio_button(:payment, 'agency') %>
+          <%= f.label('Agency') %>
+          <%= f.error_message_for(:payment) %>
         <% end %>
       <% end %>
       <%= form_row do %>

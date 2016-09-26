@@ -43,7 +43,8 @@ module Cf0925sHelper
 
   def wrap_date_field(f, field, width)
     wrap_field(width) do
-      f.date_field(field)
+      f.date_field(field) +
+        f.error_message_for(field)
     end
   end
 
