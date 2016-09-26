@@ -1,3 +1,5 @@
+##
+# Request to pay form for BC
 class Cf0925 < ApplicationRecord
   include Helpers::FiscalYear
 
@@ -8,8 +10,29 @@ class Cf0925 < ApplicationRecord
 
   validates :service_provider_service_start,
             :service_provider_service_end,
+            :child_dob,
+            :child_first_name,
+            :child_last_name,
+            # :child_in_care_of_ministry, TODO: validate this.
+            :home_phone,
+            :parent_address,
+            :parent_city,
+            :parent_first_name,
+            :parent_last_name,
+            :parent_postal_code,
             presence: true,
             on: :printable
+  validates :work_phone,
+            presence: true,
+            on: :printable,
+            unless: ->(x) { x.home_phone.present? }
+  validates :home_phone,
+            presence: true,
+            on: :printable,
+            unless: ->(x) { x.work_phone.present? }
+
+  # It should be a validation that the start and end dates are in the same
+  # fiscal year.
   validate :start_date_before_end_date, on: :printable
   validates :payment,
             presence: {
@@ -19,22 +42,6 @@ class Cf0925 < ApplicationRecord
 
   before_validation :set_form
 
-  # We don't want to validate on these because the user should be able to
-  # enter and save partial records.
-  # validates :child_dob,
-  #           :child_first_name,
-  #           :child_last_name,
-  #           :child_middle_name,
-  #           :child_in_care_of_ministry,
-  #           :home_phone,
-  #           :parent_address,
-  #           :parent_city,
-  #           :parent_first_name,
-  #           :parent_last_name,
-  #           :parent_middle_name,
-  #           :parent_postal_code,
-  #           :work_phone,
-  #           presence: true
   # It should be a validation that the start and end dates are in the same
   # fiscal year.
 
@@ -121,27 +128,8 @@ class Cf0925 < ApplicationRecord
   end
 
   def printable?
-    valid?(:printable) &&
-      !child_dob.blank? &&
-      !child_first_name.blank? &&
-      !child_last_name.blank? &&
-      (!home_phone.blank? || !work_phone.blank?) &&
-      !parent_address.blank? &&
-      !parent_city.blank? &&
-      !parent_first_name.blank? &&
-      !parent_last_name.blank? &&
-      !parent_postal_code.blank? &&
-      !service_provider_postal_code.blank? &&
-      !service_provider_address.blank? &&
-      !service_provider_city.blank? &&
-      !service_provider_phone.blank? &&
-      !service_provider_name.blank? &&
-      !service_provider_service_1.blank? &&
-      !service_provider_service_amount.blank? &&
-      !service_provider_service_end.blank? &&
-      !service_provider_service_fee.blank? &&
-      !service_provider_service_hour.blank? &&
-      !service_provider_service_start.blank?
+    # valid?(:printable) || puts(errors.full_messages)
+    valid?(:printable)
   end
 
   def set_form

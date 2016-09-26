@@ -1,3 +1,5 @@
+##
+# Field helpers for BC request to pay forms.
 module Cf0925sHelper
   def show_field(field, width = 4, opts = {}, &block)
     wrap_field(width) do
@@ -13,7 +15,7 @@ module Cf0925sHelper
 
   def form_row(&block)
     raise ArgumentError, 'Missing block' unless block_given?
-    content_tag :div, class: 'row' do
+    content_tag :div, class: 'form-inline' do
       capture(&block)
     end
   end
@@ -24,11 +26,12 @@ module Cf0925sHelper
         a = capture(&block)
         a.prepend(content_tag(:small, format_label(field, opts)) +
                   content_tag(:br)) if field
-        a
       else
-        f.label(field, class: 'hide-label') +
-          f.text_field(field, placeholder: format_label(field, opts))
+        a = f.label(field, class: 'hide-label') +
+            f.text_field(field, placeholder: format_label(field, opts))
       end
+      logger.debug 'about to add error message...'
+      a + f.error_message_for(field)
     end
   end
 
@@ -40,7 +43,8 @@ module Cf0925sHelper
 
   def wrap_date_field(f, field, width)
     wrap_field(width) do
-      f.date_field(field)
+      f.date_field(field) +
+        f.error_message_for(field)
     end
   end
 
