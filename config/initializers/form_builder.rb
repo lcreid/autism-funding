@@ -9,10 +9,10 @@ module ActionView
         # puts "Message?: #{field_name}: #{object.errors[field_name]}"
         if object.errors[field_name].present?
           # puts "User prompted for: #{field_name}: #{object.errors[field_name].map(&:humanize)}"
-          model_name = object.class.name.downcase
-          id_of_element           = "error_#{model_name}_#{field_name}"
-          target_elem_id          = "#{model_name}_#{field_name}"
-          class_name              = 'signup-error alert alert-danger'
+          model_name      = object.class.name.downcase
+          id_of_element   = "error_#{model_name}_#{field_name}"
+          target_elem_id  = "#{model_name}_#{field_name}"
+          class_name      = 'signup-error alert alert-danger'
           # error_declaration_class = 'has-signup-error'
 
           @template.content_tag :div,
