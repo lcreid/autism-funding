@@ -30,7 +30,7 @@ module Cf0925sHelper
         a = f.label(field, class: 'hide-label') +
             f.text_field(field, placeholder: format_label(field, opts))
       end
-      logger.debug 'about to add error message...'
+      # puts "about to add error message for #{field}..."
       a + f.error_message_for(field)
     end
   end

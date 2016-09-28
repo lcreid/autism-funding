@@ -30,6 +30,9 @@ class Cf0925sController < ApplicationController
 
     copy_parent_to_form
     copy_child_to_form
+    puts "New error count: #{@cf0925.errors.count}"
+    @cf0925.printable?
+    puts "New error count after printable?: #{@cf0925.errors.count}"
   end
 
   def edit
@@ -37,6 +40,8 @@ class Cf0925sController < ApplicationController
     # puts @cf0925.funded_person.inspect
     # Get the missing fields, aka help info, for the object
     @cf0925.printable?
+    puts "Edit error count: #{@cf0925.errors.count}"
+    puts @cf0925.errors[:parent_last_name]
   end
 
   def create

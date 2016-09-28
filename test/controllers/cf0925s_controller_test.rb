@@ -214,6 +214,25 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Service provider service start can&#39;t be blank/, body)
   end
 
+  test 'Parent last name must exist' do
+    get new_funded_person_cf0925_path(@funded_person)
+    assert_response :success
+
+    # Make a bad date.
+    bad_name_params = @form_field_values # .merge(service_provider_service_end: '')
+    bad_name_params['funded_person_attributes']['user_attributes']['name_last'] = ''
+
+    pp bad_name_params
+    assert_difference('Cf0925.count') do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_name_params }
+    end
+
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_select '.alert', 'Name last can&#39;t be blank'
+  end
+
   test 'CF_0925 end date must exist' do
     get new_funded_person_cf0925_path(@funded_person)
     assert_response :success
