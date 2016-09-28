@@ -222,7 +222,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     bad_name_params = @form_field_values # .merge(service_provider_service_end: '')
     bad_name_params['funded_person_attributes']['user_attributes']['name_last'] = ''
 
-    pp bad_name_params
     assert_difference('Cf0925.count') do
       post funded_person_cf0925s_path(@funded_person),
            params: { cf0925: bad_name_params }
@@ -230,7 +229,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_select '.alert', 'Name last can&#39;t be blank'
+    assert_select '.alert', "Name last can't be blank"
   end
 
   test 'CF_0925 end date must exist' do
@@ -273,5 +272,27 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
     assert_match(/Payment please choose either service provider or agency/, body)
+  end
+
+  test 'Address must exist' do
+    get new_funded_person_cf0925_path(@funded_person)
+    assert_response :success
+
+    bad_address_params = @form_field_values
+    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['address_line_1'] = ''
+    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['city'] = ''
+    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['postal_code'] = ''
+
+    pp bad_address_params
+    assert_difference('Cf0925.count') do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_address_params }
+    end
+
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_select '.alert', "Address line 1 can't be blank"
+    assert_select '.alert', "City can't be blank"
+    assert_select '.alert', "Postal code can't be blank"
   end
 end

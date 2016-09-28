@@ -14,12 +14,6 @@ class Cf0925 < ApplicationRecord
             :child_first_name,
             :child_last_name,
             # :child_in_care_of_ministry, TODO: validate this.
-            :home_phone,
-            :parent_address,
-            :parent_city,
-            :parent_first_name,
-            :parent_last_name,
-            :parent_postal_code,
             presence: true,
             on: :printable
   validates :work_phone,
@@ -129,7 +123,9 @@ class Cf0925 < ApplicationRecord
 
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
-    valid?(:printable)
+    cf0925_printable = valid?(:printable)
+    user_printable = user.printable?
+    cf0925_printable && user_printable
   end
 
   def set_form

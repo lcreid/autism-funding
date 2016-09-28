@@ -20,6 +20,11 @@ class User < ApplicationRecord
                                   attributes[:phone_number].blank?
                                 }
 
+  validates :name_first,
+            :name_last,
+            presence: true,
+            on: :printable
+
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
@@ -45,6 +50,12 @@ class User < ApplicationRecord
 
   def my_work_phone
     my_phone 'Work'
+  end
+
+  def printable?
+    user_printable = valid?(:printable)
+    address_printable = my_address.printable?
+    user_printable && address_printable
   end
 
   def supported?
