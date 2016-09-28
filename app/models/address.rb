@@ -13,6 +13,12 @@ class Address < ApplicationRecord
   validates :postal_code, format: { with: /\A *[a-zA-Z][0-9][a-zA-Z] *[0-9][a-zA-Z][0-9] *\z/,
                                     message: ' - must be of the format ANA NAN' }, allow_blank: true
 
+  validates :address_line_1,
+            :city,
+            :postal_code,
+            presence: true,
+            on: :printable
+
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------
   before_save :clean_address
@@ -92,6 +98,10 @@ class Address < ApplicationRecord
 
   def get_province_name
     (province_code.nil? ? '' : province_code.province_name)
+  end
+
+  def printable?
+    valid?(:printable)
   end
 
   #-----------------------------------------------------------------------------
