@@ -12,3 +12,10 @@ minimum_printable:
   postal_code: S0S 0S0
   province_code: bc
   user: minimum_printable
+
+forms:
+  address_line_1: Forms
+  city: Formsville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: forms
