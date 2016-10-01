@@ -1,7 +1,8 @@
 <h4><%= @title %></h4>
 <div style="font-size: 8pt"><%= @subtitle %></div>
-<div class="col-md-8">
-  <table class="table table-striped">
+<div class="col-md-1"></div>
+<div class="col-md-10">
+  <table class="table table-striped" style="border: 1pt solid red;">
     <thead>
       <tr>
         <th class="text-center">Invoice Date</th>
@@ -24,7 +25,11 @@
           <%= i.invoice_amount %>
         </td>
         <td>
-          Ministry Pay
+          <% if i.include_in_reports? %>
+            Complete
+          <% else %>
+            Need More info
+          <% end %>
         </td>
         <td>
           <%= link_to('Edit', edit_invoice_path(i.id), class: "btn btn-xs btn-primary") %>
@@ -38,3 +43,4 @@
     </tfoot>
   </table>
 </div>
+<div class="col-md-1"></div>

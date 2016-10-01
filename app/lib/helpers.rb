@@ -7,7 +7,11 @@ module Helpers
     # Return the fiscal year of the model, defined as the fiscal year of the
     # start date for service.
     def fiscal_year
-      return nil unless start_date
+      #-- if no start_date defined, then return default of the FY of now
+      return funded_person.fiscal_year(Time.new) unless start_date
+
+      #-- start_date is defined, the funded_person part will determine the FY
+      #    based on the dob and start_date
       funded_person.fiscal_year(start_date)
     end
   end
