@@ -40,7 +40,7 @@ inv_valtest_01:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date:
   service_end: '2016-03-31'
@@ -53,7 +53,7 @@ inv_valtest_02:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount:
   invoice_date: '2016-04-07'
   service_end: '2016-03-31'
@@ -66,7 +66,7 @@ inv_valtest_03:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-03-30'
   service_end: '2016-03-31'
@@ -79,7 +79,7 @@ inv_valtest_04:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-03-30'
   service_end:
@@ -92,7 +92,7 @@ inv_valtest_05:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-04-07'
   service_end:  '2016-03-31'
@@ -105,7 +105,7 @@ inv_valtest_06:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-04-07'
   service_end:  '2016-03-31'
@@ -118,7 +118,7 @@ inv_valtest_07:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-04-07'
   service_end:  '2016-01-31'
@@ -131,7 +131,7 @@ inv_valtest_08:
   invoice_reference: 'validation test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-04-07'
   service_end:  '2016-03-31'
@@ -144,7 +144,7 @@ inv_valtest_complete:
   invoice_reference: 'complete test'
 
   agency_name:
-  funded_person: invoice_and_form
+  funded_person: invoice_validation_test
   invoice_amount: 200
   invoice_date: '2016-04-07'
   service_end:  '2016-03-31'
