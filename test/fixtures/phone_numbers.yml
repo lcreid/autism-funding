@@ -19,3 +19,8 @@ minimum_printable:
   phone_type: Home
   phone_number: '2345678899'
   user: minimum_printable
+
+forms:
+  phone_type: Home
+  phone_number: '4445556666'
+  user: forms
