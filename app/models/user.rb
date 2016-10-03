@@ -5,7 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :addresses, inverse_of: :user
-  accepts_nested_attributes_for :addresses
+  accepts_nested_attributes_for :addresses, allow_destroy: true
 
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
@@ -24,6 +24,39 @@ class User < ApplicationRecord
             :name_last,
             presence: true,
             on: :printable
+
+  # This following doesn't seem to work.
+  # validates :my_work_phone,
+  #           presence: true,
+  #           on: :printable,
+  #           unless: ->(x) { x.my_home_phone.present? }
+  #
+  # validates :my_home_phone,
+  #           presence: true,
+  #           on: :printable,
+  #           unless: ->(x) { x.my_work_phone.present? }
+  validate :at_least_one_phone_number, on: :printable
+
+  ##
+  # Attach an error message to the symbol :phone_numbers if neither home
+  # nor work phone provided.
+  # I struggled for a while to attach the messages to the phone numbers.
+  # In doing so, I realized (read) that that approach wasn't going to work,
+  # because when you validate the phone number itself, you wipe out the
+  # previous error messages.
+  def at_least_one_phone_number
+    puts 'Validating phone numbers.'
+    puts "home: #{home_phone.phone_number} work: #{work_phone.phone_number}"
+    puts "State of fields: #{work_phone.phone_number.blank? && home_phone.phone_number.blank?}"
+
+    errors.add(:phone_numbers, 'must provide at least one phone number') if
+      work_phone.phone_number.blank? && home_phone.phone_number.blank?
+    puts "User Errors: #{errors.full_messages}"
+  end
+
+  def home_phone
+    phone 'Home'
+  end
 
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
@@ -52,8 +85,17 @@ class User < ApplicationRecord
     my_phone 'Work'
   end
 
+  def phone(phone_type)
+    phone_numbers.select { |x| x.phone_type == phone_type }.first
+  end
+
   def printable?
     user_printable = valid?(:printable)
+    puts "user.printable? #{errors.full_messages + my_home_phone.errors.full_messages + my_work_phone.errors.full_messages}" unless user_printable
+    # puts "I have #{addresses.size} addresses"
+    my_address.printable? ||
+      puts("my_address.printable? #{my_address.errors.full_messages}")
+    # pp my_address
     address_printable = my_address.printable?
     user_printable && address_printable
   end
@@ -63,13 +105,19 @@ class User < ApplicationRecord
       !(my_address.province_code.not_supported == 'Y')
   end
 
+  def work_phone
+    phone 'Work'
+  end
+
   private
 
   def my_phone(the_type)
+    # obj_phone = phone_numbers.find(phone_type: the_type)
     obj_phone = phone_numbers.find_by(phone_type: the_type)
     if id.nil?
       ret_obj = nil
     elsif obj_phone.nil?
+      puts "Didn't find #{the_type} phone number. Making a new one."
       ret_obj = PhoneNumber.create(user_id: id, phone_type: the_type)
       phone_numbers.reload # refreshes cache
     else

@@ -30,9 +30,9 @@ class Cf0925sController < ApplicationController
 
     copy_parent_to_form
     copy_child_to_form
-    puts "New error count: #{@cf0925.errors.count}"
+    # puts "New error count: #{@cf0925.errors.count}"
     @cf0925.printable?
-    puts "New error count after printable?: #{@cf0925.errors.count}"
+    # puts "New error count after printable?: #{@cf0925.errors.count}"
   end
 
   def edit
@@ -40,8 +40,8 @@ class Cf0925sController < ApplicationController
     # puts @cf0925.funded_person.inspect
     # Get the missing fields, aka help info, for the object
     @cf0925.printable?
-    puts "Edit error count: #{@cf0925.errors.count}"
-    puts @cf0925.errors[:parent_last_name]
+    # puts "Edit error count: #{@cf0925.errors.count}"
+    # puts @cf0925.errors[:parent_last_name]
   end
 
   def create
@@ -68,7 +68,7 @@ class Cf0925sController < ApplicationController
     # puts user.errors.full_messages
     # puts 'Cf0925 save failed' unless @cf0925.save
     # puts @cf0925.errors.full_messages
-    if @cf0925.save && user.save
+    if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
       # TODO: why can't I just render :edit here?
@@ -88,7 +88,7 @@ class Cf0925sController < ApplicationController
     copy_parent_to_form
     copy_child_to_form
 
-    if @cf0925.save && user.save
+    if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
       # TODO: why can't I just render :edit here?
@@ -139,14 +139,15 @@ class Cf0925sController < ApplicationController
   end
 
   def copy_parent_to_form
-    @cf0925.parent_last_name = @cf0925.user.name_last
-    @cf0925.parent_first_name = @cf0925.user.name_first
-    @cf0925.parent_middle_name = @cf0925.user.name_middle
-    @cf0925.home_phone = @cf0925.user.my_home_phone.full_number
-    @cf0925.work_phone = @cf0925.user.my_work_phone.full_number
-    @cf0925.parent_address = @cf0925.user.my_address.address_line_1
-    @cf0925.parent_city = @cf0925.user.my_address.city
-    @cf0925.parent_postal_code = @cf0925.user.my_address.postal_code
+    user = @cf0925.user
+    @cf0925.parent_last_name = user.name_last
+    @cf0925.parent_first_name = user.name_first
+    @cf0925.parent_middle_name = user.name_middle
+    @cf0925.home_phone = user.my_home_phone.full_number
+    @cf0925.work_phone = user.my_work_phone.full_number
+    @cf0925.parent_address = user.my_address.address_line_1
+    @cf0925.parent_city = user.my_address.city
+    @cf0925.parent_postal_code = user.my_address.postal_code
   end
 
   # def copy_form_to_parent
