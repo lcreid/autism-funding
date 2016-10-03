@@ -14,8 +14,8 @@ minimum_printable:
   user: minimum_printable
 
 forms:
-  address_line_1: Forms Printable St
-  city: Forms Print Ville
-  postal_code: S0S 0S0
+  address_line_1: Forms
+  city: Formsville
+  postal_code: F0F 0F0
   province_code: bc
   user: forms

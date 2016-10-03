@@ -31,6 +31,7 @@
                      f: phone_form
                    } %>
       <% end %>
+      <%= parent.error_message_for(:phone_numbers) %>
     <% end %>
     <%= form_row do %>
       <%= parent.fields_for :addresses, [@cf0925.funded_person.user.addresses.first] do |addresses_form| %>

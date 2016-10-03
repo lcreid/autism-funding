@@ -157,8 +157,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 child between 6 and 18' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
     assert_difference('Cf0925.count') do
       post funded_person_cf0925s_path(@funded_person),
            params: { cf0925: @form_field_values }
@@ -173,9 +173,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 start date after end date' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
-    assert_equal path, new_funded_person_cf0925_path(@funded_person)
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
+    # assert_equal path, new_funded_person_cf0925_path(@funded_person)
 
     # Make a bad date.
     bad_date_params = @form_field_values.merge(service_provider_service_end: '2016-05-31')
@@ -194,8 +194,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 start date must exist' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
 
     # Make a bad date.
     bad_date_params = @form_field_values.merge(service_provider_service_start: '')
@@ -215,8 +215,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'Parent last name must exist' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
 
     # Make a bad date.
     bad_name_params = @form_field_values # .merge(service_provider_service_end: '')
@@ -233,8 +233,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'CF_0925 end date must exist' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
 
     # Make a bad date.
     bad_date_params = @form_field_values.merge(service_provider_service_end: '')
@@ -275,15 +275,15 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'Address must exist' do
-    get new_funded_person_cf0925_path(@funded_person)
-    assert_response :success
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
 
     bad_address_params = @form_field_values
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['address_line_1'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['city'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['postal_code'] = ''
 
-    pp bad_address_params
+    # pp bad_address_params
     assert_difference('Cf0925.count') do
       post funded_person_cf0925s_path(@funded_person),
            params: { cf0925: bad_address_params }
@@ -294,5 +294,24 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     assert_select '.alert', "Address line 1 can't be blank"
     assert_select '.alert', "City can't be blank"
     assert_select '.alert', "Postal code can't be blank"
+  end
+
+  test 'Phone number must exist and be valid' do
+    # get new_funded_person_cf0925_path(@funded_person)
+    # assert_response :success
+
+    bad_phone_params = @form_field_values
+    bad_phone_params['funded_person_attributes']['user_attributes']['phone_numbers_attributes']['0']['phone_number'] = ''
+    bad_phone_params['funded_person_attributes']['user_attributes']['phone_numbers_attributes']['1']['phone_number'] = ''
+
+    # pp bad_phone_params
+    assert_difference('Cf0925.count') do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: bad_phone_params }
+    end
+
+    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    follow_redirect!
+    assert_select '.alert', 'Phone numbers must provide at least one phone number'
   end
 end

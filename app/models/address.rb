@@ -101,6 +101,7 @@ class Address < ApplicationRecord
   end
 
   def printable?
+    # valid?(:printable) || pp(errors.full_messages)
     valid?(:printable)
   end
 
