@@ -312,7 +312,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_select '.alert', "Work phone can't be blank"
-    assert_select '.alert', "Home phone can't be blank"
+    assert_select '.alert', 'Phone numbers must provide at least one phone number'
   end
 end
