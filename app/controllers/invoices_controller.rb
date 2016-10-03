@@ -17,6 +17,7 @@ class InvoicesController < ApplicationController
     @url = invoice_path (params[:id])
 
     @invoice = Invoice.find(params[:id])
+    @invoice.valid?(:complete)
     @funded_person = @invoice.funded_person
   end
 
