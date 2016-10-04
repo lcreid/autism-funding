@@ -1,63 +1,63 @@
 <%= render partial: 'status', locals: { funded_person: funded_person } %>
 <div class="row">
-    <div class="col-md-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2 class="panel-title">Invoices</h2>
-            </div>
-            <div class="panel-body">
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Invoices</h2>
+      </div>
+      <div class="panel-body">
+        <p>
+          When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
+        </p>
+        <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
+        <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Expenses</h2>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
                 <p>
-                    When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
+                  Before the Ministry will pay a service provider (e.g. Psychologist, Behaviour Consultant, or Behaviour Interventionist), you have to complete and submit a Request to Pay form.
                 </p>
-                <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
-                <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
+                <%= link_to('New Request to Pay', new_funded_person_cf0925_path(funded_person), class: 'btn btn-primary btn-block') %>
+              </div>
             </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <p>
+                  If you have other expenses, like you attend an autism-related conference, you have to request reimbursement of expenses.
+                </p>
+                <%= link_to('Request Reimbursement', '#', class: 'btn btn-primary btn-block') %>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <p>
+                  In order to purchase equipment, like a tablet computer, you need to complete and submit an Equipment Justification form.
+                </p>
+                <%= link_to('New Equipment Justification', '#', class: 'btn btn-primary btn-block') %>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <div class="col-md-9">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2 class="panel-title">Expenses</h2>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <p>
-                                    Before the Ministry will pay a service provider (e.g. Psychologist, Behaviour Consultant, or Behaviour Interventionist), you have to complete and submit a Request to Pay form.
-                                </p>
-                                <%= link_to('New Request to Pay', new_funded_person_cf0925_path(funded_person), class: 'btn btn-primary btn-block') %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <p>
-                                    If you have other expenses, like you attend an autism-related conference, you have to request reimbursement of expenses.
-                                </p>
-                                <%= link_to('Request Reimbursement', '#', class: 'btn btn-primary btn-block') %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <p>
-                                    In order to purchase equipment, like a tablet computer, you need to complete and submit an Equipment Justification form.
-                                </p>
-                                <%= link_to('New Equipment Justification', '#', class: 'btn btn-primary btn-block') %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                      <%= link_to('All Forms', funded_person_filled_in_forms_path(funded_person)) %>
-                  </div>
-                </div>
-            </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= link_to('All Forms', funded_person_filled_in_forms_path(funded_person)) %>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
