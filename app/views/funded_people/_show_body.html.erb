@@ -9,8 +9,22 @@
         <p>
           When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
         </p>
-        <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
-        <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
+        <div class="row">
+          <div class="col-md-12">
+            <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= render partial: "invoices/invoices",
+                       locals: { invoices: funded_person.invoices_in_fiscal_year(funded_person.selected_fiscal_year) } %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

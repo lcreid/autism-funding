@@ -15,7 +15,7 @@ class CompleteCf0925Test < CapybaraTest
         assert_selector 'tbody tr', count: 2
       end
       within '.invoice-list' do
-        assert_no_selectors 'tbody tr'
+        assert_no_selector 'tbody tr'
       end
     end
   end

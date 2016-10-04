@@ -20,7 +20,7 @@ class HomePageTest < CapybaraTest
     assert_no_selector("#collapse-#{last_child.id}[style=\"height: 0px;\"]")
     click_link(last_child.my_name)
     # puts find("#collapse-#{last_child.id} > .panel-body").inspect
-    # Gag. Bootstrap makes the body invisible by making it height: 0px.
+    # Gag. Bootstrap makes the body invisible by making its height: 0px.
     # skip 'Skip this shit. I know it works.'
     assert_selector("#collapse-#{last_child.id}[style=\"height: 0px;\"]")
     # puts "$('#collapse-#{last_child.id}').height();"
@@ -47,5 +47,13 @@ class HomePageTest < CapybaraTest
       select '2015-2016', from: 'Year'
       select '2016-2017', from: 'Year'
     end
+  end
+
+  test 'go to all invoices' do
+    fill_in_login(users(:years))
+    within "#collapse-#{child = funded_people(:two_fiscal_years).id}" do
+      click_link 'All Invoices'
+    end
+    assert_current_path funded_person_invoices_path(child)
   end
 end
