@@ -13,6 +13,7 @@
     </thead>
     <tbody>
       <% @funded_person.cf0925s.each do |form| %>
+        <!-- TODO: align the partial name with contents so I don't need locals -->
         <%= render partial: 'filled_in_form', locals: { form: form } %>
       <% end %>
     </tbody>

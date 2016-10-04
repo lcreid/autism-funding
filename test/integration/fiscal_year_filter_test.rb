@@ -12,5 +12,11 @@ class CompleteCf0925Test < CapybaraTest
     within "#collapse-#{child.id}" do
       assert_select('Year', selected: '2016-2017')
     end
+    within '.form-list' do
+      assert_selector 'tr', count: 2
+    end
+    within '.invoice-list' do
+      assert_no_selectors 'tr'
+    end
   end
 end
