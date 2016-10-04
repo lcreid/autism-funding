@@ -1,21 +1,16 @@
-<div class="row">
-  <h3>Forms for <%# TODO: = @funded_person.full_name %></h3>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th class="text-center">Form</th>
-        <th class="text-center">Provider</th>
-        <th class="text-center">Date of Last Activity</th>
-        <th class="text-center">Amount/Limit</th>
-        <th class="text-center">Status</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @funded_person.cf0925s.each do |form| %>
-        <!-- TODO: align the partial name with contents so I don't need locals -->
-        <%= render partial: 'filled_in_form', locals: { form: form } %>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+<table class="table table-striped form-list">
+  <thead>
+    <tr>
+      <th class="text-center">Form</th>
+      <th class="text-center">Provider</th>
+      <th class="text-center">Date of Last Activity</th>
+      <th class="text-center">Amount/Limit</th>
+      <th class="text-center">Status</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- TODO: align the partial name with contents so I don't need locals -->
+    <%= render partial: "filled_in_forms/filled_in_form", collection: filled_in_forms %>
+  </tbody>
+</table>

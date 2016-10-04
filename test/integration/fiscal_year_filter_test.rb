@@ -11,12 +11,12 @@ class CompleteCf0925Test < CapybaraTest
     child = user.funded_people.select { |x| x.name_first == 'Two' }.first
     within "#collapse-#{child.id}" do
       assert_select('Year', selected: '2016-2017')
-    end
-    within '.form-list' do
-      assert_selector 'tr', count: 2
-    end
-    within '.invoice-list' do
-      assert_no_selectors 'tr'
+      within '.form-list' do
+        assert_selector 'tbody tr', count: 2
+      end
+      within '.invoice-list' do
+        assert_no_selectors 'tbody tr'
+      end
     end
   end
 end

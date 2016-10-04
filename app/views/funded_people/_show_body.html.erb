@@ -54,7 +54,8 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <%= render "filled_in_forms/forms" %>
+            <%= render partial: "filled_in_forms/forms",
+                       locals: { filled_in_forms: funded_person.cf0925s } %>
           </div>
         </div>
         <div class="row">

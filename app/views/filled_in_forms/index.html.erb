@@ -1,2 +1,5 @@
 <!-- This is probably just a temporary file for the prototype -->
-<%= render 'forms' %>
+<div class="row">
+  <h3>Forms for <%# TODO: = @funded_person.full_name %></h3>
+  <%= render partial: 'forms', locals: { filled_in_forms: @funded_person.cf0925s } %>
+</div>
