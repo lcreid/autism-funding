@@ -10,7 +10,7 @@ class CompleteCf0925Test < CapybaraTest
     assert_current_path root_path
     child = user.funded_people.select { |x| x.name_first == 'Two' }.first
     within "#collapse-#{child.id}" do
-      assert_select('Year', selected: '2016-2017')
+      assert_select("year-#{child.id}", selected: '2016-2017')
       within '.form-list' do
         assert_selector 'tbody tr', count: 2
       end
