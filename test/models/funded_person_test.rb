@@ -215,6 +215,24 @@ class FundedPersonTest < ActiveSupport::TestCase
     assert_equal 2, child.fiscal_years.count
     assert_equal %w(2016-2017 2015-2016), child.fiscal_years.map(&:to_s)
   end
+
+  test 'cf0925s in fiscal year' do
+    child = funded_people(:two_fiscal_years)
+    assert_equal 3, child.cf0925s.size
+    assert_equal 1,
+                 child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
+    assert_equal 2,
+                 child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
+  end
+
+  test 'invoices in fiscal year' do
+    child = funded_people(:two_fiscal_years)
+    assert_equal 1, child.invoices.size
+    assert_equal 1,
+                 child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
+    assert_equal 0,
+                 child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
+  end
 end
 
 # the_fp.errors.messages.each do |m|

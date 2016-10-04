@@ -13,6 +13,14 @@ class FundedPerson < ApplicationRecord
   validate :must_define_at_least_one_name
 
   # ----- Public Methods -------------------------------------------------------
+  def cf0925s_in_fiscal_year(fy)
+    cf0925s.select { |x| fy.include?(x.fiscal_year) }
+  end
+
+  def invoices_in_fiscal_year(fy)
+    invoices.select { |x| fy.include?(x.fiscal_year) }
+  end
+
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
