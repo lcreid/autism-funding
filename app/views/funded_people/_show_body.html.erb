@@ -55,7 +55,7 @@
         <div class="row">
           <div class="col-md-12">
             <%= render partial: "filled_in_forms/forms",
-                       locals: { filled_in_forms: funded_person.cf0925s } %>
+                       locals: { filled_in_forms: funded_person.cf0925s_in_fiscal_year(funded_person.selected_fiscal_year) } %>
           </div>
         </div>
         <div class="row">

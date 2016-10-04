@@ -68,6 +68,13 @@ class FundedPerson < ApplicationRecord
       errors.add(:name, ' - must define at least one name')
     end
   end
+
+  def selected_fiscal_year
+    @selected_fiscal_year ||= fiscal_years.first
+  end
+
+  attr_writer :selected_fiscal_year
+
   #-----------------------------------------------------------------------------
 
   # ----- Private Methods -------------------------------------------------------
