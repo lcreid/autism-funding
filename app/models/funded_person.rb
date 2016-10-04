@@ -13,6 +13,14 @@ class FundedPerson < ApplicationRecord
   validate :must_define_at_least_one_name
 
   # ----- Public Methods -------------------------------------------------------
+  def cf0925s_in_fiscal_year(fy)
+    cf0925s.select { |x| fy.include?(x.fiscal_year) }
+  end
+
+  def invoices_in_fiscal_year(fy)
+    invoices.select { |x| fy.include?(x.fiscal_year) }
+  end
+
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
@@ -47,11 +55,12 @@ class FundedPerson < ApplicationRecord
 
   ##
   # Return a list of fiscal years for which there is some sort of activity
-  # for the FundedPerson.
+  # for the FundedPerson. The list is sorted in descending order from the
+  # most recent fiscal year.
   # TODO: Add other sources of paperwork as they become available (Invoice).
   def fiscal_years
     (cf0925s.map(&:fiscal_year) | invoices.map(&:fiscal_year))
-      .sort # { |x, y| x.range.first <=> y.range.first }
+      .sort { |x, y| y <=> x }
   end
 
   def must_define_at_least_one_name
@@ -59,6 +68,13 @@ class FundedPerson < ApplicationRecord
       errors.add(:name, ' - must define at least one name')
     end
   end
+
+  def selected_fiscal_year
+    @selected_fiscal_year ||= fiscal_years.first
+  end
+
+  attr_writer :selected_fiscal_year
+
   #-----------------------------------------------------------------------------
 
   # ----- Private Methods -------------------------------------------------------

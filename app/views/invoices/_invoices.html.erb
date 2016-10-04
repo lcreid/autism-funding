@@ -2,7 +2,7 @@
 <div style="font-size: 8pt"><%= @subtitle %></div>
 <div class="col-md-1"></div>
 <div class="col-md-10">
-  <table class="table table-striped" style="border: 1pt solid red;">
+  <table class="table table-striped invoice-list" style="border: 1pt solid red;">
     <thead>
       <tr>
         <th class="text-center">Invoice Date</th>
@@ -13,7 +13,7 @@
       </tr>
     </thead>
     <tbody>
-    <% @invoices.each do |i| %>
+    <% invoices.each do |i| %>
       <tr>
         <td class="text-center">
           <%= i.invoice_date %>

@@ -4,20 +4,20 @@
     partial for all form types, and ensure that all form types have the
     methods or attributes needed by this partial. %>
 <tr class="static-form-record">
-    <td><%= form.form.form_name %></td>
-    <td><%= form.service_provider_name %></td>
-    <td class="text-right">
-        <%= form.updated_at.to_date.to_formatted_s(:iso8601) %>
-    </td>
-    <td class="text-right">
-      <%= number_to_currency(form.service_provider_service_amount) %>
-    </td>
-    <td>
-      <%= form.status %>
-    </td>
-    <td>
-        <%= edit_button(form, class: 'btn-xs') %>
-        <%= print_button(form, class: 'btn-xs') %> <%#=link_to('Print', '#', class: "btn btn-xs btn-primary") %>
-        <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
-    </td>
+  <td><%= filled_in_form.form.form_name %></td>
+  <td><%= filled_in_form.service_provider_name %></td>
+  <td class="text-right">
+    <%= filled_in_form.updated_at.to_date.to_formatted_s(:iso8601) %>
+  </td>
+  <td class="text-right">
+    <%= number_to_currency(filled_in_form.service_provider_service_amount) %>
+  </td>
+  <td>
+    <%= filled_in_form.status %>
+  </td>
+  <td>
+    <%= edit_button(filled_in_form, class: 'btn-xs') %>
+    <%= print_button(filled_in_form, class: 'btn-xs') %>
+    <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
+  </td>
 </tr>

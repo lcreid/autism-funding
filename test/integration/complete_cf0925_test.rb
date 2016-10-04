@@ -170,8 +170,6 @@ class CompleteCf0925Test < CapybaraTest
 
   test 'put a form in the list and edit it' do
     fill_in_login(users(:forms))
-    # TODO: Change the navigation to give an easier way to the list.
-    # visit home_index_path
     click_link 'All Forms'
     assert_equal 1, all('.static-form-record').size
     assert_content 'Request to Pay'
