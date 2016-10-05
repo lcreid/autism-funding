@@ -14,10 +14,12 @@ class FundedPerson < ApplicationRecord
 
   # ----- Public Methods -------------------------------------------------------
   def cf0925s_in_fiscal_year(fy)
+    # pp cf0925s.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
     cf0925s.select { |x| fy.include?(x.fiscal_year) }
   end
 
   def invoices_in_fiscal_year(fy)
+    # pp invoices.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
     invoices.select { |x| fy.include?(x.fiscal_year) }
   end
 
@@ -73,7 +75,17 @@ class FundedPerson < ApplicationRecord
     @selected_fiscal_year ||= fiscal_years.first
   end
 
-  attr_writer :selected_fiscal_year
+  def selected_fiscal_year=(fy)
+    case fy
+    when FiscalYear
+      @selected_fiscal_year = fy
+    when Range
+      @selected_fiscal_year = FiscalYear.new(fy)
+    when String
+      # FIXME: put String in the FY initializer
+      @selected_fiscal_year = fiscal_years.find { |i| fy == i.to_s }
+    end
+  end
 
   #-----------------------------------------------------------------------------
 

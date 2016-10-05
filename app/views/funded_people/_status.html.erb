@@ -12,7 +12,8 @@
     <!-- TODO: Make the years do something. -->
     <!-- TODO: Hide the dropdown if there's only one year? -->
     <% if (fiscal_year_list = funded_person.fiscal_years).present? %>
-      <%= select_tag "year-#{funded_person.id}",
+
+      <%= select_tag "year[#{funded_person.id}]",
                      options_from_collection_for_select(fiscal_year_list,
                                                         :to_s,
                                                         :to_s,

@@ -40,12 +40,12 @@ class HomePageTest < CapybaraTest
     assert_current_path root_path
 
     within "#collapse-#{child_id = funded_people(:one_fiscal_year).id}" do
-      select '2017', from: "year-#{child_id}"
+      select '2017', from: "year_#{child_id}"
     end
 
     within "#collapse-#{child_id = funded_people(:two_fiscal_years).id}" do
-      select '2015-2016', from: "year-#{child_id}"
-      select '2016-2017', from: "year-#{child_id}"
+      select '2015-2016', from: "year_#{child_id}"
+      select '2016-2017', from: "year_#{child_id}"
     end
   end
 
