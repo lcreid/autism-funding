@@ -17,8 +17,8 @@
                      options_from_collection_for_select(fiscal_year_list,
                                                         :to_s,
                                                         :to_s,
-                                                        fiscal_year_list.first.to_s),
-                     class: "pull-right" %>
+                                                        funded_person.selected_fiscal_year.to_s),
+                     class: "pull-right fiscal-year-selector" %>
      <% end %>
   </div>
 </div>

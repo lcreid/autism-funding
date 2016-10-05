@@ -82,7 +82,9 @@ class FundedPerson < ApplicationRecord
     when Range
       @selected_fiscal_year = FiscalYear.new(fy)
     when String
-      # FIXME: put String in the FY initializer
+      # FIXME: put String in the FY initializer. Not as simple as that.
+      # The FiscalYear class doesn't have the child's DOB, probably
+      # rightly so.
       @selected_fiscal_year = fiscal_years.find { |i| fy == i.to_s }
     end
   end
