@@ -3,23 +3,8 @@ require 'capybara/poltergeist'
 
 ##
 # Integration tests for the fiscal year filter.
-class CompleteCf0925Test < CapybaraTest
+class FiscalYearFilterTest < PoltergeistTest
   include TestSessionHelpers
-
-  def setup
-    Capybara.javascript_driver = :poltergeist
-    Capybara.current_driver = Capybara.javascript_driver
-    # Capybara.register_driver :poltergeist do |app|
-    #   # Capybara::Poltergeist::Driver.new(app, timeout: 60)
-    #   Capybara::Poltergeist::Driver.new(app,
-    #                                     # js_errors: false,
-    #                                     # #inspector: true,
-    #                                     # phantomjs_logger: Rails.logger,
-    #                                     # logger: nil,
-    #                                     # phantomjs_options: ['--debug=no', '--load-images=no', '--ignore-ssl-errors=yes', '--ssl-protocol=TLSv1'],
-    #                                     debug: true)
-    # end
-  end
 
   test 'start on current fiscal year' do
     fill_in_login(user = users(:years))

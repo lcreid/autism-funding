@@ -38,6 +38,7 @@ end
 
 # Added for Capybara
 require 'capybara/rails'
+require 'database_cleaner'
 
 class CapybaraTest < ActionDispatch::IntegrationTest
   # Make the Capybara DSL available in all integration tests
@@ -52,6 +53,20 @@ class CapybaraTest < ActionDispatch::IntegrationTest
   end
 end
 # End Capybara
+
+class PoltergeistTest < CapybaraTest
+  def setup
+    DatabaseCleaner.strategy = :truncation
+    Capybara.javascript_driver = :poltergeist
+    Capybara.current_driver = Capybara.javascript_driver
+    super
+  end
+
+  def teardown
+    super
+    DatabaseCleaner.clean
+  end
+end
 
 # I got this from: https://github.com/chriskottom/minitest_cookbook_source/issues/3
 # To fix transacation issues with Poltergeist tests

@@ -1,13 +1,8 @@
 require 'test_helper'
 require 'capybara/poltergeist'
 
-class HomePageTest < CapybaraTest
+class HomePageTest < PoltergeistTest
   include TestSessionHelpers
-
-  def setup
-    Capybara.javascript_driver = :poltergeist
-    Capybara.current_driver = Capybara.javascript_driver
-  end
 
   test 'collapse and expand accordion' do
     fill_in_login(user = users(:dual_child_parent))

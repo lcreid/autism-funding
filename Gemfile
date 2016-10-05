@@ -40,6 +40,7 @@ group :development, :test do
   gem 'capybara'
   gem 'minitest-capybara'
   gem 'poltergeist'
+  gem 'database_cleaner'
 end
 
 group :development do
