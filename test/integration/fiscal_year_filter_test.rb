@@ -1,8 +1,9 @@
 require 'test_helper'
+require 'capybara/poltergeist'
 
 ##
 # Integration tests for the fiscal year filter.
-class CompleteCf0925Test < CapybaraTest
+class FiscalYearFilterTest < PoltergeistTest
   include TestSessionHelpers
 
   test 'start on current fiscal year' do
@@ -10,12 +11,27 @@ class CompleteCf0925Test < CapybaraTest
     assert_current_path root_path
     child = user.funded_people.select { |x| x.name_first == 'Two' }.first
     within "#collapse-#{child.id}" do
-      assert_select('Year', selected: '2016-2017')
+      year_selector = "year_#{child.id}"
+      assert_select(year_selector, selected: '2016-2017')
       within '.form-list' do
         assert_selector 'tbody tr', count: 2
       end
       within '.invoice-list' do
         assert_no_selector 'tbody tr'
+      end
+
+      select '2015-2016', from: year_selector
+      assert_select(year_selector, selected: '2015-2016')
+    end
+
+    # page.execute_script("console.log('From #{__FILE__}');")
+    # page.execute_script("$('form.fiscal-year-selector').submit();")
+    within "#collapse-#{child.id}" do
+      within '.form-list' do
+        assert_selector 'tbody tr', count: 1
+      end
+      within '.invoice-list' do
+        assert_selector 'tbody tr', count: 1
       end
     end
   end

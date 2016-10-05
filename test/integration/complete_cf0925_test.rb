@@ -122,7 +122,7 @@ class CompleteCf0925Test < CapybaraTest
       assert_equal 'Sixteen Old Two-Kids', child[0].text
       assert_equal 'Four Old Two-Kids', child[1].text
     end
-    within '.child:first' do
+    within '.child:first-of-type' do
       click_link 'New Request to Pay'
     end
 

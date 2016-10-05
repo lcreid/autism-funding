@@ -38,6 +38,7 @@ end
 
 # Added for Capybara
 require 'capybara/rails'
+require 'database_cleaner'
 
 class CapybaraTest < ActionDispatch::IntegrationTest
   # Make the Capybara DSL available in all integration tests
@@ -52,6 +53,34 @@ class CapybaraTest < ActionDispatch::IntegrationTest
   end
 end
 # End Capybara
+
+class PoltergeistTest < CapybaraTest
+  def setup
+    DatabaseCleaner.strategy = :truncation
+    Capybara.javascript_driver = :poltergeist
+    Capybara.current_driver = Capybara.javascript_driver
+    super
+  end
+
+  def teardown
+    super
+    DatabaseCleaner.clean
+  end
+end
+
+# I got this from: https://github.com/chriskottom/minitest_cookbook_source/issues/3
+# To fix transacation issues with Poltergeist tests
+# Without this I was getting random failures. Seems to be necessary.
+# But the it looks like Postgres may not like shared connections.
+# class ActiveRecord::Base
+#   mattr_accessor :shared_connection
+#   @@shared_connection = nil
+#   def self.connection
+#     @@shared_connection || retrieve_connection
+#   end
+# end
+# ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+# End transactions fix.
 
 # Support Devise controller tests (only)
 class ActionController::TestCase

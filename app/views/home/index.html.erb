@@ -15,5 +15,8 @@
 <% end %>
 <%= render 'shared/notifications' %>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
+  <%= form_tag(home_index_path, method: :get, class: "fiscal-year-selector") do %>
+    <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
+    <%= submit_tag "Search" %>
+  <% end %>
 </div>
