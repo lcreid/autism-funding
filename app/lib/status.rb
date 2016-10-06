@@ -2,6 +2,7 @@
 # Calculate the status of a child's funding in a given fiscal year.
 class Status
   def initialize(funded_person, fiscal_year)
+    # puts "New Status: #{funded_person.inspect} Fiscal Year: #{fiscal_year.inspect}"
     @fiscal_year = fiscal_year
 
     # Not really age, but age of fiscal years.

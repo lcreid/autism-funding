@@ -44,9 +44,13 @@ class StatusTest < ActiveSupport::TestCase
     assert_equal 0, status.allowable_funds_for_year
   end
 
-  test 'Not born yet' do
+  test 'not born yet' do
     child = funded_people(:four_year_old)
     status = child.status(child.fiscal_year(Date.new(2012, 2, 29)))
     assert_equal 0, status.allowable_funds_for_year
+  end
+
+  test 'big spender' do
+    skip
   end
 end

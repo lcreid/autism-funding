@@ -81,7 +81,10 @@ class FundedPerson < ApplicationRecord
   end
 
   def selected_fiscal_year
+    # puts "first: #{fiscal_years.first}"
     @selected_fiscal_year ||= fiscal_years.first
+    # puts "selected_fiscal_year: #{@selected_fiscal_year.inspect}"
+    @selected_fiscal_year
   end
 
   def selected_fiscal_year=(fy)
