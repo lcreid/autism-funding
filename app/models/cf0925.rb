@@ -115,10 +115,10 @@ class Cf0925 < ApplicationRecord
   end
 
   def item_total
-    return '' unless item_cost_1 && item_cost_2 && item_cost_3
-    item_cost_1 +
-      item_cost_2 +
-      item_cost_3
+    return nil unless item_cost_1 || item_cost_2 || item_cost_3
+    (item_cost_1 || 0) +
+      (item_cost_2 || 0) +
+      (item_cost_3 || 0)
   end
 
   def pdf_output_file
@@ -150,6 +150,14 @@ class Cf0925 < ApplicationRecord
   def status
     return 'Ready to Print' if printable?
     'Not Complete'
+  end
+
+  ##
+  # Total amount requested on this CF0925
+  def total_amount
+    # puts "amount: #{service_provider_service_amount} item_total: #{item_total}"
+    # puts 'Item total is false' unless item_total
+    (service_provider_service_amount || 0) + (item_total || 0)
   end
 
   def user

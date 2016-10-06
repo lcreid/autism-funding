@@ -167,7 +167,7 @@ two_fiscal_years_0:
   service_provider_phone: service_provider_phone
   service_provider_name: service_provider_name
   service_provider_service_1: service_provider_service_1
-  service_provider_service_amount: 3000
+  service_provider_service_amount: 2500
   service_provider_service_end: "2016-06-30"
   service_provider_service_fee: 130.00
   service_provider_service_hour: hour
