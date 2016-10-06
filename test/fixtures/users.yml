@@ -91,3 +91,10 @@ years:
   encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
   name_first: Mom
   name_last: Years
+
+int_user1:
+  email: imatestcase@weenhanceit.com
+  encrypted_password: $2a$04$luuIAmwVdQNvJSi0m9.LW.eLHYMa22gBEPYyQD7Aqox3ty2AAanQa
+  name_first: Ima
+  name_middle: Integration
+  name_last: 'Testor'

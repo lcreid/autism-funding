@@ -34,7 +34,29 @@ module TestSessionHelpers
     fill_in 'Password', with: 'password'
     click_button 'Log in'
   end
+
+  # This one derived from Larry The Rails Guy's log_in
+  def login_known(the_user)
+    # Get an instance of the user
+    user = users(the_user)
+    # provide the credentials and log in
+    # Note the encrypted_password in the yml was created using an
+    # instance of User in console with a password as below
+    post user_session_path,
+         params: {
+           user: {
+             email: user.email,
+             password: 'secret08',
+             remember_me: 0
+           },
+           commit: 'Log in'
+         }
+  end
+
 end
+
+
+
 
 # Added for Capybara
 require 'capybara/rails'

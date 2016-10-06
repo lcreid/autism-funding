@@ -1,0 +1,9 @@
+                    invoices_new GET    /invoices/new(.:format)                                        invoices#new
+          funded_person_invoices GET    /funded_people/:funded_person_id/invoices(.:format)            invoices#index
+                                 POST   /funded_people/:funded_person_id/invoices(.:format)            invoices#create
+       new_funded_person_invoice GET    /funded_people/:funded_person_id/invoices/new(.:format)        invoices#new
+                    edit_invoice GET    /invoices/:id/edit(.:format)                                   invoices#edit
+                         invoice GET    /invoices/:id(.:format)                                        invoices#show
+                                 PATCH  /invoices/:id(.:format)                                        invoices#update
+                                 PUT    /invoices/:id(.:format)                                        invoices#update
+                                 DELETE /invoices/:id(.:format)                                        invoices#destroy
