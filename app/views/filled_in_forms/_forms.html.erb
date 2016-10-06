@@ -10,7 +10,13 @@
     </tr>
   </thead>
   <tbody>
-    <!-- TODO: align the partial name with contents so I don't need locals -->
-    <%= render partial: "filled_in_forms/filled_in_form", collection: filled_in_forms %>
+    <%= render(partial: "filled_in_forms/filled_in_form",
+               collection: filled_in_forms) ||
+          content_tag(:tr,
+                      content_tag(:td,
+                                  local_assigns[:no_data_msg] ||
+                                    "No funding requests available",
+                                  colspan: 6,
+                                  class: "text-center")) %>
   </tbody>
 </table>
