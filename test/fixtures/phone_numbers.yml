@@ -24,3 +24,13 @@ forms:
   phone_type: Home
   phone_number: '4445556666'
   user: forms
+
+no_invoice_amount:
+  phone_type: Home
+  phone_number: '4445556666'
+  user: no_invoice_amount
+
+years:
+  phone_type: Home
+  phone_number: '5556667777'
+  user: years

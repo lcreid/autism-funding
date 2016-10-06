@@ -19,3 +19,17 @@ forms:
   postal_code: F0F 0F0
   province_code: bc
   user: forms
+
+no_invoice_amount:
+  address_line_1: No
+  city: Noville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: no_invoice_amount
+
+years:
+  address_line_1: 123 Year St
+  city: Yearville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: years

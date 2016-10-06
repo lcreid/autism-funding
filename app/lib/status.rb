@@ -20,11 +20,13 @@ class Status
 
     @spent_funds = funded_person
                    .invoices_in_fiscal_year(fiscal_year)
+                   .select(&:include_in_reports?)
                    .map(&:invoice_amount)
                    .reduce(0, &:+)
 
     @committed_funds = funded_person
                        .cf0925s_in_fiscal_year(fiscal_year)
+                       .select(&:printable?)
                        .map(&:total_amount)
                        .reduce(0, &:+)
 
