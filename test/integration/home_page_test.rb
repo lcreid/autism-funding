@@ -70,4 +70,9 @@ class HomePageTest < PoltergeistTest
       assert_selector '.test-allowable-funds-for-year', text: /\$6,000.00/
     end
   end
+
+  test 'status panel with no invoice amount or RTP amount' do
+    fill_in_login(users(:no_invoice_amount))
+    assert_current_path root_path
+  end
 end

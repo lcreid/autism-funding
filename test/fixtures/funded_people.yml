@@ -103,3 +103,9 @@ invoice_validation_test:
   name_first: Invoice
   name_middle: Validation
   name_last: Test
+
+no_invoice_amount:
+  birthdate: '2003-12-01'
+  name_first: No
+  name_last: Invoice
+  user: no_invoice_amount
