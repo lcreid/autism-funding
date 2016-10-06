@@ -48,11 +48,20 @@ class FundedPerson < ApplicationRecord
   end
 
   def fiscal_year(date)
-    date = date.to_date unless date.is_a?(Date)
-    start_of_first_fiscal_year = birthdate.next_month.beginning_of_month
-    start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
-    start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
-    FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+    case date
+    when FiscalYear
+      date
+    when String
+      fy_parts = /(\d+{4,})(-(\d+{4,}))?/.match(date)
+      # puts "First year: #{fy_parts[1]} Second year: #{fy_parts[3]}"
+      start_of_fiscal_year = start_of_first_fiscal_year.change(year: fy_parts[1].to_i)
+      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+    else
+      date = date.to_date unless date.is_a?(Date)
+      start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
+      start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
+      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+    end
   end
 
   ##
@@ -72,7 +81,10 @@ class FundedPerson < ApplicationRecord
   end
 
   def selected_fiscal_year
+    # puts "first: #{fiscal_years.first}"
     @selected_fiscal_year ||= fiscal_years.first
+    # puts "selected_fiscal_year: #{@selected_fiscal_year.inspect}"
+    @selected_fiscal_year
   end
 
   def selected_fiscal_year=(fy)
@@ -89,8 +101,21 @@ class FundedPerson < ApplicationRecord
     end
   end
 
+  def start_of_first_fiscal_year
+    birthdate.next_month.beginning_of_month
+  end
+
+  def status(fy)
+    Status.new(self, fiscal_year(fy))
+  end
+
   #-----------------------------------------------------------------------------
 
   # ----- Private Methods -------------------------------------------------------
   #-----------------------------------------------------------------------------
+  def fiscal_year_from_year(year)
+    start_of_fiscal_year = start_of_first_fiscal_year.change(year: year)
+    start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
+    FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+  end
 end

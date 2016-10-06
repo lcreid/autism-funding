@@ -1,15 +1,27 @@
 <div class=row>
-  <div class="col-md-2">Funding spent: $3,000</div>
-  <div class="col-md-2">Funding committed but not spent: $1,000</div>
-  <div class="col-md-2">Funding remaining this year: $2,000</div>
+  <% if funded_person.fiscal_years.present? %>
+    <% status = Status.new(funded_person, funded_person.selected_fiscal_year) %>
+    <div class="col-md-2 test-spent-funds">
+      Funding spent: <%= number_to_currency(status.spent_funds) %>
+    </div>
+    <div class="col-md-2 test-committed-funds">
+      Funding committed but not spent: <%= number_to_currency(status.committed_funds) %>
+    </div>
+    <div class="col-md-2 test-remaining-funds">
+      Funding remaining this year: <%= number_to_currency(status.remaining_funds) %>
+    </div>
+    <div class="col-md-2 test-allowable-funds-for-year">
+      Total funding for year: <%= number_to_currency(status.allowable_funds_for_year) %>
+    </div>
+    <div class="col-md-2 test-spent-out-of-pocket">
+      Out of pocket: <%= number_to_currency(status.spent_out_of_pocket) %>
+    </div>
+  <% else %>
+    <div class="col-md-10">
+      <p>No data available for this period.</p>
+    </div>
+  <% end %>
   <div class="col-md-2">
-    Total funding for year: $6,000
-  </div>
-  <div class="col-md-2">
-    Out of pocket: $0
-  </div>
-  <div class="col-md-2">
-    <!-- TODO: Make the years do something. -->
     <!-- TODO: Hide the dropdown if there's only one year? -->
     <% if (fiscal_year_list = funded_person.fiscal_years).present? %>
 
