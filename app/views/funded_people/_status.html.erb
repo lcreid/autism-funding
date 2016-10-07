@@ -3,37 +3,25 @@
     <div class="col-md-10">
       <% status = Status.new(funded_person, funded_person.selected_fiscal_year) %>
       <div class="row">
-        <div class="col-md-2 test-spent-funds text-center">
-          Funding Spent
+        <div class="col-md-3 test-allowable-funds-for-year text-center">
+          <p class="top-area">Total Funding for Year</p>
+          <div class="bottom-align"><p class="text-center"><%= number_to_currency(status.allowable_funds_for_year) %></p></div>
         </div>
         <div class="col-md-2 test-committed-funds text-center">
-          Funding Approved
+          <p class="top-area">Funding Approved</p>
+          <div class="bottom-align"><p class="text-center"><%= number_to_currency(status.committed_funds) %></p></div>
         </div>
         <div class="col-md-3 test-remaining-funds text-center">
-          Funding Remaining this Year
+          <p class="top-area">Funding Remaining this Year</p>
+          <div class="bottom-align"><p class="text-center"><%= number_to_currency(status.remaining_funds) %></p></div>
         </div>
-        <div class="col-md-3 test-allowable-funds-for-year text-center">
-          Total Funding for Year
-        </div>
-        <div class="col-md-2 test-spent-out-of-pocket text-center">
-          Out of Pocket
-        </div>
-      </div>
-      <div class="row">
         <div class="col-md-2 test-spent-funds text-center">
-          <%= number_to_currency(status.spent_funds) %>
-        </div>
-        <div class="col-md-2 test-committed-funds text-center">
-          <%= number_to_currency(status.committed_funds) %>
-        </div>
-        <div class="col-md-3 test-remaining-funds text-center">
-          <%= number_to_currency(status.remaining_funds) %>
-        </div>
-        <div class="col-md-3 test-allowable-funds-for-year text-center">
-          <%= number_to_currency(status.allowable_funds_for_year) %>
+          <p class="top-area">Funding Spent</p>
+          <div class="bottom-align"><p class="text-center"><%= number_to_currency(status.spent_funds) %></p></div>
         </div>
         <div class="col-md-2 test-spent-out-of-pocket text-center">
-          <%= number_to_currency(status.spent_out_of_pocket) %>
+          <p class="top-area">Out of Pocket</p>
+          <div class="bottom-align"><p class="text-center"><%= number_to_currency(status.spent_out_of_pocket) %></p></div>
         </div>
       </div>
     </div>
