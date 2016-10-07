@@ -17,7 +17,8 @@ class FiscalYearFilterTest < PoltergeistTest
         assert_selector 'tbody tr', count: 2
       end
       within '.invoice-list' do
-        assert_no_selector 'tbody tr'
+#        assert_no_selector 'tbody tr'
+        assert_selector 'tbody tr td', text: "You have no invoices in this fiscal year"
       end
 
       select '2015-2016', from: year_selector
