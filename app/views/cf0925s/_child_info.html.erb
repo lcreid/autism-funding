@@ -4,11 +4,11 @@
   <%= child_field(f, :child_last_name, 2) %>
   <%= child_field(f, :child_dob, 2) %>
   <%= child_field(f, "Is this child in the care of the ministry?", 2) do %>
-  <%= f.radio_button(:child_in_care_of_ministry, 'true') %>
-  <%= f.label('Yes') %>
-  <br/>
-  <%= f.radio_button(:child_in_care_of_ministry, 'false') %>
-  <%= f.label('No') %>
+    <%= f.radio_button(:child_in_care_of_ministry, 'true') %>
+    <%= f.label('Yes') %>
+    <br/>
+    <%= f.radio_button(:child_in_care_of_ministry, 'false') %>
+    <%= f.label('No') %>
   <% end %>
 
   <div class="col-md-2">
