@@ -55,6 +55,7 @@ class HomePageTest < PoltergeistTest
     fill_in_login(users(:years))
     within "#collapse-#{child_id = funded_people(:two_fiscal_years).id}" do
       # puts body
+      sleep(1)
       assert_selector '.test-spent-funds', text: /\$0.00/
       assert_selector '.test-committed-funds', text: /\$3,000.00/
       assert_selector '.test-remaining-funds', text: /\$3,000.00/
