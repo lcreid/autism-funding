@@ -18,9 +18,17 @@ class FundedPerson < ApplicationRecord
     cf0925s.select { |x| fy.include?(x.fiscal_year) }
   end
 
+  def cf0925s_in_selected_fiscal_year
+    cf0925s_in_fiscal_year(selected_fiscal_year)
+  end
+
   def invoices_in_fiscal_year(fy)
     # pp invoices.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
     invoices.select { |x| fy.include?(x.fiscal_year) }
+  end
+
+  def invoices_in_selected_fiscal_year
+    invoices_in_fiscal_year(selected_fiscal_year)
   end
 
   def my_name
@@ -56,6 +64,8 @@ class FundedPerson < ApplicationRecord
       # puts "First year: #{fy_parts[1]} Second year: #{fy_parts[3]}"
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: fy_parts[1].to_i)
       FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+    when nil
+      nil
     else
       date = date.to_date unless date.is_a?(Date)
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
@@ -81,24 +91,24 @@ class FundedPerson < ApplicationRecord
   end
 
   def selected_fiscal_year
-    # puts "first: #{fiscal_years.first}"
-    @selected_fiscal_year ||= fiscal_years.first
-    # puts "selected_fiscal_year: #{@selected_fiscal_year.inspect}"
-    @selected_fiscal_year
+    user.childs_selected_fiscal_year(self)
   end
 
   def selected_fiscal_year=(fy)
-    case fy
-    when FiscalYear
-      @selected_fiscal_year = fy
-    when Range
-      @selected_fiscal_year = FiscalYear.new(fy)
-    when String
-      # FIXME: put String in the FY initializer. Not as simple as that.
-      # The FiscalYear class doesn't have the child's DOB, probably
-      # rightly so.
-      @selected_fiscal_year = fiscal_years.find { |i| fy == i.to_s }
-    end
+    user.set_childs_selected_fiscal_year(self,
+                                         case fy
+                                         when FiscalYear
+                                           fy
+                                         when Range
+                                           FiscalYear.new(fy)
+                                         when String
+                                           # FIXME: put String in the FY initializer. Not as simple as that.
+                                           # The FiscalYear class doesn't have the child's DOB, probably
+                                           # rightly so.
+                                           fiscal_years.find { |i| fy == i.to_s }
+                                         end)
+    logger.debug { "Set selected fiscal year for #{my_name} to #{selected_fiscal_year}" }
+    selected_fiscal_year
   end
 
   def start_of_first_fiscal_year

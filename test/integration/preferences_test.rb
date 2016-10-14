@@ -10,9 +10,10 @@ class PreferencesTest < PoltergeistTest
     assert_content 'Sixteen Year Two-Kids'
     assert_content 'Four Year Two-Kids'
     last_child = user.funded_people.last
+    Rails.logger.debug { "The last child is #{last_child.inspect}" }
     assert_selector("#collapse-#{last_child.id}.in")
 
-    puts "About to click name: #{last_child.my_name}"
+    Rails.logger.debug { "About to click name: #{last_child.my_name}" }
     click_link(last_child.my_name)
     # The next couple of lines make sure this test script doesn't get
     # ahead of PhantomJS.
@@ -26,24 +27,30 @@ class PreferencesTest < PoltergeistTest
 
     click_link 'My Home'
     assert_no_content 'My Funded Children'
-    assert_content 'Sixteen Year Two-Kids'
+    assert_content 'Four Year Two-Kids'
     assert_current_path root_path
-    puts 'Looking for collapsed panel.'
+    Rails.logger.debug { 'Looking for collapsed panel.' }
     # The next line is just to make sure we're synched up before looking
     # for the expanded panel.
-    assert_selector("#collapse-#{last_child.id}")
+    assert_selector("#collapse-#{last_child.id}", visible: false)
     assert_no_selector("#collapse-#{last_child.id}.in")
 
+    # Ugh. Not supposed to do this, but what choice do I have?
+    sleep(5)
     click_link(last_child.my_name)
+    Rails.logger.debug { 'Just clicked link to show panel.' }
     # The next line is just to make sure we're synched up before looking
     # for the expanded panel.
-    assert_no_selector("#collapse-#{last_child.id}.collapsing")
+    assert_content 'Four Year Two-Kids'
     assert_selector("#collapse-#{last_child.id}.in")
+
     click_link 'My Profile'
     assert_content 'My Funded Children'
     assert_current_path my_profile_index_path
 
+    Rails.logger.debug { 'Going back to home.' }
     click_link 'My Home'
+    assert_content 'Four Year Two-Kids'
     assert_current_path root_path
     assert_selector("#collapse-#{last_child.id}.in")
   end
@@ -63,23 +70,22 @@ class PreferencesTest < PoltergeistTest
     assert_no_select two_year_kid, selected: '2016-2017'
     assert_select two_year_kid, selected: '2015-2016'
 
-    # puts 'Going to My Profile'
-    # puts page.body
+    # Rails.logger.debug { 'Going to My Profile' }
+    # Rails.logger.debug { page.body }
     # assert_link 'My Profile'
     click_link 'My Profile'
-    # puts find("a[href='/my_profile/index']").inspect
+    # Rails.logger.debug { find("a[href='/my_profile/index']").inspect }
     # find("a[href='/my_profile/index']").click
     # visit my_profile_index_path
     assert_content 'My Funded Children'
     assert_current_path my_profile_index_path
-    # puts 'Going back to My Home'
+    # Rails.logger.debug { 'Going back to My Home' }
     click_link 'My Home'
     # visit root_path
     assert_current_path root_path
 
-    # puts find("##{two_year_kid}").inspect
+    # Rails.logger.debug { find("##{two_year_kid}").inspect }
     assert_select two_year_kid, selected: '2015-2016'
-    assert_select two_year_kid, selected: '2016-2017'
   end
 
   test 'BC reminder dismissed' do

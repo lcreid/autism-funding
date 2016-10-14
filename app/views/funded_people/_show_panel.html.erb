@@ -3,7 +3,7 @@
     <div class="panel-heading" role="tab" id="heading-<%= funded_person.id %>">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<%= funded_person.id %>" aria-expanded="true" aria-controls="collapse-<%= funded_person.id %>">
-          <span class="glyphicon glyphicon-minus"></span>
+          <%= glyphicon_for_panel(funded_person) %>
           <span class="name">
             <%# The object name in the partial is named after the partial,
                         not the singular of the object for the collection. %>
@@ -12,11 +12,6 @@
         </a>
       </h4>
     </div>
-    <!-- Remove the class="in" to make this start collapsed -->
-    <div id="collapse-<%= funded_person.id %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-<%= funded_person.id %>">
-      <div class="panel-body">
-        <%= render partial: "funded_people/show_body", locals: { funded_person: funded_person } %>
-      </div>
-    </div>
+    <%= collapsible_panel(funded_person) %>
   </div>
 </div>
