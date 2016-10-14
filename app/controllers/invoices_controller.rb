@@ -24,7 +24,9 @@ class InvoicesController < ApplicationController
   def update
     @invoice = Invoice.find(params[:id])
     @invoice.update(invoice_params)
-    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
+    ## TODO Save the fiscal year of the updated invoice in the funded person's preferences
+#    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
+    redirect_to root_path
   end
 
   def destroy
@@ -38,8 +40,9 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
     if @invoice.update(invoice_params)
-      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-      #render 'edit'
+#      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
+      ## TODO Save the fiscal year of the created invoice in the funded person's preferences
+      redirect_to root_path
     else
       render 'new'
     end

@@ -33,7 +33,7 @@ class MyProfileController < ApplicationController
 
   def add_data_for_user
     # Whitelist the parameters for update
-    user_params = params.require(:user).permit(:name_first, :name_middle, :name_last, funded_people_attributes: [:id, :name_first, :name_middle, :name_last, :birthdate, :_destroy])
+    user_params = params.require(:user).permit(:name_first, :name_middle, :name_last, funded_people_attributes: [:id, :name_first, :name_middle, :name_last, :birthdate, :child_in_care_of_ministry, :_destroy])
     address_params = params.require(:address).permit(:province_code_id, :address_line_1, :address_line_2, :city, :postal_code)
     home_phone_params = params.require(:home_phone_number).permit(:phone_number)
     work_phone_params = params.require(:work_phone_number).permit(:phone_number, :phone_extension)
