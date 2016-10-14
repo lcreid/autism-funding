@@ -11,6 +11,8 @@ class PreferencesTest < PoltergeistTest
     assert_content 'Four Year Two-Kids'
     last_child = user.funded_people.last
     Rails.logger.debug { "The last child is #{last_child.inspect}" }
+    # Ugh. Not supposed to do this, but what choice do I have?
+    sleep(1)
     assert_selector("#collapse-#{last_child.id}.in")
 
     Rails.logger.debug { "About to click name: #{last_child.my_name}" }
@@ -36,7 +38,7 @@ class PreferencesTest < PoltergeistTest
     assert_no_selector("#collapse-#{last_child.id}.in")
 
     # Ugh. Not supposed to do this, but what choice do I have?
-    sleep(5)
+    sleep(1)
     click_link(last_child.my_name)
     Rails.logger.debug { 'Just clicked link to show panel.' }
     # The next line is just to make sure we're synched up before looking

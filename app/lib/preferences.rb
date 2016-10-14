@@ -1,10 +1,8 @@
 ##
 # Implement a preferences mechanism
 module Preferences
-  def set_childs_selected_fiscal_year(child, fy)
-    # puts "child: #{child.inspect} fy: #{fy}"
-    # TODO: Fix the following line to be like the one a few below.
-    set_child_preference(child, :selected_fiscal_year, fy) if fy
+  def childs_panel_state(child)
+    child_preference(child, :panel_state, :open).to_sym
   end
 
   def childs_selected_fiscal_year(child)
@@ -15,8 +13,10 @@ module Preferences
     set_child_preference(child, :panel_state, state).to_sym
   end
 
-  def childs_panel_state(child)
-    child_preference(child, :panel_state, :open).to_sym
+  def set_childs_selected_fiscal_year(child, fy)
+    # puts "child: #{child.inspect} fy: #{fy}"
+    # TODO: Fix the following line to be like the one a few below.
+    child.fiscal_year(set_child_preference(child, :selected_fiscal_year, fy)) if fy
   end
 
   private
