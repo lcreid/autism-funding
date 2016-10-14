@@ -12,7 +12,7 @@ class PreferencesTest < PoltergeistTest
     last_child = user.funded_people.last
     Rails.logger.debug { "The last child is #{last_child.inspect}" }
     # Ugh. Not supposed to do this, but what choice do I have?
-    sleep(1)
+    sleep(2)
     assert_selector("#collapse-#{last_child.id}.in")
 
     Rails.logger.debug { "About to click name: #{last_child.my_name}" }

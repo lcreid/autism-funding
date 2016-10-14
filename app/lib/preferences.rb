@@ -1,6 +1,13 @@
 ##
 # Implement a preferences mechanism
 module Preferences
+  ##
+  # Return true if the user has once acknowledged the notification
+  # that the forms are only for residents of BC.
+  def bc_warning_acknowledgement?
+    preference(:bc_warning_acknowledgement, false)
+  end
+
   def childs_panel_state(child)
     child_preference(child, :panel_state, :open).to_sym
   end
@@ -9,13 +16,16 @@ module Preferences
     child.fiscal_year(child_preference(child, :selected_fiscal_year, child.fiscal_years.first))
   end
 
+  def set_bc_warning_acknowledgement(state)
+    set_preference(bc_warning_acknowledgement: state)
+  end
+
   def set_childs_panel_state(child, state)
     set_child_preference(child, :panel_state, state).to_sym
   end
 
   def set_childs_selected_fiscal_year(child, fy)
     # puts "child: #{child.inspect} fy: #{fy}"
-    # TODO: Fix the following line to be like the one a few below.
     child.fiscal_year(set_child_preference(child, :selected_fiscal_year, fy)) if fy
   end
 
@@ -26,12 +36,7 @@ module Preferences
   end
 
   def set_child_preference(child, key, value)
-    logger.debug do
-      "Set child preference: #{child.my_name} " \
-      "{ #{key}: #{value} }"
-    end
-    self.preferences = json(preferences).merge(child.id.to_s => { key => value }).to_json
-    logger.debug { "Set child preferences: #{preferences}" }
+    set_preference(child.id.to_s => { key => value })
     save
     value
   end
@@ -45,6 +50,25 @@ module Preferences
     logger.debug { "Child preferences value before default: #{value}" }
     value ||= default
     logger.debug { "Child preferences value: #{value}" }
+    value
+  end
+
+  def set_preference(hash)
+    logger.debug { "Set preference new hash: #{hash}" }
+    self.preferences = json(preferences).merge(hash).to_json
+    logger.debug { "Set preference preferences: #{preferences}" }
+    save
+  end
+
+  def preference(key, default)
+    logger.debug { "Preference args: #{key}(#{key.class})" }
+    logger.debug { "Preferences: #{preferences}" }
+    pref_hash = json(preferences)
+    logger.debug { "Preferences hash: #{pref_hash}" }
+    value = pref_hash && pref_hash[key.to_s]
+    logger.debug { "Preferences value before default: #{value}" }
+    value ||= default
+    logger.debug { "Preferences value: #{value}" }
     value
   end
 end
