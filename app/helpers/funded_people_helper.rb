@@ -33,6 +33,6 @@ module FundedPeopleHelper
   private
 
   def panel_state(funded_person)
-    funded_person.user.childs_panel_state(funded_person)
+    funded_person.childs_panel_state
   end
 end
