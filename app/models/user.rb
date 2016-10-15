@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Preferences
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -112,6 +114,36 @@ class User < ApplicationRecord
 
   def work_phone
     phone 'Work'
+  end
+
+  ##
+  # Return true if the user has once acknowledged the notification
+  # that the forms are only for residents of BC.
+  def bc_warning_acknowledgement?
+    preference(:bc_warning_acknowledgement, false)
+  end
+
+  def set_bc_warning_acknowledgement(state)
+    set_preference(bc_warning_acknowledgement: state)
+  end
+
+  def set_preference(hash)
+    logger.debug { "Set preference new hash: #{hash}" }
+    self.preferences = json(preferences).merge(hash).to_json
+    logger.debug { "Set preference preferences: #{preferences}" }
+    save
+  end
+
+  def preference(key, default)
+    logger.debug { "Preference args: #{key}(#{key.class})" }
+    logger.debug { "Preferences: #{preferences}" }
+    pref_hash = json(preferences)
+    logger.debug { "Preferences hash: #{pref_hash}" }
+    value = pref_hash && pref_hash[key.to_s]
+    logger.debug { "Preferences value before default: #{value}" }
+    value ||= default
+    logger.debug { "Preferences value: #{value}" }
+    value
   end
 
   private
