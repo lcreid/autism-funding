@@ -153,6 +153,7 @@ ActiveRecord::Schema.define(version: 20161014182902) do
     t.text     "name_last"
     t.text     "name_middle"
     t.text     "role"
+    t.text     "preferences"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
