@@ -81,6 +81,8 @@ class PoltergeistTest < CapybaraTest
     DatabaseCleaner.strategy = :truncation
     Capybara.javascript_driver = :poltergeist
     Capybara.current_driver = Capybara.javascript_driver
+    # Was getting lots of random failures, so try extending the wait time.
+    Capybara.default_max_wait_time = 5
     super
   end
 
