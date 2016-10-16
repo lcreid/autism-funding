@@ -3,9 +3,13 @@
 class FiscalYear < Range
   ##
   # Convenience to be able to initialize from a Range.
-  def initialize(range)
-    super(range.begin, range.end, range.exclude_end?)
-    # @range = range
+  def initialize(param)
+    case param
+    when Range
+      super(param.begin, param.end, param.exclude_end?)
+    when Date
+      super(param, param.next_year - 1.day)
+    end
   end
 
   ##

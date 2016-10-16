@@ -55,12 +55,12 @@ class FundedPerson < ApplicationRecord
       fy_parts = /(\d+{4,})(-(\d+{4,}))?/.match(date)
       # puts "First year: #{fy_parts[1]} Second year: #{fy_parts[3]}"
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: fy_parts[1].to_i)
-      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+      FiscalYear.new(start_of_fiscal_year)
     else
       date = date.to_date unless date.is_a?(Date)
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
       start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
-      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+      FiscalYear.new(start_of_fiscal_year)
     end
   end
 
