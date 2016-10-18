@@ -34,6 +34,8 @@ gem 'devise'
 # Manipulate PDFs https://github.com/jkraemer/pdf-forms
 gem 'pdf-forms'
 
+gem 'bootstrap_forms'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
