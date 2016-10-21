@@ -1,3 +1,4 @@
+require 'augmented_bootstrap_forms'
 ##
 # Field helpers for BC request to pay forms.
 module Cf0925sHelper
@@ -15,7 +16,8 @@ module Cf0925sHelper
   ##
   # Form for completing the BC request to pay form (CF0925)
   def cf0925_form(funded_person, cf0925)
-    bootstrap_form_for([funded_person, cf0925]) do |f|
+    bootstrap_form_for([funded_person, cf0925],
+                       builder: AugmentedBootstrapForms) do |f|
       f.fields_for(:funded_person_attributes,
                    @cf0925.funded_person) do |child|
         child.hidden_field(:id) +
@@ -75,20 +77,20 @@ module Cf0925sHelper
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_address, 5) +
-        service_provider_field(f, :service_provider_city, 3) +
-        service_provider_field(f, :service_provider_postal_code, 2) +
-        service_provider_field(f, :service_provider_phone, 2)
+          service_provider_field(f, :service_provider_city, 3) +
+          service_provider_field(f, :service_provider_postal_code, 2) +
+          service_provider_field(f, :service_provider_phone, 2)
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_1, 6) +
-        wrap_date_field(f, :service_provider_service_start, 3) +
-        wrap_date_field(f, :service_provider_service_end, 3)
+          wrap_date_field(f, :service_provider_service_start, 3) +
+          wrap_date_field(f, :service_provider_service_end, 3)
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_2, 6) +
-        service_provider_field(f, :service_provider_service_fee, 2) +
-        service_provider_field(f, :service_provider_service_hour, 2) +
-        service_provider_field(f, :service_provider_service_amount, 2)
+          service_provider_field(f, :service_provider_service_fee, 2) +
+          service_provider_field(f, :service_provider_service_hour, 2) +
+          service_provider_field(f, :service_provider_service_amount, 2)
       end
       a + content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_3, 6)
@@ -112,27 +114,27 @@ module Cf0925sHelper
         "directly on behalf of a parent or guardian."
 
       a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(4, supplier_field(f, :supplier_name, lstrip: '')) +
-        wrap_in_column(5, supplier_field(f, :supplier_contact_person)) +
-        wrap_in_column(3, supplier_field(f, :supplier_phone))
+        wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
+          wrap_in_column(5, f.supplier_field(:supplier_contact_person)) +
+          wrap_in_column(3, f.supplier_field(:supplier_phone))
       end
       a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, supplier_field(f, :supplier_address)) +
-        wrap_in_column(4, supplier_field(f, :supplier_city)) +
-        wrap_in_column(2, supplier_field(f, :supplier_postal_code))
+        wrap_in_column(6, f.supplier_field(:supplier_address)) +
+          wrap_in_column(4, f.supplier_field(:supplier_city)) +
+          wrap_in_column(2, f.supplier_field(:supplier_postal_code))
       end
       a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, supplier_field(f, :item_desp_1)) +
-        wrap_in_column(2, supplier_field(f, :item_cost_1)) +
-        wrap_in_column(4, supplier_field(f, :item_total))
+        wrap_in_column(6, f.supplier_field(:item_desp_1)) +
+          wrap_in_column(2, f.supplier_field(:item_cost_1)) +
+          wrap_in_column(4, f.supplier_field(:item_total))
       end
       a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, supplier_field(f, :item_desp_2)) +
-        wrap_in_column(2, supplier_field(f, :item_cost_2))
+        wrap_in_column(6, f.supplier_field(:item_desp_2)) +
+          wrap_in_column(2, f.supplier_field(:item_cost_2))
       end
       a + content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, supplier_field(f, :item_desp_3)) +
-        wrap_in_column(2, supplier_field(f, :item_cost_3))
+        wrap_in_column(6, f.supplier_field(:item_desp_3)) +
+          wrap_in_column(2, f.supplier_field(:item_cost_3))
       end
     end
   end
@@ -140,10 +142,6 @@ module Cf0925sHelper
   def field_with_error_message(f, field, opts = {})
     f.text_field(field, label: format_label(field, opts)) +
       f.error_message_for(field)
-  end
-
-  def supplier_field(f, field, opts = {}, &block)
-    field_with_error_message(f, field, { lstrip: 'Supplier' }.merge(opts))
   end
 
   def wrap_in_column(width, text)
