@@ -71,6 +71,7 @@ class Cf0925sController < ApplicationController
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
+      @funded_person.selected_fiscal_year = @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
       redirect_to edit_cf0925_path(@cf0925), notice: 'Request saved.'
     else
@@ -91,6 +92,7 @@ class Cf0925sController < ApplicationController
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
+      @funded_person.selected_fiscal_year = @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
       redirect_to edit_cf0925_path(@cf0925), notice: 'Request updated.'
     else
