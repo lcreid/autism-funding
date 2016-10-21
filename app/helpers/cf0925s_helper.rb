@@ -63,34 +63,40 @@ module Cf0925sHelper
 
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_name, 8, lstrip: '') +
-        service_provider_field(f, "Payment to be provided to:", 4) do
-          f.radio_button(:payment, 'provider') +
-          f.label('Service Provider') +
-          "<br/>".html_safe +
-          f.radio_button(:payment, 'agency') +
-          f.label('Agency') +
-          f.error_message_for(:payment)
-        end
+          wrap_field(4) do
+            f.form_group(:payment,
+                         label: { text: "Payment to be provided to:" }) do
+              f.radio_button(:payment, 'provider', label: 'Service Provider') +
+              "<br/>".html_safe +
+              f.radio_button(:payment, 'agency', label: 'Agency') +
+              f.error_message_for(:payment)
+            end
+          end
       end
       a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :agency_name, 8)
+        service_provider_field(f, :agency_name, 8, label: 'Agency Name (if applicable)')
       end
       a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_address, 5) +
-          service_provider_field(f, :service_provider_city, 3) +
-          service_provider_field(f, :service_provider_postal_code, 2) +
-          service_provider_field(f, :service_provider_phone, 2)
+        service_provider_field(f, :service_provider_address, 5, label: 'Address') +
+          service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
+          service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
+          service_provider_field(f, :service_provider_phone, 2, label: 'Phone Number')
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_1, 6) +
-          wrap_date_field(f, :service_provider_service_start, 3) +
-          wrap_date_field(f, :service_provider_service_end, 3)
+          wrap_date_field(f, :service_provider_service_start, 3, label: 'Start Date') +
+          wrap_date_field(f, :service_provider_service_end, 3, label: 'End Date')
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_2, 6) +
-          service_provider_field(f, :service_provider_service_fee, 2) +
-          service_provider_field(f, :service_provider_service_hour, 2) +
-          service_provider_field(f, :service_provider_service_amount, 2)
+          service_provider_field(f, :service_provider_service_fee, 2, label: 'Fee (incl PST)') +
+          # service_provider_field(f, :service_provider_service_hour, 2, label: 'Per') +
+          wrap_field(2) do
+            f.select(:service_provider_service_hour,
+                     %w(Hour Day),
+                     label: 'Per')
+          end +
+          service_provider_field(f, :service_provider_service_amount, 2, label: 'Total Amount')
       end
       a + content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_3, 6)
@@ -179,11 +185,10 @@ module Cf0925sHelper
     wrap_field(width) do
       if block_given?
         a = capture(&block)
-        a.prepend(content_tag(:small, format_label(field, opts)) +
-                  content_tag(:br)) if field
       else
-        a = f.label(field, class: 'hide-label') +
-            f.text_field(field, placeholder: format_label(field, opts))
+        opts[:label] ||= format_label(field)
+        opts[:placeholder] ||= opts[:label]
+        a = f.text_field(field, opts)
       end
       # puts "about to add error message for #{field}..."
       a + f.error_message_for(field)
@@ -196,9 +201,9 @@ module Cf0925sHelper
     end
   end
 
-  def wrap_date_field(f, field, width)
+  def wrap_date_field(f, field, width, opts = {})
     wrap_field(width) do
-      f.date_field(field) +
+      f.date_field(field, opts) +
         f.error_message_for(field)
     end
   end
@@ -207,8 +212,9 @@ module Cf0925sHelper
     show_field(field, width, lstrip: 'Child', &block)
   end
 
-  def parent_field(f, field, width = 4, &block)
-    form_field(f, field, width, lstrip: 'Parent', &block)
+  def parent_field(f, field, width = 4, opts = {}, &block)
+    opts[:label] ||= format_label(field, lstrip: 'Parent')
+    form_field(f, field, width, opts, &block)
   end
 
   def parent_phone_field(f, field, phone_number, _width = 3)
@@ -219,7 +225,8 @@ module Cf0925sHelper
   end
 
   def service_provider_field(f, field, width = 4, opts = {}, &block)
-    form_field(f, field, width, { lstrip: 'Service Provider' }.merge(opts), &block)
+    opts[:label] ||= format_label(field, lstrip: 'Service Provider')
+    form_field(f, field, width, opts, &block)
   end
 
   def format_label(field, opts = {})
