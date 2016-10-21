@@ -412,4 +412,12 @@ class UserTest < ActiveSupport::TestCase
     #   assert_equal user_hash[k], user.send(fixed_key)
     # end
   end
+
+  test 'BC message acknowledgement' do
+    user = users(:years)
+    assert_not user.bc_warning_acknowledgement?
+    user.set_bc_warning_acknowledgement(true)
+    user = User.find(user.id)
+    assert user.bc_warning_acknowledgement?
+  end
 end

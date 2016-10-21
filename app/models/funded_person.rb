@@ -1,4 +1,6 @@
 class FundedPerson < ApplicationRecord
+  include Preferences
+
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
   belongs_to :user, inverse_of: :funded_people
@@ -18,9 +20,25 @@ class FundedPerson < ApplicationRecord
     cf0925s.select { |x| fy.include?(x.fiscal_year) }
   end
 
+  def cf0925s_in_selected_fiscal_year
+    cf0925s_in_fiscal_year(selected_fiscal_year)
+  end
+
+  def childs_panel_state
+    child_preference(:panel_state, :open).to_sym
+  end
+
+  def childs_selected_fiscal_year
+    fiscal_year(child_preference(:selected_fiscal_year, fiscal_years.first))
+  end
+
   def invoices_in_fiscal_year(fy)
     # pp invoices.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
     invoices.select { |x| fy.include?(x.fiscal_year) }
+  end
+
+  def invoices_in_selected_fiscal_year
+    invoices_in_fiscal_year(selected_fiscal_year)
   end
 
   def my_name
@@ -55,12 +73,14 @@ class FundedPerson < ApplicationRecord
       fy_parts = /(\d+{4,})(-(\d+{4,}))?/.match(date)
       # puts "First year: #{fy_parts[1]} Second year: #{fy_parts[3]}"
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: fy_parts[1].to_i)
-      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+      FiscalYear.new(start_of_fiscal_year)
+    when nil
+      nil
     else
       date = date.to_date unless date.is_a?(Date)
       start_of_fiscal_year = start_of_first_fiscal_year.change(year: date.year)
       start_of_fiscal_year -= 1.year if date < start_of_fiscal_year
-      FiscalYear.new(start_of_fiscal_year...start_of_fiscal_year.next_year)
+      FiscalYear.new(start_of_fiscal_year)
     end
   end
 
@@ -81,24 +101,31 @@ class FundedPerson < ApplicationRecord
   end
 
   def selected_fiscal_year
-    # puts "first: #{fiscal_years.first}"
-    @selected_fiscal_year ||= fiscal_years.first
-    # puts "selected_fiscal_year: #{@selected_fiscal_year.inspect}"
-    @selected_fiscal_year
+    childs_selected_fiscal_year
   end
 
   def selected_fiscal_year=(fy)
-    case fy
-    when FiscalYear
-      @selected_fiscal_year = fy
-    when Range
-      @selected_fiscal_year = FiscalYear.new(fy)
-    when String
-      # FIXME: put String in the FY initializer. Not as simple as that.
-      # The FiscalYear class doesn't have the child's DOB, probably
-      # rightly so.
-      @selected_fiscal_year = fiscal_years.find { |i| fy == i.to_s }
-    end
+    set_childs_selected_fiscal_year(case fy
+                                    when FiscalYear
+                                      fy
+                                    when Range
+                                      FiscalYear.new(fy)
+                                    when String
+                                      # The FiscalYear class doesn't have the child's DOB, probably
+                                      # FIXME: put String in the FY initializer. Not as simple as that.
+                                      # rightly so.
+                                      fiscal_years.find { |i| fy == i.to_s }
+                                    end)
+    logger.debug { "Set selected fiscal year for #{my_name} to #{selected_fiscal_year}" }
+    selected_fiscal_year
+  end
+
+  def set_childs_panel_state(state)
+    set_child_preference(:panel_state, state).to_sym
+  end
+
+  def set_childs_selected_fiscal_year(fy)
+    fiscal_year(set_child_preference(:selected_fiscal_year, fy)) if fy
   end
 
   def start_of_first_fiscal_year
@@ -109,10 +136,30 @@ class FundedPerson < ApplicationRecord
     Status.new(self, fiscal_year(fy))
   end
 
+  def set_child_preference(key, value)
+    user.set_preference(id.to_s => { key => value })
+    value
+  end
+
+  def child_preference(key, default)
+    logger.debug { "Child preferences args: #{self.inspect}, #{key}(#{key.class})" }
+    logger.debug { "Child preferences: #{user.preferences}" }
+    pref_hash = json(user.preferences)
+    logger.debug { "Child preferences hash: #{pref_hash}" }
+    value = (pref_hash && pref_hash[id.to_s] && pref_hash[id.to_s][key.to_s])
+    logger.debug { "Child preferences value before default: #{value}" }
+    value ||= default
+    logger.debug { "Child preferences value: #{value}" }
+    value
+  end
+
   #-----------------------------------------------------------------------------
 
   # ----- Private Methods -------------------------------------------------------
   #-----------------------------------------------------------------------------
+
+  private
+
   def fiscal_year_from_year(year)
     start_of_fiscal_year = start_of_first_fiscal_year.change(year: year)
     start_of_fiscal_year -= 1.year if date < start_of_fiscal_year

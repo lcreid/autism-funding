@@ -115,11 +115,28 @@
         </div>
       </div>
       <div class="col-md-1">
-        <br>
+
         <%= fp.label "Delete ?", class: 'control-label' %>
         <%= fp.check_box :_destroy %>
       </div>
 
+    </div>
+    <div class="row">
+      <div class="col-md-1">
+      </div>
+      <div class="col-md-11">
+        <div class="form-group">
+          <%= fp.label "Is this child in the care of the ministry ?", class: 'control-label' %>
+          <span style="padding: 4pt;">
+            <%= fp.radio_button(:child_in_care_of_ministry, 'true') %>
+            <%= fp.label('Yes') %>
+          </span>
+          <span style="padding: 4pt;">
+            <%= fp.radio_button(:child_in_care_of_ministry, 'false') %>
+            <%= fp.label('No') %>
+          </span>
+        </div>
+      </div>
     </div>
 
   <% end %>

@@ -167,6 +167,7 @@ class Cf0925sController < ApplicationController
     @cf0925.child_first_name = @cf0925.funded_person.name_first
     @cf0925.child_middle_name = @cf0925.funded_person.name_middle
     @cf0925.child_dob = @cf0925.funded_person.my_dob
+    @cf0925.child_in_care_of_ministry = @cf0925.funded_person.child_in_care_of_ministry
     # puts "After: #{@cf0925.child_dob}"
   end
 end

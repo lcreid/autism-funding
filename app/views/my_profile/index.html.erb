@@ -49,6 +49,9 @@
     <div class="row">
       <div class="col-sm-3 col-md-12">
         <%= fperson.my_name %> born <%= fperson.my_dob %>
+        <% if fperson.child_in_care_of_ministry %>
+           - <i>in care of the Ministry</i>
+        <% end %>
       </div>
     </div>
 

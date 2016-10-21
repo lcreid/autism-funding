@@ -33,3 +33,10 @@ years:
   postal_code: F0F 0F0
   province_code: bc
   user: years
+
+dual_child_parent:
+  address_line_1: 123 Dual St
+  city: Dualtown
+  postal_code: D0D 0D0
+  province_code: bc
+  user: dual_child_parent

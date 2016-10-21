@@ -1,8 +1,4 @@
-<h4><%= @title %></h4>
-<div style="font-size: 8pt"><%= @subtitle %></div>
-<div class="col-md-1"></div>
-<div class="col-md-10">
-  <table class="table table-striped invoice-list" style="border: 1pt solid red;">
+  <table class="table table-striped invoice-list">
     <thead>
       <tr>
         <th class="text-center">Invoice Date</th>
@@ -13,34 +9,37 @@
       </tr>
     </thead>
     <tbody>
-    <% invoices.each do |i| %>
-      <tr>
-        <td class="text-center">
-          <%= i.invoice_date %>
-        </td>
-        <td>
-          <%= i.invoice_from %>
-        </td>
-        <td class="text-right">
-          <%= i.invoice_amount %>
-        </td>
-        <td>
-          <% if i.include_in_reports? %>
-            Complete
-          <% else %>
-            Need More info
-          <% end %>
-        </td>
-        <td>
-          <%= link_to('Edit', edit_invoice_path(i.id), class: "btn btn-xs btn-primary") %>
+      <% if invoices.size == 0 %>
+        <tr>
+          <td colspan="5" class="text-center"><%= message_on_empty_report %></td>
+      <% else %>
+        <% invoices.each do |i| %>
+          <tr>
+            <td class="text-center">
+              <%= i.invoice_date %>
+            </td>
+            <td>
+              <%= i.invoice_from %>
+            </td>
+            <td class="text-right">
+              <%= number_to_currency(i.invoice_amount) %>
+            </td>
+            <td>
+              <% if i.include_in_reports? %>
+                Complete
+              <% else %>
+                Need More info
+              <% end %>
+            </td>
+            <td>
+              <%= link_to('Edit', edit_invoice_path(i.id), class: "btn btn-xs btn-primary") %>
           <%#= link_to('Paid', '#', class: "btn btn-xs btn-primary", disabled: true) %>
-          <%= link_to('Delete', invoice_path(i.id), method: :delete, data: { confirm: "\Are you really, really sure?\n\nThis action cannot be undone.\n\n"}, class: "btn btn-xs btn-danger") %>
-        </td>
-      </tr>
-    <% end %>
+              <%= link_to('Delete', invoice_path(i.id), method: :delete, data: { confirm: "\Are you really, really sure?\n\nThis action cannot be undone.\n\n"}, class: "btn btn-xs btn-danger") %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
     </tbody>
     <tfoot>
     </tfoot>
   </table>
-</div>
-<div class="col-md-1"></div>
