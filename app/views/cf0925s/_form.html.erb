@@ -64,7 +64,9 @@
       <% end %>
         <%= form_row do %>
         <%= service_provider_field(f, :service_provider_service_1, 6) %>
+        <%= f.label(:service_provider_service_start, "Start Date") %>
         <%= wrap_date_field(f, :service_provider_service_start, 3) %>
+        <%= f.label(:service_provider_service_end, "End Date") %>
         <%= wrap_date_field(f, :service_provider_service_end, 3) %>
       <% end %>
       <%= form_row do %>
