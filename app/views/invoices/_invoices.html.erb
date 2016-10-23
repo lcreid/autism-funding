@@ -1,9 +1,9 @@
   <table class="table table-striped invoice-list">
     <thead>
       <tr>
-        <th class="text-center">Invoice Date</th>
-        <th class="text-center">From</th>
-        <th class="text-center">Amount</th>
+        <th class="text-center">Date</th>
+        <th class="text-left">From</th>
+        <th class="text-right">Amount</th>
         <th class="text-center">Status</th>
         <th class="text-center">Actions</th>
       </tr>
@@ -13,10 +13,10 @@
         <tr>
           <td colspan="5" class="text-center"><%= message_on_empty_report %></td>
       <% else %>
-        <% invoices.each do |i| %>
+        <% invoices.sort{|x,y| (y.start_date || Date.new(1900,1,1)) <=> (x.start_date || Date.new(1900,1,1))}.each do |i| %>
           <tr>
             <td class="text-center">
-              <%= i.invoice_date %>
+              <%= i.start_date %>
             </td>
             <td>
               <%= i.invoice_from %>
@@ -24,14 +24,14 @@
             <td class="text-right">
               <%= number_to_currency(i.invoice_amount) %>
             </td>
-            <td>
+            <td class="text-center">
               <% if i.include_in_reports? %>
                 Complete
               <% else %>
                 Need More info
               <% end %>
             </td>
-            <td>
+            <td class="text-center">
               <%= link_to('Edit', edit_invoice_path(i.id), class: "btn btn-xs btn-primary") %>
           <%#= link_to('Paid', '#', class: "btn btn-xs btn-primary", disabled: true) %>
               <%= link_to('Delete', invoice_path(i.id), method: :delete, data: { confirm: "\Are you really, really sure?\n\nThis action cannot be undone.\n\n"}, class: "btn btn-xs btn-danger") %>

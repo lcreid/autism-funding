@@ -1,9 +1,18 @@
 <% title("All Children") %>
-<div class="alert alert-warning">
-  <span class="glyphicon glyphicon-star-empty"></span>
-  The forms and funding found in this area are only availble to residents of
-  British Columbia
-</div>
+<% unless current_user.bc_warning_acknowledgement? %>
+  <div class="alert alert-warning">
+    <div class="row">
+      <div class="col-md-7">
+        <span class="glyphicon glyphicon-star-empty"></span>
+        The forms and funding found in this area are only availble to residents of
+        British Columbia
+      </div>
+      <div class="col-md-5">
+        <%= link_to('I understand, please don\'t show me this anymore', home_acknowledge_bc_instructions_path, method: :post, class: 'btn btn-deefault btn-block') %>
+      </div>
+    </div>
+  </div>
+<% end %>
 <%  if @funded_people.count == 0 %>
   <div class="alert alert-warning">
     <span class="glyphicon glyphicon-star-empty"></span>

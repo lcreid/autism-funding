@@ -2,6 +2,7 @@ class InvoicesController < ApplicationController
   def new
 
     @invoice = Invoice.new
+    @invoice.funded_person_id = params[:funded_person_id]
     @url = funded_person_invoices_path (params[:funded_person_id])
 #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
   #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
@@ -23,7 +24,9 @@ class InvoicesController < ApplicationController
 
   def update
     @invoice = Invoice.find(params[:id])
+    logger.debug { "******Service Provider:  #{@invoice.service_provider_name}" }
     @invoice.update(invoice_params)
+    @invoice.funded_person.selected_fiscal_year=(@invoice.funded_person.fiscal_year(@invoice.start_date))
     ## TODO Save the fiscal year of the updated invoice in the funded person's preferences
 #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
     redirect_to root_path
@@ -33,13 +36,15 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find(params[:id])
     @funded_person = @invoice.funded_person
     @invoice.destroy
-    redirect_to funded_person_invoices_path(@funded_person.id)
+    #redirect_to funded_person_invoices_path(@funded_person.id)
+    redirect_to root_path
   end
 
   def create
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
     if @invoice.update(invoice_params)
+        @invoice.funded_person.selected_fiscal_year=(@invoice.funded_person.fiscal_year(@invoice.start_date))
 #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
       ## TODO Save the fiscal year of the created invoice in the funded person's preferences
       redirect_to root_path
