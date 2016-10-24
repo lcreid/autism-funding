@@ -181,6 +181,21 @@ class CompleteCf0925Test < CapybaraTest
     assert_button 'Save'
   end
 
+  test 'delete a form' do
+    create_a_cf0925
+    click_link_or_button 'Home'
+    assert_current_path home_index_path
+    assert_difference 'Cf0925.count', -1 do
+      assert_no_difference 'User.count' do
+        assert_no_difference 'FundedPerson.count' do
+          within 'table.form-list tbody tr:first-of-type' do
+            click_link 'Delete'
+          end
+        end
+      end
+    end
+  end
+
   private
 
   def create_a_cf0925

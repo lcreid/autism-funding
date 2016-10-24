@@ -18,6 +18,12 @@
   <td>
     <%= edit_button(filled_in_form, class: 'btn-xs') %>
     <%= print_button(filled_in_form, class: 'btn-xs') %>
-    <%= link_to('Delete', '#', class: "btn btn-xs btn-danger") %>
+    <%= link_to('Delete',
+                cf0925_path(filled_in_form),
+                method: :delete,
+                data: {
+                  confirm: "\Are you really, really sure?\n\nThis action cannot be undone.\n\n"
+                },
+                class: "btn btn-xs btn-danger") %>
   </td>
 </tr>

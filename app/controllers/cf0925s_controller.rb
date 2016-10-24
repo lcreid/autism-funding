@@ -104,6 +104,14 @@ class Cf0925sController < ApplicationController
     end
   end
 
+  def destroy
+    # FIXME: Check that the user owns the record to be deleted.
+    @cf0925 = Cf0925.find(params[:id])
+    @cf0925.destroy
+
+    redirect_to home_index_path
+  end
+
   private
 
   def cf0925_params
