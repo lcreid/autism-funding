@@ -1,4 +1,5 @@
 <%#= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
+<%= render "link_to_bc_info" %>
 
 <%= form_for([@funded_person, @cf0925]) do |f| %>
   <%= f.fields_for :funded_person_attributes, @cf0925.funded_person do |child| %>
@@ -129,3 +130,4 @@
   <%= print_button(@cf0925) %>
   <%= home_button %>
 <% end %>
+<%= render "link_to_bc_info" %>
