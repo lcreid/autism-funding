@@ -21,4 +21,28 @@ class Cf0925Test < ActiveSupport::TestCase
     assert_equal Date.new(2016, 5, 1)..Date.new(2017, 4, 30),
                  rtp.fiscal_year
   end
+
+  test 'dates are not in one fiscal year' do
+    rtp = Cf0925.new
+    rtp.funded_person = funded_people(:dob_2003_01_01)
+    rtp.service_provider_service_start = Date.new(2008, 1, 31)
+    rtp.service_provider_service_end = Date.new(2008, 2, 1)
+    rtp.printable?
+    assert_equal ['service end date must be in the same fiscal year ' \
+                 'as service start date'],
+                 rtp.errors[:service_provider_service_end]
+  end
+
+  test 'dates are in one fiscal year' do
+    rtp = Cf0925.new
+    rtp.funded_person = funded_people(:dob_2003_01_01)
+    rtp.service_provider_service_start = Date.new(2008, 2, 1)
+    rtp.service_provider_service_end = Date.new(2009, 1, 31)
+    rtp.printable?
+    assert rtp.errors[:service_provider_service_end].empty?,
+           -> {
+             'Expected no error message. ' \
+             "Got #{rtp.errors[:service_provider_service_end]}"
+           }
+  end
 end

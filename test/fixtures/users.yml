@@ -104,3 +104,8 @@ int_user1:
   name_first: Ima
   name_middle: Integration
   name_last: 'Testor'
+
+dob_2003_01_01:
+  email: dob_2003_01_01@weenhanceit.com
+  name_first: Test
+  name_last: Dates

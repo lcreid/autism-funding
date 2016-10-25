@@ -109,3 +109,9 @@ no_invoice_amount:
   name_first: No
   name_last: Invoice
   user: no_invoice_amount
+
+dob_2003_01_01:
+  birthdate: '2003-01-01'
+  name_first: Date
+  name_last: Validation
+  user: dob_2003_01_01
