@@ -34,3 +34,8 @@ years:
   phone_type: Home
   phone_number: '5556667777'
   user: years
+
+has_no_rtp:
+  phone_type: Home
+  phone_number: '2345678899'
+  user: has_no_rtp

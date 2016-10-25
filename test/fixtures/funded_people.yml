@@ -115,3 +115,9 @@ dob_2003_01_01:
   name_first: Date
   name_last: Validation
   user: dob_2003_01_01
+
+has_no_rtp:
+  birthdate: '2005-11-11'
+  name_first: No
+  name_last: Rtp
+  user: has_no_rtp
