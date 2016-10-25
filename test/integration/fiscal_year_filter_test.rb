@@ -17,8 +17,8 @@ class FiscalYearFilterTest < PoltergeistTest
         assert_selector 'tbody tr', count: 2
       end
       within '.invoice-list' do
-#        assert_no_selector 'tbody tr'
-        assert_selector 'tbody tr td', text: "You have no invoices in this fiscal year"
+        #        assert_no_selector 'tbody tr'
+        assert_selector 'tbody tr td', text: 'You have no invoices in this fiscal year'
       end
 
       Rails.logger.debug { 'Selecting 2015-2016...' }
@@ -60,7 +60,7 @@ class FiscalYearFilterTest < PoltergeistTest
     find('#cf0925_service_provider_service_start').set('2015-09-01')
     find('#cf0925_service_provider_service_start').set('2015-12-31')
     click_button 'Save'
-    click_link 'Home'
+    # click_link 'Home'
     assert_current_path home_index_path
     # puts page.html
 
