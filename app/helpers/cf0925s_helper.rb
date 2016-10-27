@@ -1,15 +1,15 @@
-require 'augmented_bootstrap_forms'
+require 'autism_funding_form_builder'
 ##
 # Field helpers for BC request to pay forms.
 module Cf0925sHelper
-  # Using bootstrap_forms gem
+  # Using bootstrap_form gem
   ##
   # The buttons at the bottom of the form.
   def buttons(f, cf0925)
-    content_tag :div, class: "form-inline" do
+    content_tag :div, class: 'form-inline' do
       f.submit('Save', class: 'btn btn-primary') +
-      print_button(cf0925) +
-      home_button
+        print_button(cf0925) +
+        home_button
     end
   end
 
@@ -17,19 +17,19 @@ module Cf0925sHelper
   # Form for completing the BC request to pay form (CF0925)
   def cf0925_form(funded_person, cf0925)
     bootstrap_form_for([funded_person, cf0925],
-                       builder: AugmentedBootstrapForms) do |f|
+                       builder: AutismFundingFormBuilder) do |f|
       f.fields_for(:funded_person_attributes,
                    @cf0925.funded_person) do |child|
         child.hidden_field(:id) +
-        child.fields_for(:user_attributes,
-                         @cf0925.funded_person.user) do |parent|
-          parent.hidden_field(:id) +
-          parent_info(f, parent) +
-          child_info(f) +
-          part_A(f) +
-          part_B(f) +
-          buttons(f, cf0925)
-        end
+          child.fields_for(:user_attributes,
+                           @cf0925.funded_person.user) do |parent|
+            parent.hidden_field(:id) +
+              parent_info(f, parent) +
+              child_info(f) +
+              part_A(f) +
+              part_B(f) +
+              buttons(f, cf0925)
+          end
       end
     end
   end
@@ -37,7 +37,7 @@ module Cf0925sHelper
   ##
   # Format view for child's info on the BC request to pay form (CF0925)
   def child_info(f)
-    panel(f, "Section 2 Child Information") do
+    panel(f, 'Section 2 Child Information') do
       render partial: 'child_info', locals: { f: f }
     end
   end
@@ -45,7 +45,7 @@ module Cf0925sHelper
   ##
   # Format view for parent's info on the BC request to pay form (CF0925)
   def parent_info(f, parent)
-    panel(f, "Section 1 Parent/Guardian Information") do
+    panel(f, 'Section 1 Parent/Guardian Information') do
       # parent and form needed below just during refactoring.
       render partial: 'parent_info', locals: { parent: parent, form: f }
     end
@@ -54,22 +54,22 @@ module Cf0925sHelper
   ##
   # Format view for part A of the BC request to pay form (CF0925)
   def part_A(f)
-    panel(f, "Part A Services") do
-      a = content_tag :p, "Complete this section " \
-          "to authorize payment " \
-          "to a service provider " \
-          "who is providing autism intervention " \
-          "for the child."
+    panel(f, 'Part A Services') do
+      a = content_tag :p, 'Complete this section ' \
+          'to authorize payment ' \
+          'to a service provider ' \
+          'who is providing autism intervention ' \
+          'for the child.'
 
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_name, 8, lstrip: '') +
           wrap_field(4) do
             f.form_group(:payment,
-                         label: { text: "Payment to be provided to:" }) do
+                         label: { text: 'Payment to be provided to:' }) do
               f.radio_button(:payment, 'provider', label: 'Service Provider') +
-              "<br/>".html_safe +
-              f.radio_button(:payment, 'agency', label: 'Agency') +
-              f.error_message_for(:payment)
+                '<br/>'.html_safe +
+                f.radio_button(:payment, 'agency', label: 'Agency') +
+                f.error_message_for(:payment)
             end
           end
       end
@@ -108,16 +108,16 @@ module Cf0925sHelper
   # Format view for part B of the BC request to pay form (CF0925)
   def part_B(f)
     panel(f,
-          "Part B Additional Expenses: ".html_safe +
-            content_tag(:small, "Travel, Training, Equipment, and Supplies")) do
-      a = content_tag :p, "Complete this section " \
-        "to authorize payment " \
-        "to a supplier " \
-        "for expenses related to travel, " \
-        "training, " \
-        "equipment " \
-        "or materials " \
-        "directly on behalf of a parent or guardian."
+          'Part B Additional Expenses: '.html_safe +
+            content_tag(:small, 'Travel, Training, Equipment, and Supplies')) do
+      a = content_tag :p, 'Complete this section ' \
+        'to authorize payment ' \
+        'to a supplier ' \
+        'for expenses related to travel, ' \
+        'training, ' \
+        'equipment ' \
+        'or materials ' \
+        'directly on behalf of a parent or guardian.'
 
       a += content_tag(:div, class: 'form-inline') do
         wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
@@ -184,6 +184,7 @@ module Cf0925sHelper
   def form_field(f, field, width = 4, opts = {}, &block)
     wrap_field(width) do
       if block_given?
+        # FIXME: if you give a block, the options are ignored.
         a = capture(&block)
       else
         opts[:label] ||= format_label(field)
@@ -191,7 +192,7 @@ module Cf0925sHelper
         a = f.text_field(field, opts)
       end
       # puts "about to add error message for #{field}..."
-      a + f.error_message_for(field)
+      # a + f.error_message_for(field)
     end
   end
 
@@ -203,8 +204,8 @@ module Cf0925sHelper
 
   def wrap_date_field(f, field, width, opts = {})
     wrap_field(width) do
-      f.date_field(field, opts) +
-        f.error_message_for(field)
+      f.date_field(field, opts) #+
+      # f.error_message_for(field)
     end
   end
 
@@ -271,13 +272,13 @@ module Cf0925sHelper
   ##
   # Format a panel
   def panel(f, title, &block)
-    content_tag :div, class: "panel panel-primary" do
-      a = content_tag(:div, class: "panel-heading") do
-        content_tag :h3, title, class: "panel-title"
+    content_tag :div, class: 'panel panel-primary' do
+      a = content_tag(:div, class: 'panel-heading') do
+        content_tag :h3, title, class: 'panel-title'
       end +
-      content_tag(:div, class: "panel-body") do
-        capture(f, &block)
-      end
+          content_tag(:div, class: 'panel-body') do
+            capture(f, &block)
+          end
     end
   end
 end

@@ -190,7 +190,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # so the path is the path for create, which is like the post above.
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_match(/Service provider service end must be after start date/, body)
+    assert_match(/must be after start date/, body)
   end
 
   test 'CF_0925 start date must exist' do
@@ -205,13 +205,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_date_params }
     end
 
-    # skip "I don't know how to show status of invalid, but saved, record"
-    # The next assert is like it is because the render in the controller
-    # is rendering the new view, but from the create action in the controller,
-    # so the path is the path for create, which is like the post above.
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_match(/Service provider service start can&#39;t be blank/, body)
+    assert_match(/can&#39;t be blank/, body)
   end
 
   test 'Parent last name must exist' do
@@ -229,7 +225,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_select '.alert', "Name last can't be blank"
+    assert_select '#cf0925_funded_person_attributes_user_attributes_name_last'\
+                  ' ~ span.help-block',
+                  "can't be blank"
   end
 
   test 'CF_0925 end date must exist' do
@@ -250,7 +248,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # so the path is the path for create, which is like the post above.
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_match(/Service provider service end can&#39;t be blank/, body)
+    assert_match(/can&#39;t be blank/, body)
   end
 
   test 'CF_0925 agency checkbox disabled if no agency' do
@@ -271,7 +269,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # so the path is the path for create, which is like the post above.
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_match(/Payment please choose either service provider or agency/, body)
+    assert_match(/please choose either service provider or agency/, body)
   end
 
   test 'Address must exist' do
@@ -291,9 +289,16 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
     follow_redirect!
-    assert_select '.alert', "Address line 1 can't be blank"
-    assert_select '.alert', "City can't be blank"
-    assert_select '.alert', "Postal code can't be blank"
+    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_address_line_1 ~ span.help-block',
+                  "can't be blank"
+    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_city ~ span.help-block',
+                  "can't be blank"
+    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_postal_code ~ span.help-block',
+                  "can't be blank"
+    # puts body
+    # assert_select '.alert', "Address line 1 can't be blank"
+    # assert_select '.alert', "City can't be blank"
+    # assert_select '.alert', "Postal code can't be blank"
   end
 
   test 'Phone number must exist and be valid' do

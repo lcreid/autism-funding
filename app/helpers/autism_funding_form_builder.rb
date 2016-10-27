@@ -1,8 +1,6 @@
 ##
-# Subclass the Rails Bootstrap class to augment it with application-specific
-# items.
-# class AugmentedBootstrapForms < ActionView::Helpers::FormBuilder
-class AugmentedBootstrapForms < BootstrapForm::FormBuilder
+# Subclass the We Enhance IT form builder for the autism funding application.
+class AutismFundingFormBuilder < WeitFormBuilder
   # def bootstrap_form_for(object, options = {}, &block)
   #   super(object, options, &block)
   # end
@@ -12,7 +10,8 @@ class AugmentedBootstrapForms < BootstrapForm::FormBuilder
   def supplier_field(field, opts = {})
     opts[:label] ||= format_label(field, { lstrip: 'Supplier' }.merge(opts))
     opts[:placeholder] ||= opts[:label]
-    text_field(field, opts) + error_message_for(field)
+    # opts[:help] = 'Enter a supplier name.'
+    text_field(field, opts) # + error_message_for(field)
   end
 
   private
