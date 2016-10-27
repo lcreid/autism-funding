@@ -49,6 +49,12 @@ class MyProfileController < ApplicationController
       end
     end
     ## Update Address
+    old_pc_id = @my_address.province_code_id
+    new_pc_id = address_params['province_code_id'.to_sym]
+    unless old_pc_id == new_pc_id
+      current_user.set_bc_warning_acknowledgement(false)
+      # logger.debug { "**** CHANGED: Orig pcid: #{old_pc_id}   New: #{new_pc_id}" }
+    end
     unless @my_address.update(address_params)
       @my_address.errors.full_messages.each do |m|
         add_flash 'Address', m

@@ -74,8 +74,9 @@ class Cf0925sController < ApplicationController
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
+      @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
-      redirect_to edit_cf0925_path(@cf0925), notice: 'Request saved.'
+      redirect_to home_index_path, notice: 'Request saved.'
     else
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
@@ -84,6 +85,8 @@ class Cf0925sController < ApplicationController
   end
 
   def update
+    # pp(params.as_json)
+    # pp(cf0925_params.as_json)
     @cf0925 = Cf0925.find(params[:id])
     @cf0925.update(cf0925_params)
     user = @cf0925.funded_person.user
@@ -94,13 +97,22 @@ class Cf0925sController < ApplicationController
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
+      @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
-      redirect_to edit_cf0925_path(@cf0925), notice: 'Request updated.'
+      redirect_to home_index_path, notice: 'Request updated.'
     else
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
       render :edit
     end
+  end
+
+  def destroy
+    # FIXME: Check that the user owns the record to be deleted.
+    @cf0925 = Cf0925.find(params[:id])
+    @cf0925.destroy
+
+    redirect_to home_index_path
   end
 
   private

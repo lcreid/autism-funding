@@ -28,6 +28,7 @@ class Cf0925 < ApplicationRecord
   # It should be a validation that the start and end dates are in the same
   # fiscal year.
   validate :start_date_before_end_date, on: :printable
+  validate :start_and_end_dates_in_same_fiscal_year, on: :printable
   validates :payment,
             presence: {
               message: 'please choose either service provider or agency'
@@ -145,6 +146,16 @@ class Cf0925 < ApplicationRecord
 
     errors.add(:service_provider_service_end, 'must be after start date') if
       service_provider_service_end < service_provider_service_start
+  end
+
+  def start_and_end_dates_in_same_fiscal_year
+    return if service_provider_service_start.blank? || service_provider_service_end.blank?
+    if funded_person.fiscal_year(service_provider_service_start) !=
+       funded_person.fiscal_year(service_provider_service_end)
+      errors.add(:service_provider_service_end,
+                 'service end date must be in the same fiscal year ' \
+                 'as service start date')
+    end
   end
 
   def status

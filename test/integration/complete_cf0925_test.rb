@@ -54,15 +54,16 @@ class CompleteCf0925Test < CapybaraTest
   end
 
   test 'CF_0925 autofill from user and child' do
-    fill_in_login(user = users(:minimum_printable))
+    fill_in_login(user = users(:has_no_rtp))
     # TODO: Make this follow links when we nail down the UI.
     visit new_funded_person_cf0925_path(user.funded_people.first)
 
     assert_difference 'Cf0925.count' do
       click_button 'Save'
     end
+
+    click_link 'Edit'
     assert has_no_link?('Print'), "Shouldn't have 'Print' link"
-    # click_link 'Edit' No longer needed since we stay on edit page
 
     {
       agency_name: 'autofill user and child',
@@ -96,6 +97,9 @@ class CompleteCf0925Test < CapybaraTest
     assert_no_difference 'Cf0925.count' do
       click_button 'Save'
     end
+
+    click_link 'Edit'
+
     assert_equal 200, status_code
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
@@ -148,7 +152,9 @@ class CompleteCf0925Test < CapybaraTest
   test 'Edit an existing CF0925' do
     create_a_cf0925
 
-    # click_link 'Edit'
+    within 'table.form-list tbody tr:last-of-type' do
+      click_link 'Edit'
+    end
     new_city = 'Vernon'
     within '.parent-address-fields' do
       fill_in 'City', with: new_city
@@ -179,6 +185,20 @@ class CompleteCf0925Test < CapybaraTest
 
     click_link 'Edit'
     assert_button 'Save'
+  end
+
+  test 'delete a form' do
+    create_a_cf0925
+    assert_current_path home_index_path
+    assert_difference 'Cf0925.count', -1 do
+      assert_no_difference 'User.count' do
+        assert_no_difference 'FundedPerson.count' do
+          within 'table.form-list tbody tr:first-of-type' do
+            click_link 'Delete'
+          end
+        end
+      end
+    end
   end
 
   private

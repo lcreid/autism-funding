@@ -153,7 +153,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # FundedPerson.all.each { |funded_person| puts "#{funded_person.name_last}: #{funded_person.my_dob}" }
     # Cf0925.all.each { |rtp| puts "#{rtp.funded_person.name_last}: #{rtp.funded_person.my_dob}" }
     assert_not_nil(cf0925 = Cf0925.find_by(child_dob: '2010-06-14'))
-    assert_redirected_to edit_cf0925_path(cf0925)
+    assert_redirected_to home_index_path
   end
 
   test 'CF_0925 child between 6 and 18' do
@@ -168,6 +168,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_response :success
 
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_select '#cf0925_service_provider_service_start[value=?]',
                   @form_field_values[:service_provider_service_start]
   end
@@ -188,8 +189,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_match(/must be after start date/, body)
   end
 
@@ -205,8 +207,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_date_params }
     end
 
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_match(/can&#39;t be blank/, body)
   end
 
@@ -223,8 +226,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_name_params }
     end
 
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_select '#cf0925_funded_person_attributes_user_attributes_name_last'\
                   ' ~ span.help-block',
                   "can't be blank"
@@ -246,8 +250,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_match(/can&#39;t be blank/, body)
   end
 
@@ -267,8 +272,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
     # so the path is the path for create, which is like the post above.
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_match(/please choose either service provider or agency/, body)
   end
 
@@ -287,8 +293,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_address_params }
     end
 
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_address_line_1 ~ span.help-block',
                   "can't be blank"
     assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_city ~ span.help-block',
@@ -315,8 +322,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
            params: { cf0925: bad_phone_params }
     end
 
-    assert_redirected_to edit_cf0925_path(@funded_person.cf0925s.last)
+    assert_redirected_to home_index_path
     follow_redirect!
+    get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_select '.alert', 'Phone numbers must provide at least one phone number'
   end
 end

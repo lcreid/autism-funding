@@ -40,3 +40,10 @@ dual_child_parent:
   postal_code: D0D 0D0
   province_code: bc
   user: dual_child_parent
+
+has_no_rtp:
+  address_line_1: No RTP St
+  city: No RTP Ville
+  postal_code: S0S 0S0
+  province_code: bc
+  user: has_no_rtp
