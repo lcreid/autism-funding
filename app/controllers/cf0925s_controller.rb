@@ -1,4 +1,7 @@
+# require 'augmented_bootstrap_forms'
 class Cf0925sController < ApplicationController
+  # default_form_builder AugmentedBootstrapForms
+
   def index
     @cf0925s = Cf0925.all
   end
