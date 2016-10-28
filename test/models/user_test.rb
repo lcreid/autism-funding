@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+    include TestSessionHelpers
   #-----------------------------------------------------------------------------
   #  Test 01
   # => a) tests that a User.new will create an object
@@ -180,7 +181,7 @@ class UserTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 05
   # => a) tests that new user has no related addresses
-  # => b) tests that new user get_address returns a nil
+  # => b) tests that new user get_address creates an address
   # => c) tests that users(:has_no_address) has no related addresses
   # => d) tests that users(:has_no_address).my_address returns an instance of class Address
   # => e) tests that users(:has_no_address).my_address returns an instance with a correct user_id
@@ -198,7 +199,10 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, the_user.addresses.size, "05.a: Instance [#{the_user.my_name}] should have no addresses"
 
     # 05.b .....................................................................
-    assert_nil the_user.my_address, "05.b: Instance [#{the_user.my_name}.my_address] should return nil as no id has been created"
+    the_user.my_address
+    assert_equal 1, the_user.addresses.size, "05.b: Instance [#{the_user.my_name}] should have 1 address"
+
+
 
     # 05.c .....................................................................
     the_user = users(:has_no_address)
@@ -367,6 +371,155 @@ class UserTest < ActiveSupport::TestCase
     expected = test_phone_type
     assert_equal expected, the_phone_number.phone_type, "07.m: Instance [#{the_user.my_name}],my_work_phone should have the correct type"
   end ## -- end test --
+
+  #-----------------------------------------------------------------------------
+  #  Test 08
+  # => a) tests that missing_key_info? is true when new instance of User is created
+  # => b) tests that missing_key_info? is false when there is an address with a province code and 1 funded person
+  # => c) tests that missing_key_info? is true when there is no address and 1 funded person
+  # => d) tests that missing_key_info? is true when there is address, but no province code and 1 funded person
+  # => e) tests that missing_key_info? is true when there is address with a province code and no funded people
+  testName = '08 Test missing_key_info?'
+  # puts "-- Test: #{testName} -----------------------------------"
+  test testName do
+    # 08.a .....................................................................
+    the_user = User.new
+    assert the_user.missing_key_info?, "08.a: missing_key_info? should be true for new instance of User"
+
+    # 08.b .....................................................................
+    # Ensure all basic info there
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('mb')
+    the_user.funded_people.build
+    assert_not the_user.missing_key_info?, "08.b: missing_key_info? should be false when there is a funded_person and address with province"
+
+    # 08.c .....................................................................
+    # Funded Person Defined, no address
+    the_user = User.new
+    the_user.funded_people.build
+    assert the_user.missing_key_info?, "08.c: missing_key_info? should be true when there is a funded_person and no address"
+
+    # 08.d .....................................................................
+    # Funded Person Defined, Address added, but no province
+    the_user = User.new
+    the_user.my_address
+    the_user.funded_people.build
+    assert the_user.missing_key_info?, "08.d: missing_key_info? should be true when there is a funded_person and an address with no province code"
+
+    # 08.e .....................................................................
+    # Funded Person Defined, Address added, but no province
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('mb')
+    assert the_user.missing_key_info?, "08.e: missing_key_info? should be true when there is no funded_person and an address with a province code"
+  end ## -- end test08 --
+
+  #-----------------------------------------------------------------------------
+  #  Test 09
+  # => a) tests that bc_resident? is false when new instance of User is created
+  # => b) tests that bc_resident? is false when new instance of User is created, and address is added
+  # => c) tests that bc_resident? is false when new instance of User is created, and address is added, and province code set to 'ON'
+  # => d) tests that bc_resident? is true when new instance of User is created, and address is added, and province code set to 'BC'
+  testName = '09 Test bc_resident?'
+  # puts "-- Test: #{testName} -----------------------------------"
+  test testName do
+    # 09.a .....................................................................
+    the_user = User.new
+    assert_not the_user.bc_resident?, '09.a: bc_resident? should be false when new instance of User is created'
+
+    # 09.b .....................................................................
+    the_user = User.new
+    the_user.my_address
+    assert_not the_user.bc_resident?, '09.b: bc_resident? should be false when new instance of User is created, and address is added'
+
+    # 09.c .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('ont')
+    assert_not the_user.bc_resident?, '09.c: bc_resident? should be false when new instance of User is created, and address is added, and province code set to ON'
+
+    # 09.d .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    assert the_user.bc_resident?, '09.d: bc_resident? should be true when new instance of User is created, and address is added, and province code set to BC'
+  end ## -- end test09 --
+
+  #-----------------------------------------------------------------------------
+  #  Test 10
+  # => a) tests that can_create_new_rtp? is false when User has a province of ON and have one funded child
+  # => b) tests that can_create_new_rtp? is false when User has a province of BC and have No funded child
+  # => c) tests that can_create_new_rtp? is true when User has a province of BC and have one funded child
+  testName = '10 Test can_create_new_rtp?'
+  # puts "-- Test: #{testName} -----------------------------------"
+  test testName do
+    # 10.a .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('ont')
+    the_user.funded_people.build
+    assert_not the_user.can_create_new_rtp?, '10.a: can_create_new_rtp? should be false when User has a province of ON and have one funded child'
+
+    # 10.b .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    assert_not the_user.can_create_new_rtp?, '10.b: can_create_new_rtp? should be false when User has a province of BC and have No funded child'
+
+    # 10.c .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    the_user.funded_people.build
+    assert the_user.can_create_new_rtp?, '10.c: can_create_new_rtp? should be true when User has a province of BC and have one funded child'
+
+  end ## -- end test 10 --
+
+  #-----------------------------------------------------------------------------
+  #  Test 11
+  # => a) tests that can_see_my_home? is false when User is new
+  # => b) tests that can_see_my_home? is false when User has an address defined, but no province code, and 1 funded child with 1 invoice
+  # => c) tests that can_see_my_home? is false when User has an address defined with a province code of BC, but no  funded child
+  # => d) tests that can_see_my_home? is true when User has an address defined with a province code of BC, with 1 funded child and no invoices
+  # => e) tests that can_see_my_home? is true when User has an address defined with a province code of BC, with 1 funded child and 1 invoice
+  # => f) tests that can_see_my_home? is false when User has an address defined with a province code of ON, with 1 funded child and no invoices
+  # => g) tests that can_see_my_home? is true when User has an address defined with a province code of ON, with 1 funded child and 1 invoice
+  testName = '11 Test can_see_my_home?'
+  # puts "-- Test: #{testName} -----------------------------------"
+  test testName do
+    # 11.a .....................................................................
+    the_user = User.new
+    assert_not the_user.can_see_my_home?, '11.a: can_see_my_home? should be false when User is new'
+
+    # 11.b .....................................................................
+    the_user = User.new
+    the_user.my_address
+    the_user.funded_people.build
+    the_user.funded_people[0].invoices.build
+    assert_not the_user.can_see_my_home?, '11.b: can_see_my_home? should be false when be User has an address defined, but no province code, and 1 funded child with 1 invoice'
+
+    # 11.c .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    assert_not the_user.can_see_my_home?, '11.c: can_see_my_home? should be false when User has an address defined with a province code of BC, but no funded child'
+
+    # 11.d .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    the_user.funded_people.build
+    assert the_user.can_see_my_home?, '11.d: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and no invoices'
+
+    # 11.e .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('bc')
+    the_user.funded_people.build
+    the_user.funded_people[0].invoices.build
+    assert the_user.can_see_my_home?, '11.e: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and 1 invoice'
+
+    # 11.f .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('ont')
+    the_user.funded_people.build
+    the_user.funded_people[0].invoices.build
+    assert the_user.can_see_my_home?, '11.f: can_see_my_home? should be true when User is has an address defined with a province code of ON, with 1 funded child and 1 invoice'
+
+
+  end ## -- end test 11 --
+
 
   test 'edit and save one user' do
     # skip 'I started to test nested attributes, but it is a rat hole.'

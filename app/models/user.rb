@@ -52,6 +52,27 @@ class User < ApplicationRecord
     end
   end
 
+  def bc_resident?
+    self.my_address.get_province_code == 'BC'
+  end
+
+  def can_create_new_rtp?
+    self.bc_resident? && self.funded_people.size > 0
+  end
+
+  def can_see_my_home?
+    ret = ! self.missing_key_info?
+    if ret && self.my_address.get_province_code != 'BC'
+      cnt = 0
+      self.funded_people.each do |fp|
+         cnt += fp.invoices.size
+         cnt += fp.cf0925s.size
+       end
+       ret = cnt > 0
+    end
+    return ret
+  end
+
   def home_phone?
     !home_phone.nil? && home_phone.phone_number.present?
   end
@@ -64,6 +85,13 @@ class User < ApplicationRecord
     phone 'Home'
   end
 
+  def missing_key_info?
+    ret = (self.funded_people.size == 0)
+    ret = ret || self.my_address.nil?
+    ret = ret || self.my_address.get_province_code.empty?
+    return ret
+  end
+
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
@@ -72,15 +100,25 @@ class User < ApplicationRecord
   end
 
   def my_address
-    if id.nil?
-      ret_obj = nil
-    elsif addresses.empty?
-      ret_obj = Address.create(user_id: id)
-      addresses.reload # refreshes cache
-    else
-      ret_obj = addresses[0]
+    ##########################
+    #if id.nil?
+    #  ret_obj = nil
+    #elsif addresses.empty?
+    #  Address.create(user_id: id)
+    #  addresses.reload # refreshes cache
+    #  ret_obj = addresses[0]
+    #else
+    #  ret_obj = addresses[0]
+    #end
+    #ret_obj
+    #######################################
+    if self.id.nil? && self.addresses.empty?
+      self.addresses.build
+    elsif self.addresses.empty?
+      Address.create(user_id: self.id)
+      addresses.reload
     end
-    ret_obj
+    addresses[0]
   end
 
   def my_home_phone

@@ -52,6 +52,21 @@ module TestSessionHelpers
            commit: 'Log in'
          }
   end
+
+  def show_errors(line, obj)
+    unless obj.respond_to? :errors
+      puts "#{line}:  Does not respond to errors"
+    else
+      if obj.errors.messages.size == 0
+        puts "#{line}:  No Errors"
+      else
+        puts "#{line}:  --Error List:"
+        obj.errors.messages.each do |m|
+          puts "**Error: #{m}"
+        end
+      end
+    end
+  end
 end
 
 # Added for Capybara
