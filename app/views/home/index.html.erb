@@ -23,8 +23,10 @@
   </div>
 <% end %>
 <%= render 'shared/notifications' %>
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <%= form_tag(home_index_path, method: :get, class: "fiscal-year-selector") do %>
+<%# The form has to go outside the accordion to get the "one tab open at a time"
+    functionality to work. %>
+<%= form_tag(home_index_path, method: :get, class: "fiscal-year-selector") do %>
+  <div class="panel-group accordion" id="accordion" aria-multiselectable="true">
     <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
-  <% end %>
-</div>
+  </div>
+<% end %>

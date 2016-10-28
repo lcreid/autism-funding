@@ -102,6 +102,7 @@ class User < ApplicationRecord
     # pp my_address
     address_printable = my_address.printable?
     # puts("my_address.printable? #{my_address.errors.full_messages}") unless
+    # FIXME: I don't think I need this next line.
     address_printable
     # TODO: Validate phone numbers.
     user_printable && address_printable
