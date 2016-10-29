@@ -4,11 +4,11 @@
     partial for all form types, and ensure that all form types have the
     methods or attributes needed by this partial. %>
 <tr class="static-form-record">
-  <td><%= filled_in_form.form.form_name %></td>
-  <td><%= filled_in_form.service_provider_name %></td>
   <td class="text-right">
     <%= filled_in_form.updated_at.to_date.to_formatted_s(:iso8601) %>
   </td>
+  <td><%= filled_in_form.service_provider_name %></td>
+  <td><%= filled_in_form.form.form_name %></td>
   <td class="text-right">
     <%= number_to_currency(filled_in_form.service_provider_service_amount) %>
   </td>
