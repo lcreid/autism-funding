@@ -86,7 +86,9 @@ class PoltergeistTest < CapybaraTest
     Capybara.javascript_driver = :poltergeist
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
-    Capybara.default_max_wait_time = 5
+    # That wasn't the issue. Taking this out. But it doesn't seem to make
+    # a different either way in the run time of the test.
+    # Capybara.default_max_wait_time = 5
     super
   end
 
