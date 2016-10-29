@@ -14,5 +14,9 @@ module Helpers
       #    based on the dob and start_date
       funded_person.fiscal_year(start_date)
     end
+
+    def in_fiscal_year?(fy)
+      fy.include?(fiscal_year)
+    end
   end
 end
