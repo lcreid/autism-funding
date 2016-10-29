@@ -12,10 +12,10 @@
   <td class="text-right">
     <%= number_to_currency(filled_in_form.service_provider_service_amount) %>
   </td>
-  <td>
+  <td class="text-center">
     <%= filled_in_form.status %>
   </td>
-  <td>
+  <td class="text-center">
     <%= edit_button(filled_in_form, class: 'btn-xs') %>
     <%= print_button(filled_in_form, class: 'btn-xs') %>
     <%= link_to('Delete',
