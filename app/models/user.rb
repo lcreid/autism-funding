@@ -72,9 +72,7 @@ class User < ApplicationRecord
   end
 
   def my_address
-    if id.nil?
-      ret_obj = nil
-    elsif addresses.empty?
+    if addresses.empty?
       ret_obj = Address.create(user_id: id)
       addresses.reload # refreshes cache
     else

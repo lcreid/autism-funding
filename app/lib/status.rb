@@ -18,6 +18,13 @@ class Status
                                   0
                                 end
 
+    # Spent funds should really be just that which is paid for by the Ministry.
+    # This requires us to line up the invoices with RTPs.
+    # The criteria would be something like: The invoice service provider
+    # or supplier must match the service provider or supplier in an approved
+    # RTP, and the service dates must be within the range of service dates,
+    # if both are provided, and the RTP must not be all used up.
+    # It might be convenient to put that into the Invoice model...
     @spent_funds = funded_person
                    .invoices_in_fiscal_year(fiscal_year)
                    .select(&:include_in_reports?)
