@@ -75,18 +75,37 @@ end
 # End Capybara
 
 class PoltergeistTest < CapybaraTest
+  # You need the following so the database cleaner's work won't get rolled
+  # back by the test case.
+  self.use_transactional_tests = false
+
   def setup
+    # User.all.each { |u| Rails.logger.debug "Starting test: #{u.preferences}" if u.preferences }
+    # Rails.logger.debug 'Starting test...'
     DatabaseCleaner.strategy = :truncation
     Capybara.javascript_driver = :poltergeist
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
-    Capybara.default_max_wait_time = 5
+    # That wasn't the issue. Taking this out. But it doesn't seem to make
+    # a different either way in the run time of the test.
+    # Capybara.default_max_wait_time = 5
     super
+  end
+
+  def assert_select(locator, options)
+    # Rails.logger.debug "assert_select #{locator} #{options}"
+    # User.all.each { |u| Rails.logger.debug "In assert_selector: #{u.preferences}" if u.preferences }
+    super
+    # Rails.logger.debug 'assert done'
   end
 
   def teardown
     super
+    # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
+    # Rails.logger.debug 'Cleaning database...'
     DatabaseCleaner.clean
+    # Rails.logger.debug '...database cleaned.'
+    # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
   end
 end
 

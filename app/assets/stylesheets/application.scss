@@ -10,16 +10,7 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require_tree .
- *= require_self
+ *= require rails_bootstrap_forms
  */
- body {
-   color: #0B0B61;
-   font-family: arial;
-   font-size: 11pt;
-   padding-top: 65px;
- }
- footer {
-   color: #B0B0B7;
-   font-size: 9pt;
- }
+ @import "weit";
+ @import "autism_funding";

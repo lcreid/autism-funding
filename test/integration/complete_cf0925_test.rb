@@ -82,7 +82,6 @@ class CompleteCf0925Test < CapybaraTest
       service_provider_service_amount: 2000,
       service_provider_service_end: '2017-05-31',
       service_provider_service_fee: 150,
-      service_provider_service_hour: 'hour',
       service_provider_service_start: '2016-06-01',
       supplier_address: '11111 Main St.',
       supplier_city: 'Vancouver',
@@ -93,6 +92,7 @@ class CompleteCf0925Test < CapybaraTest
       fill_in 'cf0925_' + k.to_s, with: v
     end
     choose 'cf0925_payment_agency'
+    select 'Hour', from: 'cf0925_service_provider_service_hour'
 
     assert_no_difference 'Cf0925.count' do
       click_button 'Save'
@@ -137,8 +137,8 @@ class CompleteCf0925Test < CapybaraTest
     # This was for when the fields were fillable. We decided you have to go
     # back to the profile page to do that.
     # FIXME: Change word order in label.
-    assert_field 'Name Last', with: 'Two-Kids'
-    assert_field 'Name First', with: 'I'
+    assert_field 'Last Name', with: 'Two-Kids'
+    assert_field 'First', with: 'I'
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
     # assert_selector '#parent_last_name', text: 'Two-Kids'
     # assert_selector '#parent_first_name', text: 'I'
@@ -214,7 +214,7 @@ class CompleteCf0925Test < CapybaraTest
       assert_no_difference 'User.count' do
         # assert_difference 'PhoneNumber.count' do
         # FIXME: Label should be Middle Name even if field is Name Middle
-        fill_in 'Name Middle', with: middle_name
+        fill_in 'Middle', with: middle_name
         within '.parent-test' do
           fill_in 'Address', with: address
           # puts 'Phones: ' + all(:fillable_field, 'Phone').inspect
