@@ -40,6 +40,13 @@ class User < ApplicationRecord
   validate :at_least_one_phone_number, on: :printable
 
   ##
+  # return first address if any
+  # TODO: Make sure we're validating the presence of an address
+  def address
+    addresses[0] unless addresses.empty?
+  end
+
+  ##
   # Attach an error message to the symbol :phone_numbers if neither home
   # nor work phone provided.
   # I struggled for a while to attach the messages to the phone numbers.
@@ -72,7 +79,9 @@ class User < ApplicationRecord
   end
 
   def my_address
-    if addresses.empty?
+    if id.nil?
+      ret_obj = nil
+    elsif addresses.empty?
       ret_obj = Address.create(user_id: id)
       addresses.reload # refreshes cache
     else
@@ -98,9 +107,8 @@ class User < ApplicationRecord
     # puts "user.printable? #{errors.full_messages}" unless user_printable
     # puts "I have #{addresses.size} addresses"
     # pp my_address
-    address_printable = my_address.printable?
+    address_printable = address.printable? if address
     # puts("my_address.printable? #{my_address.errors.full_messages}") unless
-    # FIXME: I don't think I need this next line.
     address_printable
     # TODO: Validate phone numbers.
     user_printable && address_printable

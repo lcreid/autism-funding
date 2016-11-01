@@ -15,7 +15,7 @@ fiscal_year:
   invoice_reference:
   funded_person: two_fiscal_years
   agency_name:
-  service_provider_name: service_provider_name
+  service_provider_name: Joe 2015
 
 invoice_adds_fiscal_year:
   invoice_amount: 200

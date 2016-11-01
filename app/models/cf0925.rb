@@ -1,5 +1,8 @@
 ##
 # Request to pay form for BC
+# TODO: The second page (instructions) for the CF_0925 says to put the date
+# of training or travel on the details lines. Doesn't say how to give date
+# for a purchase.
 class Cf0925 < ApplicationRecord
   include Helpers::FiscalYear
 
@@ -10,12 +13,17 @@ class Cf0925 < ApplicationRecord
 
   validates :service_provider_service_start,
             :service_provider_service_end,
-            :child_dob,
+            presence: true,
+            on: :printable,
+            unless: :supplier_only_rtp?
+  validates :child_dob,
             :child_first_name,
             :child_last_name,
-            # :child_in_care_of_ministry, TODO: validate this.
             presence: true,
             on: :printable
+  validates_inclusion_of :child_in_care_of_ministry,
+                         in: [true, false],
+                         on: :printable
   validates :work_phone,
             presence: true,
             on: :printable,
@@ -25,16 +33,25 @@ class Cf0925 < ApplicationRecord
             on: :printable,
             unless: ->(x) { x.work_phone.present? }
 
-  # It should be a validation that the start and end dates are in the same
-  # fiscal year.
-  validate :start_date_before_end_date, on: :printable
-  validate :start_and_end_dates_in_same_fiscal_year, on: :printable
+  # FIXME: There should be a validation that the start and end dates are in
+  # the same fiscal year.
+  validate :start_date_before_end_date,
+           on: :printable,
+           unless: :supplier_only_rtp?
+  validate :start_and_end_dates_in_same_fiscal_year,
+           on: :printable,
+           unless: :supplier_only_rtp?
   validates :payment,
             presence: {
               message: 'please choose either service provider or agency'
             },
-            on: :printable
+            on: :printable,
+            unless: :supplier_only_rtp?
 
+  # TODO: Validate that request is less than maximum.
+  # TODO: Validate that request is less than remaining amount.
+  # TODO: (optional) Validate that request is this year or next year (warning?)
+  # TODO: Validate that Part B funding is no more than 20% of available funding.
   before_validation :set_form
 
   # It should be a validation that the start and end dates are in the same
@@ -45,6 +62,33 @@ class Cf0925 < ApplicationRecord
       child_first_name + '-' +
       id.to_s +
       '.pdf'
+  end
+
+  def copy_parent_to_form
+    self.parent_last_name = user.name_last
+    self.parent_first_name = user.name_first
+    self.parent_middle_name = user.name_middle
+    # puts "In copy_parent_to_form home phone: #{user.home_phone.full_number}"
+    self.home_phone = user.home_phone.full_number if user.home_phone
+    self.work_phone = user.work_phone.full_number if user.work_phone
+    self.parent_address = user.address.address_line_1 if user.address
+    self.parent_city = user.address.city if user.address
+    self.parent_postal_code = user.address.postal_code if user.address
+  end
+
+  def copy_child_to_form
+    # puts "Before: #{child_dob}"
+    self.child_last_name = funded_person.name_last
+    self.child_first_name = funded_person.name_first
+    self.child_middle_name = funded_person.name_middle
+    self.child_dob = funded_person.my_dob
+    self.child_in_care_of_ministry = funded_person.child_in_care_of_ministry
+    # puts "After: #{child_dob}"
+  end
+
+  def include?(range)
+    Range.new(service_provider_service_start, service_provider_service_end)
+         .include?(range)
   end
 
   def format_date(date)
@@ -126,10 +170,20 @@ class Cf0925 < ApplicationRecord
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  ##
+  # Pull the info from the user and the funded_person into the Cf0925 instance
+  def populate
+    copy_parent_to_form
+    copy_child_to_form
+  end
+
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
+    # user.printable? || puts(errors.full_messages)
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
+    # puts "user validation: #{user_printable}. CF0925 validate: #{cf0925_printable}"
+    # puts "Both: #{cf0925_printable && user_printable}"
     cf0925_printable && user_printable
   end
 
@@ -164,6 +218,17 @@ class Cf0925 < ApplicationRecord
   end
 
   ##
+  # Some validations aren't needed if this is a supplier-only RTP
+  def supplier_only_rtp?
+    service_provider_name.blank? &&
+      agency_name.blank? &&
+      service_provider_service_start.blank? &&
+      service_provider_service_end.blank? &&
+      payment.blank? &&
+      supplier_name.present?
+  end
+
+  ##
   # Total amount requested on this CF0925
   def total_amount
     # puts "amount: #{service_provider_service_amount} item_total: #{item_total}"
@@ -171,16 +236,16 @@ class Cf0925 < ApplicationRecord
     (service_provider_service_amount || 0) + (item_total || 0)
   end
 
-  def user
-    funded_person.user
+  def translate_care_of_ministry_to_pdf_field
+    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
   end
 
   def translate_payment_to_pdf_field
     payment == 'provider' ? 'Choice2' : 'Choice1'
   end
 
-  def translate_care_of_ministry_to_pdf_field
-    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
+  def user
+    funded_person.user
   end
 
   private
