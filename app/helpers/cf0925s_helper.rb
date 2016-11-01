@@ -162,15 +162,12 @@ module Cf0925sHelper
 
   # Old way
 
-  def show_field(field, width = 4, opts = {}, &block)
+  def show_field(f, field, width = 4, opts = {}, &block)
     wrap_field(width) do
-      content_tag(:small, format_label(field, opts)) +
-        content_tag(:br) +
-        if block_given?
-          capture(&block)
-        else
-          content_tag(:span, @cf0925.send(field), id: field, class: 'value')
-        end
+      # content_tag(:small, format_label(field, opts)) +
+      opts[:label] ||= format_label(field, opts)
+      f.static_control(field, opts, &block)
+      # content_tag(:span, @cf0925.send(field), id: field, class: 'value')
     end
   end
 
@@ -209,8 +206,8 @@ module Cf0925sHelper
     end
   end
 
-  def child_field(_f, field, width = 4, &block)
-    show_field(field, width, lstrip: 'Child', &block)
+  def child_field(f, field, width = 4, opts = {}, &block)
+    show_field(f, field, width, opts.merge(lstrip: 'Child'), &block)
   end
 
   def parent_field(f, field, width = 4, opts = {}, &block)

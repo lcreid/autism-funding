@@ -17,7 +17,7 @@ class FundedPerson < ApplicationRecord
   # ----- Public Methods -------------------------------------------------------
   def cf0925s_in_fiscal_year(fy)
     # pp cf0925s.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
-    cf0925s.select { |x| fy.include?(x.fiscal_year) }
+    association_in_fiscal_year(cf0925s, fy)
   end
 
   def cf0925s_in_selected_fiscal_year
@@ -34,7 +34,7 @@ class FundedPerson < ApplicationRecord
 
   def invoices_in_fiscal_year(fy)
     # pp invoices.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
-    invoices.select { |x| fy.include?(x.fiscal_year) }
+    association_in_fiscal_year(invoices, fy)
   end
 
   def invoices_in_selected_fiscal_year
@@ -142,7 +142,7 @@ class FundedPerson < ApplicationRecord
   end
 
   def child_preference(key, default)
-    logger.debug { "Child preferences args: #{self.inspect}, #{key}(#{key.class})" }
+    logger.debug { "Child preferences args: #{inspect}, #{key}(#{key.class})" }
     logger.debug { "Child preferences: #{user.preferences}" }
     pref_hash = json(user.preferences)
     logger.debug { "Child preferences hash: #{pref_hash}" }
@@ -159,6 +159,10 @@ class FundedPerson < ApplicationRecord
   #-----------------------------------------------------------------------------
 
   private
+
+  def association_in_fiscal_year(association, fy)
+    association.select { |x| x.in_fiscal_year?(fy) }
+  end
 
   def fiscal_year_from_year(year)
     start_of_fiscal_year = start_of_first_fiscal_year.change(year: year)

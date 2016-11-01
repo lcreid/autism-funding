@@ -155,10 +155,6 @@ class Cf0925 < ApplicationRecord
     true
   end
 
-  def in_fiscal_year(fy)
-    fy.includes?(fiscal_year)
-  end
-
   def item_total
     return nil unless item_cost_1 || item_cost_2 || item_cost_3
     (item_cost_1 || 0) +
