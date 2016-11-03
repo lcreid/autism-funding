@@ -121,3 +121,6 @@ has_no_rtp:
   name_first: No
   name_last: Rtp
   user: has_no_rtp
+
+is_a_blank:
+  name_first: Blank

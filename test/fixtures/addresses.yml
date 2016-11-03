@@ -47,3 +47,20 @@ has_no_rtp:
   postal_code: S0S 0S0
   province_code: bc
   user: has_no_rtp
+
+has_no_prov:
+  address_line_1: Provinceless St
+  city: Orphanville
+  postal_code: S0S 0S1
+
+has_supported_prov:
+  address_line_1: Provinceless St
+  city: Happyville
+  province_code: bc
+  postal_code: V0S 0S1
+
+has_unsupported_prov:
+  address_line_1: Provinceless St
+  city: Sadville
+  province_code: sk
+  postal_code: S0S 0S1
