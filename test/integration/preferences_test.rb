@@ -9,19 +9,16 @@ class PreferencesTest < PoltergeistTest
     assert_current_path root_path
     assert_content 'Sixteen Year Two-Kids'
     assert_content 'Four Year Two-Kids'
+    first_child = user.funded_people.first
     last_child = user.funded_people.last
     Rails.logger.debug { "The last child is #{last_child.inspect}" }
-    # Ugh. Not supposed to do this, but what choice do I have?
-    sleep(2)
-    assert_selector("#collapse-#{last_child.id}.in")
+    assert_no_selector("#collapse-#{first_child.id}.in")
+    assert_no_selector("#collapse-#{last_child.id}.in")
 
     Rails.logger.debug { "About to click name: #{last_child.my_name}" }
     click_link(last_child.my_name)
-    # The next couple of lines make sure this test script doesn't get
-    # ahead of PhantomJS.
-    assert_no_selector("#collapse-#{last_child.id}.collapsing")
-    assert_no_selector("#collapse-#{last_child.id}.in")
-    assert_current_path root_path
+    assert_selector("#collapse-#{last_child.id}.in")
+    assert_no_selector("#collapse-#{first_child.id}.in")
 
     click_link 'My Profile'
     assert_content 'My Funded Children'
@@ -32,19 +29,19 @@ class PreferencesTest < PoltergeistTest
     assert_content 'Four Year Two-Kids'
     assert_current_path root_path
     Rails.logger.debug { 'Looking for collapsed panel.' }
-    # The next line is just to make sure we're synched up before looking
-    # for the expanded panel.
-    assert_selector("#collapse-#{last_child.id}", visible: false)
-    assert_no_selector("#collapse-#{last_child.id}.in")
+    assert_selector("#collapse-#{last_child.id}.in")
+    assert_no_selector("#collapse-#{first_child.id}.in")
 
     # Ugh. Not supposed to do this, but what choice do I have?
+    # FIXME: Taking this one out leads to a broken test case.
     sleep(1)
-    click_link(last_child.my_name)
+    click_link(first_child.my_name)
     Rails.logger.debug { 'Just clicked link to show panel.' }
     # The next line is just to make sure we're synched up before looking
     # for the expanded panel.
     assert_content 'Four Year Two-Kids'
-    assert_selector("#collapse-#{last_child.id}.in")
+    assert_selector("#collapse-#{first_child.id}.in")
+    assert_no_selector("#collapse-#{last_child.id}.in")
 
     click_link 'My Profile'
     assert_content 'My Funded Children'
@@ -54,15 +51,21 @@ class PreferencesTest < PoltergeistTest
     click_link 'My Home'
     assert_content 'Four Year Two-Kids'
     assert_current_path root_path
-    assert_selector("#collapse-#{last_child.id}.in")
+    assert_selector("#collapse-#{first_child.id}.in")
+    assert_no_selector("#collapse-#{last_child.id}.in")
   end
 
   test 'fiscal year menu preferences' do
-    fill_in_login(users(:years))
+    fill_in_login(user = users(:years))
     assert_current_path root_path
 
-    child_id = funded_people(:two_fiscal_years).id
-    two_year_kid = "year_#{child_id}"
+    child = funded_people(:two_fiscal_years)
+    two_year_kid = "year_#{child.id}"
+
+    click_link child.my_name
+    # It looks like you need to check that the tab actually opened, to give
+    # the Javascript time to execute.
+    assert_selector("#collapse-#{child.id}.in")
 
     assert_select two_year_kid, selected: '2016-2017'
     select '2015-2016', from: two_year_kid

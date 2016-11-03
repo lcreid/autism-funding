@@ -96,7 +96,7 @@ class AddressTest < ActiveSupport::TestCase
   # => k) test address_line_1 cleaned up
   # => g) test get_full_address with address_line_1, address_line_2, city, province & postal code
   testName = '03 Check Address format methods'
-  puts "-- Test: #{testName} -----------------------------------"
+  # puts "-- Test: #{testName} -----------------------------------"
   test testName do
     test_address = Address.new
     test_style = 'color: red;'

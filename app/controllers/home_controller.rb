@@ -18,6 +18,7 @@ class HomeController < ApplicationController
   ##
   # Set the state of a panel on the index view
   def set_panel_state
+    # puts "set panel state: #{params[:panel_state]}"
     child = FundedPerson.find(params[:funded_person_id])
     child.set_childs_panel_state(params[:panel_state])
     head :ok, content_type: 'text/html'
