@@ -10,6 +10,9 @@ class FiscalYearFilterTest < PoltergeistTest
     fill_in_login(user = users(:years))
     assert_current_path root_path
     child = user.funded_people.find { |x| x.name_first == 'Two' }
+    click_link child.my_name
+    assert_selector("#collapse-#{child.id}.in")
+
     within "#collapse-#{child.id}" do
       year_selector = "year_#{child.id}"
       assert_select(year_selector, selected: '2016-2017')
@@ -43,6 +46,9 @@ class FiscalYearFilterTest < PoltergeistTest
     fill_in_login(user = users(:years))
 
     child = user.funded_people.select { |x| x.name_first == 'Two' }.first
+    click_link child.my_name
+    assert_selector("#collapse-#{child.id}.in")
+
     year_selector = "year_#{child.id}"
     within "#collapse-#{child.id}" do
       assert_select(year_selector, selected: '2016-2017')
