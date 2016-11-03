@@ -4,7 +4,7 @@
   <%= f.hidden_field :user_id %>
   <div class="form-group">
     <%#= f.label :phone_number, f.object.phone_type + " Phone", class: 'control-label' %>
-    <%= f.text_field :phone_number, label: f.object.phone_type + " Phone" %>
+    <%= f.phone_field :phone_number, label: f.object.phone_type + " Phone" %>
     <%= f.error_message_for(:phone_number) %>
     <%= f.hidden_field :phone_type, value: f.object.phone_type %>
   </div>

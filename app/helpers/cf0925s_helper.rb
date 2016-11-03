@@ -80,7 +80,9 @@ module Cf0925sHelper
         service_provider_field(f, :service_provider_address, 5, label: 'Address') +
           service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
           service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
-          service_provider_field(f, :service_provider_phone, 2, label: 'Phone Number')
+          wrap_in_column(2,
+                         f.phone_field(:service_provider_phone,
+                                       label: 'Phone Number'))
       end
       a += content_tag(:div, class: 'form-inline') do
         service_provider_field(f, :service_provider_service_1, 6) +
@@ -122,7 +124,9 @@ module Cf0925sHelper
       a += content_tag(:div, class: 'form-inline') do
         wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
           wrap_in_column(5, f.supplier_field(:supplier_contact_person)) +
-          wrap_in_column(3, f.supplier_field(:supplier_phone))
+          wrap_in_column(3,
+                         f.phone_field(:supplier_phone,
+                                       label: 'Phone Number'))
       end
       a += content_tag(:div, class: 'form-inline') do
         wrap_in_column(6, f.supplier_field(:supplier_address)) +

@@ -39,7 +39,7 @@
           <%= parent.hidden_field :id %>
           <%= parent_field(addresses_form, :address_line_1, 6, label: 'Address') %>
           <%= parent_field(addresses_form, :city, 4, label: 'City/Town') %>
-          <%= parent_field(addresses_form, :postal_code, 2, label: 'Postal Code') %>
+          <%= wrap_in_column(2, addresses_form.postal_code_field(:postal_code, label: 'Postal Code')) %>
         </div>
       <% end %>
     <% end %>
