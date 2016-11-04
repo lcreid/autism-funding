@@ -6,11 +6,11 @@ module Cf0925sHelper
   ##
   # The buttons at the bottom of the form.
   def buttons(f, cf0925)
-    content_tag :div, class: 'form-inline' do
-      f.submit('Save', class: 'btn btn-primary') +
-        print_button(cf0925) +
-        home_button
-    end
+    # content_tag :div, class: 'form-inline' do
+    f.submit('Save', class: 'btn btn-primary') +
+      print_button(cf0925) +
+      home_button
+    # end
   end
 
   ##
@@ -61,7 +61,7 @@ module Cf0925sHelper
           'who is providing autism intervention ' \
           'for the child.'
 
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_name, 8, lstrip: '') +
           wrap_field(4) do
             f.form_group(:payment,
@@ -73,10 +73,10 @@ module Cf0925sHelper
             end
           end
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         service_provider_field(f, :agency_name, 8, label: 'Agency Name (if applicable)')
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_address, 5, label: 'Address') +
           service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
           service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
@@ -84,12 +84,12 @@ module Cf0925sHelper
                          f.phone_field(:service_provider_phone,
                                        label: 'Phone Number'))
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_service_1, 6) +
           wrap_date_field(f, :service_provider_service_start, 3, label: 'Start Date') +
           wrap_date_field(f, :service_provider_service_end, 3, label: 'End Date')
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_service_2, 6) +
           service_provider_field(f, :service_provider_service_fee, 2, label: 'Fee (incl PST)') +
           # service_provider_field(f, :service_provider_service_hour, 2, label: 'Per') +
@@ -100,7 +100,7 @@ module Cf0925sHelper
           end +
           service_provider_field(f, :service_provider_service_amount, 2, label: 'Total Amount')
       end
-      a + content_tag(:div, class: 'form-inline') do
+      a + content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_service_3, 6)
       end
     end
@@ -121,28 +121,28 @@ module Cf0925sHelper
         'or materials ' \
         'directly on behalf of a parent or guardian.'
 
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
           wrap_in_column(5, f.supplier_field(:supplier_contact_person)) +
           wrap_in_column(3,
                          f.phone_field(:supplier_phone,
                                        label: 'Phone Number'))
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         wrap_in_column(6, f.supplier_field(:supplier_address)) +
           wrap_in_column(4, f.supplier_field(:supplier_city)) +
           wrap_in_column(2, f.supplier_field(:supplier_postal_code))
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         wrap_in_column(6, f.supplier_field(:item_desp_1)) +
           wrap_in_column(2, f.supplier_field(:item_cost_1)) +
           wrap_in_column(4, f.supplier_field(:item_total))
       end
-      a += content_tag(:div, class: 'form-inline') do
+      a += content_tag(:div, class: 'row') do
         wrap_in_column(6, f.supplier_field(:item_desp_2)) +
           wrap_in_column(2, f.supplier_field(:item_cost_2))
       end
-      a + content_tag(:div, class: 'form-inline') do
+      a + content_tag(:div, class: 'row') do
         wrap_in_column(6, f.supplier_field(:item_desp_3)) +
           wrap_in_column(2, f.supplier_field(:item_cost_3))
       end
@@ -177,7 +177,7 @@ module Cf0925sHelper
 
   def form_row(&block)
     raise ArgumentError, 'Missing block' unless block_given?
-    content_tag :div, class: 'form-inline' do
+    content_tag :div, class: 'row' do
       capture(&block)
     end
   end
