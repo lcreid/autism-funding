@@ -67,9 +67,7 @@ module Cf0925sHelper
             f.form_group(:payment,
                          label: { text: 'Payment to be provided to:' }) do
               f.radio_button(:payment, 'provider', label: 'Service Provider') +
-                '<br/>'.html_safe +
-                f.radio_button(:payment, 'agency', label: 'Agency') +
-                f.error_message_for(:payment)
+                f.radio_button(:payment, 'agency', label: 'Agency')
             end
           end
       end
