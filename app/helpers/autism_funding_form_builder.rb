@@ -8,7 +8,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   ##
-  # Format the text field for the supplier into field
+  # Format the text field for a supplier info field
   def supplier_field(field, options = {})
     options[:label] ||= format_label(field,
                                      { lstrip: 'Supplier' }.merge(options))
