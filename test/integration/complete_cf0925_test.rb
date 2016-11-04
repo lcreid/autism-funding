@@ -136,13 +136,12 @@ class CompleteCf0925Test < CapybaraTest
     # work. It also doesn't use the ID, but rather the "for=" attribute.
     # This was for when the fields were fillable. We decided you have to go
     # back to the profile page to do that.
-    # FIXME: Change word order in label.
     assert_field 'Last Name', with: 'Two-Kids'
     assert_field 'First', with: 'I'
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
     # assert_selector '#parent_last_name', text: 'Two-Kids'
     # assert_selector '#parent_first_name', text: 'I'
-    assert_selector '#child_first_name', text: 'Sixteen'
+    assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Sixteen'
   end
 
   test 'Change parent info' do

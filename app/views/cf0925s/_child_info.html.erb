@@ -1,25 +1,24 @@
 <%= form_row do %>
-  <%= child_field(f, :child_first_name, 2) %>
-  <%= child_field(f, :child_middle_name, 2) %>
   <%= child_field(f, :child_last_name, 2) %>
-  <%= child_field(f, :child_dob, 2) %>
-  <%= child_field(f, "Is this child in the care of the ministry?", 2) do %>
+  <%= child_field(f, :child_first_name, 2, label: 'First') %>
+  <%= child_field(f, :child_middle_name, 2, label: 'Middle') %>
+  <%= child_field(f, :child_dob, 2, label: 'DOB') %>
+  <%= child_field(f, nil, 4, label: "Is this child in the care of the ministry?") do %>
     <% if @cf0925.child_in_care_of_ministry %>
       Yes
     <% else %>
       No
     <% end %>
   <% end %>
+<% end %>
 
-  <div class="col-md-2">
+<%= form_row do %>
+  <div class="col-md-12">
     <p>
       If you need to change the child information,
       you have to go to your
       <%= link_to 'profile page', my_profile_edit_path(@cf0925.funded_person.user) %>
       and change it there.
-      <strike>then re-start the request to pay.</strike> Child Information will
-      always relect the information in your profile <i>at the time this form is
-      saved</i>
     </p>
   </div>
 <% end %>

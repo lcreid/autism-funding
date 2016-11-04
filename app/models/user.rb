@@ -132,19 +132,23 @@ class User < ApplicationRecord
     my_phone 'Work'
   end
 
+  def open_panel
+    preference(:open_panel_child_id, nil)
+  end
+
   def phone(phone_type)
     phone_numbers.select { |x| x.phone_type == phone_type }.first
   end
 
   def preference(key, default)
-    logger.debug { "Preference args: #{key}(#{key.class})" }
-    logger.debug { "Preferences: #{preferences}" }
+    # logger.debug { "Preference args: #{key}(#{key.class})" }
+    # logger.debug { "Preferences: #{preferences}" }
     pref_hash = json(preferences)
-    logger.debug { "Preferences hash: #{pref_hash}" }
+    # logger.debug { "Preferences hash: #{pref_hash}" }
     value = pref_hash && pref_hash[key.to_s]
-    logger.debug { "Preferences value before default: #{value}" }
+    # logger.debug { "Preferences value before default: #{value}" }
     value ||= default
-    logger.debug { "Preferences value: #{value}" }
+    # logger.debug { "Preferences value: #{value}" }
     value
   end
 
@@ -155,6 +159,7 @@ class User < ApplicationRecord
     # pp my_address
     address_printable = my_address.printable?
     # puts("my_address.printable? #{my_address.errors.full_messages}") unless
+    # FIXME: I don't think I need this next line.
     address_printable
     # TODO: Validate phone numbers.
     user_printable && address_printable
@@ -164,10 +169,16 @@ class User < ApplicationRecord
     set_preference(bc_warning_acknowledgement: state)
   end
 
+  ##
+  # Set the child ID of the open panel, since only one can be open
+  def set_open_panel(child_id)
+    set_preference(open_panel_child_id: child_id)
+  end
+
   def set_preference(hash)
-    logger.debug { "Set preference new hash: #{hash}" }
+    # logger.debug { "Set preference new hash: #{hash}" }
     self.preferences = json(preferences).merge(hash).to_json
-    logger.debug { "Set preference preferences: #{preferences}" }
+    # logger.debug { "Set preference preferences: #{preferences}" }
     save
   end
 

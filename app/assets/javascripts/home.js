@@ -14,7 +14,7 @@ $(document).on('turbolinks:load', function() {
   });
 
   function set_childs_panel_state(child_id, value) {
-    $.post('home/set_panel_state', {
+    $.post('/home/set_panel_state', {
       funded_person_id: child_id,
       panel_state: value
     });
