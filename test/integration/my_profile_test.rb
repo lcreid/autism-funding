@@ -23,12 +23,15 @@ class MyProfileTest < CapybaraTest
     # We pre-create empty records so this test will fail for a brand new user.
     # assert_equal 0, User.find_by(email: email).addresses.size
 
-    assert_equal '/', current_path
-    within 'nav' do
-      click_link 'My Profile'
-    end
-    assert_equal '/my_profile/index', current_path
-    click_link 'edit'
+    ## Changed functionality so that new users are redirected to the my_profile_edit path
+    ##  Therefore the following tests are removed ---
+    ##assert_equal '/', current_path
+    ##within 'nav' do
+    ##  click_link 'My Profile'
+    ##end
+    ##assert_equal '/my_profile/index', current_path
+    ##click_link 'edit'
+    ##-- end removed tests
 
     assert_equal '/my_profile/edit', current_path
     address_hash = {
@@ -57,7 +60,7 @@ class MyProfileTest < CapybaraTest
     # end
     # end
 
-    assert_equal '/my_profile/index', current_path
+    assert_equal '/my_profile/edit', current_path
     user = User.find_by(name_last: user_hash[:name_last])
     assert_equal user_hash[:name_first], user.name_first
     assert_equal user_hash[:name_last], user.name_last

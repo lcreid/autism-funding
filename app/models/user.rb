@@ -56,6 +56,13 @@ class User < ApplicationRecord
     self.my_address.get_province_code == 'BC'
   end
 
+  ##
+  # Return true if the user has once acknowledged the notification
+  # that the forms are only for residents of BC.
+  def bc_warning_acknowledgement?
+    preference(:bc_warning_acknowledgement, false)
+  end
+
   def can_create_new_rtp?
     self.bc_resident? && self.funded_people.size > 0
   end
@@ -73,16 +80,12 @@ class User < ApplicationRecord
     return ret
   end
 
-  def home_phone?
-    !home_phone.nil? && home_phone.phone_number.present?
-  end
-
-  def work_phone?
-    !work_phone.nil? && work_phone.phone_number.present?
-  end
-
   def home_phone
     phone 'Home'
+  end
+
+  def home_phone?
+    !home_phone.nil? && home_phone.phone_number.present?
   end
 
   def missing_key_info?
@@ -90,13 +93,6 @@ class User < ApplicationRecord
     ret = ret || self.my_address.nil?
     ret = ret || self.my_address.get_province_code.empty?
     return ret
-  end
-
-  def my_name
-    my_name = "#{name_first} #{name_middle}".strip
-    my_name = "#{my_name} #{name_last}".strip
-    my_name = email if my_name == ''
-    my_name
   end
 
   def my_address
@@ -125,6 +121,13 @@ class User < ApplicationRecord
     my_phone 'Home'
   end
 
+  def my_name
+    my_name = "#{name_first} #{name_middle}".strip
+    my_name = "#{my_name} #{name_last}".strip
+    my_name = email if my_name == ''
+    my_name
+  end
+
   def my_work_phone
     my_phone 'Work'
   end
@@ -135,6 +138,18 @@ class User < ApplicationRecord
 
   def phone(phone_type)
     phone_numbers.select { |x| x.phone_type == phone_type }.first
+  end
+
+  def preference(key, default)
+    # logger.debug { "Preference args: #{key}(#{key.class})" }
+    # logger.debug { "Preferences: #{preferences}" }
+    pref_hash = json(preferences)
+    # logger.debug { "Preferences hash: #{pref_hash}" }
+    value = pref_hash && pref_hash[key.to_s]
+    # logger.debug { "Preferences value before default: #{value}" }
+    value ||= default
+    # logger.debug { "Preferences value: #{value}" }
+    value
   end
 
   def printable?
@@ -148,22 +163,6 @@ class User < ApplicationRecord
     address_printable
     # TODO: Validate phone numbers.
     user_printable && address_printable
-  end
-
-  def supported?
-    my_address.province_code &&
-      !(my_address.province_code.not_supported == 'Y')
-  end
-
-  def work_phone
-    phone 'Work'
-  end
-
-  ##
-  # Return true if the user has once acknowledged the notification
-  # that the forms are only for residents of BC.
-  def bc_warning_acknowledgement?
-    preference(:bc_warning_acknowledgement, false)
   end
 
   def set_bc_warning_acknowledgement(state)
@@ -183,25 +182,29 @@ class User < ApplicationRecord
     save
   end
 
-  def preference(key, default)
-    # logger.debug { "Preference args: #{key}(#{key.class})" }
-    # logger.debug { "Preferences: #{preferences}" }
-    pref_hash = json(preferences)
-    # logger.debug { "Preferences hash: #{pref_hash}" }
-    value = pref_hash && pref_hash[key.to_s]
-    # logger.debug { "Preferences value before default: #{value}" }
-    value ||= default
-    # logger.debug { "Preferences value: #{value}" }
-    value
+  def supported?
+    my_address.province_code &&
+      !(my_address.province_code.not_supported == 'Y')
   end
 
+  def work_phone
+    phone 'Work'
+  end
+
+  def work_phone?
+    !work_phone.nil? && work_phone.phone_number.present?
+  end
+
+
+#### private methods ###########################################################
   private
 
   def my_phone(the_type)
     # obj_phone = phone_numbers.find(phone_type: the_type)
     obj_phone = phone_numbers.find_by(phone_type: the_type)
     if id.nil?
-      ret_obj = nil
+      ret_obj = phone_numbers.build
+      ret_obj.phone_type = the_type
     elsif obj_phone.nil?
       ret_obj = PhoneNumber.create(user_id: id, phone_type: the_type)
       phone_numbers.reload # refreshes cache

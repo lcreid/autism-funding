@@ -241,7 +241,7 @@ class UserTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 06
   # => a) tests that new user has no related phone_numbers
-  # => b) tests that new user my_home_phone returns a nil
+  # => b) tests that new user has one phone number after my_home_phone
   # => c) tests that users(:has_no_phone) has no related addresses
   # => d) tests that users(::has_no_phone).my_home_phone returns an instance of class PhoneNumber
   # => e) tests that users(::has_no_phone).my_home_phone returns an instance with a correct user_id
@@ -262,7 +262,8 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, the_user.phone_numbers.size, "06.a: Instance [#{the_user.my_name}] should have no phone_numbers"
 
     # 06.b .....................................................................
-    assert_nil the_user.my_home_phone, "06.b: Instance [#{the_user.my_name}.my_home_phone] should return nil as no id has been created"
+    the_user.my_home_phone
+    assert_equal 1, the_user.phone_numbers.size, "06.b: Instance [#{the_user.my_name}] Should have 1 phone number after my_home_phone"
 
     # 06.c .....................................................................
     the_user = users(:has_no_phone)
@@ -308,7 +309,7 @@ class UserTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 07
   # => a) tests that new user has no related phone_numbers
-  # => b) tests that new user my_work_phone returns a nil
+  # => b) tests that new user has one phone number after my_work_phone
   # => c) tests that users(:has_no_phone) has no related addresses
   # => d) tests that users(::has_no_phone).my_work_phone returns an instance of class PhoneNumber
   # => e) tests that users(::has_no_phone).my_work_phone returns an instance with a correct user_id
@@ -329,7 +330,8 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, the_user.phone_numbers.size, "07.a: Instance [#{the_user.my_name}] should have no phone_numbers"
 
     # 07.b .....................................................................
-    assert_nil the_user.my_work_phone, "07.b: Instance [#{the_user.my_name}.my_work_phone] should return nil as no id has been created"
+    the_user.my_work_phone
+    assert_equal 1, the_user.phone_numbers.size, "07.b: Instance [#{the_user.my_name}] Should have 1 phone number after my_work_phone"
 
     # 07.c .....................................................................
     the_user = users(:has_no_phone)

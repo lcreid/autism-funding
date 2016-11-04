@@ -21,7 +21,8 @@ class MyProfileController < ApplicationController
     add_data_for_user
 
     if flash[:save_errors].nil?
-      redirect_to my_profile_index_path(request.parameters)
+      # redirect_to my_profile_index_path(request.parameters)
+      redirect_to root_path
     else
       redirect_to my_profile_edit_path(request.parameters)
     end
