@@ -1,4 +1,12 @@
 class HomeController < ApplicationController
+  before_action :check_if_can_see_my_home
+
+  def check_if_can_see_my_home
+    unless current_user.can_see_my_home?
+      redirect_to my_profile_edit_path
+    end
+  end
+
   def index
     @funded_people = current_user.funded_people
     @funded_people.each do |child|

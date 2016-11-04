@@ -24,8 +24,8 @@ class PreferencesTest < PoltergeistTest
     assert_current_path root_path
 
     click_link 'My Profile'
-    assert_content 'My Funded Children'
-    assert_current_path my_profile_index_path
+    assert_content 'Edit My Data'
+    assert_current_path my_profile_edit_path
 
     click_link 'My Home'
     assert_no_content 'My Funded Children'
@@ -47,8 +47,8 @@ class PreferencesTest < PoltergeistTest
     assert_selector("#collapse-#{last_child.id}.in")
 
     click_link 'My Profile'
-    assert_content 'My Funded Children'
-    assert_current_path my_profile_index_path
+    assert_content 'Funded Children'
+    assert_current_path my_profile_edit_path
 
     Rails.logger.debug { 'Going back to home.' }
     click_link 'My Home'
@@ -79,8 +79,8 @@ class PreferencesTest < PoltergeistTest
     # Rails.logger.debug { find("a[href='/my_profile/index']").inspect }
     # find("a[href='/my_profile/index']").click
     # visit my_profile_index_path
-    assert_content 'My Funded Children'
-    assert_current_path my_profile_index_path
+    assert_content 'Funded Children'
+    assert_current_path my_profile_edit_path
     # Rails.logger.debug { 'Going back to My Home' }
     click_link 'My Home'
     # visit root_path

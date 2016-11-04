@@ -11,7 +11,18 @@ end
 
 module TestSessionHelpers
   def log_in(user =
-             User.create!(email: 'me@weenhanceit.com', password: 'password'))
+             User.create!(email: 'me1@weenhanceit.com', password: 'password'))
+    ## If the user's province has not been set - default it to BC
+    if user.my_address.get_province_code.empty?
+      user.my_address.province_code = province_codes('bc')
+      user.save
+    end
+
+    ## If there are no phone numbers, create a home phone numbers
+    if user.phone_numbers.size == 0
+      user.my_home_phone.phone_number = '3335557777'
+      user.save
+    end
 
     post new_user_session_path,
          params: {
@@ -66,6 +77,25 @@ module TestSessionHelpers
         end
       end
     end
+  end
+
+  def show_user_status (line = '', user = controller.current_user)
+    puts ""
+    puts " -- User status #{line} --"
+    puts "                 id: #{user.id}"
+    puts "    addresses[0].id: #{user.addresses[0].id}"
+    puts "     addresses.size: #{user.addresses.size}"
+    puts " phone_numbers.size: #{user.phone_numbers.size}"
+    puts "       Last Updated: #{user.updated_at}"
+    puts "          User Name: #{user.my_name}"
+    puts "         User email: #{user.email}"
+    puts "            Address: #{user.my_address.get_address}"
+    puts "                     City: #{user.my_address.city}  Prov: #{user.my_address.get_province_code}   #{user.my_address.get_postal_code}"
+    puts "  Missing Key Info?: #{user.missing_key_info?}"
+    puts "       BC Resident?: #{user.bc_resident?} "
+    puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
+    puts "   Can See My Home?: #{user.can_see_my_home?}"
+    puts " -----------------"
   end
 end
 

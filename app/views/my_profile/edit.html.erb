@@ -1,6 +1,33 @@
 <div class="container">
   <h1>Edit My Data</h1>
   <br>
+  <% if current_user.missing_key_info? %>
+    <div class="alert alert-warning">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <span class="glyphicon glyphicon-star-empty"></span>
+          To begin taking advantage of the functionality of this site you must
+          enter the province of your address as well as at least one funded child
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  <% end %>
+  <% unless current_user.bc_resident? %>
+    <div class="alert alert-warning">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <span class="glyphicon glyphicon-star-empty"></span>
+          The forms and funding found in this area are only availble to residents of
+          British Columbia.
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  <% end %>
+
   <% unless flash[:save_errors].nil? %>
     <div style = "width: 80%; color: black; background-color: #FFE6E6; border: 5px double red; padding: 5px; margin-left: 20px;">
       <%= flash[:save_errors].html_safe %>
