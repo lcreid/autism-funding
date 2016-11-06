@@ -35,6 +35,8 @@ class AutismFundingFormBuilder < WeitFormBuilder
                                                   area_code: true)
 
     # FIXME: Should be able to DRY this up.
+    # TODO: DRY this up because I have to do date_field, form_group, and
+    #       select, at least.
     width = (options.delete(:column_width) || options.delete(:col_width))
 
     if width
@@ -73,7 +75,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
 
   def process_options(method, options)
     label_modifier = options.delete(:lstrip)
-    options[:label] ||= format_label(method, label_modifier)
+    options[:label] ||= format_label(method, lstrip: label_modifier)
     options[:placeholder] ||= options[:label]
     options
   end

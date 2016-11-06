@@ -62,7 +62,7 @@ module Cf0925sHelper
           'for the child.'
 
       a += content_tag(:div, class: 'row') do
-        service_provider_field(f, :service_provider_name, 8, lstrip: '') +
+        f.text_field(:service_provider_name, column_width: 8, lstrip: '') +
           wrap_field(4) do
             f.form_group(:payment,
                          label: { text: 'Payment to be provided to:' }) do
@@ -72,34 +72,33 @@ module Cf0925sHelper
           end
       end
       a += content_tag(:div, class: 'row') do
-        service_provider_field(f, :agency_name, 8, label: 'Agency Name (if applicable)')
+        f.text_field(:agency_name, column_width: 8, label: 'Agency Name (if applicable)')
       end
       a += content_tag(:div, class: 'row') do
-        service_provider_field(f, :service_provider_address, 5, label: 'Address') +
-          service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
-          service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
+        f.text_field(:service_provider_address, column_width: 5, label: 'Address') +
+          f.text_field(:service_provider_city, column_width: 3, label: 'City/Town') +
+          f.text_field(:service_provider_postal_code, column_width: 2, label: 'Postal Code') +
           f.phone_field(:service_provider_phone,
                         column_width: 2,
                         label: 'Phone Number')
       end
       a += content_tag(:div, class: 'row') do
-        service_provider_field(f, :service_provider_service_1, 6) +
+        f.text_field(:service_provider_service_1, column_width: 6) +
           wrap_date_field(f, :service_provider_service_start, 3, label: 'Start Date') +
           wrap_date_field(f, :service_provider_service_end, 3, label: 'End Date')
       end
       a += content_tag(:div, class: 'row') do
-        service_provider_field(f, :service_provider_service_2, 6) +
-          service_provider_field(f, :service_provider_service_fee, 2, label: 'Fee (incl PST)') +
-          # service_provider_field(f, :service_provider_service_hour, 2, label: 'Per') +
+        f.text_field(:service_provider_service_2, column_width: 6) +
+          f.text_field(:service_provider_service_fee, column_width: 2, label: 'Fee (incl PST)') +
           wrap_field(2) do
             f.select(:service_provider_service_hour,
                      %w(Hour Day),
                      label: 'Per')
           end +
-          service_provider_field(f, :service_provider_service_amount, 2, label: 'Total Amount')
+          f.text_field(:service_provider_service_amount, column_width: 2, label: 'Total Amount')
       end
       a + content_tag(:div, class: 'row') do
-        service_provider_field(f, :service_provider_service_3, 6)
+        f.text_field(:service_provider_service_3, column_width: 6)
       end
     end
   end
@@ -202,11 +201,6 @@ module Cf0925sHelper
 
   def child_field(f, field, width = 4, opts = {}, &block)
     show_field(f, field, width, opts.merge(lstrip: 'Child'), &block)
-  end
-
-  def service_provider_field(f, field, width = 4, opts = {}, &block)
-    opts[:label] ||= format_label(field, lstrip: 'Service Provider')
-    form_field(f, field, width, opts, &block)
   end
 
   def format_label(field, opts = {})
