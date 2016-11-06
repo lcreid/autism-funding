@@ -8,13 +8,23 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   ##
-  # Format the text field for a supplier info field
-  def supplier_field(field, options = {})
-    options[:label] ||= format_label(field,
-                                     { lstrip: 'Supplier' }.merge(options))
-    options[:placeholder] ||= options[:label]
-    # options[:help] = 'Enter a supplier name.'
-    text_field(field, options) # + error_message_for(field)
+  # Format a text field
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  # If `lstrip: string` is given as an option, strip the string from the
+  # left side of the label.
+  # Set the placeholder to the label, unless :placeholder is given in the
+  # options.
+  def text_field(method, options)
+    options = process_options(method, options)
+
+    width = (options.delete(:column_width) || options.delete(:col_width))
+
+    if width
+      content_tag :div, super, class: "col-md-#{width}"
+    else
+      super
+    end
   end
 
   ##
@@ -33,6 +43,16 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options = process_options(method, options)
     options[:value] ||= format_postal_code(object.send(method))
     text_field(method, options)
+  end
+
+  ##
+  # Format the text field for a supplier info field
+  def supplier_field(field, options = {})
+    options[:label] ||= format_label(field,
+                                     { lstrip: 'Supplier' }.merge(options))
+    options[:placeholder] ||= options[:label]
+    # options[:help] = 'Enter a supplier name.'
+    text_field(field, options) # + error_message_for(field)
   end
 
   private

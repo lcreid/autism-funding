@@ -1,10 +1,8 @@
 <div class="parent-test">
-  <div class="row">
-    <%= parent_field(parent, :name_last, 2, label: 'Last Name') %>
-    <%= parent_field(parent, :name_first, 2, label: 'First') %>
-    <%= parent_field(parent, :name_middle, 2, label: 'Middle') %>
-    <%#= parent_phone_field(parent, :home, parent.object.my_home_phone, 3) %>
-    <%#= parent_phone_field(parent, :work, parent.object.my_work_phone, 3) %>
+  <%= form_row do %>
+    <%= parent.text_field(:name_last, column_width: 2, label: 'Last Name') %>
+    <%= parent.text_field(:name_first, column_width: 2, label: 'First') %>
+    <%= parent.text_field(:name_middle, column_width: 2, label: 'Middle') %>
     <%# OK. I think the below works. What is the learning? By putting in the method name, you cause the form builder to use it in the element id and name, so you get unique IDs. But the form builder must look only at attributes, rather than all methods,
     when looking for the value, so you also have to explicitly provide the object. I couldn't get nested attributes to work out of the box. So an approach that uses the collection ordered by the way you want them to be, while hacky, works more smoothly.
     You can do two different rows explicitly, but then you have multiple elements with the same HTML ID, which causes grief and doesn't work. %>
@@ -20,13 +18,14 @@
                          } %>
       <% end %>
       <%= parent.error_message_for(:phone_numbers) %>
-  </div>
+  <% end %>
   <%= form_row do %>
     <%= parent.fields_for :addresses, [@cf0925.funded_person.user.addresses.first] do |addresses_form| %>
       <div class="parent-address-fields" %>
+        <%# This next field is wrong. It's putting the parent ID as the ID of the address. %>
         <%= parent.hidden_field :id %>
-        <%= parent_field(addresses_form, :address_line_1, 6, label: 'Address') %>
-        <%= parent_field(addresses_form, :city, 4, label: 'City/Town') %>
+        <%= addresses_form.text_field(:address_line_1, column_width: 6, label: 'Address') %>
+        <%= addresses_form.text_field(:city, column_width: 4, label: 'City/Town') %>
         <%= wrap_in_column(2, addresses_form.postal_code_field(:postal_code, label: 'Postal Code')) %>
       </div>
     <% end %>
