@@ -78,9 +78,9 @@ module Cf0925sHelper
         service_provider_field(f, :service_provider_address, 5, label: 'Address') +
           service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
           service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
-          wrap_in_column(2,
-                         f.phone_field(:service_provider_phone,
-                                       label: 'Phone Number'))
+          f.phone_field(:service_provider_phone,
+                        column_width: 2,
+                        label: 'Phone Number')
       end
       a += content_tag(:div, class: 'row') do
         service_provider_field(f, :service_provider_service_1, 6) +
@@ -120,29 +120,31 @@ module Cf0925sHelper
         'directly on behalf of a parent or guardian.'
 
       a += content_tag(:div, class: 'row') do
-        wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
-          wrap_in_column(5, f.supplier_field(:supplier_contact_person)) +
-          wrap_in_column(3,
-                         f.phone_field(:supplier_phone,
-                                       label: 'Phone Number'))
+        f.supplier_field(:supplier_name,
+                         column_width: 4,
+                         label: 'Supplier Name') +
+          f.supplier_field(:supplier_contact_person, column_width: 5) +
+          f.phone_field(:supplier_phone,
+                        column_width: 3,
+                        label: 'Phone Number')
       end
       a += content_tag(:div, class: 'row') do
-        wrap_in_column(6, f.supplier_field(:supplier_address)) +
-          wrap_in_column(4, f.supplier_field(:supplier_city)) +
-          wrap_in_column(2, f.supplier_field(:supplier_postal_code))
+        f.supplier_field(:supplier_address, column_width: 6) +
+          f.supplier_field(:supplier_city, column_width: 4) +
+          f.supplier_field(:supplier_postal_code, column_width: 2)
       end
       a += content_tag(:div, class: 'row') do
-        wrap_in_column(6, f.supplier_field(:item_desp_1)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_1)) +
-          wrap_in_column(4, f.supplier_field(:item_total))
+        f.supplier_field(:item_desp_1, column_width: 6) +
+          f.supplier_field(:item_cost_1, column_width: 2) +
+          f.supplier_field(:item_total, column_width: 4)
       end
       a += content_tag(:div, class: 'row') do
-        wrap_in_column(6, f.supplier_field(:item_desp_2)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_2))
+        f.supplier_field(:item_desp_2, column_width: 6) +
+          f.supplier_field(:item_cost_2, column_width: 2)
       end
       a + content_tag(:div, class: 'row') do
-        wrap_in_column(6, f.supplier_field(:item_desp_3)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_3))
+        f.supplier_field(:item_desp_3, column_width: 6) +
+          f.supplier_field(:item_cost_3, column_width: 2)
       end
     end
   end
@@ -150,16 +152,6 @@ module Cf0925sHelper
   def field_with_error_message(f, field, opts = {})
     f.text_field(field, label: format_label(field, opts)) +
       f.error_message_for(field)
-  end
-
-  def wrap_in_column(width, text)
-    content_tag :div, class: "col-md-#{width}" do
-      if block_given?
-        yield
-      else
-        text
-      end
-    end
   end
 
   # Old way

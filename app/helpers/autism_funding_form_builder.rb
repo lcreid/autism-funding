@@ -33,7 +33,15 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options = process_options(method, options)
     options[:value] ||= @template.number_to_phone(object.send(method),
                                                   area_code: true)
-    super
+
+    # FIXME: Should be able to DRY this up.
+    width = (options.delete(:column_width) || options.delete(:col_width))
+
+    if width
+      content_tag :div, super, class: "col-md-#{width}"
+    else
+      super
+    end
   end
 
   ##
