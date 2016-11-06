@@ -63,12 +63,11 @@ module Cf0925sHelper
 
       a += content_tag(:div, class: 'row') do
         f.text_field(:service_provider_name, column_width: 8, lstrip: '') +
-          wrap_field(4) do
-            f.form_group(:payment,
-                         label: { text: 'Payment to be provided to:' }) do
-              f.radio_button(:payment, 'provider', label: 'Service Provider') +
-                f.radio_button(:payment, 'agency', label: 'Agency')
-            end
+          f.form_group(:payment,
+                       label: { text: 'Payment to be provided to:' },
+                       column_width: 4) do
+            f.radio_button(:payment, 'provider', label: 'Service Provider') +
+              f.radio_button(:payment, 'agency', label: 'Agency')
           end
       end
       a += content_tag(:div, class: 'row') do
@@ -84,17 +83,16 @@ module Cf0925sHelper
       end
       a += content_tag(:div, class: 'row') do
         f.text_field(:service_provider_service_1, column_width: 6) +
-          wrap_date_field(f, :service_provider_service_start, 3, label: 'Start Date') +
-          wrap_date_field(f, :service_provider_service_end, 3, label: 'End Date')
+          f.date_field(:service_provider_service_start, column_width: 3, label: 'Start Date') +
+          f.date_field(:service_provider_service_end, column_width: 3, label: 'End Date')
       end
       a += content_tag(:div, class: 'row') do
         f.text_field(:service_provider_service_2, column_width: 6) +
           f.text_field(:service_provider_service_fee, column_width: 2, label: 'Fee (incl PST)') +
-          wrap_field(2) do
-            f.select(:service_provider_service_hour,
-                     %w(Hour Day),
-                     label: 'Per')
-          end +
+          f.select(:service_provider_service_hour,
+                   %w(Hour Day),
+                   column_width: 2,
+                   label: 'Per') +
           f.text_field(:service_provider_service_amount, column_width: 2, label: 'Total Amount')
       end
       a + content_tag(:div, class: 'row') do
@@ -148,11 +146,6 @@ module Cf0925sHelper
     end
   end
 
-  def field_with_error_message(f, field, opts = {})
-    f.text_field(field, label: format_label(field, opts)) +
-      f.error_message_for(field)
-  end
-
   # Old way
 
   def show_field(f, field, width = 4, opts = {}, &block)
@@ -171,31 +164,9 @@ module Cf0925sHelper
     end
   end
 
-  def form_field(f, field, width = 4, opts = {}, &block)
-    wrap_field(width) do
-      if block_given?
-        # FIXME: if you give a block, the options are ignored.
-        a = capture(&block)
-      else
-        opts[:label] ||= format_label(field)
-        opts[:placeholder] ||= opts[:label]
-        a = f.text_field(field, opts)
-      end
-      # puts "about to add error message for #{field}..."
-      # a + f.error_message_for(field)
-    end
-  end
-
   def wrap_field(width)
     content_tag :div, class: "col-md-#{width}" do
       yield
-    end
-  end
-
-  def wrap_date_field(f, field, width, opts = {})
-    wrap_field(width) do
-      f.date_field(field, opts) #+
-      # f.error_message_for(field)
     end
   end
 

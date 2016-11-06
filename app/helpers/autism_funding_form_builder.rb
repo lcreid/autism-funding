@@ -8,23 +8,21 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   ##
-  # Format a text field
+  # Format a date field.
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
-  # If `lstrip: string` is given as an option, strip the string from the
-  # left side of the label.
-  # Set the placeholder to the label, unless :placeholder is given in the
-  # options.
-  def text_field(method, options)
-    options = process_options(method, options)
+  def date_field(method, options)
+    process_width(options) { super }
+  end
 
-    width = (options.delete(:column_width) || options.delete(:col_width))
-
-    if width
-      content_tag :div, super, class: "col-md-#{width}"
-    else
-      super
-    end
+  ##
+  # Format a form group.
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  # I'm just guessing about the arguments to this one, since it's not a Rails
+  # helper, but rather a Bootstrap Forms helper.
+  def form_group(method, options, &block)
+    process_width(options) { super }
   end
 
   ##
@@ -33,17 +31,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options = process_options(method, options)
     options[:value] ||= @template.number_to_phone(object.send(method),
                                                   area_code: true)
-
-    # FIXME: Should be able to DRY this up.
-    # TODO: DRY this up because I have to do date_field, form_group, and
-    #       select, at least.
-    width = (options.delete(:column_width) || options.delete(:col_width))
-
-    if width
-      content_tag :div, super, class: "col-md-#{width}"
-    else
-      super
-    end
+    process_width(options) { super }
   end
 
   ##
@@ -56,6 +44,14 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
+  # Format a select field.
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  def select(method, choices = nil, options = {}, html_options = {}, &block)
+    process_width(options) { super }
+  end
+
+  ##
   # Format the text field for a supplier info field
   def supplier_field(field, options = {})
     options[:label] ||= format_label(field,
@@ -63,6 +59,19 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options[:placeholder] ||= options[:label]
     # options[:help] = 'Enter a supplier name.'
     text_field(field, options) # + error_message_for(field)
+  end
+
+  ##
+  # Format a text field
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  # If `lstrip: string` is given as an option, strip the string from the
+  # left side of the label.
+  # Set the placeholder to the label, unless :placeholder is given in the
+  # options.
+  def text_field(method, options)
+    options = process_options(method, options)
+    process_width(options) { super }
   end
 
   private
@@ -78,5 +87,18 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options[:label] ||= format_label(method, lstrip: label_modifier)
     options[:placeholder] ||= options[:label]
     options
+  end
+
+  ##
+  # Ugh. This modifies the options, which might not be usable in many
+  # cases.
+  def process_width(options)
+    width = (options.delete(:column_width) || options.delete(:col_width))
+
+    if width
+      content_tag :div, yield, class: "col-md-#{width}"
+    else
+      yield
+    end
   end
 end
