@@ -225,7 +225,6 @@ class Cf0925 < ApplicationRecord
   end
 
   def formatted_currency(amount)
-    puts "formatted_currency(#{amount}) #{number_to_currency(amount, unit: '')}"
     number_to_currency(amount, unit: '')
   end
 
