@@ -71,29 +71,45 @@ module Cf0925sHelper
           end
       end
       a += content_tag(:div, class: 'row') do
-        f.text_field(:agency_name, column_width: 8, label: 'Agency Name (if applicable)')
+        f.text_field(:agency_name,
+                     column_width: 8,
+                     label: 'Agency Name (if applicable)')
       end
       a += content_tag(:div, class: 'row') do
-        f.text_field(:service_provider_address, column_width: 5, label: 'Address') +
-          f.text_field(:service_provider_city, column_width: 3, label: 'City/Town') +
-          f.text_field(:service_provider_postal_code, column_width: 2, label: 'Postal Code') +
+        f.text_field(:service_provider_address,
+                     column_width: 5,
+                     label: 'Address') +
+          f.text_field(:service_provider_city,
+                       column_width: 3,
+                       label: 'City/Town') +
+          f.text_field(:service_provider_postal_code,
+                       column_width: 2,
+                       label: 'Postal Code') +
           f.phone_field(:service_provider_phone,
                         column_width: 2,
                         label: 'Phone Number')
       end
       a += content_tag(:div, class: 'row') do
         f.text_field(:service_provider_service_1, column_width: 6) +
-          f.date_field(:service_provider_service_start, column_width: 3, label: 'Start Date') +
-          f.date_field(:service_provider_service_end, column_width: 3, label: 'End Date')
+          f.date_field(:service_provider_service_start,
+                       column_width: 3,
+                       label: 'Start Date') +
+          f.date_field(:service_provider_service_end,
+                       column_width: 3,
+                       label: 'End Date')
       end
       a += content_tag(:div, class: 'row') do
         f.text_field(:service_provider_service_2, column_width: 6) +
-          f.text_field(:service_provider_service_fee, column_width: 2, label: 'Fee (incl PST)') +
+          f.currency_field(:service_provider_service_fee,
+                           column_width: 2,
+                           label: 'Fee (incl PST)') +
           f.select(:service_provider_service_hour,
                    %w(Hour Day),
                    column_width: 2,
                    label: 'Per') +
-          f.text_field(:service_provider_service_amount, column_width: 2, label: 'Total Amount')
+          f.currency_field(:service_provider_service_amount,
+                           column_width: 2,
+                           label: 'Total Amount')
       end
       a + content_tag(:div, class: 'row') do
         f.text_field(:service_provider_service_3, column_width: 6)
@@ -132,16 +148,16 @@ module Cf0925sHelper
       end
       a += content_tag(:div, class: 'row') do
         f.supplier_field(:item_desp_1, column_width: 6) +
-          f.supplier_field(:item_cost_1, column_width: 2) +
-          f.supplier_field(:item_total, column_width: 4)
+          f.currency_field(:item_cost_1, column_width: 2, lstrip: 'Supplier') +
+          f.currency_field(:item_total, column_width: 4, lstrip: 'Supplier')
       end
       a += content_tag(:div, class: 'row') do
         f.supplier_field(:item_desp_2, column_width: 6) +
-          f.supplier_field(:item_cost_2, column_width: 2)
+          f.currency_field(:item_cost_2, column_width: 2, lstrip: 'Supplier')
       end
       a + content_tag(:div, class: 'row') do
         f.supplier_field(:item_desp_3, column_width: 6) +
-          f.supplier_field(:item_cost_3, column_width: 2)
+          f.currency_field(:item_cost_3, column_width: 2, lstrip: 'Supplier')
       end
     end
   end

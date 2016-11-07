@@ -56,10 +56,10 @@ class Cf0925 < ApplicationRecord
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')
-    puts "Home: #{home_phone}"
-    puts "Work: #{work_phone}"
-    puts "Provider: #{service_provider_phone}"
-    puts "Supplier: #{supplier_phone}"
+    # puts "Home: #{home_phone}"
+    # puts "Work: #{work_phone}"
+    # puts "Provider: #{service_provider_phone}"
+    # puts "Supplier: #{supplier_phone}"
     home_phone_parts = match_phone_number(home_phone)
     work_phone_parts = match_phone_number(work_phone)
     service_provider_phone_parts = match_phone_number(service_provider_phone)
@@ -79,28 +79,37 @@ class Cf0925 < ApplicationRecord
                       sup_name: supplier_name,
                       adrs_sup: supplier_address,
                       item_desp_1: item_desp_1,
-                      item_cost_1: item_cost_1,
-                      item_cost_2: item_cost_2,
-                      item_total: item_total,
-                      item_cost_3: item_cost_3,
+                      item_cost_1:
+                        formatted_currency(item_cost_1),
+                      item_cost_2:
+                        formatted_currency(item_cost_2),
+                      item_total:
+                        formatted_currency(item_total),
+                      item_cost_3:
+                        formatted_currency(item_cost_3),
                       item_desp_2: item_desp_2,
                       item_desp_3: item_desp_3,
                       cnt_person: supplier_contact_person,
                       city_sup: supplier_city,
-                      PC_sup: supplier_postal_code,
+                      PC_sup: format_postal_code(supplier_postal_code),
                       city_SP: service_provider_city,
-                      PC_SP: service_provider_postal_code,
-                      SP_serv_start: format_date(service_provider_service_start),
-                      SP_serv_fee: service_provider_service_fee,
+                      PC_SP: format_postal_code(service_provider_postal_code),
+                      SP_serv_start:
+                        format_date(service_provider_service_start),
+                      SP_serv_fee:
+                        formatted_currency(service_provider_service_fee),
                       SP_serv_hr: service_provider_service_hour,
-                      SP_serv_amt: service_provider_service_amount,
+                      SP_serv_amt:
+                        formatted_currency(service_provider_service_amount),
                       SP_serv_end: format_date(service_provider_service_end),
-                      ph_area_SP: formatted_area_code(service_provider_phone_parts),
+                      ph_area_SP:
+                        formatted_area_code(service_provider_phone_parts),
                       sup_area_ph: formatted_area_code(supplier_phone_parts),
-                      phn_SP: formatted_phone_number(service_provider_phone_parts),
+                      phn_SP:
+                        formatted_phone_number(service_provider_phone_parts),
                       sup_ph: formatted_phone_number(supplier_phone_parts),
                       parent_city: parent_city,
-                      parent_PC: parent_postal_code,
+                      parent_PC: format_postal_code(parent_postal_code),
                       parent_fst_name: parent_first_name,
                       chld_fst_name: child_first_name,
                       parent_mid_name: parent_middle_name,
@@ -182,7 +191,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def translate_payment_to_pdf_field
-    payment == 'provider' ? 'Choice2' : 'Choice1'
+    payment == 'provider' ? 'Choice1' : 'Choice2'
   end
 
   def translate_care_of_ministry_to_pdf_field
@@ -193,6 +202,11 @@ class Cf0925 < ApplicationRecord
 
   def formatted_area_code(match)
     match[:area_code] if match
+  end
+
+  def formatted_currency(amount)
+    puts "formatted_currency(#{amount}) #{number_to_currency(amount, unit: '')}"
+    number_to_currency(amount, unit: '')
   end
 
   def formatted_phone_number(match)

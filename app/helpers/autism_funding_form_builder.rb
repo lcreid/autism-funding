@@ -26,6 +26,15 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
+  # Format a currency field.
+  def currency_field(method, options)
+    options = process_options(method, options)
+    options[:value] ||= @template.number_to_currency(object.send(method),
+                                                     unit: '')
+    process_width(options) { text_field(method, options) }
+  end
+
+  ##
   # Format a phone number field and show it with punctuation
   def phone_field(method, options = {})
     options = process_options(method, options)
@@ -57,8 +66,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
     options[:label] ||= format_label(field,
                                      { lstrip: 'Supplier' }.merge(options))
     options[:placeholder] ||= options[:label]
-    # options[:help] = 'Enter a supplier name.'
-    text_field(field, options) # + error_message_for(field)
+    text_field(field, options)
   end
 
   ##
