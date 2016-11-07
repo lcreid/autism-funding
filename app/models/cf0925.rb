@@ -2,6 +2,8 @@
 # Request to pay form for BC
 class Cf0925 < ApplicationRecord
   include Helpers::FiscalYear
+  include Formatters
+  include ActionView::Helpers::NumberHelper
 
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
@@ -54,6 +56,14 @@ class Cf0925 < ApplicationRecord
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')
+    # puts "Home: #{home_phone}"
+    # puts "Work: #{work_phone}"
+    # puts "Provider: #{service_provider_phone}"
+    # puts "Supplier: #{supplier_phone}"
+    home_phone_parts = match_phone_number(home_phone)
+    work_phone_parts = match_phone_number(work_phone)
+    service_provider_phone_parts = match_phone_number(service_provider_phone)
+    supplier_phone_parts = match_phone_number(supplier_phone)
     pdftk.fill_form(form.file_name,
                     pdf_output_file,
                     {
@@ -69,39 +79,48 @@ class Cf0925 < ApplicationRecord
                       sup_name: supplier_name,
                       adrs_sup: supplier_address,
                       item_desp_1: item_desp_1,
-                      item_cost_1: item_cost_1,
-                      item_cost_2: item_cost_2,
-                      item_total: item_total,
-                      item_cost_3: item_cost_3,
+                      item_cost_1:
+                        formatted_currency(item_cost_1),
+                      item_cost_2:
+                        formatted_currency(item_cost_2),
+                      item_total:
+                        formatted_currency(item_total),
+                      item_cost_3:
+                        formatted_currency(item_cost_3),
                       item_desp_2: item_desp_2,
                       item_desp_3: item_desp_3,
                       cnt_person: supplier_contact_person,
                       city_sup: supplier_city,
-                      PC_sup: supplier_postal_code,
+                      PC_sup: format_postal_code(supplier_postal_code),
                       city_SP: service_provider_city,
-                      PC_SP: service_provider_postal_code,
-                      SP_serv_start: format_date(service_provider_service_start),
-                      SP_serv_fee: service_provider_service_fee,
+                      PC_SP: format_postal_code(service_provider_postal_code),
+                      SP_serv_start:
+                        format_date(service_provider_service_start),
+                      SP_serv_fee:
+                        formatted_currency(service_provider_service_fee),
                       SP_serv_hr: service_provider_service_hour,
-                      SP_serv_amt: service_provider_service_amount,
+                      SP_serv_amt:
+                        formatted_currency(service_provider_service_amount),
                       SP_serv_end: format_date(service_provider_service_end),
-                      ph_area_SP: service_provider_phone[0..2],
-                      sup_area_ph: supplier_phone[0..2],
-                      phn_SP: service_provider_phone[4..-1],
-                      sup_ph: supplier_phone[4..-1],
+                      ph_area_SP:
+                        formatted_area_code(service_provider_phone_parts),
+                      sup_area_ph: formatted_area_code(supplier_phone_parts),
+                      phn_SP:
+                        formatted_phone_number(service_provider_phone_parts),
+                      sup_ph: formatted_phone_number(supplier_phone_parts),
                       parent_city: parent_city,
-                      parent_PC: parent_postal_code,
+                      parent_PC: format_postal_code(parent_postal_code),
                       parent_fst_name: parent_first_name,
                       chld_fst_name: child_first_name,
                       parent_mid_name: parent_middle_name,
                       chld_mid_name: child_middle_name,
-                      hm_phn_area: home_phone[1..3],
-                      hm_phn: home_phone[5..-1],
+                      hm_phn_area: formatted_area_code(home_phone_parts),
+                      hm_phn: formatted_phone_number(home_phone_parts),
                       chld_DOB: format_date(child_dob),
                       chld_yn: translate_care_of_ministry_to_pdf_field, # This comes from radio buttons
                       Payment: translate_payment_to_pdf_field, # This comes from radio buttons
-                      wrk_phn_area: work_phone[1..3],
-                      wrk_phn: work_phone[5..-1]
+                      wrk_phn_area: formatted_area_code(work_phone_parts),
+                      wrk_phn: formatted_phone_number(work_phone_parts)
                     },
                     flatten: true)
     # rescue PdfForms::PdftkError => e
@@ -172,7 +191,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def translate_payment_to_pdf_field
-    payment == 'provider' ? 'Choice2' : 'Choice1'
+    payment == 'provider' ? 'Choice1' : 'Choice2'
   end
 
   def translate_care_of_ministry_to_pdf_field
@@ -180,4 +199,18 @@ class Cf0925 < ApplicationRecord
   end
 
   private
+
+  def formatted_area_code(match)
+    match[:area_code] if match
+  end
+
+  def formatted_currency(amount)
+    puts "formatted_currency(#{amount}) #{number_to_currency(amount, unit: '')}"
+    number_to_currency(amount, unit: '')
+  end
+
+  def formatted_phone_number(match)
+    number_to_phone(match[:exchange] + match[:number],
+                    extension: match[:ext]) if match
+  end
 end
