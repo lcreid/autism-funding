@@ -8,10 +8,19 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   ##
+  # Format a currency field.
+  def currency_field(method, options = {})
+    options = process_options(method, options)
+    options[:value] ||= @template.number_to_currency(object.send(method),
+                                                     unit: '')
+    process_width(options) { text_field(method, options) }
+  end
+
+  ##
   # Format a date field.
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
-  def date_field(method, options)
+  def date_field(method, options = {})
     process_width(options) { super }
   end
 
@@ -21,17 +30,8 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # Bootstrap grid column.
   # I'm just guessing about the arguments to this one, since it's not a Rails
   # helper, but rather a Bootstrap Forms helper.
-  def form_group(method, options, &block)
+  def form_group(method, options = {}, &block)
     process_width(options) { super }
-  end
-
-  ##
-  # Format a currency field.
-  def currency_field(method, options)
-    options = process_options(method, options)
-    options[:value] ||= @template.number_to_currency(object.send(method),
-                                                     unit: '')
-    process_width(options) { text_field(method, options) }
   end
 
   ##
@@ -61,23 +61,21 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
-  # Format the text field for a supplier info field
-  def supplier_field(field, options = {})
-    options[:label] ||= format_label(field,
-                                     { lstrip: 'Supplier' }.merge(options))
-    options[:placeholder] ||= options[:label]
-    text_field(field, options)
-  end
-
-  ##
-  # Format a text field
+  # Static control
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
   # If `lstrip: string` is given as an option, strip the string from the
   # left side of the label.
   # Set the placeholder to the label, unless :placeholder is given in the
   # options.
-  def text_field(method, options)
+  def static_control(method, options = {})
+    options = process_options(method, options)
+    process_width(options) { super }
+  end
+
+  ##
+  # Format a text field
+  def text_field(method, options = {})
     options = process_options(method, options)
     process_width(options) { super }
   end
@@ -90,7 +88,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
     label
   end
 
-  def process_options(method, options)
+  def process_options(method, options = {})
     label_modifier = options.delete(:lstrip)
     options[:label] ||= format_label(method, lstrip: label_modifier)
     options[:placeholder] ||= options[:label]
@@ -100,7 +98,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   ##
   # Ugh. This modifies the options, which might not be usable in many
   # cases.
-  def process_width(options)
+  def process_width(options = {})
     width = (options.delete(:column_width) || options.delete(:col_width))
 
     if width
