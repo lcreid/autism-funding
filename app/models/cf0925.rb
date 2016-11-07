@@ -130,6 +130,18 @@ class Cf0925 < ApplicationRecord
     true
   end
 
+  def item_cost_1=(value)
+    super number_clean(value)
+  end
+
+  def item_cost_2=(value)
+    super number_clean(value)
+  end
+
+  def item_cost_3=(value)
+    super number_clean(value)
+  end
+
   def item_total
     return nil unless item_cost_1 || item_cost_2 || item_cost_3
     (item_cost_1 || 0) +
@@ -146,6 +158,14 @@ class Cf0925 < ApplicationRecord
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
     cf0925_printable && user_printable
+  end
+
+  def service_provider_service_amount=(value)
+    super number_clean(value)
+  end
+
+  def service_provider_service_fee=(value)
+    super number_clean(value)
   end
 
   def set_form
@@ -212,5 +232,9 @@ class Cf0925 < ApplicationRecord
   def formatted_phone_number(match)
     number_to_phone(match[:exchange] + match[:number],
                     extension: match[:ext]) if match
+  end
+
+  def number_clean(value)
+    value.gsub(/[^\d#{I18n.default_separator}]+/, '')
   end
 end

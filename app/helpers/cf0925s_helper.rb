@@ -132,32 +132,34 @@ module Cf0925sHelper
         'or materials ' \
         'directly on behalf of a parent or guardian.'
 
-      a += content_tag(:div, class: 'row') do
-        f.supplier_field(:supplier_name,
-                         column_width: 4,
-                         label: 'Supplier Name') +
-          f.supplier_field(:supplier_contact_person, column_width: 5) +
+      a += form_row do
+        f.text_field(:supplier_name,
+                     column_width: 4,
+                     label: 'Supplier Name') +
+          f.text_field(:supplier_contact_person,
+                       column_width: 5,
+                       label: 'Contact Person') +
           f.phone_field(:supplier_phone,
                         column_width: 3,
                         label: 'Phone Number')
       end
-      a += content_tag(:div, class: 'row') do
-        f.supplier_field(:supplier_address, column_width: 6) +
-          f.supplier_field(:supplier_city, column_width: 4) +
-          f.supplier_field(:supplier_postal_code, column_width: 2)
+      a += form_row do
+        f.text_field(:supplier_address, column_width: 6, lstrip: 'Supplier') +
+          f.text_field(:supplier_city, column_width: 4, label: 'City/Town') +
+          f.text_field(:supplier_postal_code, column_width: 2, lstrip: 'Supplier')
       end
-      a += content_tag(:div, class: 'row') do
-        f.supplier_field(:item_desp_1, column_width: 6) +
-          f.currency_field(:item_cost_1, column_width: 2, lstrip: 'Supplier') +
-          f.currency_field(:item_total, column_width: 4, lstrip: 'Supplier')
+      a += form_row do
+        f.text_field(:item_desp_1, column_width: 6, label: 'Item', placeholder: 'Item 1') +
+          f.currency_field(:item_cost_1, column_width: 2, label: 'Cost', placeholder: 'Item Cost 1')
       end
-      a += content_tag(:div, class: 'row') do
-        f.supplier_field(:item_desp_2, column_width: 6) +
-          f.currency_field(:item_cost_2, column_width: 2, lstrip: 'Supplier')
+      a += form_row do
+        f.text_field(:item_desp_2, column_width: 6, hide_label: true, placeholder: 'Item 2') +
+          f.currency_field(:item_cost_2, column_width: 2, hide_label: true, lstrip: 'Supplier')
       end
-      a + content_tag(:div, class: 'row') do
-        f.supplier_field(:item_desp_3, column_width: 6) +
-          f.currency_field(:item_cost_3, column_width: 2, lstrip: 'Supplier')
+      a + form_row do
+        f.text_field(:item_desp_3, column_width: 6, hide_label: true, placeholder: 'Item 3') +
+          f.currency_field(:item_cost_3, column_width: 2, hide_label: true, lstrip: 'Supplier') +
+          f.currency_field(:item_total, column_width: 4, label: 'Total')
       end
     end
   end

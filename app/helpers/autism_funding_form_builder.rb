@@ -61,15 +61,6 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
-  # Format the text field for a supplier info field
-  def supplier_field(field, options = {})
-    options[:label] ||= format_label(field,
-                                     { lstrip: 'Supplier' }.merge(options))
-    options[:placeholder] ||= options[:label]
-    text_field(field, options)
-  end
-
-  ##
   # Format a text field
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
