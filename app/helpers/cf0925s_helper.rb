@@ -61,7 +61,7 @@ module Cf0925sHelper
           'who is providing autism intervention ' \
           'for the child.'
 
-      a += content_tag(:div, class: 'row') do
+      a += form_row do
         f.text_field(:service_provider_name, column_width: 8, lstrip: '') +
           f.form_group(:payment,
                        label: { text: 'Payment to be provided to:' },
@@ -70,12 +70,12 @@ module Cf0925sHelper
               f.radio_button(:payment, 'agency', label: 'Agency')
           end
       end
-      a += content_tag(:div, class: 'row') do
+      a += form_row do
         f.text_field(:agency_name,
                      column_width: 8,
                      label: 'Agency Name (if applicable)')
       end
-      a += content_tag(:div, class: 'row') do
+      a += form_row do
         f.text_field(:service_provider_address,
                      column_width: 5,
                      label: 'Address') +
@@ -89,8 +89,11 @@ module Cf0925sHelper
                         column_width: 2,
                         label: 'Phone Number')
       end
-      a += content_tag(:div, class: 'row') do
-        f.text_field(:service_provider_service_1, column_width: 6) +
+      a += form_row do
+        f.text_field(:service_provider_service_1,
+                     column_width: 6,
+                     placeholder: 'Service 1',
+                     label: 'Type of Service(s)') +
           f.date_field(:service_provider_service_start,
                        column_width: 3,
                        label: 'Start Date') +
@@ -98,8 +101,11 @@ module Cf0925sHelper
                        column_width: 3,
                        label: 'End Date')
       end
-      a += content_tag(:div, class: 'row') do
-        f.text_field(:service_provider_service_2, column_width: 6) +
+      a += form_row do
+        f.text_field(:service_provider_service_2,
+                     column_width: 6,
+                     placeholder: 'Service 2',
+                     hide_label: true) +
           f.currency_field(:service_provider_service_fee,
                            column_width: 2,
                            label: 'Fee (incl PST)') +
@@ -111,8 +117,11 @@ module Cf0925sHelper
                            column_width: 2,
                            label: 'Total Amount')
       end
-      a + content_tag(:div, class: 'row') do
-        f.text_field(:service_provider_service_3, column_width: 6)
+      a + form_row do
+        f.text_field(:service_provider_service_3,
+                     column_width: 6,
+                     placeholder: 'Service 3',
+                     hide_label: true)
       end
     end
   end
