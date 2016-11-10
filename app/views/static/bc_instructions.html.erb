@@ -1,18 +1,290 @@
-<div class="container">
-  <h1>Help For BC Residents</h1>
-  <br><br>
-  <div class="row">
-    <div class="col-md-3">
-      <%= image_tag "BuildingSite.jpg", size: "300" %>
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-8">
-      This page is yet to be written.  It should contain
-      <ul>
-        <li>Brief Description of what you can do with this site</li>
-        <li>Any Instructions that don't seem obvious from the application</li>
-        <li>How to Report Errors and problems</li>
-      </ul>
-    </div>
+<div class="row" id="help">
+  <div class="col-md-6">
+    <h1>Help For BC Residents</h1>
+    <h2 id="Overview">Overview</h2>
+    <p>
+      This application helps you keep track of funds
+      you can use to pay for autism-related
+      services and supplies. You can:
+    </p>
+    <ul>
+      <li>
+        Fill in and print the Request to Pay forms,
+        which you have to send to,
+        and have approved by,
+        the Autism Funding Unit,
+        before you can spend any funds.
+      </li>
+      <li>
+        Fill in an invoice tracker with information
+        from the service provider's or supplier's invoices.
+      </li>
+    </ul>
+    <p>
+      With the above information,
+      this application can show you when it's time
+      to request more funds,
+      or when the funding for the year is running out,
+      and you may have to pay for additional expenses
+      out of pocket.
+    </p>
+    <p>
+      In order to receive funding from the B.C. government
+      for services for child on the autism spectrum,
+      the child must be resident in B.C.,
+      and the parent or guardian must apply for the funding.
+      You can't apply for the funding on this web site.
+      Please go to the B.C. government's
+      <%= link_to "autism funding page",
+                  "http://www2.gov.bc.ca/gov/content/health/managing-your-health/healthy-women-children/child-behaviour-development/special-needs/autism-spectrum-disorder/autism-funding" %>
+      for instructions on how to apply for funding.
+    </p>
+    <h2 id="My-Profile">My Profile</h2>
+    <p>
+      Before you can use the application,
+      you have to complete your profile.
+      You have to be the parent/guardian
+      who signed the Autism Funding Agreement.
+      There are two key pieces of information here:
+    </p>
+    <ul>
+      <li>
+        Your address,
+        since this application currently only supports
+        families living in B.C.
+      </li>
+      <li>
+        The funded child's information,
+        which is needed to complete all forms.
+      </li>
+    </ul>
+    <p>
+      When you first sign up
+      you'll be taken to the profile page.
+      Until you complete enough profile information,
+      you won't be able to navigate to any other pages
+      of the application.
+    </p>
+    <h2 id="Request-to-Pay">Request to Pay</h2>
+    <p>
+      The Request to Pay form is what you use
+      to get the Autism Funding Unit's approval
+      for services and supplies to support your child.
+      Instructions for filling out the form are below.
+      You can request services in Part A of the form,
+      or you can request reimbursement for travel,
+      supplies,
+      or education
+      in Part B.
+      You can fill out both Part A and Part B on the same form
+      if applicable,
+      but it's more typical to just fill out one or the other.
+    </p>
+    <h3 id="Eligibility">Eligibility</h3>
+    <p>
+      Autism funding must be used for eligible autism intervention expenses,
+      as outlined in
+      <%= link_to "A Parent’s Handbook: Your Guide to Autism Programs",
+        "http://www.mcf.gov.bc.ca/autism/pdf/autism_handbook_web.pdf",
+        target: "_blank" %>.
+    </p>
+    <h3 id="Section-1-Parent-Info">Section 1 Parent Info</h3>
+    <p>
+      The application fills this information in from your profile.
+      If you change parent/guardian information
+      on the Request to Pay form,
+      the application automatically updates the profile.
+    </p>
+    <h3 id="Section-2-Child-Info">Section 2 Child Info</h3>
+    <p>
+      This information is filled in from your profile.
+      It can't be changed here,
+      because it has to match the information
+      submitted in the Autism Funding Agreement.
+    </p>
+    <h3 id="Part-A">Part A</h3>
+    <p>
+      Complete this section of the form
+      to request authorization for autism intervention services.
+    </p>
+    <ul>
+      <li>
+        Fill in the service provider’s name, address and phone number
+        <ul>
+          <li>
+            Payment will be sent to the address listed
+          </li>
+          <li>
+            Indicate to whom the cheque will be payable.
+            You have the choice of “Service Provider” or “Agency”
+          </li>
+        </ul>
+      </li>
+      <li>
+        Fill in the “Type of Service”
+        (e.g. Behaviour Consultant, Occupational Therapy)
+      </li>
+      <li>
+        Fill in the “Start” and “End” dates
+        <ul>
+          <li>
+            The “End” date must be on or before the last day of the month of your child’s birthday
+            It is recommended that RTP forms be completed for at least three months to reduce your paperwork
+          </li>
+        </ul>
+      </li>
+      <li>
+        Enter the Hourly or daily rate of the service
+        and the total amount that will be spent.
+        The Total Amount can be
+        calculated in the following way:
+        <ul>
+          <li>
+            Hourly rate (e.g. $75)
+          </li>
+          <li>
+            multiplied by the expected number of hours of service per month
+            (e.g. 2 hours)
+          </li>
+          <li>
+            multiplied by the number of months that service will be provided (e.g. 12 months)
+          </li>
+          <li>
+            equals the Total Amount (e.g. $1,800)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>
+      Paying multiple professionals from a single agency
+      If an agency will be paid for a package of services, list all services and the hourly rate of each service in the
+      Type Of Services box. The Total Amount can be calculated by using the method described above for each service and
+      then adding the totals for each service together.
+    </p>
+    <h3 id="Part-B">Part B</h3>
+    <p>
+      Complete this section of the form to authorize payment
+      to a service provider/supplier for travel, training, equipment or
+      supplies.
+      The following information is required for each type of expense:
+    </p>
+    <ul>
+      <li>
+        Travel – Name of traveller,
+        reason for travel,
+        type of expense (e.g. hotel, mileage),
+        travel from/to location,
+        dates of travel,
+        and cost
+      </li>
+      <li>
+        Training – Name of person who will receive training, name/type of training, dates of training and cost
+      </li>
+      <li>
+        Equipment and Supplies – Item(s) purchased, cost
+      </li>
+    </ul>
+    <p>
+      Up to 20% of autism funding may be spent on eligible,
+      travel,
+      training,
+      equipment,
+      and supplies related to intervention annually.
+    </p>
+    <h3 id="Additional-Info">Additional Info</h3>
+    <p>
+      Parents are responsible for deciding if they will allocate a portion or all of their funds to one service
+      provider/agency.
+    </p>
+    <p>
+      To change of cancel this RTP, parents complete and submit a Request to Amend Invoice Payment Authorization form to
+      Autism Funding
+    </p>
+    <p>
+      If a service provider wishes to be paid by direct deposit into his or her account, Autism Funding can provide him or her with
+      a direct deposit form.
+      The service provider must mail, email or fax the invoice to Autism Funding to receive payment.
+      The Provincial Government is GST exempt for services/purchases that occurred prior to July 1, 2010. Service providers
+      should not include GST in their billings.
+    </p>
+    <p class="text-center">
+      Contact Autism Funding for assistance with completing this form
+      <br/>
+      Phone: within Victoria: 250-387-3530 or toll-free: 1-877-777-3530
+      <br/>
+      Email: mcf.autismfundingunit@gov.bc.ca
+    </p>
+    <h2 id="Invoice">Invoice</h2>
+    <p>
+      When you enter information
+      from service provider
+      or supplier
+      invoices,
+      the application can track
+      spent funds,
+      and show when you need to request more funds,
+      or when you'll have to pay out of pocket.
+    </p>
+    <p>
+      The invoice form lets you choose a service provider,
+      agency,
+      or supplier,
+      as applicable,
+      from those that have been named in a Request to Pay form.
+    </p>
+    <p>
+      For services, it's important that you enter the start
+      and end date of services,
+      so the application can allocate the spending
+      against the appropriate Request to Pay.
+    </p>
+    <p>
+      For other expenses,
+      make sure you put in the invoice date.
+    </p>
+    <p>
+      Don't forget to fill in the amount,
+      as the whole point is to track spending.
+    </p>
+  </div>
+
+  <div class="col-md-3 scrollspy">
+    <ul class="nav hidden-xs hidden-sm list-group" data-spy="affix">
+      <li>
+        <h4>Quick Links</h4>
+      </li>
+      <li class="list-group-item">
+        <%= link_to 'Overview', '#Overview' %>
+      </li>
+      <li class="list-group-item">
+        <%= link_to 'My Profile', '#My-Profile' %>
+      </li>
+      <li class="list-group-item">
+        <%= link_to 'Request to Pay', '#Request-to-Pay' %>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <%= link_to 'Eligibility', '#Eligibility' %>
+          </li>
+          <li class="list-group-item">
+            <%= link_to 'Section 1 Parent Info', '#Section-1-Parent-Info' %>
+          </li>
+          <li class="list-group-item">
+            <%= link_to 'Section 2 Child Info', '#Section-2-Child-Info' %>
+          </li>
+          <li class="list-group-item">
+            <%= link_to 'Part A', '#Part-A' %>
+          </li>
+          <li class="list-group-item">
+            <%= link_to 'Part B', '#Part-B' %>
+          </li>
+          <li class="list-group-item">
+            <%= link_to 'Additional Info', '#Additional-Info' %>
+          </li>
+        </ul>
+      </li>
+      <li class="list-group-item">
+        <%= link_to 'Invoice', '#Invoice' %>
+      </li>
+    </ul>
   </div>
 </div>
