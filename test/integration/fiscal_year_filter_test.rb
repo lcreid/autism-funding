@@ -61,10 +61,10 @@ class FiscalYearFilterTest < PoltergeistTest
     # assert_selector '#cf0925_service_provider_service_start'
     # assert_selector '#cf0925_service_provider_service_end'
     # assert_content 'Parent/Guardian Information'
-    # fill_in 'Start Date', with: '2015-09-01'
-    # fill_in 'End Date', with: '2015-12-31'
-    find('#cf0925_service_provider_service_start').set('2015-09-01')
-    find('#cf0925_service_provider_service_start').set('2015-12-31')
+    fill_in 'Start Date', with: '2015-09-01'
+    fill_in 'End Date', with: '2015-12-31'
+    # find('#cf0925_service_provider_service_start').set('2015-09-01')
+    # find('#cf0925_service_provider_service_start').set('2015-12-31')
     click_button 'Save'
     # click_link 'Home'
     assert_current_path home_index_path

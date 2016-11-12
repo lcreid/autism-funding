@@ -71,6 +71,7 @@ class Cf0925sController < ApplicationController
     # puts user.errors.full_messages
     # puts 'Cf0925 save failed' unless @cf0925.save
     # puts @cf0925.errors.full_messages
+    # FIXME: I shouldn't need to save addresses explicitly here.
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
@@ -78,6 +79,7 @@ class Cf0925sController < ApplicationController
       # TODO: why can't I just render :edit here?
       redirect_to home_index_path, notice: 'Request saved.'
     else
+      put 'CREATE FAILED'
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
       render :new
@@ -94,6 +96,7 @@ class Cf0925sController < ApplicationController
     copy_parent_to_form
     copy_child_to_form
 
+    # FIXME: I shouldn't need to save addresses explicitly here.
     if @cf0925.save && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       # @cf0925.printable? FIXME: Useless since we're redirecting
@@ -101,6 +104,7 @@ class Cf0925sController < ApplicationController
       # TODO: why can't I just render :edit here?
       redirect_to home_index_path, notice: 'Request updated.'
     else
+      put 'UPDATE FAILED'
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
       render :edit
@@ -177,12 +181,12 @@ class Cf0925sController < ApplicationController
   # end
   #
   def copy_child_to_form
-    # puts "Before: #{@cf0925.child_dob}"
+    # puts "Before: #{@cf0925.child_in_care_of_ministry}"
     @cf0925.child_last_name = @cf0925.funded_person.name_last
     @cf0925.child_first_name = @cf0925.funded_person.name_first
     @cf0925.child_middle_name = @cf0925.funded_person.name_middle
     @cf0925.child_dob = @cf0925.funded_person.my_dob
     @cf0925.child_in_care_of_ministry = @cf0925.funded_person.child_in_care_of_ministry
-    # puts "After: #{@cf0925.child_dob}"
+    # puts "After: #{@cf0925.child_in_care_of_ministry}"
   end
 end

@@ -79,18 +79,21 @@ no_fiscal_years:
   birthdate: '2007-10-31'
   name_first: No
   name_last: Years
+  child_in_care_of_ministry: false
   user: years
 
 one_fiscal_year:
   birthdate: '2009-12-01'
   name_first: One
   name_last: Year
+  child_in_care_of_ministry: false
   user: years
 
 two_fiscal_years:
   birthdate: '2003-06-15'
   name_first: Two
   name_last: Years
+  child_in_care_of_ministry: false
   user: years
 
 invoice_and_form:
@@ -120,6 +123,7 @@ has_no_rtp:
   birthdate: '2005-11-11'
   name_first: No
   name_last: Rtp
+  child_in_care_of_ministry: false
   user: has_no_rtp
 
 is_a_blank:

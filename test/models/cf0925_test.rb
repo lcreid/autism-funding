@@ -14,6 +14,9 @@ class Cf0925Test < ActiveSupport::TestCase
     rtp = cf0925s(:minimum_printable)
     rtp.parent_last_name = nil
     assert !rtp.printable?, 'should be not printable'
+    assert 1, rtp.errors.size
+    assert 'Fill in Part A or Part B or both.',
+           rtp.errors[:hints]
   end
 
   test 'fiscal year' do
@@ -53,5 +56,24 @@ class Cf0925Test < ActiveSupport::TestCase
     assert_equal 2_000.50, rtp.service_provider_service_amount
     rtp.update(service_provider_service_amount: '2,000.50')
     assert_equal 2_000.50, rtp.service_provider_service_amount
+  end
+
+  test 'empty form' do
+    user = User.new(email: 'empty_form@autism-funding.com',
+                    encrypted_password: 'x',
+                    name_first: 'Empty',
+                    name_last: 'Form')
+    user.addresses.build(address_line_1: 'Empty St',
+                         city: 'Sadville',
+                         province_code: province_codes(:bc),
+                         postal_code: 'V0V 0V0')
+    child = user.funded_people.build(name_first: 'Empty',
+                                     name_last: 'Form',
+                                     birthdate: '2003-09-30')
+    rtp = child.cf0925s.build
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ['Fill in Part A or Part B or both.'],
+                 rtp.errors[:hints]
   end
 end

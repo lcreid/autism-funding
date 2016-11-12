@@ -10,37 +10,39 @@ class Cf0925 < ApplicationRecord
   has_many :invoices
   # accepts_nested_attributes_for :funded_person
 
-  validates :service_provider_service_start,
-            :service_provider_service_end,
-            :child_dob,
-            :child_first_name,
-            :child_last_name,
-            # :child_in_care_of_ministry, TODO: validate this.
-            presence: true,
-            on: :printable
-  validates :work_phone,
-            presence: true,
-            on: :printable,
-            unless: ->(x) { x.home_phone.present? }
-  validates :home_phone,
-            presence: true,
-            on: :printable,
-            unless: ->(x) { x.work_phone.present? }
-
-  # It should be a validation that the start and end dates are in the same
-  # fiscal year.
-  validate :start_date_before_end_date, on: :printable
-  validate :start_and_end_dates_in_same_fiscal_year, on: :printable
-  validates :payment,
-            presence: {
-              message: 'please choose either service provider or agency'
-            },
-            on: :printable
-
   before_validation :set_form
 
-  # It should be a validation that the start and end dates are in the same
-  # fiscal year.
+  with_options on: :printable do
+    validates :child_dob,
+              :child_first_name,
+              :child_last_name,
+              presence: true
+    validates :child_in_care_of_ministry,
+              inclusion: { in: [true, false] }
+
+    validates :work_phone,
+              presence: true,
+              unless: ->(x) { x.home_phone.present? }
+    validates :home_phone,
+              presence: true,
+              unless: ->(x) { x.work_phone.present? }
+
+    validate unless: :filling_in_part_a? || filling_in_part_b? do
+      errors.add(:hints, 'Fill in Part A or Part B or both.')
+    end
+
+    with_options if: :filling_in_part_a? do
+      validates :service_provider_service_start,
+                :service_provider_service_end,
+                presence: true
+      validate :start_date_before_end_date
+      validate :start_and_end_dates_in_same_fiscal_year
+      validates :payment,
+                presence: {
+                  message: 'please choose either service provider or agency'
+                }
+    end
+  end
 
   def client_pdf_file_name
     child_last_name + '-' +
@@ -155,6 +157,7 @@ class Cf0925 < ApplicationRecord
 
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
+    # FIXME: Add phone numbers (in user?)
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
     cf0925_printable && user_printable
@@ -235,5 +238,44 @@ class Cf0925 < ApplicationRecord
 
   def number_clean(value)
     value.gsub(/[^\d#{I18n.default_separator}]+/, '')
+  end
+
+  def filling_in_part_a?
+    # answer =
+    agency_name.present? ||
+      # payment.present? ||
+      service_provider_postal_code.present? ||
+      service_provider_address.present? ||
+      service_provider_city.present? ||
+      service_provider_phone.present? ||
+      service_provider_name.present? ||
+      service_provider_service_1.present? ||
+      service_provider_service_2.present? ||
+      service_provider_service_3.present? ||
+      service_provider_service_amount.present? ||
+      service_provider_service_end.present? ||
+      service_provider_service_fee.present? ||
+      # service_provider_service_hour.present? ||
+      service_provider_service_start.present?
+    #
+    # puts "Answer: #{answer}, Start: #{service_provider_service_start}" \
+    # ", End: #{service_provider_service_end}"
+    # answer
+  end
+
+  def filling_in_part_b?
+    %w(supplier_address
+       supplier_city
+       supplier_contact_person
+       supplier_name
+       supplier_phone
+       supplier_postal_code
+       item_cost_1
+       item_cost_2
+       item_cost_3
+       item_desp_1
+       item_desp_2
+       item_desp_3)
+    false
   end
 end
