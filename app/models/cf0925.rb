@@ -10,6 +10,31 @@ class Cf0925 < ApplicationRecord
   has_many :invoices
   # accepts_nested_attributes_for :funded_person
 
+  class << self
+    def part_a_required_attributes
+      [
+        # :agency_name,
+        # :payment,
+        :service_provider_postal_code,
+        :service_provider_address,
+        :service_provider_city,
+        :service_provider_phone,
+        # :service_provider_name,
+        :service_provider_service_1,
+        # :service_provider_service_2,
+        # :service_provider_service_3,
+        :service_provider_service_amount,
+        :service_provider_service_end,
+        :service_provider_service_fee,
+        :service_provider_service_hour,
+        :service_provider_service_start
+      ]
+    end
+
+    def part_b_required_attributes
+    end
+  end
+
   before_validation :set_form
 
   with_options on: :printable do
@@ -28,12 +53,11 @@ class Cf0925 < ApplicationRecord
               unless: ->(x) { x.work_phone.present? }
 
     validate unless: :filling_in_part_a? || filling_in_part_b? do
-      errors.add(:hints, 'Fill in Part A or Part B or both.')
+      errors.add(:base, 'Fill in Part A or Part B or both.')
     end
 
     with_options if: :filling_in_part_a? do
-      validates :service_provider_service_start,
-                :service_provider_service_end,
+      validates *Cf0925.part_a_required_attributes,
                 presence: true
       validate :start_date_before_end_date
       validate :start_and_end_dates_in_same_fiscal_year
@@ -223,23 +247,6 @@ class Cf0925 < ApplicationRecord
 
   private
 
-  def formatted_area_code(match)
-    match[:area_code] if match
-  end
-
-  def formatted_currency(amount)
-    number_to_currency(amount, unit: '')
-  end
-
-  def formatted_phone_number(match)
-    number_to_phone(match[:exchange] + match[:number],
-                    extension: match[:ext]) if match
-  end
-
-  def number_clean(value)
-    value.gsub(/[^\d#{I18n.default_separator}]+/, '')
-  end
-
   def filling_in_part_a?
     # answer =
     agency_name.present? ||
@@ -277,5 +284,22 @@ class Cf0925 < ApplicationRecord
        item_desp_2
        item_desp_3)
     false
+  end
+
+  def formatted_area_code(match)
+    match[:area_code] if match
+  end
+
+  def formatted_currency(amount)
+    number_to_currency(amount, unit: '')
+  end
+
+  def formatted_phone_number(match)
+    number_to_phone(match[:exchange] + match[:number],
+                    extension: match[:ext]) if match
+  end
+
+  def number_clean(value)
+    value.gsub(/[^\d#{I18n.default_separator}]+/, '')
   end
 end

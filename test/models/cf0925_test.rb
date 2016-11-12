@@ -59,6 +59,53 @@ class Cf0925Test < ActiveSupport::TestCase
   end
 
   test 'empty form' do
+    rtp = prep_empty_form
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ['Fill in Part A or Part B or both.'],
+                 rtp.errors[:base]
+  end
+
+  test 'Missing one item from Part A' do
+    rtp = prep_empty_form
+    rtp.update(agency_name: 'Disable Clinic',
+               payment: 'provider',
+               service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               #  service_provider_phone: '5555551212',
+               service_provider_name: 'B Intervention',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ["can't be blank"],
+                 rtp.errors[:service_provider_phone]
+  end
+
+  test 'Ask for payment when both provider and agency' do
+    skip
+  end
+
+  test 'Default payment when provider only' do
+    skip
+  end
+
+  test 'Default payment when agency only' do
+    skip
+  end
+
+  test 'Missing one item from Part B' do
+    skip
+  end
+
+  private
+
+  def prep_empty_form
     user = User.new(email: 'empty_form@autism-funding.com',
                     encrypted_password: 'x',
                     name_first: 'Empty',
@@ -70,10 +117,6 @@ class Cf0925Test < ActiveSupport::TestCase
     child = user.funded_people.build(name_first: 'Empty',
                                      name_last: 'Form',
                                      birthdate: '2003-09-30')
-    rtp = child.cf0925s.build
-
-    assert !rtp.printable?, 'should be not printable'
-    assert_equal ['Fill in Part A or Part B or both.'],
-                 rtp.errors[:hints]
+    child.cf0925s.build
   end
 end
