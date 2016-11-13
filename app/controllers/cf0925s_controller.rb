@@ -158,15 +158,7 @@ class Cf0925sController < ApplicationController
   end
 
   def copy_parent_to_form
-    user = @cf0925.user
-    @cf0925.parent_last_name = user.name_last
-    @cf0925.parent_first_name = user.name_first
-    @cf0925.parent_middle_name = user.name_middle
-    @cf0925.home_phone = user.my_home_phone.full_number
-    @cf0925.work_phone = user.my_work_phone.full_number
-    @cf0925.parent_address = user.my_address.address_line_1
-    @cf0925.parent_city = user.my_address.city
-    @cf0925.parent_postal_code = user.my_address.postal_code
+    @cf0925.copy_parent_to_form
   end
 
   # def copy_form_to_parent
@@ -182,11 +174,7 @@ class Cf0925sController < ApplicationController
   #
   def copy_child_to_form
     # puts "Before: #{@cf0925.child_in_care_of_ministry}"
-    @cf0925.child_last_name = @cf0925.funded_person.name_last
-    @cf0925.child_first_name = @cf0925.funded_person.name_first
-    @cf0925.child_middle_name = @cf0925.funded_person.name_middle
-    @cf0925.child_dob = @cf0925.funded_person.my_dob
-    @cf0925.child_in_care_of_ministry = @cf0925.funded_person.child_in_care_of_ministry
+    @cf0925.copy_child_to_form
     # puts "After: #{@cf0925.child_in_care_of_ministry}"
   end
 end

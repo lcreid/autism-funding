@@ -62,8 +62,8 @@ class Cf0925Test < ActiveSupport::TestCase
     rtp = prep_empty_form
 
     assert !rtp.printable?, 'should be not printable'
-    assert_equal ['Fill in Part A or Part B or both.'],
-                 rtp.errors[:base]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+    assert_equal ['Fill in Part A or Part B or both.'], rtp.errors[:base]
   end
 
   test 'Missing one item from Part A' do
@@ -83,19 +83,70 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_start: '2016-10-01'
               )
     assert !rtp.printable?, 'should be not printable'
-    assert_equal ["can't be blank"],
-                 rtp.errors[:service_provider_phone]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+    assert_equal ["can't be blank"], rtp.errors[:service_provider_phone]
   end
 
   test 'Ask for payment when both provider and agency' do
-    skip
+    rtp = prep_empty_form
+    rtp.update(agency_name: 'Disable Clinic',
+               #  payment: 'provider',
+               service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_name: 'B Intervention',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+    assert_equal ['please choose either service provider or agency'],
+                 rtp.errors[:payment]
   end
 
-  test 'Default payment when provider only' do
-    skip
+  test "Don't insist on payment when provider only" do
+    rtp = prep_empty_form
+    rtp.update(service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_name: 'B Intervention',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+
+    assert rtp.printable?,
+           rtp.errors.full_messages + rtp.user.errors.full_messages
+    # assert_equal 'provider', rtp.payment
   end
 
-  test 'Default payment when agency only' do
+  test "Don't insist on payment when agency only" do
+    rtp = prep_empty_form
+    rtp.update(agency_name: 'Disable Clinic',
+               service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+
+    assert rtp.printable?,
+           rtp.errors.full_messages + rtp.user.errors.full_messages
+    # assert_equal 'agency', rtp.payment
     skip
   end
 
@@ -107,16 +158,18 @@ class Cf0925Test < ActiveSupport::TestCase
 
   def prep_empty_form
     user = User.new(email: 'empty_form@autism-funding.com',
-                    encrypted_password: 'x',
+                    password: 'aslk234jakl',
                     name_first: 'Empty',
                     name_last: 'Form')
     user.addresses.build(address_line_1: 'Empty St',
                          city: 'Sadville',
                          province_code: province_codes(:bc),
                          postal_code: 'V0V 0V0')
+    user.phone_numbers.build(phone_type: 'Home', phone_number: '5555551212')
     child = user.funded_people.build(name_first: 'Empty',
                                      name_last: 'Form',
-                                     birthdate: '2003-09-30')
+                                     birthdate: '2003-09-30',
+                                     child_in_care_of_ministry: false)
     child.cf0925s.build
   end
 end

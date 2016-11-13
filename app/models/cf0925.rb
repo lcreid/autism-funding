@@ -35,7 +35,7 @@ class Cf0925 < ApplicationRecord
     end
   end
 
-  before_validation :set_form
+  before_validation :set_form, :copy_child_to_form, :copy_parent_to_form
 
   with_options on: :printable do
     validates :child_dob,
@@ -52,7 +52,7 @@ class Cf0925 < ApplicationRecord
               presence: true,
               unless: ->(x) { x.work_phone.present? }
 
-    validate unless: :filling_in_part_a? || filling_in_part_b? do
+    validate unless: :filling_in_part_a? || :filling_in_part_b? do
       errors.add(:base, 'Fill in Part A or Part B or both.')
     end
 
@@ -64,6 +64,9 @@ class Cf0925 < ApplicationRecord
       validates :payment,
                 presence: {
                   message: 'please choose either service provider or agency'
+                },
+                unless: lambda { |x|
+                  x.agency_name.blank? || x.service_provider_name.blank?
                 }
     end
   end
@@ -73,6 +76,34 @@ class Cf0925 < ApplicationRecord
       child_first_name + '-' +
       id.to_s +
       '.pdf'
+  end
+
+  def copy_parent_to_form
+    if user
+      self.parent_last_name = user.name_last
+      self.parent_first_name = user.name_first
+      self.parent_middle_name = user.name_middle
+      # puts "In copy_parent_to_form home phone: #{user.home_phone.full_number}"
+      self.home_phone = user.home_phone.full_number if user.home_phone
+      self.work_phone = user.work_phone.full_number if user.work_phone
+      if user.address
+        self.parent_address = user.address.address_line_1
+        self.parent_city = user.address.city
+        self.parent_postal_code = user.address.postal_code
+      end
+    end
+  end
+
+  def copy_child_to_form
+    # puts "Before: #{child_dob}"
+    if funded_person
+      self.child_last_name = funded_person.name_last
+      self.child_first_name = funded_person.name_first
+      self.child_middle_name = funded_person.name_middle
+      self.child_dob = funded_person.my_dob
+      self.child_in_care_of_ministry = funded_person.child_in_care_of_ministry
+    end
+    # puts "After: #{child_dob}"
   end
 
   def format_date(date)
@@ -234,7 +265,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def user
-    funded_person.user
+    funded_person && funded_person.user
   end
 
   def translate_payment_to_pdf_field

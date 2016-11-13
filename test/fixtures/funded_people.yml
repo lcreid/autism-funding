@@ -34,6 +34,7 @@ forms:
   birthdate: '2013-12-27'
   name_first: Junior
   name_last: Forms
+  child_in_care_of_ministry: true
   user: forms
 
 sixteen_year_old:
