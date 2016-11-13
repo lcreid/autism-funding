@@ -147,11 +147,106 @@ class Cf0925Test < ActiveSupport::TestCase
     assert rtp.printable?,
            rtp.errors.full_messages + rtp.user.errors.full_messages
     # assert_equal 'agency', rtp.payment
-    skip
+  end
+
+  test 'Must have one or agency or service provider name' do
+    rtp = prep_empty_form
+    rtp.update(service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal 2, rtp.errors.size, rtp.errors.full_messages
+
+    rtp.update(agency_name: 'Disable Clinic')
+    assert rtp.printable?, rtp.errors.full_messages
+
+    rtp.update(agency_name: '', service_provider_name: 'B Intervention')
+    assert rtp.printable?, rtp.errors.full_messages
   end
 
   test 'Missing one item from Part B' do
-    skip
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               # item_cost_1: '1,000',
+               item_desp_1: 'iPad')
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ["can't be blank"], rtp.errors[:item_cost_1]
+  end
+
+  test 'Missing one item from each section' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               #  supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               agency_name: 'Disable Clinic',
+               payment: 'provider',
+               service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_name: 'B Intervention',
+               service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               #  service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal 2, rtp.errors.size, rtp.errors.full_messages
+    assert_equal ["can't be blank"], rtp.errors[:service_provider_service_fee]
+    assert_equal ["can't be blank"], rtp.errors[:supplier_postal_code]
+  end
+
+  test 'Missing one item from part A section' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               agency_name: 'Disable Clinic',
+               payment: 'provider',
+               service_provider_postal_code: 'V0V 0V0',
+               service_provider_address: 'Way St',
+               service_provider_city: 'Way Way',
+               service_provider_phone: '5555551212',
+               service_provider_name: 'B Intervention',
+               #  service_provider_service_1: 'Behaviour Intervention',
+               service_provider_service_amount: '1,000',
+               service_provider_service_end: '2017-02-28',
+               service_provider_service_fee: '100',
+               service_provider_service_hour: 'hour',
+               service_provider_service_start: '2016-10-01'
+              )
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+    assert_equal ["can't be blank"], rtp.errors[:service_provider_service_1]
   end
 
   private

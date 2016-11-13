@@ -32,6 +32,20 @@ class Cf0925 < ApplicationRecord
     end
 
     def part_b_required_attributes
+      [
+        :supplier_address,
+        :supplier_city,
+        # :supplier_contact_person,
+        :supplier_name,
+        :supplier_phone,
+        :supplier_postal_code,
+        :item_cost_1,
+        # :item_cost_2,
+        # :item_cost_3,
+        :item_desp_1
+        # :item_desp_2,
+        # :item_desp_3
+      ]
     end
   end
 
@@ -61,6 +75,12 @@ class Cf0925 < ApplicationRecord
                 presence: true
       validate :start_date_before_end_date
       validate :start_and_end_dates_in_same_fiscal_year
+      validates :agency_name,
+                presence: true,
+                unless: ->(x) { x.service_provider_name.present? }
+      validates :service_provider_name,
+                presence: true,
+                unless: ->(x) { x.agency_name.present? }
       validates :payment,
                 presence: {
                   message: 'please choose either service provider or agency'
@@ -68,6 +88,10 @@ class Cf0925 < ApplicationRecord
                 unless: lambda { |x|
                   x.agency_name.blank? || x.service_provider_name.blank?
                 }
+    end
+
+    with_options if: :filling_in_part_b? do
+      validates *Cf0925.part_b_required_attributes, presence: true
     end
   end
 
@@ -302,19 +326,18 @@ class Cf0925 < ApplicationRecord
   end
 
   def filling_in_part_b?
-    %w(supplier_address
-       supplier_city
-       supplier_contact_person
-       supplier_name
-       supplier_phone
-       supplier_postal_code
-       item_cost_1
-       item_cost_2
-       item_cost_3
-       item_desp_1
-       item_desp_2
-       item_desp_3)
-    false
+    supplier_address.present? ||
+      supplier_city.present? ||
+      supplier_contact_person.present? ||
+      supplier_name.present? ||
+      supplier_phone.present? ||
+      supplier_postal_code.present? ||
+      item_cost_1.present? ||
+      item_cost_2.present? ||
+      item_cost_3.present? ||
+      item_desp_1.present? ||
+      item_desp_2.present? ||
+      item_desp_3.present?
   end
 
   def formatted_area_code(match)
