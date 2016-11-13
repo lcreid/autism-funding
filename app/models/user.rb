@@ -40,6 +40,13 @@ class User < ApplicationRecord
   validate :at_least_one_phone_number, on: :printable
 
   ##
+  # By conention, the first address is the address we use.
+  # FIXME: This may be redundant after merging Phil's code.
+  def address
+    addresses[0] if addresses.present?
+  end
+
+  ##
   # Attach an error message to the symbol :phone_numbers if neither home
   # nor work phone provided.
   # I struggled for a while to attach the messages to the phone numbers.
@@ -53,7 +60,7 @@ class User < ApplicationRecord
   end
 
   def bc_resident?
-    self.my_address.get_province_code == 'BC'
+    my_address.get_province_code == 'BC'
   end
 
   ##
@@ -64,20 +71,20 @@ class User < ApplicationRecord
   end
 
   def can_create_new_rtp?
-    self.bc_resident? && self.funded_people.size > 0
+    bc_resident? && !funded_people.empty?
   end
 
   def can_see_my_home?
-    ret = ! self.missing_key_info?
-    if ret && self.my_address.get_province_code != 'BC'
+    ret = !missing_key_info?
+    if ret && my_address.get_province_code != 'BC'
       cnt = 0
-      self.funded_people.each do |fp|
-         cnt += fp.invoices.size
-         cnt += fp.cf0925s.size
-       end
-       ret = cnt > 0
+      funded_people.each do |fp|
+        cnt += fp.invoices.size
+        cnt += fp.cf0925s.size
+      end
+      ret = cnt > 0
     end
-    return ret
+    ret
   end
 
   def home_phone
@@ -89,29 +96,29 @@ class User < ApplicationRecord
   end
 
   def missing_key_info?
-    ret = (self.funded_people.size == 0)
-    ret = ret || self.my_address.nil?
-    ret = ret || self.my_address.get_province_code.empty?
-    return ret
+    ret = funded_people.empty?
+    ret ||= my_address.nil?
+    ret ||= my_address.get_province_code.empty?
+    ret
   end
 
   def my_address
     ##########################
-    #if id.nil?
+    # if id.nil?
     #  ret_obj = nil
-    #elsif addresses.empty?
+    # elsif addresses.empty?
     #  Address.create(user_id: id)
     #  addresses.reload # refreshes cache
     #  ret_obj = addresses[0]
-    #else
+    # else
     #  ret_obj = addresses[0]
-    #end
-    #ret_obj
+    # end
+    # ret_obj
     #######################################
-    if self.id.nil? && self.addresses.empty?
-      self.addresses.build
-    elsif self.addresses.empty?
-      Address.create(user_id: self.id)
+    if id.nil? && addresses.empty?
+      addresses.build
+    elsif addresses.empty?
+      Address.create(user_id: id)
       addresses.reload
     end
     addresses[0]
@@ -195,8 +202,7 @@ class User < ApplicationRecord
     !work_phone.nil? && work_phone.phone_number.present?
   end
 
-
-#### private methods ###########################################################
+  #### private methods ###########################################################
   private
 
   def my_phone(the_type)
