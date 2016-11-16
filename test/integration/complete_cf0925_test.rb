@@ -201,6 +201,16 @@ class CompleteCf0925Test < CapybaraTest
     end
   end
 
+  test 'part A or part B message' do
+    user = users(:has_no_rtp)
+    fill_in_login user
+
+    click_link 'New Request to Pay'
+    within '#base-errors' do
+      assert_content 'Fill in Part A or Part B or both.'
+    end
+  end
+
   private
 
   def create_a_cf0925
