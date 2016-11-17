@@ -3,6 +3,17 @@ require 'autism_funding_form_builder'
 # Field helpers for BC request to pay forms.
 module Cf0925sHelper
   # Using bootstrap_form gem
+
+  ##
+  # Output :base messages
+  def base_errors(f)
+    content_tag :div, class: 'bg-danger', id: 'base-errors' do
+      f.object.errors[:base].map do |x|
+        content_tag :p, x
+      end.join('\n').html_safe
+    end
+  end
+
   ##
   # The buttons at the bottom of the form.
   def buttons(f, cf0925)
@@ -26,6 +37,7 @@ module Cf0925sHelper
             parent.hidden_field(:id) +
               parent_info(f, parent) +
               child_info(f) +
+              base_errors(f) +
               part_A(f) +
               part_B(f) +
               buttons(f, cf0925)
