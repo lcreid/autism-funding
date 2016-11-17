@@ -54,9 +54,8 @@ class CompleteCf0925Test < CapybaraTest
   end
 
   test 'CF_0925 autofill from user and child' do
-    fill_in_login(user = users(:has_no_rtp))
-    # TODO: Make this follow links when we nail down the UI.
-    visit new_funded_person_cf0925_path(user.funded_people.first)
+    fill_in_login(users(:has_no_rtp))
+    click_link 'New Request to Pay'
 
     assert_difference 'Cf0925.count' do
       click_button 'Save'

@@ -174,13 +174,13 @@ class FundedPersonTest < ActiveSupport::TestCase
 
   test 'Fiscal year end of month' do
     child = funded_people(:end_of_month)
-    assert_equal Time.new(2016, 5, 1).to_date..Time.new(2017, 4,30).to_date,
+    assert_equal Time.new(2016, 5, 1).to_date..Time.new(2017, 4, 30).to_date,
                  child.fiscal_year(Time.new(2016, 12, 31))
   end
 
   test 'Fiscal year end of month on birthday' do
     child = funded_people(:end_of_month)
-    assert_equal Time.new(2015, 5, 1).to_date..Time.new(2016, 4,30).to_date,
+    assert_equal Time.new(2015, 5, 1).to_date..Time.new(2016, 4, 30).to_date,
                  child.fiscal_year(Time.new(2016, 4, 30))
   end
 
@@ -197,7 +197,6 @@ class FundedPersonTest < ActiveSupport::TestCase
   end
 
   test 'fiscal years list' do
-    # TODO: this needs to be updated when invoices come along.
     child = funded_people(:no_fiscal_years)
     assert_equal 0, child.fiscal_years.count
 

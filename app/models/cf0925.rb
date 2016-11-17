@@ -236,7 +236,6 @@ class Cf0925 < ApplicationRecord
 
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
-    # FIXME: Add phone numbers (in user?)
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
     cf0925_printable && user_printable

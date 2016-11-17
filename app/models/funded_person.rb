@@ -114,7 +114,7 @@ class FundedPerson < ApplicationRecord
                                       FiscalYear.new(fy)
                                     when String
                                       # The FiscalYear class doesn't have the child's DOB, probably
-                                      # FIXME: put String in the FY initializer. Not as simple as that.
+                                      # TODO: put String in the FY initializer. Not as simple as that.
                                       # rightly so.
                                       fiscal_years.find { |i| fy == i.to_s }
                                     end)
