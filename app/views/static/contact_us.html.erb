@@ -1,18 +1,49 @@
+<div class="jumbotron">
+  <div class="container">
+    <h1 class="text-center">Contact Us</h1>
+  </div>
+</div>
 <div class="container">
-  <h1>Contact Us</h1>
-  <br><br>
   <div class="row">
-    <div class="col-md-3">
-      <%= image_tag "BuildingSite.jpg", size: "300" %>
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-8">
-      This page is yet to be written.  It should contain
+    <div class="col-md-6">
+      <h2>Tell Us What You Think</h2>
+      <p>
+        We'd love to hear what you think of this site.
+        <%= link_to 'E-mail',
+                    'mailto:contactus@autism-funding.com?' +
+                    {
+                      subject: 'Feedback from Autism Funding'
+                    }.to_param %>
+        us if you have:
+      </p>
       <ul>
-        <li>How to contact us</li>
-        <li>Why you should contact us</li>
-        <li>Encourage requests for more coverage, calls to contact governments and providers</li>
+        <li>Problems with this site.</li>
+        <li>Suggestions for improvement.</li>
+        <li>Suggestions for new features.</li>
       </ul>
+    </div>
+    <div class="col-md-6">
+      <h2>Spread the Word</h2>
+      <p>
+        Tell other families about this site.
+        Send them
+        <%= link_to 'an invitation',
+                    'mailto:?' +
+                    {
+                      subject: 'An Invitation to Try the Autism Funding Site',
+                      body: 'I invite you to try out the Autism Funding site. ' \
+                            'Just click ' +
+                            welcome_index_url +
+                            ' for more information, or click ' +
+                            new_user_registration_url +
+                            ' to sign up. ' +
+                            "If the links don't work, " \
+                            'right click on the link, copy the shortcut, ' \
+                            "and paste it into your browser's address bar."
+                    }.to_param %>
+        to sign up
+        and try it out.
+      </p>
     </div>
   </div>
 </div>
