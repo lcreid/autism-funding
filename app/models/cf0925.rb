@@ -7,8 +7,8 @@ class Cf0925 < ApplicationRecord
 
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
+  accepts_nested_attributes_for :funded_person
   has_many :invoices
-  # accepts_nested_attributes_for :funded_person
 
   class << self
     def part_a_required_attributes
