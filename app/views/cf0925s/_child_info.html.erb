@@ -8,11 +8,15 @@
                        label: {
                          text: "Is this child in the care of the ministry?"
                          }) do %>
-    <% if @cf0925.child_in_care_of_ministry %>
-      Yes
-    <% else %>
-      No
-    <% end %>
+    <%# http://stackoverflow.com/questions/1953017/why-cant-radio-buttons-be-readonly %>
+    <%= f.radio_button_static(:child_in_care_of_ministry,
+                              'true',
+                              label: 'Yes',
+                              inline: true) %>
+    <%= f.radio_button_static(:child_in_care_of_ministry,
+                              'false',
+                              label: 'No',
+                              inline: true) %>
   <% end %>
 <% end %>
 

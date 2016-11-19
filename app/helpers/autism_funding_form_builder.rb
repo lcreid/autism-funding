@@ -53,6 +53,15 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
+  # Output radio buttons that can't be changed, effectively giving a disabled
+  # radio button group.
+  # http://stackoverflow.com/questions/1953017/why-cant-radio-buttons-be-readonly
+  def radio_button_static(method, tag_value, options = {})
+    options[:disabled] = true unless object.send(method).to_s == tag_value
+    radio_button(method, tag_value, options)
+  end
+
+  ##
   # Format a select field.
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
