@@ -220,8 +220,8 @@ class InvoiceTest < ActiveSupport::TestCase
                                    service_start: '2015-08-01',
                                    service_provider_name: 'A Provider')
     assert_equal 1, invoice.match.size
-    # assert_equal 'A Provider 2015-07-01 to 2015-09-30',
-    #              invoice.match[0].
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
   end
 
   test 'match one RTP on agency' do
@@ -232,6 +232,8 @@ class InvoiceTest < ActiveSupport::TestCase
                                    service_start: '2015-08-01',
                                    agency_name: 'A G Ency and Co.')
     assert_equal 1, invoice.match.size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
   end
 
   test 'match one RTP on supplier' do
@@ -240,6 +242,8 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2016-03-01',
                                    supplier_name: 'Supplies R Us')
     assert_equal 1, invoice.match.size
+    assert_equal '2015-06-01 to 2016-05-31',
+                 invoice.match[0].service_period_string
   end
 
   test 'match two RTPs' do
@@ -251,5 +255,9 @@ class InvoiceTest < ActiveSupport::TestCase
                                    agency_name: 'A G Ency and Co.',
                                    service_provider_name: 'A Provider')
     assert_equal 2, invoice.match.size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
+    assert_equal '2015-09-01 to 2015-09-30',
+                 invoice.match[1].service_period_string
   end
 end

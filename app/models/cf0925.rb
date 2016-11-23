@@ -294,6 +294,19 @@ class Cf0925 < ApplicationRecord
     service_provider_service_start..service_provider_service_end
   end
 
+  ##
+  # Return a human-digestable string for the service period.
+  def service_period_string
+    if service_provider_service_start && service_provider_service_end
+      service_provider_service_start.to_s +
+        ' to ' +
+        service_provider_service_end.to_s
+    else
+      fy = funded_person.fiscal_year(created_at)
+      fy.begin.to_s + ' to ' + fy.end.to_s
+    end
+  end
+
   def service_provider_service_amount=(value)
     super number_clean(value)
   end
