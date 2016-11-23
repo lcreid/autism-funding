@@ -10,20 +10,25 @@
     </div>
     <div class="panel-body" style="margin: 8px;">
       <div class="row">
-        <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :service_provider_name, ['', '-- Other Service Provider --', @invoice.service_provider_name] %>
-        <%= f.select :service_provider_name,
-                     opt_list,
-                     {
-                       label: 'Service Provider',
-                       column_width: 6
-                     } %>
+        <div class="col-md-10">
+          <div class="row">
+            <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :service_provider_name, ['', '-- Other Service Provider --', @invoice.service_provider_name] %>
+            <%= f.select :service_provider_name,
+                         opt_list,
+                         {
+                           label: 'Service Provider',
+                           column_width: 10
+                         } %>
 
-        <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
-        <%= f.number_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 6) %>
-      </div>
-      <div class="row">
-        <%= f.date_field :service_start, label: 'Service Start', column_width: 4 %>
-        <%= f.date_field :service_end, label: 'Service End', column_width: 4 %>
+            <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
+            <%= f.number_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
+          </div>
+          <div class="row">
+            <%= f.date_field :service_start, label: 'Service Start', column_width: 6 %>
+            <%= f.date_field :service_end, label: 'Service End', column_width: 6 %>
+          </div>
+        </div>
+        <%= f.select :cf0925, '', { label: 'Request to Pay', column_width: 2 } %>
       </div>
 
 

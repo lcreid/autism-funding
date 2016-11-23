@@ -66,7 +66,7 @@ class Cf0925 < ApplicationRecord
               presence: true,
               unless: ->(x) { x.work_phone.present? }
 
-    validate unless: :filling_in_part_a? || :filling_in_part_b? do
+    validate unless: ->(rtp) { rtp.filling_in_part_a? || rtp.filling_in_part_b? } do
       errors.add(:base, 'Fill in Part A or Part B or both.')
     end
 
@@ -132,6 +132,44 @@ class Cf0925 < ApplicationRecord
 
   def format_date(date)
     date
+  end
+
+  def filling_in_part_a?
+    # answer =
+    agency_name.present? ||
+      # payment.present? ||
+      service_provider_postal_code.present? ||
+      service_provider_address.present? ||
+      service_provider_city.present? ||
+      service_provider_phone.present? ||
+      service_provider_name.present? ||
+      service_provider_service_1.present? ||
+      service_provider_service_2.present? ||
+      service_provider_service_3.present? ||
+      service_provider_service_amount.present? ||
+      service_provider_service_end.present? ||
+      service_provider_service_fee.present? ||
+      # service_provider_service_hour.present? ||
+      service_provider_service_start.present?
+    #
+    # puts "Answer: #{answer}, Start: #{service_provider_service_start}" \
+    # ", End: #{service_provider_service_end}"
+    # answer
+  end
+
+  def filling_in_part_b?
+    supplier_address.present? ||
+      supplier_city.present? ||
+      supplier_contact_person.present? ||
+      supplier_name.present? ||
+      supplier_phone.present? ||
+      supplier_postal_code.present? ||
+      item_cost_1.present? ||
+      item_cost_2.present? ||
+      item_cost_3.present? ||
+      item_desp_1.present? ||
+      item_desp_2.present? ||
+      item_desp_3.present?
   end
 
   def generate_pdf
@@ -211,6 +249,15 @@ class Cf0925 < ApplicationRecord
     true
   end
 
+  ##
+  # Return true if the date  or date range passed in is within the service
+  # dates of the Cf0925.
+  def include?(range)
+    # puts "RTP range: #{service_period}"
+    # puts "Invoice (other) range: #{range}"
+    service_period.include?(range) # rubocop:disable Performance/RangeInclude
+  end
+
   def item_cost_1=(value)
     super number_clean(value)
   end
@@ -239,6 +286,12 @@ class Cf0925 < ApplicationRecord
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
     cf0925_printable && user_printable
+  end
+
+  ##
+  # Return the range from start date to end date.
+  def service_period
+    service_provider_service_start..service_provider_service_end
   end
 
   def service_provider_service_amount=(value)
@@ -300,44 +353,6 @@ class Cf0925 < ApplicationRecord
   end
 
   private
-
-  def filling_in_part_a?
-    # answer =
-    agency_name.present? ||
-      # payment.present? ||
-      service_provider_postal_code.present? ||
-      service_provider_address.present? ||
-      service_provider_city.present? ||
-      service_provider_phone.present? ||
-      service_provider_name.present? ||
-      service_provider_service_1.present? ||
-      service_provider_service_2.present? ||
-      service_provider_service_3.present? ||
-      service_provider_service_amount.present? ||
-      service_provider_service_end.present? ||
-      service_provider_service_fee.present? ||
-      # service_provider_service_hour.present? ||
-      service_provider_service_start.present?
-    #
-    # puts "Answer: #{answer}, Start: #{service_provider_service_start}" \
-    # ", End: #{service_provider_service_end}"
-    # answer
-  end
-
-  def filling_in_part_b?
-    supplier_address.present? ||
-      supplier_city.present? ||
-      supplier_contact_person.present? ||
-      supplier_name.present? ||
-      supplier_phone.present? ||
-      supplier_postal_code.present? ||
-      item_cost_1.present? ||
-      item_cost_2.present? ||
-      item_cost_3.present? ||
-      item_desp_1.present? ||
-      item_desp_2.present? ||
-      item_desp_3.present?
-  end
 
   def formatted_area_code(match)
     match[:area_code] if match
