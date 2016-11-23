@@ -35,6 +35,15 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
+  # Format a number field.
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  def number_field(method, options = {})
+    options = process_options(method, options)
+    process_width(options) { super }
+  end
+
+  ##
   # Format a phone number field and show it with punctuation
   def phone_field(method, options = {})
     options = process_options(method, options)
@@ -66,6 +75,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
   def select(method, choices = nil, options = {}, html_options = {}, &block)
+    process_options(method, options)
     process_width(options) { super }
   end
 
