@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get 'invoices/new'
 
-#  get 'static/non_supported'
+  #  get 'static/non_supported'
 
   get 'static/contact_us'
 
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get 'welcome/index'
 
   get 'other_resources/index'
-#  get 'my_profile/index'
+  #  get 'my_profile/index'
   get 'my_profile/edit'
   patch 'my_profile/update'
   put 'my_profile/update'
@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   resources :funded_people, shallow: true do
     get :all_forms
+    get :rtps
     #    get :all_invoices
     resources :cf0925s
     resources :invoices

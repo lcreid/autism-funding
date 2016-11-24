@@ -8,6 +8,20 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   ##
+  # Collection select with our st
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  def collection_select(method,
+                        collection,
+                        value_method,
+                        text_method,
+                        options = {},
+                        html_options = {})
+    process_options(method, options)
+    process_width(options) { super }
+  end
+
+  ##
   # Format a currency field.
   def currency_field(method, options = {})
     options = process_options(method, options)

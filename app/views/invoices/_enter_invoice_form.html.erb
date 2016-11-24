@@ -28,7 +28,16 @@
             <%= f.date_field :service_end, label: 'Service End', column_width: 6 %>
           </div>
         </div>
-        <%= f.select :cf0925, '', { label: 'Request to Pay', column_width: 2 } %>
+        <%= f.collection_select :cf0925,
+                                f.object.match,
+                                :id,
+                                :to_s,
+                                {
+                                  prompt: 'Choose a Request to Pay',
+                                  label: 'Request to Pay',
+                                  column_width: 2
+                                },
+                                id: 'rtp-select' %>
       </div>
 
 

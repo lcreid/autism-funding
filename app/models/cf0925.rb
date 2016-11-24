@@ -289,22 +289,22 @@ class Cf0925 < ApplicationRecord
   end
 
   ##
-  # Return the range from start date to end date.
-  def service_period
-    service_provider_service_start..service_provider_service_end
+  # Return the range from start date to end date, or fiscal year the RTP
+  # was created, if no start or end date.
+  def service_period(start = service_provider_service_start,
+                     finish = service_provider_service_end)
+    if start && finish
+      start..finish
+    else
+      fy = funded_person.fiscal_year(created_at)
+      service_period(fy.begin, fy.end)
+    end
   end
 
   ##
   # Return a human-digestable string for the service period.
   def service_period_string
-    if service_provider_service_start && service_provider_service_end
-      service_provider_service_start.to_s +
-        ' to ' +
-        service_provider_service_end.to_s
-    else
-      fy = funded_person.fiscal_year(created_at)
-      fy.begin.to_s + ' to ' + fy.end.to_s
-    end
+    [service_period.begin.to_s, service_period.end.to_s].join(' to ')
   end
 
   def service_provider_service_amount=(value)
@@ -343,6 +343,16 @@ class Cf0925 < ApplicationRecord
   def status
     return 'Ready to Print' if printable?
     'Not Complete'
+  end
+
+  ##
+  # A human-usable way to identify an RTP.
+  # Useful for drop-downs, etc.
+  def to_s
+    [
+      (service_provider_name || agency_name || supplier_name),
+      service_period_string
+    ].join(' ')
   end
 
   ##
