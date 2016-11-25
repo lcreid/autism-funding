@@ -25,9 +25,12 @@ Rails.application.routes.draw do
 
   get 'forms', to: 'forms#index'
 
+  # A route to support the query of RTPs that match a new or existing invoice.
+  # It has to be before the rest of the routes for invoices.
+  get 'invoices/rtps'
+
   resources :funded_people, shallow: true do
     get :all_forms
-    get :rtps
     #    get :all_invoices
     resources :cf0925s
     resources :invoices

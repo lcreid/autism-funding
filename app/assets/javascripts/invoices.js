@@ -54,21 +54,21 @@ $(document).on('turbolinks:load', function() {
       });
       // console.log($.param(params));
 
-      path = window.location.pathname;
-      url = path.substr(0, path.lastIndexOf('/'));
-      url = url.substr(0, url.lastIndexOf('/'));
-      console.log(url);
+      // path = window.location.pathname;
+      // url = path.substr(0, path.lastIndexOf('/'));
+      // url = url.substr(0, url.lastIndexOf('/'));
+      // console.log(url);
 
       var request = $.ajax({
-        url: url + "/rtps",
+        url: "/invoices/rtps",
         data: params,
         method: "GET",
         dataType: "html"
       }).done(function(msg) {
         console.log(msg);
-        console.log('#rtp-select');
-        $(msg).replaceAll('#rtp-select');
+        console.log('.rtp-select');
         // this is where I change the HTML
+        $(msg).replaceAll('.rtp-select option');
       }).fail(function(jqXHR, textStatus) {
         console.log("Request failed: " + textStatus);
       });

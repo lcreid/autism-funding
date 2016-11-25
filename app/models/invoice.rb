@@ -39,7 +39,10 @@ class Invoice < ApplicationRecord
   # Doesn't consider how much has been spent.
   # Uses dates and matching criteria.
   def match
-    return [] unless funded_person.cf0925s
+    puts "In match child: #{funded_person.inspect}"
+    return [] unless funded_person && funded_person.cf0925s
+    puts "In match child: #{funded_person.cf0925s.inspect}"
+    puts "Start #{service_start.class} End #{service_end.class}"
     if service_provider_name
       funded_person.cf0925s.select(&:printable?).select do |rtp|
         service_provider_name == rtp.service_provider_name &&
