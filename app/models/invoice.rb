@@ -39,36 +39,68 @@ class Invoice < ApplicationRecord
   # Doesn't consider how much has been spent.
   # Uses dates and matching criteria.
   def match
-    puts "In match child: #{funded_person.inspect}"
+    # puts "In match child: #{funded_person.inspect}"
     return [] unless funded_person && funded_person.cf0925s
-    puts "In match child: #{funded_person.cf0925s.inspect}"
-    puts "Start #{service_start.class} End #{service_end.class}"
-    if service_provider_name
-      funded_person.cf0925s.select(&:printable?).select do |rtp|
-        service_provider_name == rtp.service_provider_name &&
-          rtp.include?(service_start..service_end)
+    # puts "ATTRIBUTES: #{attributes}"
+    Invoice.match(funded_person, attributes)
+  end
+
+  class <<self
+    def match(funded_person, params)
+      return [] unless funded_person.cf0925s
+
+      params = ActiveSupport::HashWithIndifferentAccess.new(params)
+
+      agency_name = params[:agency_name]
+      invoice_date = to_date(params[:invoice_date])
+      service_end = to_date(params[:service_end])
+      service_provider_name = params[:service_provider_name]
+      service_start = to_date(params[:service_start])
+      supplier_name = params[:supplier_name]
+
+      # puts "agency_name: #{agency_name}"
+      # puts "invoice_date: #{invoice_date}"
+      # puts "service_end: #{service_end}"
+      # puts "service_provider_name: #{service_provider_name}"
+      # puts "service_start: #{service_start}"
+      # puts "supplier_name: #{supplier_name}"
+
+      if service_provider_name
+        funded_person.cf0925s.select(&:printable?).select do |rtp|
+          service_provider_name == rtp.service_provider_name &&
+            rtp.include?(service_start..service_end)
+        end
+      elsif agency_name
+        funded_person.cf0925s.select(&:printable?).select do |rtp|
+          agency_name == rtp.agency_name &&
+            rtp.include?(service_start..service_end)
+        end
+      elsif supplier_name
+        funded_person.cf0925s.select do |rtp|
+          # puts "Supplier: #{supplier_name} FY: #{funded_person.fiscal_year(invoice_date).inspect}"
+          # puts "RTP created_at: #{rtp.created_at}"
+          # rtp.printable?
+          # puts rtp.errors.full_messages
+          # puts "Date compare: #{funded_person.fiscal_year(invoice_date).include?(rtp.created_at.to_date)}"
+          rtp.printable? &&
+            supplier_name == rtp.supplier_name &&
+            funded_person.fiscal_year(invoice_date)
+                         .include?(rtp.created_at.to_date)
+          # FIXME: The above needs to be fixed for the real world.
+          # FIXME: It's not clear how to get a validity period for a
+          # FIXME: supplier-only RTP.
+        end
+      else
+        []
       end
-    elsif agency_name
-      funded_person.cf0925s.select(&:printable?).select do |rtp|
-        agency_name == rtp.agency_name &&
-          rtp.include?(service_start..service_end)
-      end
-    elsif supplier_name
-      funded_person.cf0925s.select do |rtp|
-        # puts "Supplier: #{supplier_name} FY: #{funded_person.fiscal_year(invoice_date).inspect}"
-        # puts "RTP created_at: #{rtp.created_at}"
-        # rtp.printable?
-        # puts rtp.errors.full_messages
-        # puts "Date compare: #{funded_person.fiscal_year(invoice_date).include?(rtp.created_at.to_date)}"
-        rtp.printable? &&
-          supplier_name == rtp.supplier_name &&
-          funded_person.fiscal_year(invoice_date).include?(rtp.created_at.to_date)
-        # FIXME: The above needs to be fixed for the real world.
-        # FIXME: It's not clear how to get a validity period for a
-        # FIXME: supplier-only RTP.
-      end
-    else
+    rescue ArgumentError
       []
+    end
+
+    def to_date(date)
+      return nil unless date
+      return date if date.is_a?(Date)
+      Date.parse(date)
     end
   end
 
@@ -129,6 +161,7 @@ class Invoice < ApplicationRecord
 
   #-----------------------------------------------------------------------------
 
-  # ----- Private Methods -------------------------------------------------------
+  # ----- Private Methods ------------------------------------------------------
   #-----------------------------------------------------------------------------
+  private
 end
