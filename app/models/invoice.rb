@@ -67,6 +67,8 @@ class Invoice < ApplicationRecord
 
       if service_provider_name
         funded_person.cf0925s.select(&:printable?).select do |rtp|
+          # puts "SP Name compare: #{service_provider_name == rtp.service_provider_name}"
+          # puts "Include: #{rtp.include?(service_start..service_end)}"
           service_provider_name == rtp.service_provider_name &&
             rtp.include?(service_start..service_end)
         end
@@ -91,9 +93,13 @@ class Invoice < ApplicationRecord
           # FIXME: supplier-only RTP.
         end
       else
+        # puts 'Found no supplier, agency, or service provider.'
         []
       end
-    rescue ArgumentError
+    rescue ArgumentError # => e
+      # FIXME: when there's one date, the code for the ranges throwns an
+      # exception. Not really broken, but it's messy.
+      # puts "Bailing on exception #{e.backtrace}"
       []
     end
 

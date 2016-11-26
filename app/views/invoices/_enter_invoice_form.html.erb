@@ -2,6 +2,7 @@
 
 <%#= form_for([@funded_person,@invoice]) do |f| %>
 <%= bootstrap_form_for(@invoice, url: @url, builder: AutismFundingFormBuilder) do |f| %>
+  <%= f.hidden_field :funded_person_id %>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h3 class="panel-title">

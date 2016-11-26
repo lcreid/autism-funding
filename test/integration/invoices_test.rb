@@ -19,6 +19,8 @@ class InvoicesTest < PoltergeistTest
     fill_in 'Service Start', with: '2017-01-01'
     fill_in 'Service End', with: '2017-01-31'
 
+    # puts "INSIDE: #{find('#invoice_cf0925').native}"
+    # puts "INSIDE: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
     assert_select 'Request to Pay', selected: 'Joe 2016 2016-07-01 to 2017-06-14'
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
@@ -27,6 +29,7 @@ class InvoicesTest < PoltergeistTest
   test 'invoice with two valid RTPs' do
     fill_in_login(users(:years))
     child = funded_people(:two_fiscal_years)
+    # puts "Child: #{child.inspect} Number of RTPs: #{child.cf0925s.size}"
 
     click_link child.my_name
     # It looks like you need to check that the tab actually opened, to give
@@ -40,9 +43,12 @@ class InvoicesTest < PoltergeistTest
     fill_in 'Service Start', with: '2016-07-01'
     fill_in 'Service End', with: '2016-07-31'
 
-    assert_select 'Request to Pay', selected: []
+    # puts "INSIDE: #{find('#invoice_cf0925').native}"
+    # puts "INSIDE: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    # assert_select 'Request to Pay', selected: []
 
-    select 'Joe 2016 2016-07-01 to 2016-08-31', from: 'Request to Pay'
+    # puts "INSIDE AGAIN: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    select 'Joe 2016 2016-07-01 to 2016-08-30', from: 'Request to Pay'
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
   end
@@ -63,7 +69,9 @@ class InvoicesTest < PoltergeistTest
     fill_in 'Service Start', with: '2015-07-01'
     fill_in 'Service End', with: '2015-07-31'
 
-    assert_select 'Request to Pay', selected: 'Out of pocket'
+    # puts "INSIDE: #{find('#invoice_cf0925').native}"
+    # puts "INSIDE: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    assert_select 'Request to Pay', selected: 'Out of Pocket'
 
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'

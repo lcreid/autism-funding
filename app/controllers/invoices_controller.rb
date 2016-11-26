@@ -31,7 +31,7 @@ class InvoicesController < ApplicationController
     @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
     ## TODO Save the fiscal year of the updated invoice in the funded person's preferences
     #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-    redirect_to root_path
+    redirect_to root_path, notice: 'Invoice updated.'
   end
 
   def destroy
@@ -48,8 +48,7 @@ class InvoicesController < ApplicationController
     if @invoice.update(invoice_params)
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
       #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-      ## TODO Save the fiscal year of the created invoice in the funded person's preferences
-      redirect_to root_path
+      redirect_to root_path, notice: 'Invoice saved.'
     else
       render 'new'
     end
@@ -57,15 +56,19 @@ class InvoicesController < ApplicationController
   end
 
   def rtps
-    # FIXME: make this only search RTPs that belong to the current user,
-    #         or funded_person even better.
+    # puts 'IN RTPS'
     # Remember that this could be called from new, so you don't enen have an
     # invoice yet. So make a throw-away invoice.
 
     invoice = Invoice.new
     invoice.assign_attributes(convert_search_params_to_create_params)
+    invoice.funded_person = FundedPerson.find(params[:funded_person_id])
 
-    puts "TEMPORARY INVOICE: #{invoice.inspect}"
+    # puts "TEMPORARY INVOICE: #{invoice.inspect}"
+
+    # puts "PARTIAL: #{render_to_string(partial: 'rtp_option_list',
+    #                                   locals: { invoice: invoice },
+    #                                   layout: !request.xhr?)}"
 
     render partial: 'rtp_option_list',
            locals: { invoice: invoice },
