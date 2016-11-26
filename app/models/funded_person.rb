@@ -4,7 +4,7 @@ class FundedPerson < ApplicationRecord
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
   belongs_to :user, inverse_of: :funded_people
-  accepts_nested_attributes_for :user
+#  accepts_nested_attributes_for :user
 
   has_many :cf0925s, inverse_of: :funded_person
   has_many :invoices
@@ -96,9 +96,15 @@ class FundedPerson < ApplicationRecord
       .sort { |x, y| y <=> x }
   end
 
+  # Return true if name, birthdate and in care of ministry fields are all blank
+  def is_blank?
+    child_in_care_of_ministry.nil? && my_dob == 'undefined' && my_name == 'no name defined'
+  end
+
   def must_define_at_least_one_name
     if my_name == 'no name defined'
-      errors.add(:name, ' - must define at least one name')
+      errors.add(:name_last, ' - must define at least one name')
+      errors.add(:name_first, ' - must define at least one name')
     end
   end
 

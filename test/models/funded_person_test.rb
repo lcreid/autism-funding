@@ -154,6 +154,72 @@ class FundedPersonTest < ActiveSupport::TestCase
     assert the_fp.save, '02.j: Save of an valid instance should succeed'
   end ## -- end test --
 
+  #-----------------------------------------------------------------------------
+  #  Test 03
+  # => a) tests is_blank is false when name, birthdate and child_in_care_of_ministry have not been set
+  # => b) tests is_blank is false when first_name is not nil, and all else are nil
+  # => c) tests is_blank is false when middle_name is not nil, and all else are nil
+  # => d) tests is_blank is false when last_name is not nil, and all else are nil
+  # => e) tests is_blank is false when birthdate is not nil, and all else are nil
+  # => f) tests is_blank is false when child_in_care_of_ministry is not nil, and all else are nil
+  testName = '03 Check FundedPerson is_blank? method'
+  # puts "-- Test: #{testName} -----------------------------------"
+  test testName do
+    test_first = 'first'
+    test_middle = 'middle'
+    test_last = 'last'
+    test_birthdate = '1999-11-15'
+    test_child_in_care = false
+    the_fp = FundedPerson.new
+#    the_fp.birthdate = test_birthdate
+#    the_fp.user = test_user
+
+    # 03.a .....................................................................
+    assert the_fp.is_blank?, '03.a: is_blank? should be true with no data set'
+
+    # 03.b .....................................................................
+    the_fp.name_first = test_first
+    the_fp.name_middle = nil
+    the_fp.name_last = nil
+    the_fp.birthdate = nil
+    the_fp.child_in_care_of_ministry = nil
+    assert_not the_fp.is_blank?, '03.b: is_blank? should be false with only name_first set'
+
+    # 03.c .....................................................................
+    the_fp.name_first = nil
+    the_fp.name_middle = test_middle
+    the_fp.name_last = nil
+    the_fp.birthdate = nil
+    the_fp.child_in_care_of_ministry = nil
+    assert_not the_fp.is_blank?, '03.c: is_blank? should be false with only name_middle set'
+
+    # 03.d .....................................................................
+    the_fp.name_first = nil
+    the_fp.name_middle = nil
+    the_fp.name_last = test_last
+    the_fp.birthdate = nil
+    the_fp.child_in_care_of_ministry = nil
+    assert_not the_fp.is_blank?, '03.d: is_blank? should be false with only name_last set'
+
+    # 03.e .....................................................................
+    the_fp.name_first = nil
+    the_fp.name_middle = nil
+    the_fp.name_last = nil
+    the_fp.birthdate = test_birthdate
+    the_fp.child_in_care_of_ministry = nil
+    assert_not the_fp.is_blank?, '03.e: is_blank? should be false with only birthdate set'
+
+    # 03.f .....................................................................
+    the_fp.name_first = nil
+    the_fp.name_middle = nil
+    the_fp.name_last = nil
+    the_fp.birthdate = nil
+    the_fp.child_in_care_of_ministry = test_child_in_care
+    assert_not the_fp.is_blank?, '03.f: is_blank? should be false with only child_in_care_of_ministry set'
+
+
+  end ## -- end test 03 --
+
   test 'Fiscal year beginning of year' do
     child = funded_people(:beginning_of_year)
     assert_equal Time.new(2009, 2, 1).to_date..Time.new(2010, 1, 31).to_date,

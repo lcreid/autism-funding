@@ -23,7 +23,8 @@ class PreferencesTest < PoltergeistTest
     click_link 'My Profile'
     assert_content 'Edit My Data'
     assert_current_path my_profile_edit_path
-
+# puts "#{__LINE__}: id: #{user.id}  missing info? #{user.missing_key_info?}  see home? #{user.can_see_my_home?}"
+#puts body
     click_link 'My Home'
     assert_no_content 'My Funded Children'
     assert_content 'Four Year Two-Kids'
@@ -71,6 +72,8 @@ class PreferencesTest < PoltergeistTest
     select '2015-2016', from: two_year_kid
     # This next line helps Capybara get back in sync with the extra submit
     # that the page does when you select from the fiscal year drop-down.
+    # sleep 5
+    # puts body
     assert_content 'Joe 2015'
     assert_no_select two_year_kid, selected: '2016-2017'
     assert_select two_year_kid, selected: '2015-2016'

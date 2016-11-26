@@ -74,7 +74,7 @@ class HomePageTest < PoltergeistTest
     end
 
     select '2015-2016', from: "year_#{two_year_child.id}"
-
+    assert_content 'Joe 2015'
     within "#collapse-#{two_year_child.id}" do
       assert_selector '.test-spent-funds', text: /\$200.00/
       assert_selector '.test-committed-funds', text: /\$2,500.00/

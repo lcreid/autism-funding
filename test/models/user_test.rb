@@ -373,7 +373,7 @@ class UserTest < ActiveSupport::TestCase
     expected = test_phone_type
     assert_equal expected, the_phone_number.phone_type, "07.m: Instance [#{the_user.my_name}],my_work_phone should have the correct type"
   end ## -- end test --
-
+## TODO - add a test to ensure missing_key_info? is false when there is more than one funded_child
   #-----------------------------------------------------------------------------
   #  Test 08
   # => a) tests that missing_key_info? is true when new instance of User is created
@@ -392,7 +392,7 @@ class UserTest < ActiveSupport::TestCase
     # Ensure all basic info there
     the_user = User.new
     the_user.my_address.province_code = province_codes('mb')
-    the_user.funded_people.build
+    the_user.funded_people.build({name_first: 'Fred'})
     assert_not the_user.missing_key_info?, "08.b: missing_key_info? should be false when there is a funded_person and address with province"
 
     # 08.c .....................................................................
@@ -502,51 +502,71 @@ class UserTest < ActiveSupport::TestCase
     # 11.d .....................................................................
     the_user = User.new
     the_user.my_address.province_code = province_codes('bc')
-    the_user.funded_people.build
+    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     assert the_user.can_see_my_home?, '11.d: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and no invoices'
 
     # 11.e .....................................................................
     the_user = User.new
     the_user.my_address.province_code = province_codes('bc')
-    the_user.funded_people.build
+    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     the_user.funded_people[0].invoices.build
     assert the_user.can_see_my_home?, '11.e: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and 1 invoice'
 
     # 11.f .....................................................................
     the_user = User.new
     the_user.my_address.province_code = province_codes('ont')
-    the_user.funded_people.build
-    the_user.funded_people[0].invoices.build
-    assert the_user.can_see_my_home?, '11.f: can_see_my_home? should be true when User is has an address defined with a province code of ON, with 1 funded child and 1 invoice'
+    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    assert_not the_user.can_see_my_home?, '11.f: can_see_my_home? should be false when User is has an address defined with a province code of ON, with 1 funded child and 0 invoices'
 
+    # 11.g .....................................................................
+    the_user = User.new
+    the_user.my_address.province_code = province_codes('ont')
+    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    the_user.funded_people[0].invoices.build
+    assert the_user.can_see_my_home?, '11.g: can_see_my_home? should be true when User is has an address defined with a province code of ON, with 1 funded child and 1 invoices'
 
   end ## -- end test 11 --
 
 
   test 'edit and save one user' do
-    # skip 'I started to test nested attributes, but it is a rat hole.'
+    #--------------------------------------------------------------------
+    # REPLACED LARRY's user_hash as the phone and address are no longer nested
+    #   but available in user
+    # # skip 'I started to test nested attributes, but it is a rat hole.'
+    # user_hash = {
+    #   name_first: '1',
+    #   name_last: '2',
+    #   addresses_attributes: {
+    #     a: {
+    #       address_line_1: '123456789 Street St',
+    #       city: 'Some City',
+    #       province_code_id: province_codes(:bc).id,
+    #       postal_code: 'S0S 0S0'
+    #     }
+    #   },
+    #   phone_numbers_attributes: {
+    #     home: {
+    #       phone_number: '5555555555',
+    #       phone_type: 'home'
+    #     },
+    #     work: {
+    #       phone_number: '6666666666',
+    #       phone_type: 'work'
+    #     }
+    #   }
+    # }
+    #--------------------------------------------------------------------
     user_hash = {
-      name_first: '1',
-      name_last: '2',
-      addresses_attributes: {
-        a: {
-          address_line_1: '123456789 Street St',
-          city: 'Some City',
-          province_code_id: province_codes(:bc).id,
-          postal_code: 'S0S 0S0'
-        }
-      },
-      phone_numbers_attributes: {
-        home: {
-          phone_number: '5555555555',
-          phone_type: 'home'
-        },
-        work: {
-          phone_number: '6666666666',
-          phone_type: 'work'
-        }
-      }
-    }
+       name_first: '1',
+       name_last: '2',
+       address: '123456789 Street St',
+       city: 'Some City',
+       province_code_id: province_codes(:bc).id,
+       postal_code: 'S0S 0S0',
+       home_phone_number: '5555555555',
+       work_phone_number: '6666666666'
+     }
+
     user = User.new(email: email = 'me@weenhanceit.com',
                     password: 'password')
     # These are no difference because we pre-create address and phone
@@ -561,7 +581,8 @@ class UserTest < ActiveSupport::TestCase
 
     assert retrieved_user = User.find_by(email: email)
     assert_equal user_hash[:name_last], retrieved_user.name_last
-    assert_equal user_hash[:addresses_attributes][:a][:city], retrieved_user.my_address.city
+    assert_equal user_hash[:city], retrieved_user.my_address.city
+    # assert_equal user_hash[:addresses_attributes][:a][:city], retrieved_user.my_address.city
     # user_hash.each do |k, _v|
     #   fixed_key = k.to_s.sub(/_attributes\Z/, '').to_sym
     #   assert_equal user_hash[k], user.send(fixed_key)
