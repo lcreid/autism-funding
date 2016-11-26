@@ -1,9 +1,13 @@
 <%= form_row do %>
-  <%= child_field(f, :child_last_name, 2) %>
-  <%= child_field(f, :child_first_name, 2, label: 'First') %>
-  <%= child_field(f, :child_middle_name, 2, label: 'Middle') %>
-  <%= child_field(f, :child_dob, 2, label: 'DOB') %>
-  <%= child_field(f, nil, 4, label: "Is this child in the care of the ministry?") do %>
+  <%= f.static_control(:child_last_name, column_width: 2, label: 'Last Name') %>
+  <%= f.static_control(:child_first_name, column_width: 2, label: 'First') %>
+  <%= f.static_control(:child_middle_name, column_width: 2, label: 'Middle') %>
+  <%= f.static_control(:child_dob, column_width: 2, label: 'Date of Birth') %>
+  <%= f.form_group(:child_in_care_of_ministry,
+                       column_width: 4,
+                       label: {
+                         text: "Is this child in the care of the ministry?"
+                         }) do %>
     <% if @cf0925.child_in_care_of_ministry %>
       Yes
     <% else %>

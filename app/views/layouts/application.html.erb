@@ -1,94 +1,104 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title><%= Globals::site_name %> <%= yield(:title) %></title>
+  <head>
+    <title>
+      <%= Globals::site_name %> <%= yield(:title) %>
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
+    <%= stylesheet_link_tag    'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', media: 'all' %>
 
-        <%= csrf_meta_tags %>
+    <%= csrf_meta_tags %>
 
-        <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
 
-        <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-        <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' %>
+  </head>
 
-    </head>
-
-    <body>
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid" style="background-color: #08088A">
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
           <% unless user_signed_in? %>
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
-          </div>
+              <a class="navbar-brand" href="/"><%= Globals::site_name %></a>
           <% end %>
+        </div>
 
+        <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav">
             <% hash_for_menu.keys.sort.each do |key| %>
-            <% the_title = key[2..-1] %>
-            <% the_seq = key[0..1] %>
-            <% the_link = hash_for_menu[key] %>
-            <% unless the_seq == '__' %>
-            <li><%= link_to the_title, the_link %></li>
-            <% end %>
+              <% the_title = key[2..-1] %>
+              <% the_seq = key[0..1] %>
+              <% the_link = hash_for_menu[key] %>
+              <% unless the_seq == '__' %>
+                <li><%= link_to the_title, the_link %></li>
+              <% end %>
             <% end %>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <% if user_signed_in? %>
-            <li><%= link_to current_user.email, edit_user_registration_path %></li>
-            <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
+              <li><%= link_to current_user.email, edit_user_registration_path %></li>
+              <li><%= link_to "Log out", destroy_user_session_path, method: :delete %></li>
             <% else %>
-            <li><%= link_to "Sign Up", new_user_registration_path %></li>
-            <li><%= link_to "Log in", new_user_session_path %></li>
-            <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
+              <li><%= link_to "Sign Up", new_user_registration_path %></li>
+              <li><%= link_to "Log in", new_user_session_path %></li>
+              <%# <li><a href="/welcome/contact_us"><span class="glyphicon glyphicon-user"></span>Contact Us</a></li> %>
             <% end %>
           </ul>
         </div>
-      </nav>
-
-      <div class="container">
-          <%# ---- Notice or alert message from devise ---------------------------%>
-          <% if notice %>
-          <div class="alert alert-info"><%= notice %></div><% end %>
-          <% if alert  %>
-          <div class="alert alert-warning"><%= alert %></div><% end %>
-
       </div>
-      <div class="container">
-        <%= yield %>
-      </div>
-    </body>
+    </nav>
 
-    <footer class="container">
-        <hr><br>
-        <div class="row">
-            <div class="col-md-4">
-                <p style="text-align: left;">
-                    <%= Globals::site_name %>
-                    - helping parents manage funding for autistic children
-                </p>
-            </div>
-            <div class="col-md-4">
-                <p style="text-align: center;">
-                    This site is sponsored by
-                    <%= Globals::sponsor_name %>, who are responsible for the development and hosting of this site.
-                </p>
-                <p style="text-align: center;">
-                    Please visit
-                    <%= link_to Globals::sponsor_url, Globals::sponsor_url  %>
-                    to find out how
-                    <%= Globals::sponsor_name %>
-                    can help you develop your application.
-                </p>
-            </div>
-            <div class="col-md-4" style="text-align: right;">
-                <p class="small-letters">
-                    <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
-                    <br>
-                    V00.10
-                </p>
-            </div>
-        </div>
-    </footer>
+    <div class="container">
+      <%# ---- Notice or alert message from devise ---------------------------%>
+      <% if notice %>
+      <div class="alert alert-info"><%= notice %></div><% end %>
+      <% if alert  %>
+      <div class="alert alert-warning"><%= alert %></div><% end %>
+
+    </div>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+
+  <footer class="container">
+    <hr>
+    <div class="row">
+      <div class="col-md-4">
+        <p class="text-left">
+          <%= Globals::site_name %>
+          - helping parents manage funding for autistic children
+        </p>
+      </div>
+      <div class="col-md-4">
+        <p class="text-center">
+          This site is sponsored by
+          <%= Globals::sponsor_name %>, who are responsible for the development and hosting of this site.
+        </p>
+        <p class="text-center">
+          Please visit
+          <%= link_to Globals::sponsor_url, Globals::sponsor_url  %>
+          to find out how
+          <%= Globals::sponsor_name %>
+          can help you develop your application.
+        </p>
+      </div>
+      <div class="col-md-4">
+        <p class="small-letters text-right">
+          <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
+          <br>
+          V00.10
+        </p>
+      </div>
+    </div>
+  </footer>
 
 </html>

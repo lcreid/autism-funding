@@ -45,4 +45,13 @@ class Cf0925Test < ActiveSupport::TestCase
              "Got #{rtp.errors[:service_provider_service_end]}"
            }
   end
+
+  test 'store numbers' do
+    rtp = Cf0925.new(service_provider_service_amount: '2000')
+    assert_equal 2_000, rtp.service_provider_service_amount
+    rtp.update(service_provider_service_amount: '2000.50')
+    assert_equal 2_000.50, rtp.service_provider_service_amount
+    rtp.update(service_provider_service_amount: '2,000.50')
+    assert_equal 2_000.50, rtp.service_provider_service_amount
+  end
 end

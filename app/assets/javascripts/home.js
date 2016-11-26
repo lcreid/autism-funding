@@ -20,8 +20,14 @@ $(document).on('turbolinks:load', function() {
     });
   }
 
+  $('.navbar-collapse').on('shown.bs.collapse', function () {
+    console.log("Debug: Opened: " + $(this).attr('id'));
+  }).on('hidden.bs.collapse', function () {
+    console.log("Debug: Closed: " + $(this).attr('id'));
+  });
+
   // From: http://stackoverflow.com/questions/13778703/adding-open-closed-icon-to-twitter-bootstrap-collapsibles-accordions
-  $('.collapse').on('shown.bs.collapse', function() {
+  $('.child.panel .collapse').on('shown.bs.collapse', function() {
     // console.log('Shown.');
     $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
     // console.log("Opened: " + $(this).attr('data-funded-person-id'));
