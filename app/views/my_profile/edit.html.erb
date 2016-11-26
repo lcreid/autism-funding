@@ -28,160 +28,77 @@
     </div>
   <% end %>
 
-  <% unless flash[:save_errors].nil? %>
-    <div style = "width: 80%; color: black; background-color: #FFE6E6; border: 5px double red; padding: 5px; margin-left: 20px;">
-      <%= flash[:save_errors].html_safe %>
+  <% unless @warning.nil? %>
+    <div class="alert alert-danger">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <%= @warning.html_safe %>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
     </div>
-    <br>
   <% end %>
 
-  <%= form_for current_user, {url: my_profile_update_path, role: "form"}  do |f| %>
-  <div class="row">
-    <div class="col-md-3">
-      <div class="form-group">
-        <%= f.label "First Name:", class: 'control-label' %>
-        <%= f.text_field :name_first, class: 'form-control' %>
-      </div>
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-3">
-      <div class="form-group">
-        <%= f.label "Middle Name:", class: 'control-label' %>
-        <%= f.text_field :name_middle, class: 'form-control' %>
-      </div>
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-3">
-      <div class="form-group">
-        <%= f.label "Last Name:", class: 'control-label' %>
-        <%= f.text_field :name_last, class: 'form-control' %>
-      </div>
-    </div>
-    <div class="col-md-1"></div>
-  </div>
-  <br><br>
-  <div class="row"><div class="col-md-12 lead">Address</div></div>
-  <%= fields_for @my_address do |ma| %>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <%= ma.label "Address 1:", class: 'control-label' %>
-          <%= ma.text_field :address_line_1, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <%= ma.label "Address 2:", class: 'control-label' %>
-          <%= ma.text_field :address_line_2, class: 'form-control' %>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="form-group">
-          <%= ma.label "City:", class: 'control-label' %>
-          <%= ma.text_field :city, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
-        <%= ma.label "Province:", class: 'control-label' %>
-        <%= ma.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, {prompt: true}, {class: 'form-control'}  %> </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= ma.label "Postal Code:", class: 'control-label' %>
-          <%= ma.text_field :postal_code, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-1"></div>
-    </div>
-  <% end %>
-  <br><br>
-  <div class="row"><div class="col-md-12 lead">Phone Numbers</div></div>
+  <%= bootstrap_form_for current_user, builder: AutismFundingFormBuilder, url: my_profile_update_path do |the_form| %>
 
-  <div class="row">
-    <%= fields_for :home_phone_number, @home_phone do |mp| %>
-      <%= render partial: 'phone_numbers/form',
-                 locals: { phone_number: mp, f: mp, type: :home } %>
+    <%= panel the_form, "Edit User Information" do |p| %>
+      <%= form_row do %>
+        <%= the_form.text_field(:name_first, column_width: 3, label: 'First') %>
+        <%= the_form.text_field(:name_middle, column_width: 3, label: 'Middle') %>
+        <%= the_form.text_field(:name_last, column_width: 3, label: 'Last') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.text_field(:address, column_width: 6, label: 'Address') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.text_field(:city, column_width: 6, label: 'City') %>
+        <%= the_form.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, {column_width: 3, label: 'Province', prompt: true} %>
+        <%= the_form.postal_code_field(:postal_code, column_width: 3, label: 'Postal Code') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.phone_field :home_phone_number, column_width: 3, label: 'Home Phone' %>
+        <%= the_form.phone_field :work_phone_number, column_width: 3, label: 'Work Phone' %>
+        <%= the_form.text_field :work_phone_extension, column_width: 2, label: 'Extension' %>
+      <% end %>
     <% end %>
-    <div class="col-md-1"></div>
-    <%= fields_for :work_phone_number, @work_phone do |mp| %>
-      <%= render partial: 'phone_numbers/form',
-                 locals: { phone_number: mp, f: mp, type: :work } %>
+    <%= panel the_form, "Funded Children" do |p| %>
+      <%= the_form.fields_for :funded_people do |fp| %>
+        <% if fp.object.id.nil? %>
+          <%= form_row do %>
+            <div class="col-md-12 text-center mark">
+              Add a new funded child by entering data below
+            </div>
+          <% end %>
+        <% end %>
+        <%= form_row do %>
+          <%= fp.text_field(:name_first, column_width: 3, label: 'First Name') %>
+          <%= fp.text_field(:name_middle, column_width: 3, label: 'Middle') %>
+          <%= fp.text_field(:name_last, column_width: 3, label: 'Last') %>
+          <%= fp.date_field(:birthdate, column_width: 2, label: 'Birthdate') %>
+          <% unless fp.object.id.nil? %>
+            <%= fp.check_box :_destroy, column_width: 1, label: 'Delete?' %>
+          <% end %>
+          <br><br>
+        <% end %>
+        <%= form_row do %>
+          <div class="col-md-1">
+          </div>
+          <%= fp.form_group :child_in_care_of_ministry,  {label: {text: 'Is this child in the care of the ministry ?'}, column_width: 4, inline: true}  do %>
+            <%= fp.radio_button(:child_in_care_of_ministry, 'true', label: "Yes", inline: true) %>
+            <%= fp.radio_button(:child_in_care_of_ministry, 'false', label: "No", inline: true) %>
+          <% end %>
+          <div class="col-md-3">
+            <%# coll = Array[{text: 'Yes', val: true },{text: 'No', val: false }] %>
+            <%#= fp.collection_radio_buttons(:child_in_care_of_ministry, coll, :val, :text, label: 'Child in Care of Ministry?') %>
+          </div>
+        <% end %>
+        <br><br>
+      <% end %>
     <% end %>
-    <div class="col-md-6"></div>
-  </div>
 
-  <br><br>
-  <div class="row"><div class="col-md-12 lead">Funded Children</div></div>
-  <%= f.fields_for :funded_people do |fp| %>
-    <div class="row">
-      <div class="col-md-3">
-        <div class="form-group">
-          <%= fp.label "First Name", class: 'control-label' %>
-          <%= fp.text_field :name_first, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="form-group">
-          <%= fp.label "Middle Name", class: 'control-label' %>
-          <%= fp.text_field :name_middle, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="form-group">
-          <%= fp.label "Last Name", class: 'control-label' %>
-          <%= fp.text_field :name_last, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <%= fp.label "Bithdate", class: 'control-label' %>
-          <%= fp.date_field :birthdate, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-1">
-
-        <%= fp.label "Delete ?", class: 'control-label' %>
-        <%= fp.check_box :_destroy %>
-      </div>
-
-    </div>
-    <div class="row">
-      <div class="col-md-1">
-      </div>
-      <div class="col-md-11">
-        <div class="form-group">
-          <%= fp.label "Is this child in the care of the ministry ?", class: 'control-label' %>
-          <span style="padding: 4pt;">
-            <%= fp.radio_button(:child_in_care_of_ministry, 'true') %>
-            <%= fp.label('Yes') %>
-          </span>
-          <span style="padding: 4pt;">
-            <%= fp.radio_button(:child_in_care_of_ministry, 'false') %>
-            <%= fp.label('No') %>
-          </span>
-        </div>
-      </div>
-    </div>
-
-  <% end %>
-
-  <div class="row"><div class="col-md-12 lead"><%= f.submit class: 'btn btn-primary' %></div></div>
-
-
-  <%#= f.fields_for :funded_people do |builder| %>
-        <%#= render partial: 'cf0925s/child_info', locals: { f: builder } %>
-        <div class="col-md-1"><%#= link_to 'Delete', '#', class: "btn btn-danger btn-xs" %></div>
-      <%# end %>
-
-    <div class="row">
-      <div class="col-md-1">
-        <%#= render partial: 'cf0925s/child_info', locals: { f: builder } %>
-      </div>
-
-      <%#= link_to '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>'.html_safe, '', class: 'btn' %>
-    </div>
+    <%= form_row do %>
+      <div class="col-md-12 lead"><%= the_form.submit class: 'btn btn-primary' %></div>
+    <% end %>
   <% end %>
 </div>

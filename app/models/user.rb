@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include Preferences
+  include AddressValidators
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -7,6 +8,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :addresses, inverse_of: :user
+  belongs_to :province_code, optional: true
+
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
   # FIXME: the next line has to change every time we add another form.
@@ -27,6 +30,8 @@ class User < ApplicationRecord
             presence: true,
             on: :printable
 
+  validate :validate_phone_numbers
+
   # This following doesn't seem to work.
   # validates :my_work_phone,
   #           presence: true,
@@ -38,6 +43,95 @@ class User < ApplicationRecord
   #           on: :printable,
   #           unless: ->(x) { x.my_work_phone.present? }
   validate :at_least_one_phone_number, on: :printable
+
+  # Get Address for User
+  def address
+    address_record.address_line_1
+  end
+
+  # Set Address for user
+  def address=(val)
+    address_record.address_line_1 = val
+  end
+
+  # Get City for User
+  def city
+    address_record.city
+  end
+  # Set City for User
+  def city=(val)
+    address_record.city = val
+  end
+
+  # Get province_code_id for User
+  def province_code_id
+    address_record.province_code_id
+  end
+  # Get province_code_id for User
+  def province_code_id=(val)
+    address_record.province_code_id = val
+  end
+
+
+  # Get Postal Code for User
+  def postal_code
+    address_record.postal_code
+  end
+
+  # Set Postal Code for User
+  def postal_code=(val)
+    address_record.postal_code = val
+  end
+
+  # Get Home Phone Number for User
+  def home_phone_number
+    phone_record('Home').phone_number
+  end
+  # Set Home Phone Number for User
+  def home_phone_number=(val)
+    phone_record('Home').phone_number = val
+  end
+
+  # Get Work Phone Number for User
+  def work_phone_number
+    phone_record('Work').phone_number
+  end
+  # Set Work Phone Number for User
+  def work_phone_number=(val)
+    phone_record('Work').phone_number = val
+  end
+
+  # Get Work Phone Extension for User
+  def work_phone_extension
+    phone_record('Work').phone_extension
+  end
+  # Set Work Phone Number for User
+  def work_phone_extension=(val)
+    phone_record('Work').phone_extension = val
+  end
+
+  def validate_phone_numbers
+    phone_record('Work').validate
+    phone_record('Work').errors[:phone_number].each do |e|
+      errors.add(:work_phone_number,e)
+    end
+    phone_record('Work').errors[:phone_extension].each do |e|
+      errors.add(:work_phone_extension,e)
+    end
+    phone_record('Home').validate
+    phone_record('Home').errors[:phone_number].each do |e|
+      errors.add(:home_phone_number,e)
+    end
+
+#    phones.each do |p|
+#      p.validate
+#      p.error
+#    end
+#    if !home_phone? && !work_phone?
+#      errors.add(:phone_numbers, 'must provide at least one phone number')
+#    end
+  end
+
 
   ##
   # By conention, the first address is the address we use.
@@ -75,16 +169,28 @@ class User < ApplicationRecord
   end
 
   def can_see_my_home?
-    ret = !missing_key_info?
-    if ret && my_address.get_province_code != 'BC'
-      cnt = 0
-      funded_people.each do |fp|
-        cnt += fp.invoices.size
-        cnt += fp.cf0925s.size
-      end
-      ret = cnt > 0
+    ret = ! self.missing_key_info?
+    cnt_items = 0
+    # Check all funded people are valid and get count of invoices/forms
+# puts "#{__LINE__}: state of ret #{ret}"
+    if ret
+      all_valid = true
+      self.funded_people.each do |fp|
+         cnt_items += fp.invoices.size
+         cnt_items += fp.cf0925s.size
+         unless fp.valid? || fp.is_blank?
+           puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
+           all_valid = false
+         end
+       end
+       ret = all_valid
     end
-    ret
+# puts "#{__LINE__}: state of ret #{ret}"
+    if ( self.my_address.get_province_code ) != 'BC' && ( cnt_items < 1 )
+       ret = false
+    end
+# puts "#{__LINE__}: state of ret #{ret}"
+    return ret
   end
 
   def home_phone
@@ -96,10 +202,26 @@ class User < ApplicationRecord
   end
 
   def missing_key_info?
-    ret = funded_people.empty?
-    ret ||= my_address.nil?
-    ret ||= my_address.get_province_code.empty?
-    ret
+    # Need to check if there are at least 1 non-blank funded_people
+    ret = true
+    self.funded_people.each do |fp|
+      unless fp.is_blank?
+        ret = false
+        break
+      end
+    end
+    # case self.funded_people.size
+    # when 0
+    #   ret = true
+    # when 1
+    #   ret = self.funded_people[0].id.nil?
+    # else
+    #   ret = false
+    # end
+
+    ret = ret || self.my_address.nil?
+    ret = ret || self.my_address.get_province_code.empty?
+    return ret
   end
 
   def my_address
@@ -203,17 +325,36 @@ class User < ApplicationRecord
   #### private methods ###########################################################
   private
 
+  def address_record
+    unless addresses[0]
+      addresses.build
+    end
+    addresses[0]
+  end
+
+  def phone_record(type)
+    phone_numbers.find { |x| x.phone_type == type } || phone_numbers.build(phone_type: type)
+  end
+
   def my_phone(the_type)
     # obj_phone = phone_numbers.find(phone_type: the_type)
     obj_phone = phone_numbers.find_by(phone_type: the_type)
-    if id.nil?
+
+    ret_obj = nil
+    self.phone_numbers.each do |pn|
+      if pn.phone_type == the_type
+        ret_obj = pn
+      end
+    end
+
+    if obj_phone.nil? && self.id.nil?
       ret_obj = phone_numbers.build
       ret_obj.phone_type = the_type
     elsif obj_phone.nil?
       ret_obj = PhoneNumber.create(user_id: id, phone_type: the_type)
       phone_numbers.reload # refreshes cache
-    else
-      ret_obj = obj_phone
+#    else
+#      ret_obj = obj_phone
     end
     ret_obj
   end

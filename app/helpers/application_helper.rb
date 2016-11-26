@@ -13,7 +13,9 @@ module ApplicationHelper
       ##== User's home page
       #       Note home page is only available to BC residents, or users
       #       who have entered a province and have invoices &or RTPs
+      # puts "can see home? #{current_user.can_see_my_home?}Current User: #{current_user.inspect}"
       if current_user.can_see_my_home?
+        # puts "#{__LINE__} HERE!"
         the_title = '%02d%s' % [iseq, 'My Home']
          the_hash[the_title] = '/'
         iseq += 1

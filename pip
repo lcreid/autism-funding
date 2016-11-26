@@ -1,0 +1,97 @@
+Run options: --fail-fast --seed 3517
+
+# Running:
+
+159: (MyProfileTest) My Class: MyProfileTest Assertions: 9
+ MyProfileTest - Class assert: false assertions: false
+ MyProfileTestHelper - Module assert: false assertions: false
+ CapybaraTest - Class assert: false assertions: false
+ Capybara::Rails::TestCase - Class assert: false assertions: false
+ Minitest::Metadata - Module assert: false assertions: false
+ Capybara::Assertions - Module assert: false assertions: false
+ Capybara::DSL - Module assert: false assertions: false
+ ActiveSupport::TestCase - Class assert: false assertions: false
+ Minitest::Rails::ConstantLookup - Module assert: false assertions: false
+ Minitest::Spec::DSL::InstanceMethods - Module assert: false assertions: false
+ #<Module:0x0000000438b478> - Module assert: false assertions: false
+ ActiveRecord::TestFixtures - Module assert: false assertions: false
+ ActiveSupport::Testing::FileFixtures - Module assert: false assertions: false
+ ActiveSupport::Testing::TimeHelpers - Module assert: false assertions: false
+ ActiveSupport::Testing::Deprecation - Module assert: false assertions: false
+ ActiveSupport::Testing::Assertions - Module assert: false assertions: false
+ ActiveSupport::Callbacks - Module assert: false assertions: false
+ ActiveSupport::Testing::SetupAndTeardown - Module assert: false assertions: false
+ ActiveSupport::Testing::TaggedLogging - Module assert: false assertions: false
+ Minitest::Test - Class assert: false assertions: false
+ Minitest::Guard - Module assert: false assertions: false
+ Minitest::Test::LifecycleHooks - Module assert: false assertions: false
+ Minitest::Assertions - Module assert: true assertions: false
+ Minitest::Runnable - Class assert: false assertions: true
+ ActiveSupport::ToJsonWithActiveSupportEncoder - Module assert: false assertions: false
+ Object - Class assert: false assertions: false
+ Minitest::Rails::Expectations - Module assert: false assertions: false
+ Minitest::Expectations - Module assert: false assertions: false
+ PP::ObjectMixin - Module assert: false assertions: false
+ ActiveSupport::Dependencies::Loadable - Module assert: false assertions: false
+ JSON::Ext::Generator::GeneratorMethods::Object - Module assert: false assertions: false
+ ActiveSupport::Tryable - Module assert: false assertions: false
+ Kernel - Module assert: false assertions: false
+ BasicObject - Class assert: false assertions: false
+161: ---------
+ CapybaraTest - Class assert: false assertions: false
+ Capybara::Rails::TestCase - Class assert: false assertions: false
+ Minitest::Metadata - Module assert: false assertions: false
+ Capybara::Assertions - Module assert: false assertions: false
+ Capybara::DSL - Module assert: false assertions: false
+ ActiveSupport::TestCase - Class assert: false assertions: false
+ Minitest::Rails::ConstantLookup - Module assert: false assertions: false
+ Minitest::Spec::DSL::InstanceMethods - Module assert: false assertions: false
+ #<Module:0x0000000438b478> - Module assert: false assertions: false
+ ActiveRecord::TestFixtures - Module assert: false assertions: false
+ ActiveSupport::Testing::FileFixtures - Module assert: false assertions: false
+ ActiveSupport::Testing::TimeHelpers - Module assert: false assertions: false
+ ActiveSupport::Testing::Deprecation - Module assert: false assertions: false
+ ActiveSupport::Testing::Assertions - Module assert: false assertions: false
+ ActiveSupport::Callbacks - Module assert: false assertions: false
+ ActiveSupport::Testing::SetupAndTeardown - Module assert: false assertions: false
+ ActiveSupport::Testing::TaggedLogging - Module assert: false assertions: false
+ Minitest::Test - Class assert: false assertions: false
+ Minitest::Guard - Module assert: false assertions: false
+ Minitest::Test::LifecycleHooks - Module assert: false assertions: false
+ Minitest::Assertions - Module assert: true assertions: false
+ Minitest::Runnable - Class assert: false assertions: true
+ ActiveSupport::ToJsonWithActiveSupportEncoder - Module assert: false assertions: false
+ Object - Class assert: false assertions: false
+ Minitest::Rails::Expectations - Module assert: false assertions: false
+ Minitest::Expectations - Module assert: false assertions: false
+ PP::ObjectMixin - Module assert: false assertions: false
+ ActiveSupport::Dependencies::Loadable - Module assert: false assertions: false
+ JSON::Ext::Generator::GeneratorMethods::Object - Module assert: false assertions: false
+ ActiveSupport::Tryable - Module assert: false assertions: false
+ Kernel - Module assert: false assertions: false
+ BasicObject - Class assert: false assertions: false
+163: ---------
+13: (MyPage) My Class: MyProfileTestHelper::MyPage  Assertions: 
+13: (MyPage) My Class: MyProfileTestHelper::MyPage  Assertions: 
+Am I here: I'm being rather silly
+168: Address Valid Value: 123 Main St
+170: Address Valid Value: 123 Main St
+171: My Class MyProfileTest
+174: am.source_location:  ["/var/lib/gems/2.3.0/gems/minitest-5.9.0/lib/minitest/assertions.rb", 134]
+177: am.source_location:  ["/var/lib/gems/2.3.0/gems/minitest-5.9.0/lib/minitest.rb", 247]
+20: am.source_location:  ["/var/lib/gems/2.3.0/gems/minitest-5.9.0/lib/minitest/assertions.rb", 134]
+E
+
+Error:
+MyProfileTest#test_01_Check_User_can_be_created_and_saved:
+NoMethodError: undefined method `+' for nil:NilClass
+    test/helpers/my_profile_test_helpers.rb:21:in `assert_check_form'
+    test/integration/my_profile_test.rb:179:in `block in <class:MyProfileTest>'
+
+bin/rails test test/integration/my_profile_test.rb:108
+
+
+
+Finished in 1.456664s, 0.6865 runs/s, 6.8650 assertions/s.
+
+1 runs, 10 assertions, 0 failures, 1 errors, 0 skips
