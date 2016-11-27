@@ -136,9 +136,9 @@ class User < ApplicationRecord
   ##
   # By conention, the first address is the address we use.
   # FIXME: This may be redundant after merging Phil's code.
-  def address
-    addresses[0] if addresses.present?
-  end
+  # def address
+  #   addresses[0] if addresses.present?
+  # end
 
   ##
   # Attach an error message to the symbol :phone_numbers if neither home

@@ -110,11 +110,17 @@ class Cf0925 < ApplicationRecord
       # puts "In copy_parent_to_form home phone: #{user.home_phone.full_number}"
       self.home_phone = user.home_phone.full_number if user.home_phone
       self.work_phone = user.work_phone.full_number if user.work_phone
-      if user.address
-        self.parent_address = user.address.address_line_1
-        self.parent_city = user.address.city
-        self.parent_postal_code = user.address.postal_code
-      end
+      # 20161126 - Phil removed the following:
+      # if user.address
+        # self.parent_address = user.address.address_line_1
+        # self.parent_city = user.address.city
+        # self.parent_postal_code = user.address.postal_code
+      # end
+      # 20161126 - Phil added to use the address attribute of user
+      self.parent_address = user.address
+      self.parent_city = user.city
+      self.parent_postal_code = user.postal_code
+      #--------------------------------------------------------------
     end
   end
 
