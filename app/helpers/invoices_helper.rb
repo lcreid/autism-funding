@@ -40,9 +40,11 @@ module InvoicesHelper
       return options_for_select(['Out of Pocket'], selected: 'Out of Pocket')
     else
       # puts "RTPs: #{rtps.inspect}"
+      # puts "Invoice has RTP: #{invoice.cf0925.inspect}"
       selected = invoice.cf0925.id if invoice.cf0925
+      # puts "First RTP selected: #{selected}"
       selected ||= rtps[0].id if rtps.size == 1
-      # puts "RTP selected: #{selected}"
+      # puts "Second RTP selected: #{selected}"
       # puts "Option list match: #{rtps}"
       options = options_from_collection_for_select(rtps,
                                                    :id,

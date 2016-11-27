@@ -48,9 +48,14 @@ class InvoicesTest < PoltergeistTest
     # assert_select 'Request to Pay', selected: []
 
     # puts "INSIDE AGAIN: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    sleep 10
     select 'Joe 2016 2016-07-01 to 2016-08-30', from: 'Request to Pay'
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
+
+    click_link 'My Home'
+    find('.invoice-list td', text: 'Joe 2016').find(:xpath, '..').click_link 'Edit'
+    assert_select 'Request to Pay', selected: 'Joe 2016 2016-07-01 to 2016-08-30'
   end
 
   test 'invoice with no valid RTPs' do

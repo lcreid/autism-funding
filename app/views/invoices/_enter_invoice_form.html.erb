@@ -29,7 +29,7 @@
             <%= f.date_field :service_end, label: 'Service End', column_width: 6 %>
           </div>
         </div>
-        <%= f.select :cf0925,
+        <%= f.select :cf0925_id,
                       rtp_option_list_for_select(f.object),
                       {
                         prompt: 'Choose a Request to Pay',

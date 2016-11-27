@@ -29,7 +29,6 @@ class InvoicesController < ApplicationController
     logger.debug { "******Service Provider:  #{@invoice.service_provider_name}" }
     @invoice.update(invoice_params)
     @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
-    ## TODO Save the fiscal year of the updated invoice in the funded person's preferences
     #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
     redirect_to root_path, notice: 'Invoice updated.'
   end
@@ -46,6 +45,7 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
     if @invoice.update(invoice_params)
+      puts @invoice.inspect
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
       #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
       redirect_to root_path, notice: 'Invoice saved.'
@@ -78,7 +78,8 @@ class InvoicesController < ApplicationController
   private
 
   def invoice_params
-    params.require(:invoice).permit(:invoice_date,
+    params.require(:invoice).permit(:cf0925_id,
+                                    :invoice_date,
                                     :service_start,
                                     :service_end,
                                     :service_provider_name,
@@ -91,7 +92,8 @@ class InvoicesController < ApplicationController
 
   def convert_search_params_to_create_params
     # { invoice: params }.require(:invoice)
-    params.permit(:service_provider_name,
+    params.permit(:cf0925_id,
+                  :service_provider_name,
                   :service_start,
                   :service_end,
                   :invoice_date,
