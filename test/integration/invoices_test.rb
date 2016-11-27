@@ -44,10 +44,12 @@ class InvoicesTest < PoltergeistTest
     fill_in 'Service End', with: '2016-07-31'
 
     # puts "INSIDE: #{find('#invoice_cf0925').native}"
-    # puts "INSIDE: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    # puts "INSIDE: #{page.evaluate_script("document.getElementById('invoice_cf0925_id').innerHTML")}"
     # assert_select 'Request to Pay', selected: []
 
-    # puts "INSIDE AGAIN: #{page.evaluate_script("document.getElementById('invoice_cf0925').innerHTML")}"
+    # puts "INSIDE AGAIN: #{page.evaluate_script("document.getElementById('invoice_cf0925_id').innerHTML")}"
+    # Force page synchronization
+    page.evaluate_script("document.getElementById('invoice_cf0925_id').innerHTML")
     select 'Joe 2016 2016-07-01 to 2016-08-30', from: 'Request to Pay'
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'

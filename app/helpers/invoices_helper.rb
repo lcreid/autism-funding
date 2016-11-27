@@ -37,7 +37,7 @@ module InvoicesHelper
     rtps = invoice.match
     if rtps.empty?
       # puts 'RTPs are empty'
-      return options_for_select(['Out of Pocket'], selected: 'Out of Pocket')
+      return options_for_select([['Out of Pocket', '']], selected: '')
     else
       # puts "RTPs: #{rtps.inspect}"
       # puts "Invoice has RTP: #{invoice.cf0925.inspect}"
