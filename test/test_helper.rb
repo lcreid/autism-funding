@@ -19,7 +19,7 @@ module TestSessionHelpers
     end
 
     ## If there are no phone numbers, create a home phone numbers
-    if user.phone_numbers.size == 0
+    if user.phone_numbers.empty?
       user.my_home_phone.phone_number = '3335557777'
       user.save
     end
@@ -65,10 +65,8 @@ module TestSessionHelpers
   end
 
   def show_errors(line, obj)
-    unless obj.respond_to? :errors
-      puts "#{line}:  Does not respond to errors"
-    else
-      if obj.errors.messages.size == 0
+    if obj.respond_to? :errors
+      if obj.errors.messages.empty?
         puts "#{line}:  No Errors"
       else
         puts "#{line}:  --Error List:"
@@ -76,11 +74,13 @@ module TestSessionHelpers
           puts "**Error: #{m}"
         end
       end
+    else
+      puts "#{line}:  Does not respond to errors"
     end
   end
 
-  def show_user_status (line = '', user = controller.current_user)
-    puts ""
+  def show_user_status(line = '', user = controller.current_user)
+    puts ''
     puts " -- User status #{line} --"
     puts "                 id: #{user.id}"
     puts "    addresses[0].id: #{user.addresses[0].id}"
@@ -95,7 +95,7 @@ module TestSessionHelpers
     puts "       BC Resident?: #{user.bc_resident?} "
     puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
     puts "   Can See My Home?: #{user.can_see_my_home?}"
-    puts " -----------------"
+    puts ' -----------------'
   end
 end
 
@@ -132,8 +132,9 @@ class PoltergeistTest < CapybaraTest
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
     # That wasn't the issue. Taking this out. But it doesn't seem to make
-    # a different either way in the run time of the test.
-    # Capybara.default_max_wait_time = 5
+    # a difference either way in the run time of the test.
+    # Trying it again...
+    Capybara.default_max_wait_time = 10
     super
   end
 

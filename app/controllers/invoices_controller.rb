@@ -45,7 +45,7 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
     if @invoice.update(invoice_params)
-      puts @invoice.inspect
+      # puts @invoice.inspect
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
       #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
       redirect_to root_path, notice: 'Invoice saved.'
