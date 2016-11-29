@@ -4,7 +4,9 @@ class FundedPerson < ApplicationRecord
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
   belongs_to :user, inverse_of: :funded_people
-#  accepts_nested_attributes_for :user
+  #  accepts_nested_attributes_for :user
+
+  default_scope { order(:name_first) }
 
   has_many :cf0925s, inverse_of: :funded_person
   has_many :invoices

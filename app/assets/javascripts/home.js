@@ -8,15 +8,26 @@ $(document).on('turbolinks:load', function() {
   //
   // console.log('loading js in ' + window.location.pathname + '...');
   $('select.fiscal-year-selector').change(function(event) {
-    // console.log('About to submit...');
+    // console.log('Fiscal year change fired. About to submit...');
     $('form.fiscal-year-selector').submit();
-    // event.preventDefault();
+    event.preventDefault();
   });
 
   function set_childs_panel_state(child_id, value) {
+    // console.log('Setting panel state: ' + child_id + ' to ' + value);
     $.post('/home/set_panel_state', {
       funded_person_id: child_id,
       panel_state: value
+    }, null, "html").done(function(data, textStatus, xhr) {
+      // console.log("set_childs_panel_status(0, 100):", data.slice( 0, 100));
+    }).fail(function(xhr, textStatus, errorThrown) {
+      if (xhr.status !== 0) {
+        console.log("Error. Status: " + textStatus + " error: " + errorThrown);
+        console.log("XHR responseXML: " + xhr.responseXML);
+        console.log("XHR: " + xhr.status);
+      } else {
+        // console.log('User aborted request before response.');
+      }
     });
   }
 
