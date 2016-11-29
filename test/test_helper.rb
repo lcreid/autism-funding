@@ -124,6 +124,25 @@ class PoltergeistTest < CapybaraTest
   # back by the test case.
   self.use_transactional_tests = false
 
+  # def assert_select(locator, options)
+  #   # Rails.logger.debug "assert_select #{locator} #{options}"
+  #   # User.all.each { |u| Rails.logger.debug "In assert_selector: #{u.preferences}" if u.preferences }
+  #   super
+  #   # Rails.logger.debug 'assert done'
+  # end
+  #
+  def cancel_request
+    page.evaluate_script('$("body.pending").deleteClass("pending");')
+  end
+
+  ##
+  # Check to see if the request has completed (see `start_request`)
+  def pending_request?
+    result = page.evaluate_script('$("body.pending").length')
+    # puts "PENDING_REQUEST?: #{result} #{result.class}"
+    result
+  end
+
   def setup
     # User.all.each { |u| Rails.logger.debug "Starting test: #{u.preferences}" if u.preferences }
     # Rails.logger.debug 'Starting test...'
@@ -138,11 +157,25 @@ class PoltergeistTest < CapybaraTest
     super
   end
 
-  def assert_select(locator, options)
-    # Rails.logger.debug "assert_select #{locator} #{options}"
-    # User.all.each { |u| Rails.logger.debug "In assert_selector: #{u.preferences}" if u.preferences }
-    super
-    # Rails.logger.debug 'assert done'
+  ##
+  # Indicate that the test is about to do a request that might take some time,
+  # either through non-trivial Javascript, or especially AJAX calls.
+  def start_request
+    # puts 'Starting Request'
+    # evaluate_script('$("body").prepend("<span class=\"pending\"></span>");')
+    # result = evaluate_script('$("span.pending").length;')
+    # puts "start_request jQuery found: #{result}"
+    # puts "capybara found: #{has_css?('span', wait: 10)}"
+    # page.assert_selector 'span.pending'
+    # puts 'Starting Request'
+    evaluate_script('$("body").addClass("pending");')
+    # result = evaluate_script('$("body.pending").length;')
+    # puts "start_request jQuery found: #{result}"
+    # puts "capybara found: #{has_css?('body.pending', wait: 10)}"
+    expect page.has_css? 'body.pending'
+    # puts method(:has_css?)
+    # puts method(:assert_selector)
+    # page.assert_selector 'body.pending'
   end
 
   def teardown
@@ -152,6 +185,10 @@ class PoltergeistTest < CapybaraTest
     DatabaseCleaner.clean
     # Rails.logger.debug '...database cleaned.'
     # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
+  end
+
+  def wait_for_request
+    expect page.has_no_css? 'body.pending'
   end
 end
 

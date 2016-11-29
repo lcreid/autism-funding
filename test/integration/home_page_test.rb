@@ -29,8 +29,10 @@ class HomePageTest < PoltergeistTest
 
     within "#collapse-#{one_year_child.id}" do
       drop_down = "year_#{one_year_child.id}"
+      start_request
       select '2017', from: drop_down
-      assert_select drop_down, selected: '2017'
+      expect has_select?(drop_down, selected: '2017')
+      # puts "PENDING?: #{pending_request?}"
     end
 
     # I can't seem to find a way to force Capybara to just wait until the
@@ -61,26 +63,39 @@ class HomePageTest < PoltergeistTest
   test 'status panel' do
     fill_in_login(users(:years))
     two_year_child = funded_people(:two_fiscal_years)
+    expect has_no_selector?("#collapse-#{two_year_child.id}.in")
     click_link two_year_child.my_name
-    assert_selector("#collapse-#{two_year_child.id}.in")
+    expect has_selector?("#collapse-#{two_year_child.id}.in")
+    expect has_no_selector?("#collapse-#{two_year_child.id}.in")
 
     within "#collapse-#{two_year_child.id}" do
       # puts body
-      assert_selector '.test-spent-funds', text: /\$0.00/
-      assert_selector '.test-committed-funds', text: /\$3,000.00/
-      assert_selector '.test-remaining-funds', text: /\$3,000.00/
-      assert_selector '.test-spent-out-of-pocket', text: /\$0.00/
-      assert_selector '.test-allowable-funds-for-year', text: /\$6,000.00/
+      expect has_selector?('.test-spent-funds', text: /\$0.00/)
+      expect has_selector?('.test-committed-funds', text: /\$3,000.00/)
+      expect has_selector?('.test-remaining-funds', text: /\$3,000.00/)
+      expect has_selector?('.test-spent-out-of-pocket', text: /\$0.00/)
+      expect has_selector?('.test-allowable-funds-for-year', text: /\$6,000.00/)
     end
 
+    # puts "TRYING jQUERY: #{evaluate_script('$("body")[0].innerHTML;')}"
+    start_request
+    # puts "IN TEST CASE PENDING?: #{pending_request?}"
     select '2015-2016', from: "year_#{two_year_child.id}"
+    expect has_select?("year_#{two_year_child.id}", selected: '2015-2016')
+    wait_for_request
+    expect has_selector?("#collapse-#{two_year_child.id}.in")
+
+    # I think the problem here is that the selector is set by the action, so
+    # the above doesn't cause the page to wait. It's really hard to find
+    # something that I can select that will cause the page to wait.
 
     within "#collapse-#{two_year_child.id}" do
-      assert_selector '.test-spent-funds', text: /\$200.00/
-      assert_selector '.test-committed-funds', text: /\$2,500.00/
-      assert_selector '.test-remaining-funds', text: /\$3,500.00/
-      assert_selector '.test-spent-out-of-pocket', text: /\$0.00/
-      assert_selector '.test-allowable-funds-for-year', text: /\$6,000.00/
+      assert_content 'Joe 2015'
+      expect has_selector?('.test-spent-funds', text: /\$200.00/)
+      expect has_selector?('.test-committed-funds', text: /\$2,500.00/)
+      expect has_selector?('.test-remaining-funds', text: /\$3,500.00/)
+      expect has_selector?('.test-spent-out-of-pocket', text: /\$0.00/)
+      expect has_selector?('.test-allowable-funds-for-year', text: /\$6,000.00/)
     end
   end
 

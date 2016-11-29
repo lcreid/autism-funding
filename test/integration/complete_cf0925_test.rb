@@ -122,11 +122,12 @@ class CompleteCf0925Test < CapybaraTest
     fill_in_login user
     assert_title(Globals.site_name + ' All Children')
 
-    assert_selector '.child .name', count: 2 do |child|
-      assert_equal 'Sixteen Old Two-Kids', child[0].text
-      assert_equal 'Four Old Two-Kids', child[1].text
-    end
+    child = all('.child .name', count: 2)
+    assert_equal 'Four Year Two-Kids', child[0].text
+    assert_equal 'Sixteen Year Two-Kids', child[1].text
+
     within '.child:first-of-type' do
+      # puts "WTF? WTF? #{find('.name').text}" unless find('.name').text == 'Four Year Two-Kids'
       click_link 'New Request to Pay'
     end
 
@@ -141,7 +142,8 @@ class CompleteCf0925Test < CapybaraTest
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
     # assert_selector '#parent_last_name', text: 'Two-Kids'
     # assert_selector '#parent_first_name', text: 'I'
-    assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Sixteen'
+    # puts find('label[for="cf0925_child_first_name"] + p').text
+    assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Four'
   end
 
   test 'Change parent info' do

@@ -1,4 +1,6 @@
 class Address < ApplicationRecord
+  include AddressValidators
+
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :province_code, optional: true
@@ -10,8 +12,7 @@ class Address < ApplicationRecord
   # LCR had to remove the following validation to make nested attributes work.
   # validates :user_id, presence: true
   # validates :province_code_id, presence: true
-  validates :postal_code, format: { with: /\A *[a-zA-Z][0-9][a-zA-Z] *[0-9][a-zA-Z][0-9] *\z/,
-                                    message: ' - must be of the format ANA NAN' }, allow_blank: true
+
 
   validates :address_line_1,
             :city,
