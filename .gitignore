@@ -51,3 +51,6 @@ pdf
 
 # Ignore ERD diagrams
 erd.pdf
+
+# Step Phil from checking in temporary files.
+pip
