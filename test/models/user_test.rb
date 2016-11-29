@@ -178,65 +178,65 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 2, the_user.phone_numbers.size, "04.c: Instance [#{the_user.my_name}] should have 2 phone_numbers"
   end ## -- end test --
 
-  #-----------------------------------------------------------------------------
-  #  Test 05
-  # => a) tests that new user has no related addresses
-  # => b) tests that new user get_address creates an address
-  # => c) tests that users(:has_no_address) has no related addresses
-  # => d) tests that users(:has_no_address).my_address returns an instance of class Address
-  # => e) tests that users(:has_no_address).my_address returns an instance with a correct user_id
-  # => f) tests that users(:has_no_address).my_address returns an Address instance that is a blank address
-  # => g) tests that users(:has_no_address) now has one related address
-  # => h) tests that users(:has_one_address) has 1 related address
-  # => i) tests that users(:has_one_address).my_address returns an instance of class Address
-  # => j) tests that users(:has_no_address).my_address returns an instance with a correct user_id
-  # => k) tests that users(:has_one_address).my_address returns expected Address data
-  testName = '05 Check Relationship with Address and my_address'
-  # puts "-- Test: #{testName} -----------------------------------"
-  test testName do
-    # 05.a .....................................................................
-    the_user = User.new
-    assert_equal 0, the_user.addresses.size, "05.a: Instance [#{the_user.my_name}] should have no addresses"
-
-    # 05.b .....................................................................
-    the_user.my_address
-    assert_equal 1, the_user.addresses.size, "05.b: Instance [#{the_user.my_name}] should have 1 address"
-
-
-
-    # 05.c .....................................................................
-    the_user = users(:has_no_address)
-    assert_equal 0, the_user.addresses.size, "05.c: Instance [#{the_user.my_name}] should have 0 addresses"
-
-    # 05.d .....................................................................
-    the_address = the_user.my_address
-    assert_instance_of Address, the_address, "05.d:  [#{the_user.my_name}.my_address] should return instance of class Address"
-
-    # 05.e .....................................................................
-    assert_equal the_user.id, the_address.user_id, "05.e: Instance [#{the_user.my_name}],my_address has an incorrect user_id"
-
-    # 05.f .....................................................................
-    expected = ''
-    assert_equal expected, the_address.get_full_address(blank_address: ''), "05.f: Instance [#{the_user.my_name}],my_address is not a blank address"
-
-    # 05.g .....................................................................
-    assert_equal 1, the_user.addresses.size, "05.g: Instance [#{the_user.my_name}] should now have 1 addresses"
-
-    # 05.h .....................................................................
-    the_user = users(:has_one_address)
-    assert_equal 1, the_user.addresses.size, "05.h: Instance [#{the_user.my_name}] should have 1 address"
-
-    # 05.i .....................................................................
-    the_address = the_user.my_address
-    assert_instance_of Address, the_address, "05.i:  [#{the_user.my_name}.my_address] should return instance of class Address"
-
-    # 05.j .....................................................................
-    assert_equal the_user.id, the_address.user_id, "05.j: Instance [#{the_user.my_name}.my_address has an incorrect user_id"
-
-    # 05.k .....................................................................
-    expected = Address.find_by(user_id: the_user.id).get_full_address
-    assert_equal expected, the_address.get_full_address, "05.k: Instance [#{the_user.my_name}].my_address is not correct"
-  end ## -- end test --
+  # #-----------------------------------------------------------------------------
+  # #  Test 05
+  # # => a) tests that new user has no related addresses
+  # # => b) tests that new user get_address creates an address
+  # # => c) tests that users(:has_no_address) has no related addresses
+  # # => d) tests that users(:has_no_address).my_address returns an instance of class Address
+  # # => e) tests that users(:has_no_address).my_address returns an instance with a correct user_id
+  # # => f) tests that users(:has_no_address).my_address returns an Address instance that is a blank address
+  # # => g) tests that users(:has_no_address) now has one related address
+  # # => h) tests that users(:has_one_address) has 1 related address
+  # # => i) tests that users(:has_one_address).my_address returns an instance of class Address
+  # # => j) tests that users(:has_no_address).my_address returns an instance with a correct user_id
+  # # => k) tests that users(:has_one_address).my_address returns expected Address data
+  # testName = '05 Check Relationship with Address and my_address'
+  # # puts "-- Test: #{testName} -----------------------------------"
+  # test testName do
+  #   # 05.a .....................................................................
+  #   the_user = User.new
+  #   assert_equal 0, the_user.addresses.size, "05.a: Instance [#{the_user.my_name}] should have no addresses"
+  #
+  #   # 05.b .....................................................................
+  #   the_user.my_address
+  #   assert_equal 1, the_user.addresses.size, "05.b: Instance [#{the_user.my_name}] should have 1 address"
+  #
+  #
+  #
+  #   # 05.c .....................................................................
+  #   the_user = users(:has_no_address)
+  #   assert_equal 0, the_user.addresses.size, "05.c: Instance [#{the_user.my_name}] should have 0 addresses"
+  #
+  #   # 05.d .....................................................................
+  #   the_address = the_user.my_address
+  #   assert_instance_of Address, the_address, "05.d:  [#{the_user.my_name}.my_address] should return instance of class Address"
+  #
+  #   # 05.e .....................................................................
+  #   assert_equal the_user.id, the_address.user_id, "05.e: Instance [#{the_user.my_name}],my_address has an incorrect user_id"
+  #
+  #   # 05.f .....................................................................
+  #   expected = ''
+  #   assert_equal expected, the_address.get_full_address(blank_address: ''), "05.f: Instance [#{the_user.my_name}],my_address is not a blank address"
+  #
+  #   # 05.g .....................................................................
+  #   assert_equal 1, the_user.addresses.size, "05.g: Instance [#{the_user.my_name}] should now have 1 addresses"
+  #
+  #   # 05.h .....................................................................
+  #   the_user = users(:has_one_address)
+  #   assert_equal 1, the_user.addresses.size, "05.h: Instance [#{the_user.my_name}] should have 1 address"
+  #
+  #   # 05.i .....................................................................
+  #   the_address = the_user.my_address
+  #   assert_instance_of Address, the_address, "05.i:  [#{the_user.my_name}.my_address] should return instance of class Address"
+  #
+  #   # 05.j .....................................................................
+  #   assert_equal the_user.id, the_address.user_id, "05.j: Instance [#{the_user.my_name}.my_address has an incorrect user_id"
+  #
+  #   # 05.k .....................................................................
+  #   expected = Address.find_by(user_id: the_user.id).get_full_address
+  #   assert_equal expected, the_address.get_full_address, "05.k: Instance [#{the_user.my_name}].my_address is not correct"
+  # end ## -- end test --
 
   #-----------------------------------------------------------------------------
   #  Test 06
@@ -377,10 +377,11 @@ class UserTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 08
   # => a) tests that missing_key_info? is true when new instance of User is created
-  # => b) tests that missing_key_info? is false when there is an address with a province code and 1 funded person
-  # => c) tests that missing_key_info? is true when there is no address and 1 funded person
-  # => d) tests that missing_key_info? is true when there is address, but no province code and 1 funded person
-  # => e) tests that missing_key_info? is true when there is address with a province code and no funded people
+  # => b) tests that missing_key_info? is false when there is an address with a province code and 1 valid funded person
+  # => c) tests that missing_key_info? is true when there is an address with a province code and 1 INVALID funded person
+  # => d) tests that missing_key_info? is true when there is no address and 1 funded person
+  # => e) tests that missing_key_info? is true when there is address, but no province code and 1 funded person
+  # => f) tests that missing_key_info? is true when there is address with a province code and no funded people
   testName = '08 Test missing_key_info?'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
@@ -389,30 +390,39 @@ class UserTest < ActiveSupport::TestCase
     assert the_user.missing_key_info?, "08.a: missing_key_info? should be true for new instance of User"
 
     # 08.b .....................................................................
-    # Ensure all basic info there
+    # Ensure all basic info there and the funded person is valid
     the_user = User.new
-    the_user.my_address.province_code = province_codes('mb')
-    the_user.funded_people.build({name_first: 'Fred'})
+    the_user.province_code_id = province_codes('mb').id
+    a = ProvinceCode.find the_user.province_code_id
+    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-04'})
     assert_not the_user.missing_key_info?, "08.b: missing_key_info? should be false when there is a funded_person and address with province"
 
     # 08.c .....................................................................
+    # Ensure all basic info there and the funded person is INVALID (no birthdate)
+    the_user = User.new
+    the_user.province_code_id = province_codes('mb').id
+    a = ProvinceCode.find the_user.province_code_id
+    the_user.funded_people.build({name_first: 'Fred'})
+    assert the_user.missing_key_info?, "08.c: missing_key_info? should be true when there is 1 invalid funded_person and address with province"
+
+    # 08.d .....................................................................
     # Funded Person Defined, no address
     the_user = User.new
     the_user.funded_people.build
-    assert the_user.missing_key_info?, "08.c: missing_key_info? should be true when there is a funded_person and no address"
-
-    # 08.d .....................................................................
-    # Funded Person Defined, Address added, but no province
-    the_user = User.new
-    the_user.my_address
-    the_user.funded_people.build
-    assert the_user.missing_key_info?, "08.d: missing_key_info? should be true when there is a funded_person and an address with no province code"
+    assert the_user.missing_key_info?, "08.d: missing_key_info? should be true when there is a funded_person and no address"
 
     # 08.e .....................................................................
     # Funded Person Defined, Address added, but no province
     the_user = User.new
-    the_user.my_address.province_code = province_codes('mb')
-    assert the_user.missing_key_info?, "08.e: missing_key_info? should be true when there is no funded_person and an address with a province code"
+    the_user.address = ''
+    the_user.funded_people.build
+    assert the_user.missing_key_info?, "08.e: missing_key_info? should be true when there is a funded_person and an address with no province code"
+
+    # 08.f .....................................................................
+    # Funded Person Defined, Address added, but no province
+    the_user = User.new
+    the_user.province_code_id = province_codes('mb').id
+    assert the_user.missing_key_info?, "08.f: missing_key_info? should be true when there is no funded_person and an address with a province code"
   end ## -- end test08 --
 
   #-----------------------------------------------------------------------------
@@ -430,17 +440,17 @@ class UserTest < ActiveSupport::TestCase
 
     # 09.b .....................................................................
     the_user = User.new
-    the_user.my_address
+    the_user.address = ''
     assert_not the_user.bc_resident?, '09.b: bc_resident? should be false when new instance of User is created, and address is added'
 
     # 09.c .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('ont')
+    the_user.province_code_id = province_codes('ont').id
     assert_not the_user.bc_resident?, '09.c: bc_resident? should be false when new instance of User is created, and address is added, and province code set to ON'
 
     # 09.d .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     assert the_user.bc_resident?, '09.d: bc_resident? should be true when new instance of User is created, and address is added, and province code set to BC'
   end ## -- end test09 --
 
@@ -454,18 +464,18 @@ class UserTest < ActiveSupport::TestCase
   test testName do
     # 10.a .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('ont')
+    the_user.province_code_id = province_codes('ont').id
     the_user.funded_people.build
     assert_not the_user.can_create_new_rtp?, '10.a: can_create_new_rtp? should be false when User has a province of ON and have one funded child'
 
     # 10.b .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     assert_not the_user.can_create_new_rtp?, '10.b: can_create_new_rtp? should be false when User has a province of BC and have No funded child'
 
     # 10.c .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     the_user.funded_people.build
     assert the_user.can_create_new_rtp?, '10.c: can_create_new_rtp? should be true when User has a province of BC and have one funded child'
 
@@ -489,38 +499,38 @@ class UserTest < ActiveSupport::TestCase
 
     # 11.b .....................................................................
     the_user = User.new
-    the_user.my_address
+    the_user.address = ''
     the_user.funded_people.build
     the_user.funded_people[0].invoices.build
     assert_not the_user.can_see_my_home?, '11.b: can_see_my_home? should be false when be User has an address defined, but no province code, and 1 funded child with 1 invoice'
 
     # 11.c .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     assert_not the_user.can_see_my_home?, '11.c: can_see_my_home? should be false when User has an address defined with a province code of BC, but no funded child'
 
     # 11.d .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     assert the_user.can_see_my_home?, '11.d: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and no invoices'
 
     # 11.e .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('bc')
+    the_user.province_code_id = province_codes('bc').id
     the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     the_user.funded_people[0].invoices.build
     assert the_user.can_see_my_home?, '11.e: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and 1 invoice'
 
     # 11.f .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('ont')
+    the_user.province_code_id = province_codes('ont').id
     the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     assert_not the_user.can_see_my_home?, '11.f: can_see_my_home? should be false when User is has an address defined with a province code of ON, with 1 funded child and 0 invoices'
 
     # 11.g .....................................................................
     the_user = User.new
-    the_user.my_address.province_code = province_codes('ont')
+    the_user.province_code_id = province_codes('ont').id
     the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
     the_user.funded_people[0].invoices.build
     assert the_user.can_see_my_home?, '11.g: can_see_my_home? should be true when User is has an address defined with a province code of ON, with 1 funded child and 1 invoices'
@@ -581,7 +591,7 @@ class UserTest < ActiveSupport::TestCase
 
     assert retrieved_user = User.find_by(email: email)
     assert_equal user_hash[:name_last], retrieved_user.name_last
-    assert_equal user_hash[:city], retrieved_user.my_address.city
+    assert_equal user_hash[:city], retrieved_user.city
     # assert_equal user_hash[:addresses_attributes][:a][:city], retrieved_user.my_address.city
     # user_hash.each do |k, _v|
     #   fixed_key = k.to_s.sub(/_attributes\Z/, '').to_sym

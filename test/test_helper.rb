@@ -13,8 +13,8 @@ module TestSessionHelpers
   def log_in(user =
              User.create!(email: 'me1@weenhanceit.com', password: 'password'))
     ## If the user's province has not been set - default it to BC
-    if user.my_address.get_province_code.empty?
-      user.my_address.province_code = province_codes('bc')
+    if user.province_code_id.nil?
+      user.province_code_id = province_codes('bc').id
       user.save
     end
 
@@ -89,8 +89,8 @@ module TestSessionHelpers
     puts "       Last Updated: #{user.updated_at}"
     puts "          User Name: #{user.my_name}"
     puts "         User email: #{user.email}"
-    puts "            Address: #{user.my_address.get_address}"
-    puts "                     City: #{user.my_address.city}  Prov: #{user.my_address.get_province_code}   #{user.my_address.get_postal_code}"
+    puts "            Address: #{user.address}"
+    puts "                     City: #{user.city}  Prov: #{ ProvinceCode.find(user.province_code_id).province_code}   #{user.postal_code}"
     puts "  Missing Key Info?: #{user.missing_key_info?}"
     puts "       BC Resident?: #{user.bc_resident?} "
     puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
