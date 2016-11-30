@@ -28,8 +28,8 @@ class FiscalYearFilterTest < PoltergeistTest
 
     start_request
     Rails.logger.debug { 'Selecting 2015-2016...' }
-    wait_for_request
     select '2015-2016', from: year_selector
+    wait_for_request
 
     expect has_select?('#' + year_selector, selected: '2015-2016')
 

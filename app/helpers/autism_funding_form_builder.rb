@@ -25,6 +25,20 @@ class AutismFundingFormBuilder < WeitFormBuilder
   end
 
   ##
+  # Collection select with our st
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  def collection_select(method,
+                        collection,
+                        value_method,
+                        text_method,
+                        options = {},
+                        html_options = {})
+    process_options(method, options)
+    process_width(options) { super }
+  end
+
+  ##
   # Format a currency field.
   def currency_field(method, options = {})
     options = process_options(method, options)
@@ -49,6 +63,15 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # helper, but rather a Bootstrap Forms helper.
   # pmc: 20161110 - added default empty hash for options
   def form_group(method, options={}, &block)
+    process_width(options) { super }
+  end
+
+  ##
+  # Format a number field.
+  # If column_width: n or :col_width: n is given as an option, wrap in a
+  # Bootstrap grid column.
+  def number_field(method, options = {})
+    options = process_options(method, options)
     process_width(options) { super }
   end
 
@@ -84,6 +107,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
   def select(method, choices = nil, options = {}, html_options = {}, &block)
+    process_options(method, options)
     process_width(options) { super }
   end
 

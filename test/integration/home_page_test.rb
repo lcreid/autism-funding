@@ -27,17 +27,18 @@ class HomePageTest < PoltergeistTest
     click_link one_year_child.my_name
     assert_selector("#collapse-#{one_year_child.id}.in")
 
+    start_request
     within "#collapse-#{one_year_child.id}" do
       drop_down = "year_#{one_year_child.id}"
-      start_request
       select '2017', from: drop_down
       expect has_select?(drop_down, selected: '2017')
       # puts "PENDING?: #{pending_request?}"
     end
+    wait_for_request
 
     # I can't seem to find a way to force Capybara to just wait until the
     # reply from the year select is done.
-    sleep 1
+    # sleep 1
 
     two_year_child = funded_people(:two_fiscal_years)
     click_link two_year_child.my_name

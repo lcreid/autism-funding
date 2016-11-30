@@ -151,14 +151,18 @@ class PoltergeistTest < CapybaraTest
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
     # That wasn't the issue. Taking this out. But it doesn't seem to make
-    # a different either way in the run time of the test.
-    # Capybara.default_max_wait_time = 5
+    # a difference either way in the run time of the test.
+    # Trying it again...
+    Capybara.default_max_wait_time = 5
     super
   end
 
   ##
   # Indicate that the test is about to do a request that might take some time,
   # either through non-trivial Javascript, or especially AJAX calls.
+  # This really should take a block and wrap the block, but because it
+  # may depend on Javascript to remove the .pending class, or a single request
+  # can remove the .pending class, it won't work.
   def start_request
     # puts 'Starting Request'
     # evaluate_script('$("body").prepend("<span class=\"pending\"></span>");')
@@ -171,7 +175,7 @@ class PoltergeistTest < CapybaraTest
     # result = evaluate_script('$("body.pending").length;')
     # puts "start_request jQuery found: #{result}"
     # puts "capybara found: #{has_css?('body.pending', wait: 10)}"
-    expect page.has_css? 'body.pending'
+    assert_selector 'body.pending'
     # puts method(:has_css?)
     # puts method(:assert_selector)
     # page.assert_selector 'body.pending'
@@ -187,7 +191,7 @@ class PoltergeistTest < CapybaraTest
   end
 
   def wait_for_request
-    expect page.has_no_css? 'body.pending'
+    assert_no_selector 'body.pending'
   end
 end
 
