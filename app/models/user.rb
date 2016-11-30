@@ -44,6 +44,13 @@ class User < ApplicationRecord
   #           unless: ->(x) { x.my_work_phone.present? }
   validate :at_least_one_phone_number, on: :printable
 
+  validates :address,
+            :city,
+            :postal_code,
+            presence: true,
+            on: :printable
+  # TODO: Validate postal code?
+
 #-- Public Methods -------------------------------------------------------------
 # Returns true if the address is in the province of British Columbia
 def bc_resident?

@@ -39,12 +39,15 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
           },
           'addresses_attributes' => {
             '0' => {
-              'id' => @funded_person.user.my_address.id,
+              'id' => @funded_person.user.send(:address_record).id,
               'address_line_1' => 'parent_address',
               'city' => 'parent_city',
               'postal_code' => 'A0A 0A0'
             }
-          }
+          },
+          'address' => 'parent_address',
+          'city' => 'parent_city',
+          'postal_code' => 'A0A 0A0'
         }
       },
       agency_name: 'agency_name',
@@ -115,12 +118,15 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
               },
               'addresses_attributes' => {
                 '0' => {
-                  'id' => @funded_person.user.my_address.id,
+                  'id' => @funded_person.user.send(:address_record).id,
                   'address_line_1' => 'parent_address',
                   'city' => 'parent_city',
                   'postal_code' => 'A0A 0A0'
                 }
-              }
+              },
+              'address' => 'parent_address',
+              'city' => 'parent_city',
+              'postal_code' => 'A0A 0A0'
             }
           },
           child_in_care_of_ministry: false,
@@ -307,6 +313,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['address_line_1'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['city'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['postal_code'] = ''
+    bad_address_params['funded_person_attributes']['user_attributes']['address'] = ''
+    bad_address_params['funded_person_attributes']['user_attributes']['city'] = ''
+    bad_address_params['funded_person_attributes']['user_attributes']['postal_code'] = ''
 
     # pp bad_address_params
     assert_difference('Cf0925.count') do
@@ -317,11 +326,11 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to home_index_path
     follow_redirect!
     get edit_cf0925_path(@funded_person.cf0925s.last)
-    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_address_line_1 ~ span.help-block',
+    assert_select '#cf0925_funded_person_attributes_user_attributes_address ~ span.help-block',
                   "can't be blank"
-    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_city ~ span.help-block',
+    assert_select '#cf0925_funded_person_attributes_user_attributes_city ~ span.help-block',
                   "can't be blank"
-    assert_select '#cf0925_funded_person_attributes_user_attributes_addresses_attributes_0_postal_code ~ span.help-block',
+    assert_select '#cf0925_funded_person_attributes_user_attributes_postal_code ~ span.help-block',
                   "can't be blank"
     # puts body
     # assert_select '.alert', "Address line 1 can't be blank"
