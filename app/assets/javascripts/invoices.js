@@ -70,10 +70,18 @@ $(document).on('turbolinks:load', function() {
         // this is where I change the HTML
         $('.rtp-select option:gt(0)').remove();
         $(msg).appendTo('.rtp-select');
-      }).fail(function(jqXHR, textStatus) {
-        // FIXME: I get three requests failing in the test suite, but I can't
-        // see why, and it doesn't seem to affect anything.
-        console.log("Request failed, jqXHR: " + JSON.stringify(jqXHR));
+      }).fail(function(xhr, textStatus, errorThrown) {
+        if (xhr.status !== 0) {
+          console.log("Error. Status: " + textStatus + " error: " + errorThrown);
+          console.log("XHR responseXML: " + xhr.responseXML);
+          console.log("XHR: " + xhr.status);
+        } else {
+          // This just means that the user aborted the request, e.g. got tired
+          // of waiting and clicked another link before the response came back.
+          // console.log('User aborted request before response.');
+        }
+      }).always(function() {
+        $('body.pending').removeClass('pending');
       });
     });
   });
