@@ -26,6 +26,8 @@ $(document).on('turbolinks:load', function() {
         console.log("XHR responseXML: " + xhr.responseXML);
         console.log("XHR: " + xhr.status);
       } else {
+        // This just means that the user aborted the request, e.g. got tired
+        // of waiting and clicked another link before the response came back.
         // console.log('User aborted request before response.');
       }
     });

@@ -64,3 +64,10 @@ has_unsupported_prov:
   city: Sadville
   province_code: sk
   postal_code: S0S 0S1
+
+invoice_matcher:
+  address_line_1: 1 Match St
+  city: Matchville
+  province_code: bc
+  postal_code: V0V 0V0
+  user: invoice_matcher
