@@ -128,13 +128,16 @@ class Cf0925sController < ApplicationController
         :name_first,
         :name_middle,
         :name_last,
-        phone_numbers_attributes: phone_attributes,
-        addresses_attributes: [
-          :id,
-          :address_line_1,
-          :city,
-          :postal_code
-        ]
+        :address,
+        :city,
+        :postal_code,
+        phone_numbers_attributes: phone_attributes
+        # addresses_attributes: [
+        #   :id,
+        #   :address_line_1,
+        #   :city,
+        #   :postal_code
+        # ]
       #     ]
       #   ]
       )

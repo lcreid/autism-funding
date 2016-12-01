@@ -19,11 +19,6 @@ module ApplicationHelper
         the_title = '%02d%s' % [iseq, 'My Home']
          the_hash[the_title] = '/'
         iseq += 1
-# =>    the_hash[the_title] = if current_user.my_address.get_province_code == 'BC'
-#                              '/'
-#                            else
-#                              static_non_supported_path
-#                            end
       end
       ##== User's profile page
       the_title = '%02d%s' % [iseq, 'My Profile']

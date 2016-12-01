@@ -44,6 +44,76 @@ class User < ApplicationRecord
   #           unless: ->(x) { x.my_work_phone.present? }
   validate :at_least_one_phone_number, on: :printable
 
+  validates :address,
+            :city,
+            :postal_code,
+            presence: true,
+            on: :printable
+  # TODO: Validate postal code?
+
+#-- Public Methods -------------------------------------------------------------
+# Returns true if the address is in the province of British Columbia
+def bc_resident?
+  address_record.get_province_code == 'BC'
+end
+
+# Returns true if the user is able to navigate to the home page
+def can_see_my_home?
+  ret = ! self.missing_key_info?
+  cnt_items = 0
+  # Check all funded people are valid and get count of invoices/forms
+# puts "#{__LINE__}: state of ret #{ret}"
+  if ret
+    all_valid = true
+    self.funded_people.each do |fp|
+       cnt_items += fp.invoices.size
+       cnt_items += fp.cf0925s.size
+       unless fp.valid? || fp.is_blank?
+         puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
+         all_valid = false
+       end
+     end
+     ret = all_valid
+  end
+# puts "#{__LINE__}: state of ret #{ret}"
+  if ( address_record.get_province_code ) != 'BC' && ( cnt_items < 1 )
+     ret = false
+  end
+# puts "#{__LINE__}: state of ret #{ret}"
+  return ret
+end
+
+
+
+# Returns true if the user has not defined enough information to get access to
+# My Home page (and the functionality of the application)
+# User must have entered at least one non-blank funded_person and a province code
+def missing_key_info?
+  # Need to check if there are at least 1 non-blank, valid funded_people
+  ret = true
+  funded_people.each do |fp|
+    unless fp.is_blank? || (! fp.valid?)
+      ret = false
+      break
+    end
+  end
+  ret = ret || province_code_id.nil?
+  ret = ret || address_record.get_province_code.empty?
+  return ret
+end
+
+# Returns true if the user has all required information to print out a RTP form
+def printable?
+  user_printable = valid?(:printable)
+  # puts "user.printable? #{errors.full_messages}" unless user_printable
+  # puts "I have #{addresses.size} addresses"
+  address_printable = address_record.printable?
+  # TODO: Validate phone numbers.
+  user_printable && address_printable
+end
+
+
+
   # Get Address for User
   def address
     address_record.address_line_1
@@ -153,9 +223,6 @@ class User < ApplicationRecord
     end
   end
 
-  def bc_resident?
-    my_address.get_province_code == 'BC'
-  end
 
   ##
   # Return true if the user has once acknowledged the notification
@@ -168,30 +235,6 @@ class User < ApplicationRecord
     bc_resident? && !funded_people.empty?
   end
 
-  def can_see_my_home?
-    ret = ! self.missing_key_info?
-    cnt_items = 0
-    # Check all funded people are valid and get count of invoices/forms
-# puts "#{__LINE__}: state of ret #{ret}"
-    if ret
-      all_valid = true
-      self.funded_people.each do |fp|
-         cnt_items += fp.invoices.size
-         cnt_items += fp.cf0925s.size
-         unless fp.valid? || fp.is_blank?
-           puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
-           all_valid = false
-         end
-       end
-       ret = all_valid
-    end
-# puts "#{__LINE__}: state of ret #{ret}"
-    if ( self.my_address.get_province_code ) != 'BC' && ( cnt_items < 1 )
-       ret = false
-    end
-# puts "#{__LINE__}: state of ret #{ret}"
-    return ret
-  end
 
   def home_phone
     phone 'Home'
@@ -199,51 +242,6 @@ class User < ApplicationRecord
 
   def home_phone?
     !home_phone.nil? && home_phone.phone_number.present?
-  end
-
-  def missing_key_info?
-    # Need to check if there are at least 1 non-blank funded_people
-    ret = true
-    self.funded_people.each do |fp|
-      unless fp.is_blank?
-        ret = false
-        break
-      end
-    end
-    # case self.funded_people.size
-    # when 0
-    #   ret = true
-    # when 1
-    #   ret = self.funded_people[0].id.nil?
-    # else
-    #   ret = false
-    # end
-
-    ret = ret || self.my_address.nil?
-    ret = ret || self.my_address.get_province_code.empty?
-    return ret
-  end
-
-  def my_address
-    ##########################
-    # if id.nil?
-    #  ret_obj = nil
-    # elsif addresses.empty?
-    #  Address.create(user_id: id)
-    #  addresses.reload # refreshes cache
-    #  ret_obj = addresses[0]
-    # else
-    #  ret_obj = addresses[0]
-    # end
-    # ret_obj
-    #######################################
-    if id.nil? && addresses.empty?
-      addresses.build
-    elsif addresses.empty?
-      Address.create(user_id: id)
-      addresses.reload
-    end
-    addresses[0]
   end
 
   def my_home_phone
@@ -281,16 +279,6 @@ class User < ApplicationRecord
     value
   end
 
-  def printable?
-    user_printable = valid?(:printable)
-    # puts "user.printable? #{errors.full_messages}" unless user_printable
-    # puts "I have #{addresses.size} addresses"
-    # pp my_address
-    address_printable = my_address.printable?
-    # puts("my_address.printable? #{my_address.errors.full_messages}") unless
-    # TODO: Validate phone numbers.
-    user_printable && address_printable
-  end
 
   def set_bc_warning_acknowledgement(state)
     set_preference(bc_warning_acknowledgement: state)
@@ -307,11 +295,6 @@ class User < ApplicationRecord
     self.preferences = json(preferences).merge(hash).to_json
     # logger.debug { "Set preference preferences: #{preferences}" }
     save
-  end
-
-  def supported?
-    my_address.province_code &&
-      !(my_address.province_code.not_supported == 'Y')
   end
 
   def work_phone
