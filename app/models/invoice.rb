@@ -95,7 +95,7 @@ class Invoice < ApplicationRecord
       else
         # puts 'Found no supplier, agency, or service provider.'
         []
-      end
+      end.sort
     rescue ArgumentError # => e
       # FIXME: when there's one date, the code for the ranges throwns an
       # exception. Not really broken, but it's messy.

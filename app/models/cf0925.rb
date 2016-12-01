@@ -95,6 +95,11 @@ class Cf0925 < ApplicationRecord
     end
   end
 
+  def <=>(other)
+    service_period.begin <=> other.service_period.begin ||
+      service_period.end <=> other.service_period.end
+  end
+
   def client_pdf_file_name
     child_last_name + '-' +
       child_first_name + '-' +
@@ -112,9 +117,9 @@ class Cf0925 < ApplicationRecord
       self.work_phone = user.work_phone.full_number if user.work_phone
       # 20161126 - Phil removed the following:
       # if user.address
-        # self.parent_address = user.address.address_line_1
-        # self.parent_city = user.address.city
-        # self.parent_postal_code = user.address.postal_code
+      # self.parent_address = user.address.address_line_1
+      # self.parent_city = user.address.city
+      # self.parent_postal_code = user.address.postal_code
       # end
       # 20161126 - Phil added to use the address attribute of user
       self.parent_address = user.address

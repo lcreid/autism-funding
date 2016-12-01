@@ -1,6 +1,8 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'minitest/rails/capybara'
+require 'capybara/poltergeist'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -41,6 +43,7 @@ module TestSessionHelpers
                     User.create!(email: 'me@weenhanceit.com',
                                  password: 'password'))
     visit(new_user_session_path)
+    expect has_field?('Email')
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'password'
     click_button 'Log in'
@@ -123,6 +126,7 @@ class PoltergeistTest < CapybaraTest
   # You need the following so the database cleaner's work won't get rolled
   # back by the test case.
   self.use_transactional_tests = false
+  Capybara.javascript_driver = :poltergeist
 
   # def assert_select(locator, options)
   #   # Rails.logger.debug "assert_select #{locator} #{options}"
@@ -147,7 +151,6 @@ class PoltergeistTest < CapybaraTest
     # User.all.each { |u| Rails.logger.debug "Starting test: #{u.preferences}" if u.preferences }
     # Rails.logger.debug 'Starting test...'
     DatabaseCleaner.strategy = :truncation
-    Capybara.javascript_driver = :poltergeist
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
     # That wasn't the issue. Taking this out. But it doesn't seem to make
