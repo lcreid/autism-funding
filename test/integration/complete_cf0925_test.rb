@@ -54,9 +54,8 @@ class CompleteCf0925Test < CapybaraTest
   end
 
   test 'CF_0925 autofill from user and child' do
-    fill_in_login(user = users(:has_no_rtp))
-    # TODO: Make this follow links when we nail down the UI.
-    visit new_funded_person_cf0925_path(user.funded_people.first)
+    fill_in_login(users(:has_no_rtp))
+    click_link 'New Request to Pay'
 
     assert_difference 'Cf0925.count' do
       click_button 'Save'
@@ -80,9 +79,9 @@ class CompleteCf0925Test < CapybaraTest
       service_provider_name: 'Joe B. Consultant',
       service_provider_service_1: 'Behaviour consulting',
       service_provider_service_amount: 2000,
-      service_provider_service_end: '2017-05-31',
+      service_provider_service_end: '2017-11-30',
       service_provider_service_fee: 150,
-      service_provider_service_start: '2016-06-01',
+      service_provider_service_start: '2016-12-01',
       supplier_address: '11111 Main St.',
       supplier_city: 'Vancouver',
       supplier_name: 'ABBA Learning',
@@ -104,16 +103,17 @@ class CompleteCf0925Test < CapybaraTest
     assert(rtp = Cf0925.find_by(agency_name: 'autofill user and child'),
            'Could not find record')
     assert_current_path edit_cf0925_path(rtp)
-    # puts "RTP printable?: #{rtp.printable?}"
-    # pp rtp.as_json
+    assert rtp.printable?, rtp.errors.full_messages
+
     if ENV['TEST_PDF_GENERATION']
       click_link 'Print'
       assert_current_path cf0925_path(rtp, :pdf)
+      # page.driver.close_window(page.driver.current_window_handle)
     else
       puts 'Skipped PDF generation. To include: `export TEST_PDF_GENERATION=1`'
     end
-    click_link_or_button 'Home'
-    assert_current_path home_index_path
+    # click_link_or_button 'Home'
+    # assert_current_path home_index_path
   end
 
   test 'RTP for dual-child parent' do
@@ -122,11 +122,12 @@ class CompleteCf0925Test < CapybaraTest
     fill_in_login user
     assert_title(Globals.site_name + ' All Children')
 
-    assert_selector '.child .name', count: 2 do |child|
-      assert_equal 'Sixteen Old Two-Kids', child[0].text
-      assert_equal 'Four Old Two-Kids', child[1].text
-    end
+    child = all('.child .name', count: 2)
+    assert_equal 'Four Year Two-Kids', child[0].text
+    assert_equal 'Sixteen Year Two-Kids', child[1].text
+
     within '.child:first-of-type' do
+      # puts "WTF? WTF? #{find('.name').text}" unless find('.name').text == 'Four Year Two-Kids'
       click_link 'New Request to Pay'
     end
 
@@ -141,7 +142,8 @@ class CompleteCf0925Test < CapybaraTest
     # assert_field 'cf0925_child_first_name', with: 'Sixteen'
     # assert_selector '#parent_last_name', text: 'Two-Kids'
     # assert_selector '#parent_first_name', text: 'I'
-    assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Sixteen'
+    # puts find('label[for="cf0925_child_first_name"] + p').text
+    assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Four'
   end
 
   test 'Change parent info' do
@@ -200,6 +202,16 @@ class CompleteCf0925Test < CapybaraTest
     end
   end
 
+  test 'part A or part B message' do
+    user = users(:has_no_rtp)
+    fill_in_login user
+
+    click_link 'New Request to Pay'
+    within '#base-errors' do
+      assert_content 'Fill in Part A or Part B or both.'
+    end
+  end
+
   private
 
   def create_a_cf0925
@@ -212,8 +224,8 @@ class CompleteCf0925Test < CapybaraTest
     assert_difference 'Cf0925.count' do
       assert_no_difference 'User.count' do
         # assert_difference 'PhoneNumber.count' do
-        # FIXME: Label should be Middle Name even if field is Name Middle
         fill_in 'Middle', with: middle_name
+        # puts find('.parent-test')['innerHTML']
         within '.parent-test' do
           fill_in 'Address', with: address
           # puts 'Phones: ' + all(:fillable_field, 'Phone').inspect

@@ -4,7 +4,9 @@ class FundedPerson < ApplicationRecord
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
   belongs_to :user, inverse_of: :funded_people
-  accepts_nested_attributes_for :user
+  #  accepts_nested_attributes_for :user
+
+  default_scope { order(:name_first) }
 
   has_many :cf0925s, inverse_of: :funded_person
   has_many :invoices
@@ -25,7 +27,9 @@ class FundedPerson < ApplicationRecord
   end
 
   def childs_panel_state
-    child_preference(:panel_state, :open).to_sym
+    # child_preference(:panel_state, :closed).to_sym
+    logger.debug("Child #{id}: #{id == user.open_panel ? :open : :closed}")
+    id == user.open_panel ? :open : :closed
   end
 
   def childs_selected_fiscal_year
@@ -94,9 +98,15 @@ class FundedPerson < ApplicationRecord
       .sort { |x, y| y <=> x }
   end
 
+  # Return true if name, birthdate and in care of ministry fields are all blank
+  def is_blank?
+    child_in_care_of_ministry.nil? && my_dob == 'undefined' && my_name == 'no name defined'
+  end
+
   def must_define_at_least_one_name
     if my_name == 'no name defined'
-      errors.add(:name, ' - must define at least one name')
+      errors.add(:name_last, ' - must define at least one name')
+      errors.add(:name_first, ' - must define at least one name')
     end
   end
 
@@ -112,7 +122,7 @@ class FundedPerson < ApplicationRecord
                                       FiscalYear.new(fy)
                                     when String
                                       # The FiscalYear class doesn't have the child's DOB, probably
-                                      # FIXME: put String in the FY initializer. Not as simple as that.
+                                      # TODO: put String in the FY initializer. Not as simple as that.
                                       # rightly so.
                                       fiscal_years.find { |i| fy == i.to_s }
                                     end)
@@ -121,7 +131,12 @@ class FundedPerson < ApplicationRecord
   end
 
   def set_childs_panel_state(state)
-    set_child_preference(:panel_state, state).to_sym
+    # set_child_preference(:panel_state, state).to_sym
+    # puts("Setting panel to #{state} for #{id}")
+    logger.debug("Setting panel to #{state} for #{id}")
+    # puts 'Set a panel to open' if state.to_sym == :open
+    user.set_open_panel(id) if state.to_sym == :open
+    state
   end
 
   def set_childs_selected_fiscal_year(fy)
@@ -142,14 +157,14 @@ class FundedPerson < ApplicationRecord
   end
 
   def child_preference(key, default)
-    logger.debug { "Child preferences args: #{inspect}, #{key}(#{key.class})" }
-    logger.debug { "Child preferences: #{user.preferences}" }
+    # logger.debug { "Child preferences args: #{inspect}, #{key}(#{key.class})" }
+    # logger.debug { "Child preferences: #{user.preferences}" }
     pref_hash = json(user.preferences)
-    logger.debug { "Child preferences hash: #{pref_hash}" }
+    # logger.debug { "Child preferences hash: #{pref_hash}" }
     value = (pref_hash && pref_hash[id.to_s] && pref_hash[id.to_s][key.to_s])
-    logger.debug { "Child preferences value before default: #{value}" }
+    # logger.debug { "Child preferences value before default: #{value}" }
     value ||= default
-    logger.debug { "Child preferences value: #{value}" }
+    # logger.debug { "Child preferences value: #{value}" }
     value
   end
 

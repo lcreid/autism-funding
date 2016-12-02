@@ -1,6 +1,8 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'minitest/rails/capybara'
+require 'capybara/poltergeist'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -11,7 +13,18 @@ end
 
 module TestSessionHelpers
   def log_in(user =
-             User.create!(email: 'me@weenhanceit.com', password: 'password'))
+             User.create!(email: 'me1@weenhanceit.com', password: 'password'))
+    ## If the user's province has not been set - default it to BC
+    if user.province_code_id.nil?
+      user.province_code_id = province_codes('bc').id
+      user.save
+    end
+
+    ## If there are no phone numbers, create a home phone numbers
+    if user.phone_numbers.empty?
+      user.my_home_phone.phone_number = '3335557777'
+      user.save
+    end
 
     post new_user_session_path,
          params: {
@@ -30,6 +43,7 @@ module TestSessionHelpers
                     User.create!(email: 'me@weenhanceit.com',
                                  password: 'password'))
     visit(new_user_session_path)
+    expect has_field?('Email')
     fill_in 'Email', with: user.email
     fill_in 'Password', with: 'password'
     click_button 'Log in'
@@ -51,6 +65,40 @@ module TestSessionHelpers
            },
            commit: 'Log in'
          }
+  end
+
+  def show_errors(line, obj)
+    if obj.respond_to? :errors
+      if obj.errors.messages.empty?
+        puts "#{line}:  No Errors"
+      else
+        puts "#{line}:  --Error List:"
+        obj.errors.messages.each do |m|
+          puts "**Error: #{m}"
+        end
+      end
+    else
+      puts "#{line}:  Does not respond to errors"
+    end
+  end
+
+  def show_user_status(line = '', user = controller.current_user)
+    puts ''
+    puts " -- User status #{line} --"
+    puts "                 id: #{user.id}"
+    puts "    addresses[0].id: #{user.addresses[0].id}"
+    puts "     addresses.size: #{user.addresses.size}"
+    puts " phone_numbers.size: #{user.phone_numbers.size}"
+    puts "       Last Updated: #{user.updated_at}"
+    puts "          User Name: #{user.my_name}"
+    puts "         User email: #{user.email}"
+    puts "            Address: #{user.address}"
+    puts "                     City: #{user.city}  Prov: #{ ProvinceCode.find(user.province_code_id).province_code}   #{user.postal_code}"
+    puts "  Missing Key Info?: #{user.missing_key_info?}"
+    puts "       BC Resident?: #{user.bc_resident?} "
+    puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
+    puts "   Can See My Home?: #{user.can_see_my_home?}"
+    puts ' -----------------'
   end
 end
 
@@ -78,25 +126,62 @@ class PoltergeistTest < CapybaraTest
   # You need the following so the database cleaner's work won't get rolled
   # back by the test case.
   self.use_transactional_tests = false
+  Capybara.javascript_driver = :poltergeist
+
+  # def assert_select(locator, options)
+  #   # Rails.logger.debug "assert_select #{locator} #{options}"
+  #   # User.all.each { |u| Rails.logger.debug "In assert_selector: #{u.preferences}" if u.preferences }
+  #   super
+  #   # Rails.logger.debug 'assert done'
+  # end
+  #
+  def cancel_request
+    page.evaluate_script('$("body.pending").deleteClass("pending");')
+  end
+
+  ##
+  # Check to see if the request has completed (see `start_request`)
+  def pending_request?
+    result = page.evaluate_script('$("body.pending").length')
+    # puts "PENDING_REQUEST?: #{result} #{result.class}"
+    result
+  end
 
   def setup
     # User.all.each { |u| Rails.logger.debug "Starting test: #{u.preferences}" if u.preferences }
     # Rails.logger.debug 'Starting test...'
     DatabaseCleaner.strategy = :truncation
-    Capybara.javascript_driver = :poltergeist
     Capybara.current_driver = Capybara.javascript_driver
     # Was getting lots of random failures, so try extending the wait time.
     # That wasn't the issue. Taking this out. But it doesn't seem to make
-    # a different either way in the run time of the test.
-    # Capybara.default_max_wait_time = 5
+    # a difference either way in the run time of the test.
+    # Trying it again...
+    Capybara.default_max_wait_time = 5
     super
   end
 
-  def assert_select(locator, options)
-    # Rails.logger.debug "assert_select #{locator} #{options}"
-    # User.all.each { |u| Rails.logger.debug "In assert_selector: #{u.preferences}" if u.preferences }
-    super
-    # Rails.logger.debug 'assert done'
+  ##
+  # Indicate that the test is about to do a request that might take some time,
+  # either through non-trivial Javascript, or especially AJAX calls.
+  # This really should take a block and wrap the block, but because it
+  # may depend on Javascript to remove the .pending class, or a single request
+  # can remove the .pending class, it won't work.
+  def start_request
+    # puts 'Starting Request'
+    # evaluate_script('$("body").prepend("<span class=\"pending\"></span>");')
+    # result = evaluate_script('$("span.pending").length;')
+    # puts "start_request jQuery found: #{result}"
+    # puts "capybara found: #{has_css?('span', wait: 10)}"
+    # page.assert_selector 'span.pending'
+    # puts 'Starting Request'
+    evaluate_script('$("body").addClass("pending");')
+    # result = evaluate_script('$("body.pending").length;')
+    # puts "start_request jQuery found: #{result}"
+    # puts "capybara found: #{has_css?('body.pending', wait: 10)}"
+    assert_selector 'body.pending'
+    # puts method(:has_css?)
+    # puts method(:assert_selector)
+    # page.assert_selector 'body.pending'
   end
 
   def teardown
@@ -106,6 +191,10 @@ class PoltergeistTest < CapybaraTest
     DatabaseCleaner.clean
     # Rails.logger.debug '...database cleaned.'
     # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
+  end
+
+  def wait_for_request
+    assert_no_selector 'body.pending'
   end
 end
 

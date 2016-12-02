@@ -24,12 +24,15 @@ module FundedPeopleHelper
 
   def glyphicon_for_panel(funded_person)
     classes = 'glyphicon '
-    classes += panel_state(funded_person) == :open ? 'glyphicon-minus' : 'glyphicon-plus'
-    content_tag :span, class: classes do
-    end
+    classes += panel_icon(funded_person)
+    content_tag :span, '', class: classes
   end
 
   private
+
+  def panel_icon(funded_person)
+    panel_state(funded_person) == :open ? 'glyphicon-minus' : 'glyphicon-plus'
+  end
 
   def panel_state(funded_person)
     funded_person.childs_panel_state

@@ -1,4 +1,3 @@
-# require 'augmented_bootstrap_forms'
 class Cf0925sController < ApplicationController
   # default_form_builder AugmentedBootstrapForms
 
@@ -52,28 +51,18 @@ class Cf0925sController < ApplicationController
     # pp(cf0925_params.as_json)
     @cf0925 = Cf0925.new(cf0925_params)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @cf0925.funded_person =
-      @funded_person =
-        FundedPerson.find(params[:funded_person_id])
-    # TODO: Do I really need to save user separately?
+    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
     user = @cf0925.funded_person.user
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # pp(user_params.as_json)
-    user.update(user_params)
+    user.assign_attributes(user_params)
     # puts "Middle name: #{user.name_middle}"
     # puts "Address: #{user.addresses.first.as_json}"
     copy_parent_to_form
     copy_child_to_form
-    # puts "User has #{user.phone_numbers.size} phone numbers"
-    # puts 'User save failed' unless user.save
-    # puts "User has #{user.phone_numbers.size} phone numbers"
-    # user.phone_numbers.each(&:save)
-    # puts user.errors.full_messages
-    # puts 'Cf0925 save failed' unless @cf0925.save
-    # puts @cf0925.errors.full_messages
-    if @cf0925.save && user.save && user.addresses.map(&:save)
+    # I didn't need to save addresses explicitly here.
+    if @cf0925.save # && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
-      # @cf0925.printable? FIXME: Useless since we're redirecting
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
       redirect_to home_index_path, notice: 'Request saved.'
@@ -90,15 +79,13 @@ class Cf0925sController < ApplicationController
     @cf0925 = Cf0925.find(params[:id])
     @cf0925.update(cf0925_params)
     user = @cf0925.funded_person.user
-    user.update(user_params)
+    user.assign_attributes(user_params)
     copy_parent_to_form
     copy_child_to_form
 
-    if @cf0925.save && user.save && user.addresses.map(&:save)
-      # Get the missing fields, aka help info, for the object
-      # @cf0925.printable? FIXME: Useless since we're redirecting
+    # I didn't need to save addresses explicitly here.
+    if @cf0925.save # && user.save && user.addresses.map(&:save)
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
-      # TODO: why can't I just render :edit here?
       redirect_to home_index_path, notice: 'Request updated.'
     else
       # Get the missing fields, aka help info, for the object
@@ -141,13 +128,16 @@ class Cf0925sController < ApplicationController
         :name_first,
         :name_middle,
         :name_last,
-        phone_numbers_attributes: phone_attributes,
-        addresses_attributes: [
-          :id,
-          :address_line_1,
-          :city,
-          :postal_code
-        ]
+        :address,
+        :city,
+        :postal_code,
+        phone_numbers_attributes: phone_attributes
+      # addresses_attributes: [
+      #   :id,
+      #   :address_line_1,
+      #   :city,
+      #   :postal_code
+      # ]
       #     ]
       #   ]
       )
@@ -158,8 +148,8 @@ class Cf0925sController < ApplicationController
   end
 
   def copy_child_to_form
-    # puts "Before: #{@cf0925.child_dob}"
+    # puts "Before: #{@cf0925.child_in_care_of_ministry}"
     @cf0925.copy_child_to_form
-    # puts "After: #{@cf0925.child_dob}"
+    # puts "After: #{@cf0925.child_in_care_of_ministry}"
   end
 end

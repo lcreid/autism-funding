@@ -11,28 +11,27 @@ module ApplicationHelper
     #-- The following menu items are available to signed in users
     if user_signed_in?
       ##== User's home page
-      the_title = '%02d%s' % [iseq, 'My Home']
-      iseq += 1
-      the_hash[the_title] = if current_user.my_address.get_province_code == 'BC'
-                              '/'
-                            else
-                              static_non_supported_path
-                            end
-
+      #       Note home page is only available to BC residents, or users
+      #       who have entered a province and have invoices &or RTPs
+      # puts "can see home? #{current_user.can_see_my_home?}Current User: #{current_user.inspect}"
+      if current_user.can_see_my_home?
+        # puts "#{__LINE__} HERE!"
+        the_title = '%02d%s' % [iseq, 'My Home']
+         the_hash[the_title] = '/'
+        iseq += 1
+      end
       ##== User's profile page
       the_title = '%02d%s' % [iseq, 'My Profile']
       iseq += 1
-      the_hash[the_title] = my_profile_index_path
-
-      if current_user.my_address.get_province_code == 'BC'
-        the_title = '%02d%s' % [iseq, 'Help']
-        iseq += 1
-        the_hash[the_title] = static_bc_instructions_path
-      end
-
+      the_hash[the_title] = my_profile_edit_path
     end
 
     #== 'Public' pages
+    the_title = '%02d%s' % [iseq, 'Help']
+    iseq += 1
+    the_hash[the_title] = static_bc_instructions_path
+
+
     the_title = '%02d%s' % [iseq, 'Other Resources']
     iseq += 1
     the_hash[the_title] = other_resources_index_path

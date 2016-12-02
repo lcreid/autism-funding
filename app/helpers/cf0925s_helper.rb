@@ -3,14 +3,25 @@ require 'autism_funding_form_builder'
 # Field helpers for BC request to pay forms.
 module Cf0925sHelper
   # Using bootstrap_form gem
+
+  ##
+  # Output :base messages
+  def base_errors(f)
+    content_tag :div, class: 'bg-danger', id: 'base-errors' do
+      f.object.errors[:base].map do |x|
+        content_tag :p, x
+      end.join('\n').html_safe
+    end
+  end
+
   ##
   # The buttons at the bottom of the form.
   def buttons(f, cf0925)
-    content_tag :div, class: 'form-inline' do
-      f.submit('Save', class: 'btn btn-primary') +
-        print_button(cf0925) +
-        home_button
-    end
+    # content_tag :div, class: 'form-inline' do
+    f.submit('Save', class: 'btn btn-primary') +
+      print_button(cf0925) +
+      home_button
+    # end
   end
 
   ##
@@ -26,6 +37,7 @@ module Cf0925sHelper
             parent.hidden_field(:id) +
               parent_info(f, parent) +
               child_info(f) +
+              base_errors(f) +
               part_A(f) +
               part_B(f) +
               buttons(f, cf0925)
@@ -61,45 +73,67 @@ module Cf0925sHelper
           'who is providing autism intervention ' \
           'for the child.'
 
-      a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_name, 8, lstrip: '') +
-          wrap_field(4) do
-            f.form_group(:payment,
-                         label: { text: 'Payment to be provided to:' }) do
-              f.radio_button(:payment, 'provider', label: 'Service Provider') +
-                '<br/>'.html_safe +
-                f.radio_button(:payment, 'agency', label: 'Agency') +
-                f.error_message_for(:payment)
-            end
+      a += form_row do
+        f.text_field(:service_provider_name, column_width: 8, lstrip: '') +
+          f.form_group(:payment,
+                       label: { text: 'Payment to be provided to:' },
+                       column_width: 4) do
+            f.radio_button(:payment, 'provider', label: 'Service Provider') +
+              f.radio_button(:payment, 'agency', label: 'Agency')
           end
       end
-      a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :agency_name, 8, label: 'Agency Name (if applicable)')
+      a += form_row do
+        f.text_field(:agency_name,
+                     column_width: 8,
+                     label: 'Agency Name (if applicable)')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_address, 5, label: 'Address') +
-          service_provider_field(f, :service_provider_city, 3, label: 'City/Town') +
-          service_provider_field(f, :service_provider_postal_code, 2, label: 'Postal Code') +
-          service_provider_field(f, :service_provider_phone, 2, label: 'Phone Number')
+      a += form_row do
+        f.text_field(:service_provider_address,
+                     column_width: 5,
+                     label: 'Address') +
+          f.text_field(:service_provider_city,
+                       column_width: 3,
+                       label: 'City/Town') +
+          f.text_field(:service_provider_postal_code,
+                       column_width: 2,
+                       label: 'Postal Code') +
+          f.phone_field(:service_provider_phone,
+                        column_width: 2,
+                        label: 'Phone Number')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_service_1, 6) +
-          wrap_date_field(f, :service_provider_service_start, 3, label: 'Start Date') +
-          wrap_date_field(f, :service_provider_service_end, 3, label: 'End Date')
+      a += form_row do
+        f.text_field(:service_provider_service_1,
+                     column_width: 6,
+                     placeholder: 'Service 1',
+                     label: 'Type of Service(s)') +
+          f.date_field(:service_provider_service_start,
+                       column_width: 3,
+                       label: 'Start Date') +
+          f.date_field(:service_provider_service_end,
+                       column_width: 3,
+                       label: 'End Date')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_service_2, 6) +
-          service_provider_field(f, :service_provider_service_fee, 2, label: 'Fee (incl PST)') +
-          # service_provider_field(f, :service_provider_service_hour, 2, label: 'Per') +
-          wrap_field(2) do
-            f.select(:service_provider_service_hour,
-                     %w(Hour Day),
-                     label: 'Per')
-          end +
-          service_provider_field(f, :service_provider_service_amount, 2, label: 'Total Amount')
+      a += form_row do
+        f.text_field(:service_provider_service_2,
+                     column_width: 6,
+                     placeholder: 'Service 2',
+                     hide_label: true) +
+          f.currency_field(:service_provider_service_fee,
+                           column_width: 2,
+                           label: 'Fee (incl PST)') +
+          f.select(:service_provider_service_hour,
+                   %w(Hour Day),
+                   column_width: 2,
+                   label: 'Per') +
+          f.currency_field(:service_provider_service_amount,
+                           column_width: 2,
+                           label: 'Total Amount')
       end
-      a + content_tag(:div, class: 'form-inline') do
-        service_provider_field(f, :service_provider_service_3, 6)
+      a + form_row do
+        f.text_field(:service_provider_service_3,
+                     column_width: 6,
+                     placeholder: 'Service 3',
+                     hide_label: true)
       end
     end
   end
@@ -119,118 +153,45 @@ module Cf0925sHelper
         'or materials ' \
         'directly on behalf of a parent or guardian.'
 
-      a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(4, f.supplier_field(:supplier_name, label: 'Supplier Name')) +
-          wrap_in_column(5, f.supplier_field(:supplier_contact_person)) +
-          wrap_in_column(3, f.supplier_field(:supplier_phone))
+      a += form_row do
+        f.text_field(:supplier_name,
+                     column_width: 4,
+                     label: 'Supplier Name') +
+          f.text_field(:supplier_contact_person,
+                       column_width: 5,
+                       label: 'Contact Person') +
+          f.phone_field(:supplier_phone,
+                        column_width: 3,
+                        label: 'Phone Number')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, f.supplier_field(:supplier_address)) +
-          wrap_in_column(4, f.supplier_field(:supplier_city)) +
-          wrap_in_column(2, f.supplier_field(:supplier_postal_code))
+      a += form_row do
+        f.text_field(:supplier_address, column_width: 6, lstrip: 'Supplier') +
+          f.text_field(:supplier_city, column_width: 4, label: 'City/Town') +
+          f.text_field(:supplier_postal_code, column_width: 2, lstrip: 'Supplier')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, f.supplier_field(:item_desp_1)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_1)) +
-          wrap_in_column(4, f.supplier_field(:item_total))
+      a += form_row do
+        f.text_field(:item_desp_1, column_width: 6, label: 'Item', placeholder: 'Item 1') +
+          f.currency_field(:item_cost_1, column_width: 2, label: 'Cost', placeholder: 'Item Cost 1')
       end
-      a += content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, f.supplier_field(:item_desp_2)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_2))
+      a += form_row do
+        f.text_field(:item_desp_2, column_width: 6, hide_label: true, placeholder: 'Item 2') +
+          f.currency_field(:item_cost_2, column_width: 2, hide_label: true, lstrip: 'Supplier')
       end
-      a + content_tag(:div, class: 'form-inline') do
-        wrap_in_column(6, f.supplier_field(:item_desp_3)) +
-          wrap_in_column(2, f.supplier_field(:item_cost_3))
-      end
-    end
-  end
-
-  def field_with_error_message(f, field, opts = {})
-    f.text_field(field, label: format_label(field, opts)) +
-      f.error_message_for(field)
-  end
-
-  def wrap_in_column(width, text)
-    content_tag :div, class: "col-md-#{width}" do
-      if block_given?
-        yield
-      else
-        text
+      a + form_row do
+        f.text_field(:item_desp_3, column_width: 6, hide_label: true, placeholder: 'Item 3') +
+          f.currency_field(:item_cost_3, column_width: 2, hide_label: true, lstrip: 'Supplier') +
+          f.currency_field(:item_total, column_width: 4, label: 'Total')
       end
     end
   end
 
   # Old way
 
-  def show_field(f, field, width = 4, opts = {}, &block)
-    wrap_field(width) do
-      # content_tag(:small, format_label(field, opts)) +
-      opts[:label] ||= format_label(field, opts)
-      f.static_control(field, opts, &block)
-      # content_tag(:span, @cf0925.send(field), id: field, class: 'value')
-    end
-  end
-
   def form_row(&block)
     raise ArgumentError, 'Missing block' unless block_given?
-    content_tag :div, class: 'form-inline' do
+    content_tag :div, class: 'row' do
       capture(&block)
     end
-  end
-
-  def form_field(f, field, width = 4, opts = {}, &block)
-    wrap_field(width) do
-      if block_given?
-        # FIXME: if you give a block, the options are ignored.
-        a = capture(&block)
-      else
-        opts[:label] ||= format_label(field)
-        opts[:placeholder] ||= opts[:label]
-        a = f.text_field(field, opts)
-      end
-      # puts "about to add error message for #{field}..."
-      # a + f.error_message_for(field)
-    end
-  end
-
-  def wrap_field(width)
-    content_tag :div, class: "col-md-#{width}" do
-      yield
-    end
-  end
-
-  def wrap_date_field(f, field, width, opts = {})
-    wrap_field(width) do
-      f.date_field(field, opts) #+
-      # f.error_message_for(field)
-    end
-  end
-
-  def child_field(f, field, width = 4, opts = {}, &block)
-    show_field(f, field, width, opts.merge(lstrip: 'Child'), &block)
-  end
-
-  def parent_field(f, field, width = 4, opts = {}, &block)
-    opts[:label] ||= format_label(field, lstrip: 'Parent')
-    form_field(f, field, width, opts, &block)
-  end
-
-  def parent_phone_field(f, field, phone_number, _width = 3)
-    f.fields_for :phone_number, phone_number do |phone|
-      render partial: 'phone_numbers/form',
-             locals: { f: f, type: field, phone_number: phone }
-    end
-  end
-
-  def service_provider_field(f, field, width = 4, opts = {}, &block)
-    opts[:label] ||= format_label(field, lstrip: 'Service Provider')
-    form_field(f, field, width, opts, &block)
-  end
-
-  def format_label(field, opts = {})
-    label = field.class == String ? field : field.to_s.titlecase
-    label = label.sub(/\A#{opts[:lstrip]}\s*/, '') if opts[:lstrip]
-    label
   end
 
   def print_button(cf0925, opts = {})

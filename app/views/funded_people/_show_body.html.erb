@@ -43,7 +43,9 @@
                 <p>
                   Before the Ministry will pay a service provider (e.g. Psychologist, Behaviour Consultant, or Behaviour Interventionist), you have to complete and submit a Request to Pay form.
                 </p>
-                <%= link_to('New Request to Pay', new_funded_person_cf0925_path(funded_person), class: 'btn btn-primary btn-block') %>
+                <% if current_user.can_create_new_rtp?%>
+                  <%= link_to('New Request to Pay', new_funded_person_cf0925_path(funded_person), class: 'btn btn-primary btn-block') %>
+                <% end %>
               </div>
             </div>
           </div>

@@ -1,4 +1,10 @@
 class HomeController < ApplicationController
+  before_action :check_if_can_see_my_home
+
+  def check_if_can_see_my_home
+    redirect_to my_profile_edit_path unless current_user.can_see_my_home?
+  end
+
   def index
     @funded_people = current_user.funded_people
     @funded_people.each do |child|
@@ -18,9 +24,11 @@ class HomeController < ApplicationController
   ##
   # Set the state of a panel on the index view
   def set_panel_state
+    # puts "set panel state: #{params[:panel_state]}"
     child = FundedPerson.find(params[:funded_person_id])
     child.set_childs_panel_state(params[:panel_state])
-    head :ok, content_type: 'text/html'
+    head :ok # , content_type: 'text/html'
+    # render inline: ''
   end
 
   ##

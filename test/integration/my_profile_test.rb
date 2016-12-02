@@ -1,70 +1,84 @@
 require 'test_helper'
+require 'helpers/my_profile_test_helpers.rb'
+class MyProfileTest < MyProfileTestHelper::MyProfileTestPage
+  testName = '01 Check User can be created and saved'
+  test testName do
+    test_email = 'a_guy@weenhanceit.com'
+    test_password = 'very_secret'
 
-class MyProfileTest < CapybaraTest
-  test 'create a user and fill in the user profile (but not child)' do
-    password = 'boson-detector'
-
+    # a) Create new user (sign up)
     visit '/'
-    assert_equal '/welcome/index', current_path
+    assert_equal '/welcome/index', current_path, "01.a_i - Check Unregistered users wind up on welcome page"
+
+    visit '/my_profile/edit'
+    assert_equal '/welcome/index', current_path, "01.a_ii - Check Unregistered users wind up on welcome page"
+
     # There are many Sign Up links on the page, so do within
     within '.navbar' do
       click_link 'Sign Up'
     end
+    assert_equal '/users/sign_up', current_path, "01.a_iii - Should be on sign_up page"
 
-    email = 'myprofiletest@weenhanceit.com'
-    assert_equal '/users/sign_up', current_path
-    fill_in 'Email', with: email
-    fill_in 'Password', with: password
-    fill_in 'Password confirmation', with: password
-    assert_difference 'User.count' do
+    fill_in 'Email', with: test_email
+    fill_in 'Password', with: test_password
+    fill_in 'Password confirmation', with: test_password
+    assert_difference 'User.count',1, '01.a_iv - Number of Users did not increase by 1' do
       click_button 'Sign up'
     end
 
-    # We pre-create empty records so this test will fail for a brand new user.
-    # assert_equal 0, User.find_by(email: email).addresses.size
+    # b) Log Out
+    click_link 'Log out'
+    assert_equal '/welcome/index', current_path, "01.b - Check Logged out users wind up on welcome page"
 
-    assert_equal '/', current_path
-    within 'nav' do
-      click_link 'My Profile'
+    # c) Log Back In
+    within '.navbar' do
+      click_link 'Log in'
     end
-    assert_equal '/my_profile/index', current_path
-    click_link 'edit'
+    assert_equal '/users/sign_in', current_path, "01.c - Should be on Log In Page"
+    fill_in 'Email', with: test_email
+    fill_in 'Password', with: test_password
+    click_button 'Log in'
 
-    assert_equal '/my_profile/edit', current_path
-    address_hash = {
-      address_line_1: '1234567 Main St',
-      city: 'Kamloops',
-      province_code_id: (province = ProvinceCode.find_by(province_code: 'BC')).id
-    }
 
-    user_hash = {
-      name_first: 'Furst',
-      name_last: 'Laast'
-    }
+    # d) Check that we wind up on my profile, with correct notifications
+    assert_equal '/my_profile/edit', current_path, "01.d.i - Brand New Users should be sent to My Profile"
 
-    # assert_difference 'PhoneNumber.count', 2 do
-    # assert_difference 'Address.count' do
-    assert_no_difference 'User.count' do
-      fill_in 'user_name_first', with: user_hash[:name_first]
-      fill_in 'user_name_last', with: user_hash[:name_last]
-      fill_in 'address_address_line_1', with: address_hash[:address_line_1]
-      fill_in 'address_city', with: address_hash[:city]
-      select province.province_name, from: 'address_province_code_id'
-      fill_in 'home_phone_number_phone_number', with: '5555555555'
-      fill_in 'work_phone_number_phone_number', with: '6666666666'
-      click_link_or_button 'Update User'
-    end
-    # end
-    # end
+    # e) check the notifications for a blank user Profile
+    check_notifications(__LINE__, '01.e', true, true)
 
-    assert_equal '/my_profile/index', current_path
-    user = User.find_by(name_last: user_hash[:name_last])
-    assert_equal user_hash[:name_first], user.name_first
-    assert_equal user_hash[:name_last], user.name_last
-    assert_equal address_hash[:address_line_1], user.my_address.address_line_1
-    assert_equal address_hash[:city], user.my_address.city
-    assert_equal address_hash[:province_code_id], user.my_address.province_code_id
-    assert_equal '(555) 555-5555', user.my_home_phone.full_number
-    assert_equal '(666) 666-6666', user.my_work_phone.full_number
+    fill_in_form_items
+    click_link_or_button 'Update User'
+    assert_equal '/my_profile/edit', current_path, "01.f - should be on my_profile_edit - no children defined"
+    check_form(__LINE__, '01.g')
+    check_notifications(__LINE__, '01.h', false, true)
+
+    set_value(:work_phone_number,:valid, '')
+    click_link_or_button 'Update User'
+    assert_equal '/my_profile/edit', current_path, "01.i - should remain on my_profile_edit - no children defined"
+    check_form(__LINE__, '01.j')
+    check_notifications(__LINE__, '01.k', false, true)
+
+
+
+    set_invalid (:work_phone_number)
+#    fill_in_form_items
+    click_link_or_button 'Update User'
+    assert_equal '/my_profile/edit', current_path, "01.l - should remain on my_profile_edit - no children defined"
+    check_form(__LINE__, '01.m')
+    check_notifications(__LINE__, '01.n', false, true)
+
+
+    set_value(:work_phone_number,:valid, '')
+    add_child(:valid)
+
+    click_link_or_button 'Update User'
+    # check_notifications(__LINE__, '01.n', false, true)
+    # check_form(__LINE__, 'phil')
+# puts body
+     assert_equal '/', current_path, "01.g.o - Everything was kosher - should be on My Home page"
+
+    # assert_equal '/my_profile/edit', current_path, "01.g.i - Brand New Users should be sent to My Profile"
+    # check_form(__LINE__, '01.g')
+
   end
-end
+end #--- class MyProfileTest ---------------------

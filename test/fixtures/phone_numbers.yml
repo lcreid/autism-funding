@@ -39,3 +39,8 @@ has_no_rtp:
   phone_type: Home
   phone_number: '2345678899'
   user: has_no_rtp
+
+invoice_matcher:
+  phone_type: Home
+  phone_number: '2345678899'
+  user: invoice_matcher

@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get 'invoices/new'
 
-  get 'static/non_supported'
+  #  get 'static/non_supported'
 
   get 'static/contact_us'
 
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get 'welcome/index'
 
   get 'other_resources/index'
-  get 'my_profile/index'
+  #  get 'my_profile/index'
   get 'my_profile/edit'
   patch 'my_profile/update'
   put 'my_profile/update'
@@ -24,6 +24,10 @@ Rails.application.routes.draw do
   devise_for :users
 
   get 'forms', to: 'forms#index'
+
+  # A route to support the query of RTPs that match a new or existing invoice.
+  # It has to be before the rest of the routes for invoices.
+  get 'invoices/rtps'
 
   resources :funded_people, shallow: true do
     get :all_forms
