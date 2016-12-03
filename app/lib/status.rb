@@ -28,26 +28,35 @@ class Status
     # It might be convenient to put that into the Invoice model...
     # Or maybe not. It also makes sense that it should all be here where the
     # rules for figuring this out, reside.
-    invoice_list = funded_person
-                   .invoices_in_fiscal_year(fiscal_year)
-                   .select(&:include_in_reports?)
-                   .sort_by(&:fiscal_year)
 
-    @spent_funds = invoice_list
-                   .select { |x| invoice_has_rtp?(x) }
-                   .map(&:invoice_amount)
-                   .reduce(0, &:+)
+    # In most cases, an invoice goes against exactly one RTP. In that case,
+    # it's pretty easy to figure out what has to be paid out-of-pocket, and
+    # what has been/will be paid by the ministry.
+    # This still applies even if the RTP has both Part A and Part B. You just
+    # have to match by the right criteria and use the right amount.
+    # The complication is overlapping RTPs for the service provider or agency,
+    # so that an invoice could apply to more than one RTP.
+    # For invoices that go against two RTPs: One rule would be that they would
+    # go against the RTP that had the most space first, and then the other if
+    # there wasn't enough funding. Another rules would be to go against the
+    # first RTP, by start date, then end date, then creation date.
+    # Another is that it doesn't matter which they "go against." The total is
+    # what's important, as long as you don't double count the invoices that
+    # overlap.
+    # partition_invoices.each_pair do |k, v|
+    #   puts "#{k}: #{v}"
+    # end
 
-    @spent_out_of_pocket = invoice_list
+    @spent_out_of_pocket = invoices
                            .select { |x| !invoice_has_rtp?(x) }
                            .map(&:invoice_amount)
-                           .reduce(0, &:+)
+                           .sum
 
-    @committed_funds = funded_person
-                       .cf0925s_in_fiscal_year(fiscal_year)
-                       .select(&:printable?)
-                       .map(&:total_amount)
-                       .reduce(0, &:+)
+    @spent_out_of_pocket += rtps.map(&:out_of_pocket).sum
+
+    @spent_funds = rtps.map(&:spent_funds).sum
+
+    @committed_funds = rtps.map(&:total_amount).reduce(0, &:+)
 
     @remaining_funds = [0, @allowable_funds_for_year - @committed_funds].max
   end
@@ -65,44 +74,33 @@ class Status
   ##
   # Allocate invoices to RTPs
   def allocate_invoices
-    # Only invoices and RTPs in the requested fiscal year.
-    # Oldest invoice first
-    # The oldest RTP that covers the invoice, and that has room, is the one.
-    # Any left-over goes to out-of-pocket
+    # The invoices should have been allocated to RTPs when they were entered.
   end
 
   ##
-  # If the rtp is payable to service provider,
-  # the service provider names must match
-  # If the rtp is payable to the agency,
-  # the agency names must match.
-  # And the date range has to be right.
-  # If there's a supplier name on the invoice,
-  # the supplier names must match,
-  # and the invoice date has to be in the fiscal year of the RTP.
+  # An invoice has an RTP if there is a Cf0925 attached to the invoice.
   def invoice_has_rtp?(invoice)
-    # puts "#{@funded_person} has " \
-    # "#{@funded_person.cf0925s_in_fiscal_year(@fiscal_year).size} RTPs."
-    ret_val = @funded_person.cf0925s_in_fiscal_year(@fiscal_year)
-                            .select(&:printable?)
-                            .find do |rtp|
-      # puts "RTP: #{rtp.payment}, " \
-      #      "#{rtp.service_provider_name}, " \
-      #      "#{invoice.service_provider_name}, " \
-      #      "#{rtp.agency_name}, " \
-      #      "#{invoice.agency_name}, " \
-      #      "#{Range.new(rtp.service_provider_service_start, rtp.service_provider_service_end)} " \
-      #      "#{invoice.service_period}, " \
-      #      "#{rtp.fiscal_year.inspect}, " \
-      #      "#{invoice.invoice_date}"
+    invoice.cf0925.present?
+  end
 
-      pay_provider?(invoice, rtp) ||
-        pay_agency?(invoice, rtp) ||
-        pay_for_supplier?(invoice, rtp)
+  ##
+  # List of invoices that apply in this fiscal year
+  def invoices
+    @invoices ||= @funded_person
+                  .invoices_in_fiscal_year(fiscal_year)
+                  .select(&:include_in_reports?)
+    # .sort_by(&:fiscal_year)
+  end
+
+  ##
+  # Partition invoices into the RTPs that could pay for them.
+  # Returns hash where key is RTP and value is array of invoices.
+  def partition_invoices
+    a = {}
+    rtps.each do |rtp|
+      a[rtp] = invoices.select { |x| rtp_has_invoice?(rtp, x) }
     end
-
-    # puts "invoice_has_rtp? #{!!ret_val}, #{!ret_val}"
-    ret_val
+    a
   end
 
   ##
@@ -130,5 +128,19 @@ class Status
       (invoice.service_provider_name || rtp.service_provider_name) &&
       invoice.service_provider_name == rtp.service_provider_name &&
       rtp.include?(invoice.service_period)
+  end
+
+  def rtp_has_invoice?(rtp, invoice)
+    pay_provider?(invoice, rtp) ||
+      pay_agency?(invoice, rtp) ||
+      pay_for_supplier?(invoice, rtp)
+  end
+
+  ##
+  # List of RTPs that apply in this fiscal year
+  def rtps
+    @rtps ||= funded_person
+              .cf0925s_in_fiscal_year(fiscal_year)
+              .select(&:printable?)
   end
 end

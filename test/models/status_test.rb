@@ -1,5 +1,8 @@
 require 'test_helper'
 
+# FIXME: Need to do a better job of ensuring adequate test coverage. What's
+# here isn't enough.
+
 class StatusTest < ActiveSupport::TestCase
   test 'status one year' do
     child = funded_people(:two_fiscal_years)
@@ -51,7 +54,7 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'big spender spent more than requested' do
-    skip 'Code to pass this test not implemented yet.'
+    # skip 'Code to pass this test not implemented yet.'
     child = set_up_child
     set_up_provider_agency_rtp(child, payment: 'provider')
 
@@ -73,11 +76,16 @@ class StatusTest < ActiveSupport::TestCase
                          service_start: '2017-03-01',
                          service_provider_name: 'Ferry Man')
 
-    status = child.status('2016-2017')
-    assert_equal 500, status.spent_out_of_pocket
-    assert_equal 2_000, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    child.invoices.each do |i|
+      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
+    end
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 2_000,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   # Test combinations of matching between RTP and invoices.
@@ -85,61 +93,72 @@ class StatusTest < ActiveSupport::TestCase
     child = set_up_child
     set_up_provider_agency_rtp(child)
 
-    status = child.status('2016-2017')
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    assert_status(child,
+                  '2016-2017',
+                  remaining_funds: 4_000,
+                  committed_funds: 2_000)
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         service_provider_name: 'Ferry Man')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2017-01-31',
+                                   service_end: '2017-01-31',
+                                   service_start: '2017-01-01',
+                                   service_provider_name: 'Ferry Man')
 
-    status = child.status('2016-2017')
-    assert_equal 500, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 0,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   test 'invoice from service provider when pay service provider' do
     child = set_up_child
     set_up_provider_agency_rtp(child, payment: 'provider')
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         service_provider_name: 'Ferry Man')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2017-01-31',
+                                   service_end: '2017-01-31',
+                                   service_start: '2017-01-01',
+                                   service_provider_name: 'Ferry Man')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 500, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 500,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   test 'invoice from service provider but date out of range of RTP' do
     child = set_up_child
     set_up_provider_agency_rtp(child, payment: 'provider')
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2016-11-30',
-                         service_end: '2016-11-30',
-                         service_start: '2016-11-01',
-                         service_provider_name: 'Ferry Man')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2016-11-30',
+                                   service_end: '2016-11-30',
+                                   service_start: '2016-11-01',
+                                   service_provider_name: 'Ferry Man')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
 
-    status = child.status('2015-2016')
-    assert_equal 500, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 0, status.committed_funds
-    assert_equal 6_000, status.remaining_funds
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 0,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
+
+    assert_status(child,
+                  '2015-2016',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 0,
+                  committed_funds: 0,
+                  remaining_funds: 6_000)
   end
 
   test 'invoice from supplier' do
@@ -147,30 +166,36 @@ class StatusTest < ActiveSupport::TestCase
     child = set_up_child
     set_up_supplier_rtp(child)
 
-    child.invoices.build(invoice_amount: 1_000,
-                         invoice_date: '2016-12-30',
-                         supplier_name: 'Supplier Name')
+    invoice = child.invoices.build(invoice_amount: 1_000,
+                                   invoice_date: '2016-12-30',
+                                   supplier_name: 'Supplier Name')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 1_000, status.spent_funds
-    assert_equal 1_000, status.committed_funds
-    assert_equal 5_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 1_000,
+                  committed_funds: 1_000,
+                  remaining_funds: 5_000)
   end
 
   test 'invoice from supplier when no supplier RTP' do
     child = set_up_child
     set_up_provider_agency_rtp(child)
 
-    child.invoices.build(invoice_amount: 1_000,
-                         invoice_date: '2016-12-30',
-                         supplier_name: 'Supplier Name')
+    invoice = child.invoices.build(invoice_amount: 1_000,
+                                   invoice_date: '2016-12-30',
+                                   supplier_name: 'Supplier Name')
 
-    status = child.status('2016-2017')
-    assert_equal 1_000, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 1_000,
+                  spent_funds: 0,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   test 'invoice from supplier when invoice date not in fiscal year' do
@@ -178,35 +203,42 @@ class StatusTest < ActiveSupport::TestCase
     child = set_up_child
     set_up_supplier_rtp(child)
 
-    child.invoices.build(invoice_amount: 1_000,
-                         invoice_date: '2016-11-30',
-                         supplier_name: 'Supplier Name')
+    invoice = child.invoices.build(invoice_amount: 1_000,
+                                   invoice_date: '2016-11-30',
+                                   supplier_name: 'Supplier Name')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 1_000, status.committed_funds
-    assert_equal 5_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
 
-    status = child.status('2015-2016')
-    assert_equal 1_000, status.spent_out_of_pocket
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 0,
+                  committed_funds: 1_000,
+                  remaining_funds: 5_000)
+
+    assert_status(child,
+                  '2015-2016',
+                  spent_out_of_pocket: 1_000)
   end
 
   test 'invoice from agency when pay agency' do
     child = set_up_child
     set_up_provider_agency_rtp(child)
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         agency_name: 'Pay Me Agency')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2017-01-31',
+                                   service_end: '2017-01-31',
+                                   service_start: '2017-01-01',
+                                   agency_name: 'Pay Me Agency')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 500, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 500,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   test 'invoice from agency when pay provider' do
@@ -215,51 +247,189 @@ class StatusTest < ActiveSupport::TestCase
                                service_provider_name: 'Pay Me Consultant',
                                payment: 'provider')
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         agency_name: 'Pay Me Agency')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2017-01-31',
+                                   service_end: '2017-01-31',
+                                   service_start: '2017-01-01',
+                                   agency_name: 'Pay Me Agency')
 
-    status = child.status('2016-2017')
-    assert_equal 500, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 0,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
   end
 
   test 'invoice from agency but date out of range of RTP' do
     child = set_up_child
     set_up_provider_agency_rtp(child)
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2016-11-30',
-                         service_end: '2016-11-30',
-                         service_start: '2016-11-01',
-                         agency_name: 'Pay Me Agency')
+    invoice = child.invoices.build(invoice_amount: 500,
+                                   invoice_date: '2016-11-30',
+                                   service_end: '2016-11-30',
+                                   service_start: '2016-11-01',
+                                   agency_name: 'Pay Me Agency')
 
-    status = child.status('2016-2017')
-    assert_equal 0, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 2_000, status.committed_funds
-    assert_equal 4_000, status.remaining_funds
+    hook_invoice_to_rtp(invoice)
 
-    status = child.status('2015-2016')
-    assert_equal 500, status.spent_out_of_pocket
-    assert_equal 0, status.spent_funds
-    assert_equal 0, status.committed_funds
-    assert_equal 6_000, status.remaining_funds
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 0,
+                  committed_funds: 2_000,
+                  remaining_funds: 4_000)
+
+    assert_status(child,
+                  '2015-2016',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 0,
+                  committed_funds: 0,
+                  remaining_funds: 6_000)
   end
 
   test 'both service provider and supplier on one RTP' do
-    skip
+    child = set_up_child
+    set_up_provider_agency_rtp(child,
+                               SUPPLIER_ATTRS
+                               .merge(created_at: Date.new(2016, 12, 31)))
+
+    child.invoices.build(invoice_amount: 500,
+                         invoice_date: '2017-01-31',
+                         service_end: '2017-01-31',
+                         service_start: '2017-01-01',
+                         agency_name: 'Pay Me Agency')
+    child.invoices.build(invoice_amount: 1_000,
+                         notes: 'WTF?',
+                         invoice_date: '2016-12-30',
+                         supplier_name: 'Supplier Name')
+
+    child.invoices.each do |i|
+      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
+    end
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 1_500,
+                  committed_funds: 3_000,
+                  remaining_funds: 3_000)
   end
 
-  test 'need more than one RTP to cover the invoices' do
-    skip
+  test 'multiple RTPs, multiple invoices' do
+    child = set_up_child
+    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    set_up_provider_agency_rtp(child,
+                               service_provider_service_end: '2017-06-30',
+                               service_provider_service_start: '2017-05-01')
+
+    child.invoices.build(invoice_amount: 700,
+                         invoice_date: '2017-01-31',
+                         service_end: '2017-01-31',
+                         service_start: '2017-01-01',
+                         agency_name: 'Pay Me Agency')
+
+    child.invoices.build(invoice_amount: 2_000,
+                         invoice_date: '2017-06-30',
+                         service_end: '2017-06-30',
+                         service_start: '2017-06-01',
+                         agency_name: 'Pay Me Agency')
+
+    child.invoices.each do |i|
+      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
+    end
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 200,
+                  spent_funds: 2_500,
+                  committed_funds: 2_500,
+                  remaining_funds: 3_500)
+  end
+
+  test 'need more than one RTP to cover an invoice' do
+    skip "This case isn't supported with the current approach."
+    child = set_up_child
+    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    set_up_provider_agency_rtp(child,
+                               service_provider_service_amount: 500,
+                               service_provider_service_end: '2017-04-30',
+                               service_provider_service_start: '2017-04-01')
+
+    child.invoices.build(invoice_amount: 1_100,
+                         invoice_date: '2017-05-01',
+                         service_end: '2017-04-30',
+                         service_start: '2017-01-01',
+                         agency_name: 'Pay Me Agency')
+
+    assert_status(child, '2016-2017',
+                  spent_out_of_pocket: 100,
+                  spent_funds: 1_000,
+                  committed_funds: 1_000,
+                  remaining_funds: 5_000)
+  end
+
+  test 'overlapping RTPs' do
+    # FIXME: This case was about the automatic calculation of the optimal
+    # way to assign charges to RTPs.
+    skip "The test case doesn't work with the current model of assigned RTPs."
+    child = set_up_child
+    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    set_up_provider_agency_rtp(child,
+                               service_provider_service_amount: 500,
+                               service_provider_service_end: '2017-02-28',
+                               service_provider_service_start: '2017-01-01')
+
+    child.invoices.build(invoice_amount: 400,
+                         invoice_date: '2016-12-31',
+                         service_end: '2016-12-31',
+                         service_start: '2016-12-01',
+                         agency_name: 'Pay Me Agency')
+    child.invoices.build(invoice_amount: 500,
+                         invoice_date: '2017-05-01',
+                         service_end: '2017-02-28',
+                         service_start: '2017-02-01',
+                         agency_name: 'Pay Me Agency')
+    child.invoices.build(invoice_amount: 300,
+                         invoice_date: '2017-04-30',
+                         service_end: '2017-04-30',
+                         service_start: '2017-04-01',
+                         agency_name: 'Pay Me Agency')
+    child.invoices.build(invoice_amount: 1_300,
+                         invoice_date: '2017-08-31',
+                         service_end: '2017-08-31',
+                         service_start: '2017-08-01',
+                         agency_name: 'Pay Me Agency')
+
+    # FIXME: The answers won't be right here for the real case.
+    child.invoices.each do |i|
+      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
+    end
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 1_500,
+                  spent_funds: 1_000,
+                  committed_funds: 1_000,
+                  remaining_funds: 5_000)
   end
 
   private
+
+  def assert_status(child, fy, statuses)
+    status = child.status(fy)
+    statuses.each_pair do |k, v|
+      assert_equal v, status.send(k), "#{k} failed"
+    end
+  end
+
+  def hook_invoice_to_rtp(invoice)
+    rtps = invoice.match
+    return(nil) unless rtps.size == 1
+    rtps.first.invoices << invoice
+  end
 
   def set_up_child
     user = User.new(email: 'a@example.com',
@@ -300,7 +470,7 @@ class StatusTest < ActiveSupport::TestCase
     service_provider_name: 'Ferry Man',
     service_provider_service_1: 'Behaviour Consultancy',
     service_provider_service_amount: 2_000,
-    service_provider_service_end: '2017-11-30',
+    service_provider_service_end: '2017-03-31',
     service_provider_service_fee: 120.00,
     service_provider_service_hour: 'Hour',
     service_provider_service_start: '2016-12-01'

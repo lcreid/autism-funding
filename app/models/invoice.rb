@@ -4,7 +4,7 @@ class Invoice < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
-  belongs_to :cf0925, optional: true
+  belongs_to :cf0925, optional: true, inverse_of: :invoices
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validate :validate_check_fy_on_service_dates, on: :complete
@@ -46,6 +46,7 @@ class Invoice < ApplicationRecord
   end
 
   class <<self
+    # FIXME: I really question whether I needed the class method.
     def match(funded_person, params)
       return [] unless funded_person.cf0925s
 
@@ -58,55 +59,65 @@ class Invoice < ApplicationRecord
       service_start = to_date(params[:service_start])
       supplier_name = params[:supplier_name]
 
-      # puts "agency_name: #{agency_name}"
-      # puts "invoice_date: #{invoice_date}"
-      # puts "service_end: #{service_end}"
-      # puts "service_provider_name: #{service_provider_name}"
-      # puts "service_start: #{service_start}"
-      # puts "supplier_name: #{supplier_name}"
-
-      if service_provider_name
-        funded_person.cf0925s.select(&:printable?).select do |rtp|
-          # puts "SP Name compare: #{service_provider_name == rtp.service_provider_name}"
-          # puts "Include: #{rtp.include?(service_start..service_end)}"
-          service_provider_name == rtp.service_provider_name &&
-            rtp.include?(service_start..service_end)
-        end
-      elsif agency_name
-        funded_person.cf0925s.select(&:printable?).select do |rtp|
-          agency_name == rtp.agency_name &&
-            rtp.include?(service_start..service_end)
-        end
-      elsif supplier_name
-        funded_person.cf0925s.select do |rtp|
-          # puts "Supplier: #{supplier_name} FY: #{funded_person.fiscal_year(invoice_date).inspect}"
-          # puts "RTP created_at: #{rtp.created_at}"
-          # rtp.printable?
-          # puts rtp.errors.full_messages
-          # puts "Date compare: #{funded_person.fiscal_year(invoice_date).include?(rtp.created_at.to_date)}"
-          rtp.printable? &&
-            supplier_name == rtp.supplier_name &&
-            funded_person.fiscal_year(invoice_date)
-                         .include?(rtp.created_at.to_date)
-          # FIXME: The above needs to be fixed for the real world.
-          # FIXME: It's not clear how to get a validity period for a
-          # FIXME: supplier-only RTP.
-        end
-      else
-        # puts 'Found no supplier, agency, or service provider.'
-        []
+      [] + funded_person.cf0925s.select(&:printable?).select do |rtp|
+        pay_provider?(rtp, service_provider_name, service_start, service_end) ||
+          pay_agency?(rtp, agency_name, service_start, service_end) ||
+          pay_for_supplier?(rtp, supplier_name, invoice_date)
       end.sort
-    rescue ArgumentError # => e
-      # FIXME: when there's one date, the code for the ranges throwns an
-      # exception. Not really broken, but it's messy.
-      # puts "Bailing on exception #{e.backtrace}"
-      []
+    end
+
+    ##
+    # Determine if the RTP authorizes the invoice when the payee is the agency
+    def pay_agency?(rtp, agency_name, service_start, service_end)
+      service_start && service_end &&
+        rtp.payment == 'agency' &&
+        rtp.agency_name &&
+        agency_name == rtp.agency_name &&
+        rtp.include?(service_start..service_end)
+    end
+
+    ##
+    # Determine if the RTP authorizes the invoice when the payee is the supplier
+    # (actually the parent)
+    def pay_for_supplier?(rtp, supplier_name, invoice_date)
+      result = rtp.created_at &&
+               rtp.supplier_name &&
+               supplier_name == rtp.supplier_name &&
+               rtp.funded_person
+                  .fiscal_year(invoice_date)
+                  .include?(rtp.created_at.to_date)
+
+      # unless result
+      #   puts "supplier_name == rtp.supplier_name: #{supplier_name == rtp.supplier_name}"
+      #   puts "rtp.funded_person .fiscal_year(invoice_date): #{rtp.funded_person .fiscal_year(invoice_date).inspect}"
+      #   puts "rtp.created_at: #{rtp.created_at}"
+      #   puts "result: #{rtp.funded_person .fiscal_year(invoice_date) .include?(rtp.created_at.to_date)}" if rtp.created_at
+      # end
+      # result
+      # FIXME: The above needs to be fixed for the real world.
+      # FIXME: It's not clear how to get a validity period for a
+      # FIXME: supplier-only RTP.
+    end
+
+    ##
+    # Determine if the RTP authorizes the invoice when the payee is the provider
+    def pay_provider?(rtp, service_provider_name, service_start, service_end)
+      service_start && service_end &&
+        rtp.payment == 'provider' &&
+        rtp.service_provider_name &&
+        service_provider_name == rtp.service_provider_name &&
+        rtp.include?(service_start..service_end)
     end
 
     def to_date(date)
       return nil unless date
       return date if date.is_a?(Date)
-      Date.parse(date)
+      begin
+        Date.parse(date)
+      rescue ArgumentError
+        puts 'Rescued date conversion'
+        nil
+      end
     end
   end
 
