@@ -227,12 +227,12 @@ class InvoiceTest < ActiveSupport::TestCase
   test 'match one RTP on agency' do
     child = funded_people(:invoice_to_rtp_match)
     invoice = child.invoices.build(invoice_amount: 200,
-                                   invoice_date: '2015-08-31',
-                                   service_end: '2015-08-31',
-                                   service_start: '2015-08-01',
+                                   invoice_date: '2014-08-31',
+                                   service_end: '2014-08-31',
+                                   service_start: '2014-08-01',
                                    agency_name: 'A G Ency and Co.')
     assert_equal 1, invoice.match.size
-    assert_equal '2015-07-01 to 2015-09-30',
+    assert_equal '2014-07-01 to 2014-09-30',
                  invoice.match[0].service_period_string
   end
 
@@ -287,13 +287,13 @@ class InvoiceTest < ActiveSupport::TestCase
 
   test 'class match one RTP on agency' do
     params = { invoice_amount: 200,
-               invoice_date: '2015-08-31',
-               service_end: '2015-08-31',
-               service_start: '2015-08-01',
+               invoice_date: '2014-08-31',
+               service_end: '2014-08-31',
+               service_start: '2014-08-01',
                agency_name: 'A G Ency and Co.' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
-    assert_equal '2015-07-01 to 2015-09-30',
+    assert_equal '2014-07-01 to 2014-09-30',
                  Invoice.match(funded_people(:invoice_to_rtp_match),
                                params)[0].service_period_string
   end

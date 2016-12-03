@@ -315,6 +315,7 @@ match_test_rtp_a:
   work_phone: 6666661212
   form: cf0925
   funded_person: invoice_to_rtp_match
+  created_at: '2015-06-15 12:00:00'
 
 match_test_rtp_b:
   child_dob: "2006-05-22"
@@ -367,6 +368,7 @@ match_test_rtp_c:
   work_phone: 6666661212
   form: cf0925
   funded_person: invoice_to_rtp_match
+  created_at: '2015-06-15 12:00:00'
 
 # In the right date range but wrong matches
 match_test_rtp_d:
@@ -396,6 +398,7 @@ match_test_rtp_d:
   work_phone: 6666661212
   form: cf0925
   funded_person: invoice_to_rtp_match
+  created_at: '2015-06-15 12:00:00'
 
 # In the right date range ??? but wrong matches
 match_test_rtp_e:
@@ -421,3 +424,32 @@ match_test_rtp_e:
   form: cf0925
   funded_person: invoice_to_rtp_match
   created_at: '2016-02-01 12:00:00'
+
+match_test_rtp_f:
+  agency_name: A G Ency and Co.
+  child_dob: "2006-05-22"
+  child_first_name: Invoice
+  child_last_name: Matcher
+  child_in_care_of_ministry: false
+  home_phone: 5555551212
+  parent_address: 1 Match St
+  parent_city: Matchville
+  parent_first_name: Match
+  parent_last_name: Test
+  parent_postal_code: V0V 0V0
+  payment: agency
+  service_provider_postal_code: V1V 1V1
+  service_provider_address: 2 Provider St
+  service_provider_city: Providerville
+  service_provider_phone: 2222221212
+  service_provider_name: A Provider
+  service_provider_service_1: Behaviour Intervention
+  service_provider_service_amount: 2000
+  service_provider_service_end: "2014-09-30"
+  service_provider_service_fee: 120.00
+  service_provider_service_hour: hour
+  service_provider_service_start: "2014-07-01"
+  work_phone: 6666661212
+  form: cf0925
+  funded_person: invoice_to_rtp_match
+  created_at: '2014-06-15 12:00:00'

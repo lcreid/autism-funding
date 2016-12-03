@@ -1,5 +1,8 @@
 ##
 # Request to pay form for BC
+# TODO: The second page (instructions) for the CF_0925 says to put the date
+# of training or travel on the details lines. Doesn't say how to give date
+# for a purchase.
 class Cf0925 < ApplicationRecord
   include Helpers::FiscalYear
   include Formatters
@@ -8,7 +11,7 @@ class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
   accepts_nested_attributes_for :funded_person
-  has_many :invoices
+  has_many :invoices, inverse_of: :cf0925
 
   class << self
     def part_a_required_attributes
@@ -139,6 +142,23 @@ class Cf0925 < ApplicationRecord
       self.child_in_care_of_ministry = funded_person.child_in_care_of_ministry
     end
     # puts "After: #{child_dob}"
+  end
+
+  # So I can use the object as a key in a hash (see status.rb)
+  def ==(other)
+    attributes.each_pair.reduce { |a, e| a && e[1] == other.send(e[0]) }
+  end
+
+  alias eql? ==
+
+  # So I can use the object as a key in a hash (see status.rb)
+  def hash
+    attributes.values.reduce { |a, e| a.to_s + e.to_s }.hash
+  end
+
+  def include?(range)
+    Range.new(service_provider_service_start, service_provider_service_end)
+         .include?(range)
   end
 
   def format_date(date)
@@ -288,14 +308,35 @@ class Cf0925 < ApplicationRecord
       (item_cost_3 || 0)
   end
 
+  ##
+  # Spent out of pocket from this RTP.
+  # FIXME: Should be smarter about remainders.
+  def out_of_pocket
+    invoice_total = invoices
+                    .select(&:include_in_reports?)
+                    .map(&:invoice_amount)
+                    .sum
+    [invoice_total - total_amount, 0].max
+  end
+
   def pdf_output_file
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  ##
+  # Pull the info from the user and the funded_person into the Cf0925 instance
+  def populate
+    copy_parent_to_form
+    copy_child_to_form
+  end
+
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
+    # user.printable? || puts(errors.full_messages)
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
+    # puts "user validation: #{user_printable}. CF0925 validate: #{cf0925_printable}"
+    # puts "Both: #{cf0925_printable && user_printable}"
     cf0925_printable && user_printable
   end
 
@@ -328,6 +369,19 @@ class Cf0925 < ApplicationRecord
 
   def set_form
     form || self.form = Form.find_by!(class_name: 'Cf0925')
+  end
+
+  ##
+  # How much is spent from this RTP
+  def spent_funds
+    invoice_total = invoices
+                    .select(&:include_in_reports?)
+                    .map(&:invoice_amount)
+                    .sum
+    [invoice_total, total_amount].min
+    # FIXME: The above has to distinguish supplier from service provider
+    # [spent_on_provider_agency, rtp.service_provider_service_amount].min +
+    #   [spent_on_supplier, rtp.item_total].min
   end
 
   def start_date
@@ -374,16 +428,16 @@ class Cf0925 < ApplicationRecord
     (service_provider_service_amount || 0) + (item_total || 0)
   end
 
-  def user
-    funded_person && funded_person.user
+  def translate_care_of_ministry_to_pdf_field
+    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
   end
 
   def translate_payment_to_pdf_field
     payment == 'provider' ? 'Choice1' : 'Choice2'
   end
 
-  def translate_care_of_ministry_to_pdf_field
-    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
+  def user
+    funded_person && funded_person.user
   end
 
   private
@@ -402,6 +456,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def number_clean(value)
+    return value unless value.is_a? String
     value.gsub(/[^\d#{I18n.default_separator}]+/, '')
   end
 end
