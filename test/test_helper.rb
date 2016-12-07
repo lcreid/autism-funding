@@ -93,7 +93,7 @@ module TestSessionHelpers
     puts "          User Name: #{user.my_name}"
     puts "         User email: #{user.email}"
     puts "            Address: #{user.address}"
-    puts "                     City: #{user.city}  Prov: #{ ProvinceCode.find(user.province_code_id).province_code}   #{user.postal_code}"
+    puts "                     City: #{user.city}  Prov: #{ProvinceCode.find(user.province_code_id).province_code}   #{user.postal_code}"
     puts "  Missing Key Info?: #{user.missing_key_info?}"
     puts "       BC Resident?: #{user.bc_resident?} "
     puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
@@ -115,10 +115,10 @@ class CapybaraTest < Capybara::Rails::TestCase
   #
   # # Reset sessions and driver between tests
   # # Use super wherever this method is redefined in your individual test classes
-  # def teardown
-  #   Capybara.reset_sessions!
-  #   Capybara.use_default_driver
-  # end
+  def teardown
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
+  end
 end
 # End Capybara
 
@@ -156,7 +156,7 @@ class PoltergeistTest < CapybaraTest
     # That wasn't the issue. Taking this out. But it doesn't seem to make
     # a difference either way in the run time of the test.
     # Trying it again...
-    Capybara.default_max_wait_time = 5
+    # Capybara.default_max_wait_time = 5
     super
   end
 
@@ -185,6 +185,8 @@ class PoltergeistTest < CapybaraTest
   end
 
   def teardown
+    click_link 'Log out'
+    assert_content 'Signed out successfully.'
     super
     # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
     # Rails.logger.debug 'Cleaning database...'
