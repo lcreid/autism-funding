@@ -25,10 +25,6 @@ class User < ApplicationRecord
                                   attributes[:phone_number].blank?
                                 }
 
-  validates :name_first,
-            :name_last,
-            presence: true,
-            on: :printable
 
   validate :validate_phone_numbers
 
@@ -42,7 +38,7 @@ class User < ApplicationRecord
   #           presence: true,
   #           on: :printable,
   #           unless: ->(x) { x.my_work_phone.present? }
-  validate :at_least_one_phone_number, on: :printable
+  validate :validate_at_least_one_phone_number, on: :printable
 
   validates :address,
             :city,
@@ -51,10 +47,32 @@ class User < ApplicationRecord
             on: :printable
   # TODO: Validate postal code?
 
+  # TODO We had to move this validates to this location to make tests run green
+  # but we don't understand why
+  validates :name_first,
+            :name_last,
+            presence: true,
+            on: :printable
+
 #-- Public Methods -------------------------------------------------------------
+#-- pseduo-attribute address -------------------
+# Get Address for User
+def address
+  address_record.address_line_1
+end
+# Set Address for user
+def address=(val)
+  address_record.address_line_1 = val
+end
+
+
 # Returns true if the address is in the province of British Columbia
 def bc_resident?
   address_record.get_province_code == 'BC'
+end
+
+def can_create_new_rtp?
+  bc_resident? && !funded_people.empty?
 end
 
 # Returns true if the user is able to navigate to the home page
@@ -83,6 +101,26 @@ def can_see_my_home?
   return ret
 end
 
+#-- pseduo-attribute city -------------------
+# Get City for User
+def city
+  address_record.city
+end
+# Set City for User
+def city=(val)
+  address_record.city = val
+end
+
+#-- pseduo-attribute h0me_phone-number -------------
+# Get Home Phone Number for User
+def home_phone_number
+  phone_record('Home').phone_number
+end
+# Set Home Phone Number for User
+def home_phone_number=(val)
+  phone_record('Home').phone_number = val
+end
+
 
 
 # Returns true if the user has not defined enough information to get access to
@@ -102,6 +140,17 @@ def missing_key_info?
   return ret
 end
 
+#-- pseduo-attribute postal_code -------------------
+# Get Postal Code for User
+def postal_code
+  address_record.postal_code
+end
+# Set Postal Code for User
+def postal_code=(val)
+  address_record.postal_code = val
+end
+
+
 # Returns true if the user has all required information to print out a RTP form
 def printable?
   user_printable = valid?(:printable)
@@ -114,26 +163,9 @@ end
 
 
 
-  # Get Address for User
-  def address
-    address_record.address_line_1
-  end
 
-  # Set Address for user
-  def address=(val)
-    address_record.address_line_1 = val
-  end
-
-  # Get City for User
-  def city
-    address_record.city
-  end
-  # Set City for User
-  def city=(val)
-    address_record.city = val
-  end
-
-  # Get province_code_id for User
+#-- pseduo-attribute province_code_id --------------
+# Get province_code_id for User
   def province_code_id
     address_record.province_code_id
   end
@@ -143,25 +175,7 @@ end
   end
 
 
-  # Get Postal Code for User
-  def postal_code
-    address_record.postal_code
-  end
-
-  # Set Postal Code for User
-  def postal_code=(val)
-    address_record.postal_code = val
-  end
-
-  # Get Home Phone Number for User
-  def home_phone_number
-    phone_record('Home').phone_number
-  end
-  # Set Home Phone Number for User
-  def home_phone_number=(val)
-    phone_record('Home').phone_number = val
-  end
-
+  #-- pseduo-attribute work_phone_number -------------------
   # Get Work Phone Number for User
   def work_phone_number
     phone_record('Work').phone_number
@@ -171,6 +185,8 @@ end
     phone_record('Work').phone_number = val
   end
 
+
+  #-- pseduo-attribute work_phone_extension -------------------
   # Get Work Phone Extension for User
   def work_phone_extension
     phone_record('Work').phone_extension
@@ -180,6 +196,9 @@ end
     phone_record('Work').phone_extension = val
   end
 
+
+  # validate phones numbers (work and home) by checking for errors in the related
+  # Phone table.  This will associate errors with the appropriate pseduo-attribute
   def validate_phone_numbers
     phone_record('Work').validate
     phone_record('Work').errors[:phone_number].each do |e|
@@ -193,22 +212,8 @@ end
       errors.add(:home_phone_number,e)
     end
 
-#    phones.each do |p|
-#      p.validate
-#      p.error
-#    end
-#    if !home_phone? && !work_phone?
-#      errors.add(:phone_numbers, 'must provide at least one phone number')
-#    end
   end
 
-
-  ##
-  # By conention, the first address is the address we use.
-  # FIXME: This may be redundant after merging Phil's code.
-  # def address
-  #   addresses[0] if addresses.present?
-  # end
 
   ##
   # Attach an error message to the symbol :phone_numbers if neither home
@@ -217,26 +222,19 @@ end
   # In doing so, I realized (read) that that approach wasn't going to work,
   # because when you validate the phone number itself, you wipe out the
   # previous error messages.
-  def at_least_one_phone_number
-    if !home_phone? && !work_phone?
+  def validate_at_least_one_phone_number
+    if work_phone_number.blank? && home_phone_number.blank?
       errors.add(:phone_numbers, 'must provide at least one phone number')
     end
+    #  if  !work_phone?
+    #    errors.add(:phone_numbers, 'must provide at least one phone number 1')
+    #  end
   end
 
-
-  ##
-  # Return true if the user has once acknowledged the notification
-  # that the forms are only for residents of BC.
-  def bc_warning_acknowledgement?
-    preference(:bc_warning_acknowledgement, false)
-  end
-
-  def can_create_new_rtp?
-    bc_resident? && !funded_people.empty?
-  end
+  #-- end --
 
 
-  def home_phone
+  def zzhome_phone
     phone 'Home'
   end
 
