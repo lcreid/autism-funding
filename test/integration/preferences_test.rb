@@ -94,8 +94,8 @@ class PreferencesTest < PoltergeistTest
     # Rails.logger.debug { find("##{two_year_kid}").inspect }
     expect has_select?(two_year_kid, selected: '2015-2016')
   end
-
-  test 'BC reminder dismissed' do
-    skip 'Remember state of reminder for BC residents'
-  end
+  #
+  # test 'BC reminder dismissed' do
+  #   skip 'Remember state of reminder for BC residents'
+  # end
 end
