@@ -137,8 +137,7 @@ class InvoiceTest < ActiveSupport::TestCase
 
     the_inv.service_start = nil
     the_inv.service_end = nil
-    expected = nil
-    assert_equal expected, the_inv.start_date, '03.a: start_date should be nil if no dates defined'
+    assert_nil the_inv.start_date, '03.a: start_date should be nil if no dates defined'
 
     # 03.b .....................................................................
     the_inv.invoice_date = nil
