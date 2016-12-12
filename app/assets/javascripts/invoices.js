@@ -53,13 +53,13 @@ $(document).on('turbolinks:load', function() {
         // console.log(x + ': ' + value_of_element($(id_of_interest(x))[0]));
         params[x] = value_of_element($(id_of_interest(x))[0]);
       });
-      // console.log($.param(params));
 
       // path = window.location.pathname;
       // url = path.substr(0, path.lastIndexOf('/'));
       // url = url.substr(0, url.lastIndexOf('/'));
       // console.log(url);
 
+      // console.log('About to look for RTPs: ' + $.param(params));
       var request = $.ajax({
         url: "/invoices/rtps",
         data: params,
@@ -70,6 +70,7 @@ $(document).on('turbolinks:load', function() {
         // this is where I change the HTML
         $('.rtp-select option:gt(0)').remove();
         $(msg).appendTo('.rtp-select');
+        // console.log('Finished updating select');
       }).fail(function(xhr, textStatus, errorThrown) {
         if (xhr.status !== 0) {
           console.log("Error. Status: " + textStatus + " error: " + errorThrown);
@@ -78,10 +79,11 @@ $(document).on('turbolinks:load', function() {
         } else {
           // This just means that the user aborted the request, e.g. got tired
           // of waiting and clicked another link before the response came back.
-          // console.log('User aborted request before response.');
+          console.log('User aborted request before response.');
         }
       }).always(function() {
         $('body.pending').removeClass('pending');
+        // console.log('Removed .pending');
       });
     });
   });
