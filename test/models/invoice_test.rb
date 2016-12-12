@@ -127,10 +127,9 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv = Invoice.new
     the_inv.funded_person = FundedPerson.first
 
-    test_invoice_date = Date.new(2005,03,11)
-    test_service_start = Date.new(2005,02,01)
-    test_service_end = Date.new(2005,03,01)
-
+    test_invoice_date = Date.new(2005, 03, 11)
+    test_service_start = Date.new(2005, 02, 01)
+    test_service_end = Date.new(2005, 03, 01)
 
     # 03.a .....................................................................
     the_inv.invoice_date = nil
@@ -161,7 +160,6 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv.service_end = test_service_end
     expected = test_service_start
     assert_equal expected, the_inv.start_date, '03.d: start_date should return service_start if service_start, invoice_date and service_end defined'
-
   end
 
   #-----------------------------------------------------------------------------
@@ -185,7 +183,6 @@ class InvoiceTest < ActiveSupport::TestCase
           puts "Found error: #{m}"
         end
 
-
       end
       assert_equal expected, tc.errors.size, "04: Test for #{tc.notes}"
 
@@ -202,5 +199,130 @@ class InvoiceTest < ActiveSupport::TestCase
   test 'fiscal year' do
     invoice = invoices(:fiscal_year)
     assert_equal '2015-2016', invoice.fiscal_year.to_s
+  end
+
+  test 'match no RTPs' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2016-09-30',
+                                   service_end: '2016-09-30',
+                                   service_start: '2016-09-01',
+                                   agency_name: 'A G Ency and Co.',
+                                   service_provider_name: 'A Provider')
+    assert_equal 0, invoice.match.size
+  end
+
+  test 'match one RTP on provider' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2015-08-31',
+                                   service_end: '2015-08-31',
+                                   service_start: '2015-08-01',
+                                   service_provider_name: 'A Provider')
+    assert_equal 1, invoice.match.size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
+  end
+
+  test 'match one RTP on agency' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2014-08-31',
+                                   service_end: '2014-08-31',
+                                   service_start: '2014-08-01',
+                                   agency_name: 'A G Ency and Co.')
+    assert_equal 1, invoice.match.size
+    assert_equal '2014-07-01 to 2014-09-30',
+                 invoice.match[0].service_period_string
+  end
+
+  test 'match one RTP on supplier' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2016-03-01',
+                                   supplier_name: 'Supplies R Us')
+    assert_equal 1, invoice.match.size
+    assert_equal '2015-06-01 to 2016-05-31',
+                 invoice.match[0].service_period_string
+  end
+
+  test 'match two RTPs' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2015-09-30',
+                                   service_end: '2015-09-30',
+                                   service_start: '2015-09-01',
+                                   agency_name: 'A G Ency and Co.',
+                                   service_provider_name: 'A Provider')
+    assert_equal 2, invoice.match.size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
+    assert_equal '2015-09-01 to 2015-09-30',
+                 invoice.match[1].service_period_string
+  end
+
+  test 'class match no RTPs' do
+    params = { invoice_amount: 200,
+               invoice_date: '2016-09-30',
+               service_end: '2016-09-30',
+               service_start: '2016-09-01',
+               agency_name: 'A G Ency and Co.',
+               service_provider_name: 'A Provider' }
+    assert_equal 0, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+  end
+
+  test 'class match one RTP on provider' do
+    params = { invoice_amount: 200,
+               invoice_date: '2015-08-31',
+               service_end: '2015-08-31',
+               service_start: '2015-08-01',
+               service_provider_name: 'A Provider' }
+    assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+  end
+
+  test 'class match one RTP on agency' do
+    params = { invoice_amount: 200,
+               invoice_date: '2014-08-31',
+               service_end: '2014-08-31',
+               service_start: '2014-08-01',
+               agency_name: 'A G Ency and Co.' }
+    assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2014-07-01 to 2014-09-30',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+  end
+
+  test 'class match one RTP on supplier' do
+    params = { invoice_amount: 200,
+               invoice_date: '2016-03-01',
+               supplier_name: 'Supplies R Us' }
+    assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2015-06-01 to 2016-05-31',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+  end
+
+  test 'class match two RTPs' do
+    params = { invoice_amount: 200,
+               invoice_date: '2015-09-30',
+               service_end: '2015-09-30',
+               service_start: '2015-09-01',
+               agency_name: 'A G Ency and Co.',
+               service_provider_name: 'A Provider' }
+    assert_equal 2, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+    assert_equal '2015-09-01 to 2015-09-30',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[1].service_period_string
   end
 end

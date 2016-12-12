@@ -20,12 +20,16 @@ $(document).on('turbolinks:load', function() {
       panel_state: value
     }, null, "html").done(function(data, textStatus, xhr) {
       // console.log("set_childs_panel_status(0, 100):", data.slice( 0, 100));
+    }).done(function(msg) {
+      // console.log('Done setting panel state: ' + msg);
     }).fail(function(xhr, textStatus, errorThrown) {
       if (xhr.status !== 0) {
-        console.log("Error. Status: " + textStatus + " error: " + errorThrown);
+        console.log("Panel state error. Status: " + textStatus + " error: " + errorThrown);
         console.log("XHR responseXML: " + xhr.responseXML);
         console.log("XHR: " + xhr.status);
       } else {
+        // This just means that the user aborted the request, e.g. got tired
+        // of waiting and clicked another link before the response came back.
         // console.log('User aborted request before response.');
       }
     });

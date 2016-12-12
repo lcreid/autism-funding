@@ -15,7 +15,7 @@ class User < ApplicationRecord
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
-  has_many :funded_people, inverse_of: :user
+  has_many :funded_people, -> { order(:name_first) }, inverse_of: :user
   accepts_nested_attributes_for :funded_people,
                                 allow_destroy: true,
                                 reject_if: :all_blank
@@ -47,6 +47,7 @@ class User < ApplicationRecord
             on: :printable
   # TODO: Validate postal code?
 
+# <<<<<<< HEAD
   # TODO We had to move this validates to this location to make tests run green
   # but we don't understand why
   validates :name_first,
@@ -65,12 +66,12 @@ def address=(val)
   address_record.address_line_1 = val
 end
 
-
 # Returns true if the address is in the province of British Columbia
 def bc_resident?
   address_record.get_province_code == 'BC'
 end
 
+# Returns true if the user is able to create a new RTP form
 def can_create_new_rtp?
   bc_resident? && !funded_people.empty?
 end
@@ -111,7 +112,7 @@ def city=(val)
   address_record.city = val
 end
 
-#-- pseduo-attribute h0me_phone-number -------------
+#-- pseduo-attribute home_phone-number -------------
 # Get Home Phone Number for User
 def home_phone_number
   phone_record('Home').phone_number
@@ -123,22 +124,69 @@ end
 
 
 
-# Returns true if the user has not defined enough information to get access to
-# My Home page (and the functionality of the application)
-# User must have entered at least one non-blank funded_person and a province code
-def missing_key_info?
-  # Need to check if there are at least 1 non-blank, valid funded_people
-  ret = true
-  funded_people.each do |fp|
-    unless fp.is_blank? || (! fp.valid?)
-      ret = false
-      break
+# # Returns true if the user has not defined enough information to get access to
+# # My Home page (and the functionality of the application)
+# # User must have entered at least one non-blank funded_person and a province code
+# def missing_key_info?
+#   # Need to check if there are at least 1 non-blank, valid funded_people
+#   ret = true
+#   funded_people.each do |fp|
+#     unless fp.is_blank? || (! fp.valid?)
+#       ret = false
+#       break
+# =======
+  #-- Public Methods -------------------------------------------------------------
+  # # Returns true if the address is in the province of British Columbia
+  # def bc_resident?
+  #   address_record.get_province_code == 'BC'
+  # end
+
+  # Returns true if the user is able to navigate to the home page
+#   def can_see_my_home?
+#     ret = !missing_key_info?
+#     cnt_items = 0
+#     # Check all funded people are valid and get count of invoices/forms
+#     # puts "#{__LINE__}: state of ret #{ret}"
+#     if ret
+#       all_valid = true
+#       funded_people.each do |fp|
+#         cnt_items += fp.invoices.size
+#         cnt_items += fp.cf0925s.size
+#         unless fp.valid? || fp.is_blank?
+#           puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
+#           all_valid = false
+#         end
+#       end
+#       ret = all_valid
+# >>>>>>> origin/develop
+#     end
+#     # puts "#{__LINE__}: state of ret #{ret}"
+#     ret = false if address_record.get_province_code != 'BC' && (cnt_items < 1)
+#     # puts "#{__LINE__}: state of ret #{ret}"
+#     ret
+#   end
+
+  # Returns true if the user has not defined enough information to get access to
+  # My Home page (and the functionality of the application)
+  # User must have entered at least one non-blank funded_person and a province code
+  def missing_key_info?
+    # Need to check if there are at least 1 non-blank, valid funded_people
+    ret = true
+    funded_people.each do |fp|
+      unless fp.is_blank? || !fp.valid?
+        ret = false
+        break
+      end
     end
+    ret ||= province_code_id.nil?
+    ret ||= address_record.get_province_code.empty?
+    ret
   end
-  ret = ret || province_code_id.nil?
-  ret = ret || address_record.get_province_code.empty?
-  return ret
-end
+# <<<<<<< HEAD
+#   ret = ret || province_code_id.nil?
+#   ret = ret || address_record.get_province_code.empty?
+#   return ret
+# end
 
 #-- pseduo-attribute postal_code -------------------
 # Get Postal Code for User
@@ -161,25 +209,83 @@ def printable?
   user_printable && address_printable
 end
 
+# =======
+# >>>>>>> origin/develop
 
+  # # Returns true if the user has all required information to print out a RTP form
+  # def printable?
+  #   user_printable = valid?(:printable)
+  #   # puts "user.printable? #{errors.full_messages}" unless user_printable
+  #   # puts "I have #{addresses.size} addresses"
+  #   address_printable = address_record.printable?
+  #   # TODO: Validate phone numbers.
+  #   user_printable && address_printable
+  # end
+  #
+# <<<<<<< HEAD
+# =======
+  # # Get Address for User
+  # def address
+  #   address_record.address_line_1
+  # end
+  #
+  # # Set Address for user
+  # def address=(val)
+  #   address_record.address_line_1 = val
+  # end
 
+  # # Get City for User
+  # def city
+  #   address_record.city
+  # end
+  #
+  # # Set City for User
+  # def city=(val)
+  #   address_record.city = val
+  # end
+# >>>>>>> origin/develop
 
 #-- pseduo-attribute province_code_id --------------
 # Get province_code_id for User
   def province_code_id
     address_record.province_code_id
   end
+
   # Get province_code_id for User
   def province_code_id=(val)
     address_record.province_code_id = val
   end
 
+# <<<<<<< HEAD
 
   #-- pseduo-attribute work_phone_number -------------------
+# =======
+  # # Get Postal Code for User
+  # def postal_code
+  #   address_record.postal_code
+  # end
+  #
+  # # Set Postal Code for User
+  # def postal_code=(val)
+  #   address_record.postal_code = val
+  # end
+
+  # # Get Home Phone Number for User
+  # def home_phone_number
+  #   phone_record('Home').phone_number
+  # end
+  #
+  # # Set Home Phone Number for User
+  # def home_phone_number=(val)
+  #   phone_record('Home').phone_number = val
+  # end
+  #
+# >>>>>>> origin/develop
   # Get Work Phone Number for User
   def work_phone_number
     phone_record('Work').phone_number
   end
+
   # Set Work Phone Number for User
   def work_phone_number=(val)
     phone_record('Work').phone_number = val
@@ -191,6 +297,7 @@ end
   def work_phone_extension
     phone_record('Work').phone_extension
   end
+
   # Set Work Phone Number for User
   def work_phone_extension=(val)
     phone_record('Work').phone_extension = val
@@ -202,19 +309,31 @@ end
   def validate_phone_numbers
     phone_record('Work').validate
     phone_record('Work').errors[:phone_number].each do |e|
-      errors.add(:work_phone_number,e)
+      errors.add(:work_phone_number, e)
     end
     phone_record('Work').errors[:phone_extension].each do |e|
-      errors.add(:work_phone_extension,e)
+      errors.add(:work_phone_extension, e)
     end
     phone_record('Home').validate
     phone_record('Home').errors[:phone_number].each do |e|
-      errors.add(:home_phone_number,e)
+      errors.add(:home_phone_number, e)
     end
 
+# <<<<<<< HEAD
   end
 
 
+# =======
+    #    phones.each do |p|
+    #      p.validate
+    #      p.error
+    #    end
+    #    if !home_phone? && !work_phone?
+    #      errors.add(:phone_numbers, 'must provide at least one phone number')
+    #    end
+#   end
+#
+# >>>>>>> origin/develop
   ##
   # Attach an error message to the symbol :phone_numbers if neither home
   # nor work phone provided.
@@ -231,10 +350,25 @@ end
     #  end
   end
 
-  #-- end --
+# <<<<<<< HEAD
+  #-- end of alphabetized methods --
 
 
   def zzhome_phone
+# =======
+  # ##
+  # # Return true if the user has once acknowledged the notification
+  # # that the forms are only for residents of BC.
+  # def bc_warning_acknowledgement?
+  #   preference(:bc_warning_acknowledgement, false)
+  # end
+  #
+  # # def can_create_new_rtp?
+  # #   bc_resident? && !funded_people.empty?
+  # # end
+
+  # def home_phone
+# >>>>>>> origin/develop
     phone 'Home'
   end
 
@@ -277,7 +411,6 @@ end
     value
   end
 
-
   def set_bc_warning_acknowledgement(state)
     set_preference(bc_warning_acknowledgement: state)
   end
@@ -307,9 +440,7 @@ end
   private
 
   def address_record
-    unless addresses[0]
-      addresses.build
-    end
+    addresses.build unless addresses[0]
     addresses[0]
   end
 
@@ -322,20 +453,18 @@ end
     obj_phone = phone_numbers.find_by(phone_type: the_type)
 
     ret_obj = nil
-    self.phone_numbers.each do |pn|
-      if pn.phone_type == the_type
-        ret_obj = pn
-      end
+    phone_numbers.each do |pn|
+      ret_obj = pn if pn.phone_type == the_type
     end
 
-    if obj_phone.nil? && self.id.nil?
+    if obj_phone.nil? && id.nil?
       ret_obj = phone_numbers.build
       ret_obj.phone_type = the_type
     elsif obj_phone.nil?
       ret_obj = PhoneNumber.create(user_id: id, phone_type: the_type)
       phone_numbers.reload # refreshes cache
-#    else
-#      ret_obj = obj_phone
+      #    else
+      #      ret_obj = obj_phone
     end
     ret_obj
   end

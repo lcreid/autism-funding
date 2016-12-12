@@ -132,12 +132,12 @@ class Cf0925sController < ApplicationController
         :city,
         :postal_code,
         phone_numbers_attributes: phone_attributes
-        # addresses_attributes: [
-        #   :id,
-        #   :address_line_1,
-        #   :city,
-        #   :postal_code
-        # ]
+      # addresses_attributes: [
+      #   :id,
+      #   :address_line_1,
+      #   :city,
+      #   :postal_code
+      # ]
       #     ]
       #   ]
       )
@@ -147,17 +147,6 @@ class Cf0925sController < ApplicationController
     @cf0925.copy_parent_to_form
   end
 
-  # def copy_form_to_parent
-  #    @cf0925.user.name_last = @cf0925.parent_last_name
-  #    @cf0925.user.name_first = @cf0925.parent_first_name
-  #    @cf0925.user.name_middle = @cf0925.parent_middle_name
-  #    @cf0925.user.my_home_phone.full_number = @cf0925.home_phone
-  #    @cf0925.user.my_work_phone.full_number = @cf0925.work_phone
-  #    @cf0925.user.my_address.address_line_1 = @cf0925.parent_address
-  #    @cf0925.user.my_address.city = @cf0925.parent_city
-  #    @cf0925.user.my_address.postal_code = @cf0925.parent_postal_code
-  # end
-  #
   def copy_child_to_form
     # puts "Before: #{@cf0925.child_in_care_of_ministry}"
     @cf0925.copy_child_to_form

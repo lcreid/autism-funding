@@ -129,3 +129,10 @@ has_no_rtp:
 
 is_a_blank:
   name_first: Blank
+
+invoice_to_rtp_match:
+  birthdate: '2006-05-22'
+  name_first: Invoice
+  name_last: Matcher
+  child_in_care_of_ministry: false
+  user: invoice_matcher

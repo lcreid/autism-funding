@@ -1,5 +1,8 @@
 ##
 # Request to pay form for BC
+# TODO: The second page (instructions) for the CF_0925 says to put the date
+# of training or travel on the details lines. Doesn't say how to give date
+# for a purchase.
 class Cf0925 < ApplicationRecord
   include Helpers::FiscalYear
   include Formatters
@@ -8,7 +11,7 @@ class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
   accepts_nested_attributes_for :funded_person
-  has_many :invoices
+  has_many :invoices, inverse_of: :cf0925
 
   class << self
     def part_a_required_attributes
@@ -56,19 +59,17 @@ class Cf0925 < ApplicationRecord
               :child_first_name,
               :child_last_name,
               presence: true
-
     validates :child_in_care_of_ministry,
               inclusion: { in: [true, false] }
 
     validates :work_phone,
               presence: true,
               unless: ->(x) { x.home_phone.present? }
-
     validates :home_phone,
               presence: true,
               unless: ->(x) { x.work_phone.present? }
 
-    validate unless: :filling_in_part_a? || :filling_in_part_b? do
+    validate unless: ->(rtp) { rtp.filling_in_part_a? || rtp.filling_in_part_b? } do
       errors.add(:base, 'Fill in Part A or Part B or both.')
     end
 
@@ -97,6 +98,11 @@ class Cf0925 < ApplicationRecord
     end
   end
 
+  def <=>(other)
+    service_period.begin <=> other.service_period.begin ||
+      service_period.end <=> other.service_period.end
+  end
+
   def client_pdf_file_name
     child_last_name + '-' +
       child_first_name + '-' +
@@ -110,14 +116,14 @@ class Cf0925 < ApplicationRecord
       self.parent_first_name = user.name_first
       self.parent_middle_name = user.name_middle
       # puts "In copy_parent_to_form home phone: #{user.home_phone.full_number}"
+#      self.home_phone = user.home_phone.full_number if user.home_phone
       self.home_phone = user.home_phone_number
-      # self.home_phone = user.home_phone.full_number if user.home_phone
       self.work_phone = user.work_phone.full_number if user.work_phone
       # 20161126 - Phil removed the following:
       # if user.address
-        # self.parent_address = user.address.address_line_1
-        # self.parent_city = user.address.city
-        # self.parent_postal_code = user.address.postal_code
+      # self.parent_address = user.address.address_line_1
+      # self.parent_city = user.address.city
+      # self.parent_postal_code = user.address.postal_code
       # end
       # 20161126 - Phil added to use the address attribute of user
       self.parent_address = user.address
@@ -139,8 +145,63 @@ class Cf0925 < ApplicationRecord
     # puts "After: #{child_dob}"
   end
 
+  # So I can use the object as a key in a hash (see status.rb)
+  def ==(other)
+    attributes.each_pair.reduce { |a, e| a && e[1] == other.send(e[0]) }
+  end
+
+  alias eql? ==
+
+  # So I can use the object as a key in a hash (see status.rb)
+  def hash
+    attributes.values.reduce { |a, e| a.to_s + e.to_s }.hash
+  end
+
+  def include?(range)
+    Range.new(service_provider_service_start, service_provider_service_end)
+         .include?(range)
+  end
+
   def format_date(date)
     date
+  end
+
+  def filling_in_part_a?
+    # answer =
+    agency_name.present? ||
+      # payment.present? ||
+      service_provider_postal_code.present? ||
+      service_provider_address.present? ||
+      service_provider_city.present? ||
+      service_provider_phone.present? ||
+      service_provider_name.present? ||
+      service_provider_service_1.present? ||
+      service_provider_service_2.present? ||
+      service_provider_service_3.present? ||
+      service_provider_service_amount.present? ||
+      service_provider_service_end.present? ||
+      service_provider_service_fee.present? ||
+      # service_provider_service_hour.present? ||
+      service_provider_service_start.present?
+    #
+    # puts "Answer: #{answer}, Start: #{service_provider_service_start}" \
+    # ", End: #{service_provider_service_end}"
+    # answer
+  end
+
+  def filling_in_part_b?
+    supplier_address.present? ||
+      supplier_city.present? ||
+      supplier_contact_person.present? ||
+      supplier_name.present? ||
+      supplier_phone.present? ||
+      supplier_postal_code.present? ||
+      item_cost_1.present? ||
+      item_cost_2.present? ||
+      item_cost_3.present? ||
+      item_desp_1.present? ||
+      item_desp_2.present? ||
+      item_desp_3.present?
   end
 
   def generate_pdf
@@ -220,6 +281,15 @@ class Cf0925 < ApplicationRecord
     true
   end
 
+  ##
+  # Return true if the date  or date range passed in is within the service
+  # dates of the Cf0925.
+  def include?(range)
+    # puts "RTP range: #{service_period}"
+    # puts "Invoice (other) range: #{range}"
+    service_period.include?(range) # rubocop:disable Performance/RangeInclude
+  end
+
   def item_cost_1=(value)
     super number_clean(value)
   end
@@ -239,15 +309,55 @@ class Cf0925 < ApplicationRecord
       (item_cost_3 || 0)
   end
 
+  ##
+  # Spent out of pocket from this RTP.
+  # FIXME: Should be smarter about remainders.
+  def out_of_pocket
+    invoice_total = invoices
+                    .select(&:include_in_reports?)
+                    .map(&:invoice_amount)
+                    .sum
+    [invoice_total - total_amount, 0].max
+  end
+
   def pdf_output_file
     "/tmp/cf0925_#{id}.pdf"
   end
 
+  ##
+  # Pull the info from the user and the funded_person into the Cf0925 instance
+  def populate
+    copy_parent_to_form
+    copy_child_to_form
+  end
+
   def printable?
     # valid?(:printable) || puts(errors.full_messages)
+    # user.printable? || puts(errors.full_messages)
     cf0925_printable = valid?(:printable)
     user_printable = user.printable?
+    # puts "user validation: #{user_printable}. CF0925 validate: #{cf0925_printable}"
+    # puts "Both: #{cf0925_printable && user_printable}"
     cf0925_printable && user_printable
+  end
+
+  ##
+  # Return the range from start date to end date, or fiscal year the RTP
+  # was created, if no start or end date.
+  def service_period(start = service_provider_service_start,
+                     finish = service_provider_service_end)
+    if start && finish
+      start..finish
+    else
+      fy = funded_person.fiscal_year(created_at)
+      service_period(fy.begin, fy.end)
+    end
+  end
+
+  ##
+  # Return a human-digestable string for the service period.
+  def service_period_string
+    [service_period.begin.to_s, service_period.end.to_s].join(' to ')
   end
 
   def service_provider_service_amount=(value)
@@ -260,6 +370,19 @@ class Cf0925 < ApplicationRecord
 
   def set_form
     form || self.form = Form.find_by!(class_name: 'Cf0925')
+  end
+
+  ##
+  # How much is spent from this RTP
+  def spent_funds
+    invoice_total = invoices
+                    .select(&:include_in_reports?)
+                    .map(&:invoice_amount)
+                    .sum
+    [invoice_total, total_amount].min
+    # FIXME: The above has to distinguish supplier from service provider
+    # [spent_on_provider_agency, rtp.service_provider_service_amount].min +
+    #   [spent_on_supplier, rtp.item_total].min
   end
 
   def start_date
@@ -289,6 +412,16 @@ class Cf0925 < ApplicationRecord
   end
 
   ##
+  # A human-usable way to identify an RTP.
+  # Useful for drop-downs, etc.
+  def to_s
+    [
+      (service_provider_name || agency_name || supplier_name),
+      service_period_string
+    ].join(' ')
+  end
+
+  ##
   # Total amount requested on this CF0925
   def total_amount
     # puts "amount: #{service_provider_service_amount} item_total: #{item_total}"
@@ -296,57 +429,19 @@ class Cf0925 < ApplicationRecord
     (service_provider_service_amount || 0) + (item_total || 0)
   end
 
-  def user
-    funded_person && funded_person.user
+  def translate_care_of_ministry_to_pdf_field
+    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
   end
 
   def translate_payment_to_pdf_field
     payment == 'provider' ? 'Choice1' : 'Choice2'
   end
 
-  def translate_care_of_ministry_to_pdf_field
-    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
+  def user
+    funded_person && funded_person.user
   end
 
   private
-
-  def filling_in_part_a?
-    # answer =
-    agency_name.present? ||
-      # payment.present? ||
-      service_provider_postal_code.present? ||
-      service_provider_address.present? ||
-      service_provider_city.present? ||
-      service_provider_phone.present? ||
-      service_provider_name.present? ||
-      service_provider_service_1.present? ||
-      service_provider_service_2.present? ||
-      service_provider_service_3.present? ||
-      service_provider_service_amount.present? ||
-      service_provider_service_end.present? ||
-      service_provider_service_fee.present? ||
-      # service_provider_service_hour.present? ||
-      service_provider_service_start.present?
-    #
-    # puts "Answer: #{answer}, Start: #{service_provider_service_start}" \
-    # ", End: #{service_provider_service_end}"
-    # answer
-  end
-
-  def filling_in_part_b?
-    supplier_address.present? ||
-      supplier_city.present? ||
-      supplier_contact_person.present? ||
-      supplier_name.present? ||
-      supplier_phone.present? ||
-      supplier_postal_code.present? ||
-      item_cost_1.present? ||
-      item_cost_2.present? ||
-      item_cost_3.present? ||
-      item_desp_1.present? ||
-      item_desp_2.present? ||
-      item_desp_3.present?
-  end
 
   def formatted_area_code(match)
     match[:area_code] if match
@@ -362,6 +457,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def number_clean(value)
+    return value unless value.is_a? String
     value.gsub(/[^\d#{I18n.default_separator}]+/, '')
   end
 end
