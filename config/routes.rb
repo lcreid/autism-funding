@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   root 'home#index'
   get 'home/index'
   post 'home/set_panel_state'
-  post 'home/acknowledge_bc_instructions'
+#  post 'home/acknowledge_bc_instructions'
 
   get 'welcome/index'
 

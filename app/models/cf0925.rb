@@ -116,7 +116,8 @@ class Cf0925 < ApplicationRecord
       self.parent_first_name = user.name_first
       self.parent_middle_name = user.name_middle
       # puts "In copy_parent_to_form home phone: #{user.home_phone.full_number}"
-      self.home_phone = user.home_phone.full_number if user.home_phone
+#      self.home_phone = user.home_phone.full_number if user.home_phone
+      self.home_phone = user.home_phone_number
       self.work_phone = user.work_phone.full_number if user.work_phone
       # 20161126 - Phil removed the following:
       # if user.address

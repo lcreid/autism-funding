@@ -31,11 +31,4 @@ class HomeController < ApplicationController
     # render inline: ''
   end
 
-  ##
-  # Acknowlege the fact that this site only applies to BC residents
-  # This ensures that the Warning panel no longer appears on my_home_phone
-  def acknowledge_bc_instructions
-    current_user.set_bc_warning_acknowledgement(true)
-    redirect_to home_index_path
-  end
 end
