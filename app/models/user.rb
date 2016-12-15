@@ -148,6 +148,10 @@ class User < ApplicationRecord
     my_name
   end
 
+  def open_panel
+    preference(:open_panel_child_id, nil)
+  end
+
   #-- pseduo-attribute postal_code -------------------
   # Get Postal Code for User
   def postal_code
@@ -157,6 +161,19 @@ class User < ApplicationRecord
   # Set Postal Code for User
   def postal_code=(val)
     address_record.postal_code = val
+  end
+
+  # Retreive the value for a preference
+  def preference(key, default)
+    # logger.debug { "Preference args: #{key}(#{key.class})" }
+    # logger.debug { "Preferences: #{preferences}" }
+    pref_hash = json(preferences)
+    # logger.debug { "Preferences hash: #{pref_hash}" }
+    value = pref_hash && pref_hash[key.to_s]
+    # logger.debug { "Preferences value before default: #{value}" }
+    value ||= default
+    # logger.debug { "Preferences value: #{value}" }
+    value
   end
 
   # Returns true if the user has all required information to print out a RTP form
@@ -178,6 +195,18 @@ class User < ApplicationRecord
   # Get province_code_id for User
   def province_code_id=(val)
     address_record.province_code_id = val
+  end
+
+  # Set the child ID of the open panel, since only one can be open
+  def set_open_panel(child_id)
+    set_preference(open_panel_child_id: child_id)
+  end
+
+  def set_preference(hash)
+    # logger.debug { "Set preference new hash: #{hash}" }
+    self.preferences = json(preferences).merge(hash).to_json
+    # logger.debug { "Set preference preferences: #{preferences}" }
+    save
   end
 
   #-- pseduo-attribute work_phone_extension -------------------
@@ -234,53 +263,6 @@ class User < ApplicationRecord
     end
   end
 
-  #-- end of alphabetized methods ----------------------------------------------
-
-  def my_work_phone
-    my_phone 'Work'
-  end
-
-  def open_panel
-    preference(:open_panel_child_id, nil)
-  end
-
-  def phone(phone_type)
-    phone_numbers.select { |x| x.phone_type == phone_type }.first
-  end
-
-  def preference(key, default)
-    # logger.debug { "Preference args: #{key}(#{key.class})" }
-    # logger.debug { "Preferences: #{preferences}" }
-    pref_hash = json(preferences)
-    # logger.debug { "Preferences hash: #{pref_hash}" }
-    value = pref_hash && pref_hash[key.to_s]
-    # logger.debug { "Preferences value before default: #{value}" }
-    value ||= default
-    # logger.debug { "Preferences value: #{value}" }
-    value
-  end
-
-  ##
-  # Set the child ID of the open panel, since only one can be open
-  def set_open_panel(child_id)
-    set_preference(open_panel_child_id: child_id)
-  end
-
-  def set_preference(hash)
-    # logger.debug { "Set preference new hash: #{hash}" }
-    self.preferences = json(preferences).merge(hash).to_json
-    # logger.debug { "Set preference preferences: #{preferences}" }
-    save
-  end
-
-  def work_phone
-    phone 'Work'
-  end
-
-  def work_phone?
-    !work_phone.nil? && work_phone.phone_number.present?
-  end
-
   #### private methods ###########################################################
   private
 
@@ -293,24 +275,4 @@ class User < ApplicationRecord
     phone_numbers.find { |x| x.phone_type == type } || phone_numbers.build(phone_type: type)
   end
 
-  def my_phone(the_type)
-    # obj_phone = phone_numbers.find(phone_type: the_type)
-    obj_phone = phone_numbers.find_by(phone_type: the_type)
-
-    ret_obj = nil
-    phone_numbers.each do |pn|
-      ret_obj = pn if pn.phone_type == the_type
-    end
-
-    if obj_phone.nil? && id.nil?
-      ret_obj = phone_numbers.build
-      ret_obj.phone_type = the_type
-    elsif obj_phone.nil?
-      ret_obj = PhoneNumber.create(user_id: id, phone_type: the_type)
-      phone_numbers.reload # refreshes cache
-      #    else
-      #      ret_obj = obj_phone
-    end
-    ret_obj
-  end
 end
