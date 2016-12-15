@@ -76,14 +76,6 @@ class MyProfileController < ApplicationController
     params.require(:user).permit(:name_first, :name_middle, :name_last, :address, :city, :postal_code, :province_code_id, :home_phone_number, :work_phone_number,:work_phone_extension, funded_people_attributes: [:id, :name_first, :name_middle, :name_last, :birthdate, :child_in_care_of_ministry, :_destroy])
   end
 
-
-  def z_set_objects
-    @my_address = current_user.my_address
-    @home_phone = current_user.my_home_phone
-    @work_phone = current_user.my_work_phone
-    # current_user.funded_people.new
-  end
-
   def xadd_flash(the_group, the_message)
     if flash[:save_errors].nil?
       flash[:save_errors] = '<u>Please Correct the Following and Re-Save</u><br><br>'

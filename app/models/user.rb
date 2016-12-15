@@ -28,16 +28,6 @@ class User < ApplicationRecord
 
   validate :validate_phone_numbers
 
-  # This following doesn't seem to work.
-  # validates :my_work_phone,
-  #           presence: true,
-  #           on: :printable,
-  #           unless: ->(x) { x.my_home_phone.present? }
-  #
-  # validates :my_home_phone,
-  #           presence: true,
-  #           on: :printable,
-  #           unless: ->(x) { x.my_work_phone.present? }
   validate :validate_at_least_one_phone_number, on: :printable
 
   validates :address,
@@ -226,13 +216,6 @@ def can_see_my_home?
   end
 
   #-- end of alphabetized methods ----------------------------------------------
-  def home_phone?
-    !home_phone.nil? && home_phone.phone_number.present?
-  end
-
-  def my_home_phone
-    my_phone 'Home'
-  end
 
   def my_work_phone
     my_phone 'Work'

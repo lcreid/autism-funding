@@ -20,12 +20,6 @@ module TestSessionHelpers
       user.save
     end
 
-    ## If there are no phone numbers, create a home phone numbers
-    if user.phone_numbers.empty?
-      user.my_home_phone.phone_number = '3335557777'
-      user.save
-    end
-
     post new_user_session_path,
          params: {
            user: {

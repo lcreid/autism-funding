@@ -24,27 +24,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
           'name_first' => 'parent_first_name',
           'name_middle' => 'parent_middle_name',
           'name_last' => 'parent_last_name',
-          'phone_numbers_attributes' => {
-            '0' => {
-              'id' => @funded_person.user.my_home_phone.id,
-              'phone_number' => '8888888888',
-              'phone_type' => 'Home'
-            },
-            '1' => {
-              'id' => @funded_person.user.my_work_phone.id,
-              'phone_number' => '7777777777',
-              'phone_type' => 'Work',
-              'phone_extension' => ''
-            }
-          },
-          'addresses_attributes' => {
-            '0' => {
-              'id' => @funded_person.user.send(:address_record).id,
-              'address_line_1' => 'parent_address',
-              'city' => 'parent_city',
-              'postal_code' => 'A0A 0A0'
-            }
-          },
+          'home_phone_number' => '6048888887',
+          'work_phone_number' => '6047777778',
           'address' => 'parent_address',
           'city' => 'parent_city',
           'postal_code' => 'A0A 0A0'
@@ -103,27 +84,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
               'name_first' => 'parent_first_name',
               'name_middle' => 'parent_middle_name',
               'name_last' => 'parent_last_name',
-              'phone_numbers_attributes' => {
-                '0' => {
-                  'id' => @funded_person.user.my_home_phone.id,
-                  'phone_number' => '8888888887',
-                  'phone_type' => 'Home'
-                },
-                '1' => {
-                  'id' => @funded_person.user.my_work_phone.id,
-                  'phone_number' => '7777777778',
-                  'phone_type' => 'Work',
-                  'phone_extension' => ''
-                }
-              },
-              'addresses_attributes' => {
-                '0' => {
-                  'id' => @funded_person.user.send(:address_record).id,
-                  'address_line_1' => 'parent_address',
-                  'city' => 'parent_city',
-                  'postal_code' => 'A0A 0A0'
-                }
-              },
+              'home_phone_number' => '6048888887',
+              'work_phone_number' => '6047777778',
               'address' => 'parent_address',
               'city' => 'parent_city',
               'postal_code' => 'A0A 0A0'
@@ -310,9 +272,9 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # assert_response :success
 
     bad_address_params = @form_field_values
-    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['address_line_1'] = ''
-    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['city'] = ''
-    bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['postal_code'] = ''
+    # bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['address_line_1'] = ''
+    # bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['city'] = ''
+    # bad_address_params['funded_person_attributes']['user_attributes']['addresses_attributes']['0']['postal_code'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['address'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['city'] = ''
     bad_address_params['funded_person_attributes']['user_attributes']['postal_code'] = ''
@@ -343,8 +305,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     # assert_response :success
 
     bad_phone_params = @form_field_values
-    bad_phone_params['funded_person_attributes']['user_attributes']['phone_numbers_attributes']['0']['phone_number'] = ''
-    bad_phone_params['funded_person_attributes']['user_attributes']['phone_numbers_attributes']['1']['phone_number'] = ''
+    bad_phone_params['funded_person_attributes']['user_attributes']['home_phone_number'] = ''
+    bad_phone_params['funded_person_attributes']['user_attributes']['work_phone_number'] = ''
 
     # pp bad_phone_params
     assert_difference('Cf0925.count') do

@@ -3,26 +3,10 @@
     <%= parent.text_field(:name_last, column_width: 2, label: 'Last Name') %>
     <%= parent.text_field(:name_first, column_width: 2, label: 'First') %>
     <%= parent.text_field(:name_middle, column_width: 2, label: 'Middle') %>
-    <%# OK. I think the below works. What is the learning? By putting in the method name,
-    you cause the form builder to use it in the element id and name, so you get unique IDs.
-    But the form builder must look only at attributes, rather than all methods,
-    when looking for the value, so you also have to explicitly provide the object.
-    I couldn't get nested attributes to work out of the box. So an approach that uses
-    the collection ordered by the way you want them to be, while hacky, works more smoothly.
-    You can do two different rows explicitly, but then you have multiple elements with the
-    same HTML ID, which causes grief and doesn't work. %>
-    <%= parent.fields_for :phone_numbers, [
-              @cf0925.funded_person.user.my_home_phone,
-              @cf0925.funded_person.user.my_work_phone
-            ] do |phone_form| %>
-        <%#= "parent object: " + parent.object.inspect %>
-        <%#= "phone_form object: " + phone_form.object.inspect %>
-        <%= render partial: 'phone_numbers/form',
-                         locals: {
-                           f: phone_form
-                         } %>
-      <% end %>
-      <%= parent.error_message_for(:phone_numbers) %>
+    <%= parent.phone_field(:home_phone_number, column_width: 2, label: 'Home Phone') %>
+    <%= parent.phone_field(:work_phone_number, column_width: 2, label: 'Work Phone') %>
+    <%= parent.text_field(:work_phone_extension, column_width: 2, label: 'Ext.') %>
+    <%= parent.error_message_for(:phone_numbers) %>
   <% end %>
   <%= form_row do %>
     <div class="parent-address-fields" %>

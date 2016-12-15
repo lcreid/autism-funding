@@ -240,70 +240,46 @@ class UserTest < ActiveSupport::TestCase
 
   #-----------------------------------------------------------------------------
   #  Test 06
-  # => a) tests that new user has no related phone_numbers
-  # => b) tests that new user has one phone number after my_home_phone
-  # => c) tests that users(:has_no_phone) has no related addresses
-  # => d) tests that users(::has_no_phone).my_home_phone returns an instance of class PhoneNumber
-  # => e) tests that users(::has_no_phone).my_home_phone returns an instance with a correct user_id
-  # => f) tests that users(::has_no_phone).my_home_phone returns a PhoneNumber instance that has a nil phone_number
-  # => g) tests that users(::has_no_phone).my_home_phone returns a PhoneNumber instance that has the correct phone_type
-  # => h) tests that users(:has_no_address) now has one related phone number
-  # => i) tests that users(:has_two_phone) has 2 related phone numbers
-  # => j) tests that users(:has_two_phone).my_home_phone returns an instance of class PhoneNumber
-  # => k) tests that users(:has_two_phone).my_home_phone returns an instance with a correct user_id
-  # => l) tests that users(:has_two_phone).my_home_phone returns expected Phone data
-  # => m) tests that users(:has_two_phone).my_home_phone returns expected phone type
-  testName = '06 Check my_home_phone'
+  # => a) tests that new user home_phone_number is nil
+  # => b) tests that new user work_phone_number is nil
+  # => c) tests that new user work_phone_extension is nil
+  # => d) tests that can set home_phone_number
+  # => e) tests that can set work_phone_number
+  # => f) tests that can set work_phone_extension
+  testName = '06 Check Phone Numbers'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
     test_phone_type = 'Home'
     # 06.a .....................................................................
     the_user = User.new
-    assert_equal 0, the_user.phone_numbers.size, "06.a: Instance [#{the_user.my_name}] should have no phone_numbers"
+    assert_nil the_user.home_phone_number, "06.a: New User should have a nil home_phone_number"
 
     # 06.b .....................................................................
-    the_user.my_home_phone
-    assert_equal 1, the_user.phone_numbers.size, "06.b: Instance [#{the_user.my_name}] Should have 1 phone number after my_home_phone"
+    assert_nil the_user.work_phone_number, "06.b: New User should have a nil work_phone_number"
 
     # 06.c .....................................................................
-    the_user = users(:has_no_phone)
-    assert_equal 0, the_user.phone_numbers.size, "06.c: Instance [#{the_user.my_name}] should have 0 phone_numbers"
+    assert_nil the_user.work_phone_extension, "06.c: New User should have a nil work_phone_extension"
 
     # 06.d .....................................................................
-    the_phone_number = the_user.my_home_phone
-    assert_instance_of PhoneNumber, the_phone_number, "06.d:  [#{the_user.my_name}.my_home_phone] should return instance of class APhoneNumber"
+    test_number = '6045678234'
+    the_user.home_phone_number = test_number
+    the_user.work_phone_number = nil
+    the_user.work_phone_extension = nil
+    assert_equal test_number, the_user.home_phone_number, "06.d: could not set home_phone_number"
 
     # 06.e .....................................................................
-    assert_equal the_user.id, the_phone_number.user_id, "06.e: Instance [#{the_user.my_name}],my_home_phone has an incorrect user_id"
+    test_number = '6045678004'
+    the_user.work_phone_number = test_number
+    the_user.home_phone_number = nil
+    the_user.work_phone_extension = nil
+    assert_equal test_number, the_user.work_phone_number, "06.e: could not set work_phone_number"
 
     # 06.f .....................................................................
-    assert_nil the_phone_number.phone_number, "06.f: Instance [#{the_user.my_name}],my_home_phone is not a blank phone number"
-
-    # 06.g .....................................................................
-    expected = test_phone_type
-    assert_equal expected, the_phone_number.phone_type, "06.g: Instance [#{the_user.my_name}],my_home_phone should have the correct type"
-
-    # 06.h .....................................................................
-    assert_equal 1, the_user.phone_numbers.size, "06.h: Instance [#{the_user.my_name}] should now have 1 phone number"
-
-    # 06.i .....................................................................
-    the_user = users(:has_two_phone)
-    assert_equal 2, the_user.phone_numbers.size, "06.i: Instance [#{the_user.my_name}] should have 2 phone numbers"
-
-    # 06.j .....................................................................
-    the_phone_number = the_user.my_home_phone
-    assert_instance_of PhoneNumber, the_phone_number, "06.j:  [#{the_user.my_name}.my_home_number] should return instance of class PhoneNumber"
-
-    # 06.k .....................................................................
-    assert_equal the_user.id, the_phone_number.user_id, "06.k: Instance [#{the_user.my_name}.my_home_phone has an incorrect user_id"
-
-    # 06.l .....................................................................
-    expected = PhoneNumber.find_by(user_id: the_user.id, phone_type: test_phone_type).full_number
-    assert_equal expected, the_phone_number.full_number, "06.l: Instance [#{the_user.my_name}].my_home_number phone_number is not correct"
-
-    # 06.m .....................................................................
-    expected = test_phone_type
-    assert_equal expected, the_phone_number.phone_type, "06.m: Instance [#{the_user.my_name}],my_home_phone should have the correct type"
+    test_ext = '60'
+    the_user.work_phone_extension = test_ext
+    the_user.home_phone_number = nil
+    the_user.work_phone_number = nil
+    assert_equal test_ext, the_user.work_phone_extension, "06.f: could not set work_phone_extension"
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
