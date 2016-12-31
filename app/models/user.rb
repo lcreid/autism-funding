@@ -7,7 +7,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :addresses, inverse_of: :user
+  has_many :addresses, inverse_of: :user, dependent: :destroy
   belongs_to :province_code, optional: true
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
@@ -15,16 +15,18 @@ class User < ApplicationRecord
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms, through: :funded_people, source: :cf0925s
-  has_many :funded_people, -> { order(:name_first) }, inverse_of: :user
+  has_many :funded_people,
+           -> { order(:name_first) },
+           inverse_of: :user,
+           dependent: :destroy
   accepts_nested_attributes_for :funded_people,
                                 allow_destroy: true,
                                 reject_if: :all_blank
-  has_many :phone_numbers, inverse_of: :user
+  has_many :phone_numbers, inverse_of: :user, dependent: :destroy
   accepts_nested_attributes_for :phone_numbers,
                                 reject_if: proc { |attributes|
                                   attributes[:phone_number].blank?
                                 }
-
 
   validate :validate_phone_numbers
 
@@ -37,65 +39,65 @@ class User < ApplicationRecord
             on: :printable
   # TODO: Validate postal code?
 
-  # TODO We had to move this validates to this location to make tests run green
+  # TODO: We had to move this validates to this location to make tests run green
   # but we don't understand why
   validates :name_first,
             :name_last,
             presence: true,
             on: :printable
 
-#-- Public Methods -------------------------------------------------------------
-#-- pseduo-attribute address -------------------
-# Get Address for User
-def address
-  address_record.address_line_1
-end
-# Set Address for user
-def address=(val)
-  address_record.address_line_1 = val
-end
-
-# Returns true if the address is in the province of British Columbia
-def bc_resident?
-  address_record.get_province_code == 'BC'
-end
-
-# Returns true if the user is able to create a new RTP form
-def can_create_new_rtp?
-  bc_resident? && !funded_people.empty?
-end
-
-# Returns true if the user is able to navigate to the home page
-def can_see_my_home?
-  ret = ! self.missing_key_info?
-  cnt_items = 0
-  # Check all funded people are valid and get count of invoices/forms
-# puts "#{__LINE__}: state of ret #{ret}"
-  if ret
-    all_valid = true
-    self.funded_people.each do |fp|
-       cnt_items += fp.invoices.size
-       cnt_items += fp.cf0925s.size
-       unless fp.valid? || fp.is_blank?
-         puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
-         all_valid = false
-       end
-     end
-     ret = all_valid
+  #-- Public Methods -------------------------------------------------------------
+  #-- pseduo-attribute address -------------------
+  # Get Address for User
+  def address
+    address_record.address_line_1
   end
-# puts "#{__LINE__}: state of ret #{ret}"
-  if ( address_record.get_province_code ) != 'BC' && ( cnt_items < 1 )
-     ret = false
-   end
-  # puts "#{__LINE__}: state of ret #{ret}"
-    return ret
+
+  # Set Address for user
+  def address=(val)
+    address_record.address_line_1 = val
   end
+
+  # Returns true if the address is in the province of British Columbia
+  def bc_resident?
+    address_record.get_province_code == 'BC'
+  end
+
+  # Returns true if the user is able to create a new RTP form
+  def can_create_new_rtp?
+    bc_resident? && !funded_people.empty?
+  end
+
+  # Returns true if the user is able to navigate to the home page
+  def can_see_my_home?
+    ret = !missing_key_info?
+    cnt_items = 0
+    # Check all funded people are valid and get count of invoices/forms
+    # puts "#{__LINE__}: state of ret #{ret}"
+    if ret
+      all_valid = true
+      funded_people.each do |fp|
+        cnt_items += fp.invoices.size
+        cnt_items += fp.cf0925s.size
+        unless fp.valid? || fp.is_blank?
+          puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
+          all_valid = false
+        end
+      end
+      ret = all_valid
+    end
+    # puts "#{__LINE__}: state of ret #{ret}"
+    ret = false if address_record.get_province_code != 'BC' && (cnt_items < 1)
+    # puts "#{__LINE__}: state of ret #{ret}"
+    ret
+    end
 
   #-- pseduo-attribute city -------------------
   # Get City for User
   def city
     address_record.city
   end
+
   # Set City for User
   def city=(val)
     address_record.city = val
@@ -106,6 +108,7 @@ def can_see_my_home?
   def home_phone_number
     phone_record('Home').phone_number
   end
+
   # Set Home Phone Number for User
   def home_phone_number=(val)
     phone_record('Home').phone_number = val
@@ -142,6 +145,7 @@ def can_see_my_home?
   def postal_code
     address_record.postal_code
   end
+
   # Set Postal Code for User
   def postal_code=(val)
     address_record.postal_code = val
@@ -162,6 +166,7 @@ def can_see_my_home?
   def province_code_id
     address_record.province_code_id
   end
+
   # Get province_code_id for User
   def province_code_id=(val)
     address_record.province_code_id = val
@@ -172,6 +177,7 @@ def can_see_my_home?
   def work_phone_extension
     phone_record('Work').phone_extension
   end
+
   # Set Work Phone Number for User
   def work_phone_extension=(val)
     phone_record('Work').phone_extension = val
@@ -182,6 +188,7 @@ def can_see_my_home?
   def work_phone_number
     phone_record('Work').phone_number
   end
+
   # Set Work Phone Number for User
   def work_phone_number=(val)
     phone_record('Work').phone_number = val
