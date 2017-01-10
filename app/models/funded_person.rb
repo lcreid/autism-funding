@@ -3,7 +3,7 @@ class FundedPerson < ApplicationRecord
 
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
-  belongs_to :user, inverse_of: :funded_people
+  belongs_to :user, inverse_of: :funded_people #, autosave: true
   #  accepts_nested_attributes_for :user
 
   default_scope { order(:name_first) }

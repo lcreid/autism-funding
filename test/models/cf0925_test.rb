@@ -249,6 +249,57 @@ class Cf0925Test < ActiveSupport::TestCase
     assert_equal ["can't be blank"], rtp.errors[:service_provider_service_1]
   end
 
+  test 'save with validation failure in postal_code' do
+    rtp = prep_empty_form
+    assert rtp.save_with_user, 'Initial save failed.'
+    # pp rtp
+    # pp rtp.funded_person
+    # pp rtp.funded_person.user
+    # pp rtp.funded_person.user.address
+    # pp rtp.funded_person.user.postal_code
+    rtp.funded_person.user.postal_code = 'VVV 000'
+    rtp.service_provider_name = "Hey, here's a name"
+    result_of_save = rtp.save_with_user
+    # puts rtp.errors.full_messages
+    rtp_from_db = Cf0925.find(rtp.id)
+    # pp rtp.funded_person
+    # pp rtp.funded_person.user
+    # pp rtp.funded_person.user.address
+    # pp rtp.funded_person.user.postal_code
+    # rtp.funded_person.user.reload
+    assert_not_equal 'VVV 000', rtp_from_db.funded_person.user.postal_code
+    assert_not_equal "Hey, here's a name", rtp_from_db.service_provider_name
+    assert !result_of_save, "RTP save worked when it shouldn't have"
+  end
+
+  test 'save with validation failure in home_phone_number' do
+    rtp = prep_empty_form
+    assert rtp.save_with_user, 'Initial save failed.'
+    # pp rtp
+    rtp.funded_person.user.home_phone_number = '66677788889'
+    rtp.service_provider_name = "Hey, here's a name"
+    assert !rtp.save_with_user, 'Save succeded when it should have failed'
+    rtp_from_db = Cf0925.find(rtp.id)
+    assert_equal '5555551212', rtp_from_db.funded_person.user.home_phone_number
+    assert_not_equal "Hey, here's a name", rtp_from_db.service_provider_name
+  end
+
+  test 'change postal code and update user' do
+    rtp = prep_empty_form
+    rtp.funded_person.user.postal_code = 'V0V 0V1'
+    assert rtp.save_with_user
+    rtp.reload
+    assert_equal 'V0V0V1', rtp.funded_person.user.postal_code
+  end
+
+  test 'change phone number and update user' do
+    rtp = prep_empty_form
+    rtp.funded_person.user.home_phone_number = '5555551213'
+    assert rtp.save_with_user
+    rtp.reload
+    assert_equal '5555551213', rtp.funded_person.user.home_phone_number
+  end
+
   private
 
   def prep_empty_form

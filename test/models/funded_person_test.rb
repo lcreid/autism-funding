@@ -298,6 +298,44 @@ class FundedPersonTest < ActiveSupport::TestCase
     assert_equal 0,
                  child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
   end
+
+  # The following were for test cases around the autosaving of user from a
+  # Cf0925. However, we decided not to do that, so commenting them out.
+  # test 'change to invalid postal code and update user' do
+  #   child = prep_child
+  #   assert child.save
+  #   child.user.postal_code = 'V0V 0V11'
+  #   assert !child.save
+  #   child_from_db = FundedPerson.find(child.id)
+  #   assert_equal 'V0V0V0', child_from_db.user.postal_code
+  # end
+  #
+  # test 'change to invalid phone number and update user' do
+  #   child = prep_child
+  #   assert child.save
+  #   child.user.home_phone_number = '55555512133'
+  #   assert !child.save
+  #   child.reload
+  #   child.user.home_phone_number = '(555) 555-1212'
+  # end
+
+  private
+
+  # def prep_child
+  #   user = User.new(email: 'empty_form@autism-funding.com',
+  #                   password: 'aslk234jakl',
+  #                   name_first: 'Empty',
+  #                   name_last: 'Form')
+  #   user.addresses.build(address_line_1: 'Empty St',
+  #                        city: 'Sadville',
+  #                        province_code: province_codes(:bc),
+  #                        postal_code: 'V0V 0V0')
+  #   user.phone_numbers.build(phone_type: 'Home', phone_number: '5555551212')
+  #   user.funded_people.build(name_first: 'Empty',
+  #                            name_last: 'Form',
+  #                            birthdate: '2003-09-30',
+  #                            child_in_care_of_ministry: false)
+  # end
 end
 
 # the_fp.errors.messages.each do |m|

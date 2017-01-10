@@ -80,7 +80,7 @@ class User < ApplicationRecord
         cnt_items += fp.invoices.size
         cnt_items += fp.cf0925s.size
         unless fp.valid? || fp.is_blank?
-          puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
+          # puts "#{fp.id}: #{fp.my_name} #{fp.birthdate}"
           all_valid = false
         end
       end
@@ -120,14 +120,22 @@ class User < ApplicationRecord
   def missing_key_info?
     # Need to check if there are at least 1 non-blank, valid funded_people
     ret = true
+    # puts "funded_people size: #{funded_people.size}"
     funded_people.each do |fp|
+      # puts "mising_key_info? #{__LINE__}: #{fp.inspect}"
+      # puts "missing_key_info? is_blank? #{fp.is_blank?} valid? #{fp.valid?}"
+      # puts "#{fp.errors.full_messages}" unless fp.valid?
       unless fp.is_blank? || !fp.valid?
+        # puts 'mising_key_info? got false on funded_person'
         ret = false
         break
       end
     end
+    # puts "mising_key_info? #{__LINE__}: got #{ret} after funded_people"
     ret ||= province_code_id.nil?
+    # puts "mising_key_info? #{__LINE__}: got #{ret} on province_code_id nil"
     ret ||= address_record.get_province_code.empty?
+    # puts "mising_key_info? #{__LINE__}: got #{ret} on get_province_code empty"
     ret
   end
 
@@ -209,15 +217,19 @@ class User < ApplicationRecord
   # validate phones numbers (work and home) by checking for errors in the related
   # Phone table.  This will associate errors with the appropriate pseduo-attribute
   def validate_phone_numbers
+    # puts 'Validating phone numbers'
     phone_record('Work').validate
     phone_record('Work').errors[:phone_number].each do |e|
+      # puts "Error in work #{e}"
       errors.add(:work_phone_number, e)
     end
     phone_record('Work').errors[:phone_extension].each do |e|
+      # puts "Error in extension #{e}"
       errors.add(:work_phone_extension, e)
     end
     phone_record('Home').validate
     phone_record('Home').errors[:phone_number].each do |e|
+      # puts "Error in home #{e}"
       errors.add(:home_phone_number, e)
     end
   end

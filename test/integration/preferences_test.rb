@@ -5,6 +5,7 @@ class PreferencesTest < PoltergeistTest
 
   test 'collapsed and expanded accordion preferences' do
     fill_in_login(user = users(:dual_child_parent))
+    puts 'LOGGED IN'
     assert_current_path root_path
     assert_content 'Sixteen Year Two-Kids'
     assert_content 'Four Year Two-Kids'
@@ -19,7 +20,9 @@ class PreferencesTest < PoltergeistTest
     expect has_selector?("#collapse-#{last_child.id}.in")
     expect has_no_selector?("#collapse-#{first_child.id}.in")
 
+    # puts "ABOUT TO CLICK TO GO TO MY PROFILE"
     click_link 'My Profile'
+    # puts 'ON MY PROFILE'
     assert_content 'Edit My Data'
     assert_current_path my_profile_edit_path
     # puts "#{__LINE__}: id: #{user.id}  missing info? #{user.missing_key_info?}  see home? #{user.can_see_my_home?}"
