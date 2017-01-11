@@ -13,6 +13,9 @@ class MyProfileController < ApplicationController
       @warning = 'Your information cannot be saved until you have corrected the information highlighted below'
     end
     # Ensure there is always one new funded person that can be filled in
+    # FIXME: This causes validations to fail, and when the validation fails,
+    # the menu for My Home doesn't get displayed and test cases fail.
+    # I didn't realize you could use new this way.
     current_user.funded_people.new
   end
 

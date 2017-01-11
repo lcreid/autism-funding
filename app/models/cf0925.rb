@@ -342,6 +342,18 @@ class Cf0925 < ApplicationRecord
   end
 
   ##
+  # Save the RTP and the user that owns the RTP.
+  def save_with_user
+    ActiveRecord::Base.transaction do
+      save!
+      user.save!
+    end
+  rescue => e
+    logger.warn "Failed to save #{inspect} #{e}"
+    return false
+  end
+
+  ##
   # Return the range from start date to end date, or fiscal year the RTP
   # was created, if no start or end date.
   def service_period(start = service_provider_service_start,

@@ -61,7 +61,7 @@ class Cf0925sController < ApplicationController
     copy_parent_to_form
     copy_child_to_form
     # I didn't need to save addresses explicitly here.
-    if @cf0925.save # && user.save && user.addresses.map(&:save)
+    if @cf0925.save_with_user # && user.save && user.addresses.map(&:save)
       # Get the missing fields, aka help info, for the object
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
@@ -83,18 +83,8 @@ class Cf0925sController < ApplicationController
     copy_parent_to_form
     copy_child_to_form
 
-    ############################################################################
-    # TODO (Applies to create as well)
-    # Need to review the redirect overall and determine which, if any, errors
-    # Sends us (back) to the edit form screen.  This is particularly important
-    # in cases where the user is not saved because of some error, such as a
-    # bad phone number or extension.  Presently, if the user entered a bad
-    # phone number they'd be redirected to My Home, but if they went back to the
-    # form they would not see the bad number, just what was there before
-    ############################################################################
-
     # I didn't need to save addresses explicitly here.
-    if @cf0925.save # && user.save && user.addresses.map(&:save)
+    if @cf0925.save_with_user # && user.save && user.addresses.map(&:save)
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       redirect_to home_index_path, notice: 'Request updated.'
     else
