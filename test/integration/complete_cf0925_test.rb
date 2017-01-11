@@ -212,6 +212,33 @@ class CompleteCf0925Test < CapybaraTest
     end
   end
 
+  test 'edit a cf0925 with invalid postal code' do
+    create_a_cf0925
+    edit_last_cf0925
+    set_parent_postal_code 'VVV 000'
+    click_button 'Save'
+    assert_selector 'form.edit_cf0925'
+    assert parent_postal_code_has_error?
+  end
+
+  test 'edit a cf0925 with invalid home phone' do
+    create_a_cf0925
+    edit_last_cf0925
+    set_home_phone_number '60455566667'
+    click_button 'Save'
+    assert_selector 'form.edit_cf0925'
+    assert home_phone_number_has_error?
+  end
+
+  test 'edit a cf0925 with invalid work phone' do
+    create_a_cf0925
+    edit_last_cf0925
+    set_work_phone_number '60455566667'
+    click_button 'Save'
+    assert_selector 'form.edit_cf0925'
+    assert work_phone_number_has_error?
+  end
+
   private
 
   def create_a_cf0925
@@ -258,5 +285,46 @@ class CompleteCf0925Test < CapybaraTest
     assert Cf0925.find_by(parent_middle_name: middle_name), 'Parent middle name in RTP not updated'
     assert Address.find_by(address_line_1: address), 'Address not updated'
     assert Cf0925.find_by(parent_address: address), 'Address in RTP not updated'
+  end
+
+  def edit_last_cf0925
+    find('table.form-list tbody tr:first-of-type').click_link('Edit')
+  end
+
+  def home_phone_number_has_error?
+    # find('div.parent-test div.has-error').find_field('Postal Code')
+    find('#cf0925_funded_person_attributes_user_attributes_home_phone_number + span.help-block')
+    true
+  rescue Capybara::ElementNotFound => e
+    puts e.inspect
+    false
+  end
+
+  def parent_postal_code_has_error?
+    find('#cf0925_funded_person_attributes_user_attributes_postal_code + span.help-block')
+    true
+  rescue Capybara::ElementNotFound => e
+    puts e.inspect
+    false
+  end
+
+  def work_phone_number_has_error?
+    find('#cf0925_funded_person_attributes_user_attributes_work_phone_number + span.help-block')
+    true
+  rescue Capybara::ElementNotFound => e
+    puts e.inspect
+    false
+  end
+
+  def set_home_phone_number(phone_number)
+    find('div.parent-test').fill_in('Home Phone', with: phone_number)
+  end
+
+  def set_work_phone_number(phone_number)
+    find('div.parent-test').fill_in('Work Phone', with: phone_number)
+  end
+
+  def set_parent_postal_code(postal_code)
+    find('div.parent-test').fill_in('Postal Code', with: postal_code)
   end
 end
