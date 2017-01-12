@@ -8,7 +8,7 @@ class FundedPerson < ApplicationRecord
 
   default_scope { order(:name_first) }
 
-  has_many :cf0925s, inverse_of: :funded_person
+  has_many :cf0925s, -> { order(created_at: :desc) }, inverse_of: :funded_person
   has_many :invoices
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------

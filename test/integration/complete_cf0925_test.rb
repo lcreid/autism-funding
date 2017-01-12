@@ -218,7 +218,10 @@ class CompleteCf0925Test < CapybaraTest
     set_parent_postal_code 'VVV 000'
     click_button 'Save'
     assert_selector 'form.edit_cf0925'
+    # puts bodys
     assert parent_postal_code_has_error?
+    # all('div.form-group input').each { |x| puts x.value }
+    assert_selector 'div.has-error', count: 10
   end
 
   test 'edit a cf0925 with invalid home phone' do
@@ -228,6 +231,7 @@ class CompleteCf0925Test < CapybaraTest
     click_button 'Save'
     assert_selector 'form.edit_cf0925'
     assert home_phone_number_has_error?
+    assert_selector 'div.has-error', count: 10
   end
 
   test 'edit a cf0925 with invalid work phone' do
@@ -237,6 +241,7 @@ class CompleteCf0925Test < CapybaraTest
     click_button 'Save'
     assert_selector 'form.edit_cf0925'
     assert work_phone_number_has_error?
+    assert_selector 'div.has-error', count: 10
   end
 
   private

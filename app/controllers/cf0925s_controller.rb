@@ -51,7 +51,8 @@ class Cf0925sController < ApplicationController
     # pp(cf0925_params.as_json)
     @cf0925 = Cf0925.new(cf0925_params)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @cf0925.funded_person = FundedPerson.find(params[:funded_person_id])
+    @cf0925.funded_person =
+      @funded_person = FundedPerson.find(params[:funded_person_id])
     user = @cf0925.funded_person.user
     # puts "User has #{user.phone_numbers.size} phone numbers"
     # pp(user_params.as_json)

@@ -5,7 +5,6 @@ class PreferencesTest < PoltergeistTest
 
   test 'collapsed and expanded accordion preferences' do
     fill_in_login(user = users(:dual_child_parent))
-    puts 'LOGGED IN'
     assert_current_path root_path
     assert_content 'Sixteen Year Two-Kids'
     assert_content 'Four Year Two-Kids'
