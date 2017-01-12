@@ -70,7 +70,7 @@ class Cf0925sController < ApplicationController
     else
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
-      render 'new'
+      render :new
     end
   end
 

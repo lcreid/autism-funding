@@ -14,7 +14,11 @@ class User < ApplicationRecord
 
   # FIXME: the next line has to change every time we add another form.
   #   There should be a btter way.
-  has_many :forms, through: :funded_people, source: :cf0925s
+  has_many :forms,
+           -> { order(created_at: :desc) },
+           through: :funded_people,
+           source: :cf0925s
+
   has_many :funded_people,
            -> { order(:name_first) },
            inverse_of: :user,
@@ -125,11 +129,10 @@ class User < ApplicationRecord
       # puts "mising_key_info? #{__LINE__}: #{fp.inspect}"
       # puts "missing_key_info? is_blank? #{fp.is_blank?} valid? #{fp.valid?}"
       # puts "#{fp.errors.full_messages}" unless fp.valid?
-      unless fp.is_blank? || !fp.valid?
-        # puts 'mising_key_info? got false on funded_person'
-        ret = false
-        break
-      end
+      next if fp.is_blank? || !fp.valid?
+      # puts 'mising_key_info? got false on funded_person'
+      ret = false
+      break
     end
     # puts "mising_key_info? #{__LINE__}: got #{ret} after funded_people"
     ret ||= province_code_id.nil?
