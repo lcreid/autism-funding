@@ -70,7 +70,7 @@ class Invoice < ApplicationRecord
     # Determine if the RTP authorizes the invoice when the payee is the agency
     def pay_agency?(rtp, agency_name, service_start, service_end)
       service_start && service_end &&
-        rtp.payment == 'agency' &&
+        (rtp.payment == 'agency' || rtp.service_provider_name.blank?) &&
         rtp.agency_name &&
         agency_name == rtp.agency_name &&
         rtp.include?(service_start..service_end)
@@ -103,7 +103,7 @@ class Invoice < ApplicationRecord
     # Determine if the RTP authorizes the invoice when the payee is the provider
     def pay_provider?(rtp, service_provider_name, service_start, service_end)
       service_start && service_end &&
-        rtp.payment == 'provider' &&
+        (rtp.payment == 'provider' || rtp.agency_name.blank?) &&
         rtp.service_provider_name &&
         service_provider_name == rtp.service_provider_name &&
         rtp.include?(service_start..service_end)

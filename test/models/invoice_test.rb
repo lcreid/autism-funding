@@ -324,4 +324,30 @@ class InvoiceTest < ActiveSupport::TestCase
                  Invoice.match(funded_people(:invoice_to_rtp_match),
                                params)[1].service_period_string
   end
+
+  test 'class match RTP with provider only and no payment specified' do
+    params = { invoice_amount: 200,
+               invoice_date: '2017-08-31',
+               service_end: '2017-08-31',
+               service_start: '2017-08-01',
+               service_provider_name: 'A Provider' }
+    assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2017-07-01 to 2017-09-30',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+  end
+
+  test 'class match RTP with agency only and no payment specified' do
+    params = { invoice_amount: 200,
+               invoice_date: '2017-11-30',
+               service_end: '2017-11-30',
+               service_start: '2017-11-01',
+               agency_name: 'A G Ency and Co.' }
+    assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+    assert_equal '2017-10-01 to 2017-12-31',
+                 Invoice.match(funded_people(:invoice_to_rtp_match),
+                               params)[0].service_period_string
+  end
 end
