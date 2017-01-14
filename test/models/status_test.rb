@@ -416,6 +416,41 @@ class StatusTest < ActiveSupport::TestCase
                   remaining_funds: 5_000)
   end
 
+  # This case was added to test Issue #38
+  # I found that I had two different implementations for the same thing.
+  # Before I fix it, I want a test to show the failure.
+  # The first part of this test comes from
+  # test_class_match_RTP_with_provider_only_and_no_payment_specified
+  # in test/model/invoice_test.rb.
+  test 'invoice and RTP match but invoice paid out of pocket' do
+    # params = { invoice_amount: 200,
+    #            invoice_date: '2017-08-31',
+    #            service_end: '2017-08-31',
+    #            service_start: '2017-08-01',
+    #            service_provider_name: 'A Provider' }
+    # assert_equal 1, Invoice.match(child = funded_people(:invoice_to_rtp_match),
+    #                               params).size
+
+    child = set_up_child
+    set_up_provider_agency_rtp(child,
+                               service_provider_service_amount: 2_000,
+                               service_provider_service_end: '2017-09-30',
+                               service_provider_service_start: '2017-07-01',
+                               payment: nil,
+                               agency_name: nil)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2017-08-31',
+                                   service_end: '2017-08-31',
+                                   service_start: '2017-08-01',
+                                   service_provider_name: 'Ferry Man')
+    assert(hook_invoice_to_rtp(invoice), "Failed to match #{invoice.inspect}")
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 200,
+                  committed_funds: 2_000)
+  end
+
   private
 
   def assert_status(child, fy, statuses)
@@ -427,7 +462,7 @@ class StatusTest < ActiveSupport::TestCase
 
   def hook_invoice_to_rtp(invoice)
     rtps = invoice.match
-    return(nil) unless rtps.size == 1
+    return(nil) unless rtps && rtps.size == 1
     rtps.first.invoices << invoice
   end
 

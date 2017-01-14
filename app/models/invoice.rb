@@ -59,11 +59,14 @@ class Invoice < ApplicationRecord
       service_start = to_date(params[:service_start])
       supplier_name = params[:supplier_name]
 
-      [] + funded_person.cf0925s.select(&:printable?).select do |rtp|
+      result = [] + funded_person.cf0925s.select(&:printable?).select do |rtp|
+        # puts rtp.inspect
         pay_provider?(rtp, service_provider_name, service_start, service_end) ||
           pay_agency?(rtp, agency_name, service_start, service_end) ||
           pay_for_supplier?(rtp, supplier_name, invoice_date)
       end.sort
+      # puts result.inspect
+      result
     end
 
     ##

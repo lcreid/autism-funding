@@ -103,32 +103,32 @@ class Status
     a
   end
 
-  ##
-  # Determine if the RTP authorizes the invoice when the payee is agency
-  def pay_agency?(invoice, rtp)
-    rtp.payment == 'agency' &&
-      (invoice.agency_name || rtp.agency_name) &&
-      invoice.agency_name == rtp.agency_name &&
-      rtp.include?(invoice.service_period)
-  end
-
-  ##
-  # Determine if the RTP authorizes the invoice when the payee is the supplier
-  # (actually the parent)
-  def pay_for_supplier?(invoice, rtp)
-    (invoice.supplier_name || rtp.supplier_name) &&
-      invoice.supplier_name == rtp.supplier_name &&
-      rtp.fiscal_year.include?(invoice.invoice_date)
-  end
-
-  ##
-  # Determine if the RTP authorizes the invoice when the payee is the provider
-  def pay_provider?(invoice, rtp)
-    rtp.payment == 'provider' &&
-      (invoice.service_provider_name || rtp.service_provider_name) &&
-      invoice.service_provider_name == rtp.service_provider_name &&
-      rtp.include?(invoice.service_period)
-  end
+  # ##
+  # # Determine if the RTP authorizes the invoice when the payee is agency
+  # def pay_agency?(invoice, rtp)
+  #   rtp.payment == 'agency' &&
+  #     (invoice.agency_name || rtp.agency_name) &&
+  #     invoice.agency_name == rtp.agency_name &&
+  #     rtp.include?(invoice.service_period)
+  # end
+  #
+  # ##
+  # # Determine if the RTP authorizes the invoice when the payee is the supplier
+  # # (actually the parent)
+  # def pay_for_supplier?(invoice, rtp)
+  #   (invoice.supplier_name || rtp.supplier_name) &&
+  #     invoice.supplier_name == rtp.supplier_name &&
+  #     rtp.fiscal_year.include?(invoice.invoice_date)
+  # end
+  #
+  # ##
+  # # Determine if the RTP authorizes the invoice when the payee is the provider
+  # def pay_provider?(invoice, rtp)
+  #   rtp.payment == 'provider' &&
+  #     (invoice.service_provider_name || rtp.service_provider_name) &&
+  #     invoice.service_provider_name == rtp.service_provider_name &&
+  #     rtp.include?(invoice.service_period)
+  # end
 
   def rtp_has_invoice?(rtp, invoice)
     pay_provider?(invoice, rtp) ||
