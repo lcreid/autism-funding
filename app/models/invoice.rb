@@ -81,6 +81,7 @@ class Invoice < ApplicationRecord
     # (actually the parent)
     def pay_for_supplier?(rtp, supplier_name, invoice_date)
       result = rtp.created_at &&
+               invoice_date &&
                rtp.supplier_name &&
                supplier_name == rtp.supplier_name &&
                rtp.funded_person
