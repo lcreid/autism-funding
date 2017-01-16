@@ -21,7 +21,12 @@ class InvoicesTest < PoltergeistTest
     fill_in 'Service End', with: '2017-01-31'
     wait_for_request
 
-    expect has_select?('Request to Pay', selected: 'Joe 2016 2016-07-01 to 2017-06-14')
+    assert has_select?('Request to Pay',
+                       with_options: ['Out of Pocket',
+                                      'Joe 2016 2016-07-01 to 2017-06-14'],
+                       selected: 'Joe 2016 2016-07-01 to 2017-06-14')
+    # expect has_select?('Request to Pay',
+    #                    selected: 'Joe 2016 2016-07-01 to 2017-06-14')
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
   end
