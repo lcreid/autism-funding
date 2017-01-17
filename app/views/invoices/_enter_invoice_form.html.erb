@@ -15,24 +15,18 @@
         <%= f.select :service_provider_name,
                      opt_list,
                      {
-                       label: 'Service Provider',
+                       label: 'Invoice From',
                        column_width: 10
                      } %>
 
         <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
-        <%= f.number_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
+        <%= f.currency_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
       </div>
       <div class="row">
         <%= f.date_field :service_start, label: 'Service Start', column_width: 3 %>
         <%= f.date_field :service_end, label: 'Service End', column_width: 3 %>
-        <%= f.select :cf0925_id,
-        rtp_option_list_for_select(f.object),
-        {
-          prompt: 'Choose a Request to Pay',
-          label: 'Request to Pay',
-          column_width: 6
-        },
-        class: 'rtp-select' %>
+        <%= f.date_field :invoice_date, label: 'Invoice Date', column_width: 3 %>
+        <%= f.text_field :invoice_reference, label: 'Invoice Reference', column_width: 3 %>
       </div>
 
 
@@ -52,21 +46,7 @@
             </div>
 <% # - end of the check pattern ----------------------------------------------%>
 
-    </div>
-  </div>
-
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        Invoice Date, Invoice Reference, Agency, Supplier, Notes
-      </h3>
-    </div>
-    <div class="panel-body">
-      <div class="row">
-        <%= f.date_field :invoice_date, label: 'Invoice Date', column_width: 6 %>
-        <%= f.text_field :invoice_reference, label: 'Invoice Reference', column_width: 6 %>
-      </div>
-      <div class="row">
+      <!-- <div class="row">
         <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :agency_name, ['', '-- Other Agency --', @invoice.agency_name] %>
         <%= f.select :agency_name,
                      opt_list,
@@ -86,10 +66,75 @@
                      },
                      { mn_width: 6 } %>
         <%#= f.collection_select :supplier_name, Cf0925.all, :supplier_name, :supplier_name,{prompt: 'None Selected', include_blank: '-- Other Supplier --'},{class: 'form-control'} %>
-      </div>
+      </div> -->
 
       <div class="row">
         <%= f.text_field :notes, { size: 100, label: 'Notes', column_width: 12 } %>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        Assign Request to Pay
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <td class="text-right">
+                  Start Date
+                </td>
+                <td class="text-right">
+                  End Date
+                </td>
+                <td>
+                  Payee
+                </td>
+                <td class="text-right">
+                  Amount Available
+                </td>
+                <td class="text-right">
+                  Amount from This Invoice
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-right">2016-05-01</td>
+                <td class="text-right">2017-04-30</td>
+                <td>Bob's Your Uncle</td>
+                <td class="text-right">100.00</td>
+                <td class="text-right">
+                  <input value="44" style="text-align: right"></input>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-right">2016-10-01</td>
+                <td class="text-right">2016-12-31</td>
+                <td>Bob's Your Uncle</td>
+                <td class="text-right">3,000.00</td>
+                <td class="text-right">
+                  <input value="0" style="text-align: right"></input>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Out of Pocket</td>
+                <td class="text-right"></td>
+                <td class="text-right">
+                  <input value="66" style="text-align: right"></input>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
   </div>
