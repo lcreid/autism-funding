@@ -3,7 +3,7 @@ class FundedPerson < ApplicationRecord
 
   # One record for each funded person
   # ----- Associations ---------------------------------------------------------
-  belongs_to :user, inverse_of: :funded_people #, autosave: true
+  belongs_to :user, inverse_of: :funded_people # , autosave: true
   #  accepts_nested_attributes_for :user
 
   default_scope { order(:name_first) }
@@ -108,6 +108,15 @@ class FundedPerson < ApplicationRecord
       errors.add(:name_last, ' - must define at least one name')
       errors.add(:name_first, ' - must define at least one name')
     end
+  end
+
+  ##
+  # All the possible payees for the child
+  def possible_payees
+    (cf0925s.map(&:service_provider_name) +
+    cf0925s.map(&:agency_name) +
+    cf0925s.map(&:supplier_name) +
+    invoices.map(&:service_provider_name)).compact.sort.uniq
   end
 
   def selected_fiscal_year

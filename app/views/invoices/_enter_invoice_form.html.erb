@@ -11,7 +11,7 @@
     </div>
     <div class="panel-body" style="margin: 8px;">
       <div class="row">
-        <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :service_provider_name, ['', '-- Other Service Provider --', @invoice.service_provider_name] %>
+        <% opt_list = prep_options @invoice, ['-- Other Service Provider --'] %>
         <%= f.select :service_provider_name,
                      opt_list,
                      {
@@ -47,7 +47,7 @@
 <% # - end of the check pattern ----------------------------------------------%>
 
       <!-- <div class="row">
-        <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :agency_name, ['', '-- Other Agency --', @invoice.agency_name] %>
+        <% opt_list = prep_options @invoice, ['-- Other Agency --'] %>
         <%= f.select :agency_name,
                      opt_list,
                      {
@@ -57,7 +57,7 @@
                      { _width: 6 } %>
 
         <%#=  f.collection_select :agency_name, Cf0925.all, :agency_name, :agency_name,{prompt: 'None Selected', include_blank: '-- Other Agency --'},{class: 'form-control'}  %>
-        <% opt_list = prep_options false, @invoice.funded_person.cf0925s, :supplier_name, ['', '-- Other Supplier --', @invoice.supplier_name] %>
+        <% opt_list = prep_options @invoice, ['-- Other Supplier --'] %>
         <%= f.select :supplier_name,
                      opt_list,
                      {
@@ -103,30 +103,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="text-right">2016-05-01</td>
-                <td class="text-right">2017-04-30</td>
-                <td>Bob's Your Uncle</td>
-                <td class="text-right">100.00</td>
-                <td class="text-right">
-                  <input value="44" style="text-align: right"></input>
-                </td>
-              </tr>
-              <tr>
-                <td class="text-right">2016-10-01</td>
-                <td class="text-right">2016-12-31</td>
-                <td>Bob's Your Uncle</td>
-                <td class="text-right">3,000.00</td>
-                <td class="text-right">
-                  <input value="0" style="text-align: right"></input>
-                </td>
-              </tr>
+              <%= render(partial: 'cf0925', collection: @invoice.match) ||
+                  content_tag(:tr, content_tag(:td, 'Fill in more fields above to retrieve RTPs that provide funds for this invoice.', colspan: 5)) %>
             </tbody>
             <tfoot>
               <tr>
                 <td></td>
                 <td></td>
-                <td>Out of Pocket</td>
+                <td>Out of Pocket Bogus</td>
                 <td class="text-right"></td>
                 <td class="text-right">
                   <input value="66" style="text-align: right"></input>
