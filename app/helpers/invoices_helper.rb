@@ -1,17 +1,6 @@
 module InvoicesHelper
-  def prep_options(remove_empty, the_object = nil, the_method = nil, add_ons = nil)
+  def prep_options(the_object = nil, add_ons = nil)
     ary = []
-
-    ##-- Inititalize the array with the collection of the_object
-    unless the_object.nil? || the_method.nil?
-      if the_object.respond_to?(:each)
-        the_object.each do |item|
-          ary << item.send(the_method).to_s if item.respond_to?(the_method)
-        end
-      elsif the_object.respond_to?(the_method)
-        ary << the_object.send(the_method).to_s
-      end
-    end
 
     ##-- Determine if there are any add ons, and if so add the_method
     if add_ons.respond_to?(:each)
@@ -22,12 +11,8 @@ module InvoicesHelper
       ary << add_ons.to_s
     end
 
-    ##-- Clean up our array
-    ary.sort!
-    ary.select! { |element| !element.empty? } if remove_empty
-    ary.uniq!
+    ary += the_object.possible_payees
 
-    ##-- Return our options
     ary
   end
 
