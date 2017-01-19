@@ -1,11 +1,11 @@
 ##
 # RTP when being used to pay for a supplier invoice
 module Supplier
-  def start_date
+  def display_start_date
     fiscal_year.begin
   end
 
-  def end_date
+  def display_end_date
     fiscal_year.end
   end
 
