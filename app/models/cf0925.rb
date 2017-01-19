@@ -204,12 +204,6 @@ class Cf0925 < ApplicationRecord
       item_desp_3.present?
   end
 
-  ##
-  # Return the fiscal year of the request for Part B requests
-  def fiscal_year
-    funded_person.fiscal_year(created_at)
-  end
-
   def generate_pdf
     # begin
     pdftk = PdfForms.new('/usr/bin/pdftk')

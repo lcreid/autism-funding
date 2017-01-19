@@ -118,13 +118,15 @@ class StatusTest < ActiveSupport::TestCase
     child = set_up_child
     set_up_provider_agency_rtp(child, payment: 'provider')
 
+    assert_equal 1, child.cf0925s.size
+
     invoice = child.invoices.build(invoice_amount: 500,
                                    invoice_date: '2017-01-31',
                                    service_end: '2017-01-31',
                                    service_start: '2017-01-01',
                                    service_provider_name: 'Ferry Man')
 
-    hook_invoice_to_rtp(invoice)
+    assert hook_invoice_to_rtp(invoice)
 
     assert_status(child,
                   '2016-2017',
@@ -300,11 +302,11 @@ class StatusTest < ActiveSupport::TestCase
                          invoice_date: '2017-01-31',
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
-                         agency_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency')
     child.invoices.build(invoice_amount: 1_000,
                          notes: 'WTF?',
                          invoice_date: '2016-12-30',
-                         supplier_name: 'Supplier Name')
+                         service_provider_name: 'Supplier Name')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
@@ -329,13 +331,13 @@ class StatusTest < ActiveSupport::TestCase
                          invoice_date: '2017-01-31',
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
-                         agency_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency')
 
     child.invoices.build(invoice_amount: 2_000,
                          invoice_date: '2017-06-30',
                          service_end: '2017-06-30',
                          service_start: '2017-06-01',
-                         agency_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")

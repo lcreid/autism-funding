@@ -48,6 +48,7 @@ class Invoice < ApplicationRecord
   class <<self
     # FIXME: I really question whether I needed the class method.
     def match(funded_person, params)
+      # puts "match child #{funded_person.inspect} params: #{params}"
       return [] unless funded_person.cf0925s
 
       params = ActiveSupport::HashWithIndifferentAccess.new(params)
