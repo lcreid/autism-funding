@@ -117,11 +117,11 @@ ActiveRecord::Schema.define(version: 20170119010352) do
     t.string   "notes"
     t.date     "service_end"
     t.date     "service_start"
-    t.string   "supplier_name"
     t.string   "invoice_reference"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.integer  "funded_person_id"
+    t.string   "supplier_name"
     t.text     "agency_name"
     t.text     "service_provider_name"
     t.index ["cf0925_id"], name: "index_invoices_on_cf0925_id", using: :btree
