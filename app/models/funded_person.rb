@@ -185,6 +185,7 @@ class FundedPerson < ApplicationRecord
   private
 
   def association_in_fiscal_year(association, fy)
+    # puts "association_in_fiscal_year: #{association} #{fy}"
     association.select { |x| x.in_fiscal_year?(fy) }
   end
 

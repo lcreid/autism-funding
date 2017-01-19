@@ -47,6 +47,7 @@ class Status
     #   puts "#{k}: #{v}"
     # end
 
+    # puts "RTPs(#{rtps.size}): #{rtps.inspect}"
     @spent_out_of_pocket = invoices
                            .select { |x| !invoice_has_rtp?(x) }
                            .map(&:invoice_amount)
@@ -139,6 +140,18 @@ class Status
   ##
   # List of RTPs that apply in this fiscal year
   def rtps
+    # puts "In rtps: funded_person #{funded_person.inspect}"
+    # puts "cf0925s(#{funded_person.cf0925s.size}): " \
+    # "#{funded_person.cf0925s.inspect}"
+    # puts 'cf0925s_in_fiscal_year' \
+    # "(#{funded_person.cf0925s_in_fiscal_year(fiscal_year).size})" \
+    # ": #{funded_person.cf0925s_in_fiscal_year(fiscal_year).inspect}"
+    # puts '----'
+    # puts "fiscal_year: #{fiscal_year}"
+    # funded_person.cf0925s.each do |rtp|
+    #   puts "rtp gets fiscal year from #{rtp.method(:fiscal_year).source_location}"
+    #   puts "rtp(#{rtp.fiscal_year})"
+    # end
     @rtps ||= funded_person
               .cf0925s_in_fiscal_year(fiscal_year)
               .select(&:printable?)
