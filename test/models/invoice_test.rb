@@ -229,7 +229,7 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2014-08-31',
                                    service_end: '2014-08-31',
                                    service_start: '2014-08-01',
-                                   agency_name: 'A G Ency and Co.')
+                                   service_provider_name: 'A G Ency and Co.')
     assert_equal 1, invoice.match.size
     assert_equal '2014-07-01 to 2014-09-30',
                  invoice.match[0].service_period_string
@@ -239,7 +239,7 @@ class InvoiceTest < ActiveSupport::TestCase
     child = funded_people(:invoice_to_rtp_match)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2016-03-01',
-                                   supplier_name: 'Supplies R Us')
+                                   service_provider_name: 'Supplies R Us')
     assert_equal 1, invoice.match.size
     assert_equal '2015-06-01 to 2016-05-31',
                  invoice.match[0].service_period_string
@@ -289,7 +289,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2014-08-31',
                service_end: '2014-08-31',
                service_start: '2014-08-01',
-               agency_name: 'A G Ency and Co.' }
+               service_provider_name: 'A G Ency and Co.' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2014-07-01 to 2014-09-30',
@@ -300,7 +300,7 @@ class InvoiceTest < ActiveSupport::TestCase
   test 'class match one RTP on supplier' do
     params = { invoice_amount: 200,
                invoice_date: '2016-03-01',
-               supplier_name: 'Supplies R Us' }
+               service_provider_name: 'Supplies R Us' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2015-06-01 to 2016-05-31',
@@ -343,7 +343,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2017-11-30',
                service_end: '2017-11-30',
                service_start: '2017-11-01',
-               agency_name: 'A G Ency and Co.' }
+               service_provider_name: 'A G Ency and Co.' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2017-10-01 to 2017-12-31',

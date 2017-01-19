@@ -13,8 +13,8 @@ class Invoice < ApplicationRecord
   validate :validate_service_start_before_service_end, on: :complete
   validates :invoice_amount, presence: true, on: :complete
   validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
-  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
-  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
+  # validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
+  # validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
 
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------

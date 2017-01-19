@@ -89,30 +89,31 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   # Test combinations of matching between RTP and invoices.
-  test 'invoice from service provider when pay agency' do
-    child = set_up_child
-    set_up_provider_agency_rtp(child)
-
-    assert_status(child,
-                  '2016-2017',
-                  remaining_funds: 4_000,
-                  committed_funds: 2_000)
-
-    invoice = child.invoices.build(invoice_amount: 500,
-                                   invoice_date: '2017-01-31',
-                                   service_end: '2017-01-31',
-                                   service_start: '2017-01-01',
-                                   service_provider_name: 'Ferry Man')
-
-    hook_invoice_to_rtp(invoice)
-
-    assert_status(child,
-                  '2016-2017',
-                  spent_out_of_pocket: 500,
-                  spent_funds: 0,
-                  committed_funds: 2_000,
-                  remaining_funds: 4_000)
-  end
+  # Payment flag is no longer a criteria for matching, so commenting this out.
+  # test 'invoice from service provider when pay agency' do
+  #   child = set_up_child
+  #   set_up_provider_agency_rtp(child)
+  #
+  #   assert_status(child,
+  #                 '2016-2017',
+  #                 remaining_funds: 4_000,
+  #                 committed_funds: 2_000)
+  #
+  #   invoice = child.invoices.build(invoice_amount: 500,
+  #                                  invoice_date: '2017-01-31',
+  #                                  service_end: '2017-01-31',
+  #                                  service_start: '2017-01-01',
+  #                                  service_provider_name: 'Ferry Man')
+  #
+  #   hook_invoice_to_rtp(invoice)
+  #
+  #   assert_status(child,
+  #                 '2016-2017',
+  #                 spent_out_of_pocket: 500,
+  #                 spent_funds: 0,
+  #                 committed_funds: 2_000,
+  #                 remaining_funds: 4_000)
+  # end
 
   test 'invoice from service provider when pay service provider' do
     child = set_up_child
@@ -231,9 +232,9 @@ class StatusTest < ActiveSupport::TestCase
                                    invoice_date: '2017-01-31',
                                    service_end: '2017-01-31',
                                    service_start: '2017-01-01',
-                                   agency_name: 'Pay Me Agency')
+                                   service_provider_name: 'Pay Me Agency')
 
-    hook_invoice_to_rtp(invoice)
+    assert hook_invoice_to_rtp(invoice)
 
     assert_status(child,
                   '2016-2017',
@@ -311,6 +312,8 @@ class StatusTest < ActiveSupport::TestCase
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
     end
+
+    assert 2, child.cf0925s.first.invoices.size
 
     assert_status(child,
                   '2016-2017',

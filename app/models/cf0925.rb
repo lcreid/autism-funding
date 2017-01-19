@@ -387,10 +387,12 @@ class Cf0925 < ApplicationRecord
   ##
   # How much is spent from this RTP
   def spent_funds
+    # puts "Cf0925#spent_funds: #{inspect} invoices(#{invoices.size})"
     invoice_total = invoices
                     .select(&:include_in_reports?)
                     .map(&:invoice_amount)
                     .sum
+    # puts "invoice_total: #{invoice_total} total_amount: #{total_amount}"
     [invoice_total, total_amount].min
     # FIXME: The above has to distinguish supplier from service provider
     # [spent_on_provider_agency, rtp.service_provider_service_amount].min +
