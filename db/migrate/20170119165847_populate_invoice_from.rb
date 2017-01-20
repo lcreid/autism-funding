@@ -9,7 +9,7 @@ class PopulateInvoiceFrom < ActiveRecord::Migration[5.0]
             ary = [invoice.service_provider_name,
                    invoice.agency_name,
                    invoice.supplier_name]
-            ary.pop while ary.last.empty? && !ary.empty?
+            ary.pop while !ary.empty? && ary.last.nil?
             invoice.update!(invoice_from: ary.join(separator))
           end.count
         end
