@@ -1,11 +1,11 @@
 ##
 # RTP when being used to pay for an agency or service provider invoice
 module ServiceProvider
-  def display_start_date
+  def start_date
     service_provider_service_start
   end
 
-  def display_end_date
+  def end_date
     service_provider_service_end
   end
 

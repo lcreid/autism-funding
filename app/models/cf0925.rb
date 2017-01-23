@@ -74,8 +74,8 @@ class Cf0925 < ApplicationRecord
     end
 
     with_options if: :filling_in_part_a? do
-      validates *Cf0925.part_a_required_attributes,
-                presence: true
+      validates(*Cf0925.part_a_required_attributes,
+                presence: true)
       validate :start_date_before_end_date
       validate :start_and_end_dates_in_same_fiscal_year
       validates :agency_name,

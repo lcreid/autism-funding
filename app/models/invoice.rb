@@ -45,6 +45,13 @@ class Invoice < ApplicationRecord
     Invoice.match(funded_person, attributes)
   end
 
+  ##
+  # Temporarily return a value for out_of_pocket
+  # FIXME: Turn this into an attribute
+  attr_reader :out_of_pocket
+
+  attr_writer :out_of_pocket
+
   class <<self
     # FIXME: I really question whether I needed the class method.
     def match(funded_person, params)

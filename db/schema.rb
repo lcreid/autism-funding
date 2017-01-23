@@ -100,16 +100,6 @@ ActiveRecord::Schema.define(version: 20170119175854) do
     t.index ["user_id"], name: "index_funded_people_on_user_id", using: :btree
   end
 
-  create_table "invoice_allocations", id: false, force: :cascade do |t|
-    t.integer "cf0925_id"
-    t.integer "invoice_id"
-    t.decimal "amount",     precision: 7, scale: 2
-    t.index ["cf0925_id", "invoice_id"], name: "index_invoice_allocations_on_cf0925_id_and_invoice_id", using: :btree
-    t.index ["cf0925_id"], name: "index_invoice_allocations_on_cf0925_id", using: :btree
-    t.index ["invoice_id", "cf0925_id"], name: "index_invoice_allocations_on_invoice_id_and_cf0925_id", using: :btree
-    t.index ["invoice_id"], name: "index_invoice_allocations_on_invoice_id", using: :btree
-  end
-
   create_table "invoices", force: :cascade do |t|
     t.integer  "cf0925_id"
     t.decimal  "invoice_amount",        precision: 7, scale: 2
@@ -117,11 +107,11 @@ ActiveRecord::Schema.define(version: 20170119175854) do
     t.string   "notes"
     t.date     "service_end"
     t.date     "service_start"
+    t.string   "supplier_name"
     t.string   "invoice_reference"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.integer  "funded_person_id"
-    t.string   "supplier_name"
     t.text     "agency_name"
     t.text     "service_provider_name"
     t.string   "invoice_from"

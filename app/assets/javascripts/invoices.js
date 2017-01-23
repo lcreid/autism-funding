@@ -40,8 +40,6 @@ $(document).on('turbolinks:load', function() {
     'service_start',
     'service_end',
     'invoice_date',
-    'agency_name',
-    'supplier_name',
     'funded_person_id'
   ];
 
@@ -60,6 +58,7 @@ $(document).on('turbolinks:load', function() {
       // console.log(url);
 
       // console.log('About to look for RTPs: ' + $.param(params));
+      // TODO: Check that this doesn't return other people's RTPs
       var request = $.ajax({
         url: "/invoices/rtps",
         data: params,
@@ -68,18 +67,18 @@ $(document).on('turbolinks:load', function() {
       }).done(function(msg) {
         // console.log(msg);
         // this is where I change the HTML
-        $('.rtp-select option:gt(0)').remove();
-        $(msg).appendTo('.rtp-select');
+        $('.cf0925-list-replace option:gt(0)').remove();
+        $(msg).appendTo('.cf0925-list-replace');
         // console.log('Finished updating select');
       }).fail(function(xhr, textStatus, errorThrown) {
         if (xhr.status !== 0) {
-          console.log("Error. Status: " + textStatus + " error: " + errorThrown);
-          console.log("XHR responseXML: " + xhr.responseXML);
-          console.log("XHR: " + xhr.status);
+          console.log("Error: Status: " + textStatus + " error: " + errorThrown);
+          console.log("Error: XHR responseXML: " + xhr.responseXML);
+          console.log("Error: XHR: " + xhr.status);
         } else {
           // This just means that the user aborted the request, e.g. got tired
           // of waiting and clicked another link before the response came back.
-          console.log('User aborted request before response.');
+          console.log('Info: User aborted request before response.');
         }
       }).always(function() {
         $('body.pending').removeClass('pending');

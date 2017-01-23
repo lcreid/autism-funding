@@ -39,7 +39,7 @@ gem 'bootstrap_form'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
-  gem 'capybara'
+  gem 'capybara', '< 2.9' # Pin to before 2.9 until a new release of minitest-rails
   gem 'minitest-rails-capybara'
   gem 'poltergeist'
   gem 'database_cleaner'
