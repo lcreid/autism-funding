@@ -136,3 +136,10 @@ invoice_to_rtp_match:
   name_last: Matcher
   child_in_care_of_ministry: false
   user: invoice_matcher
+
+invoice_with_rtp_matched:
+  birthdate: '2006-05-22'
+  name_first: Invoice
+  name_last: With Rtp Jr.
+  child_in_care_of_ministry: false
+  user: invoice_with_rtp_matched

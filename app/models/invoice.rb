@@ -4,7 +4,10 @@ class Invoice < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
-  belongs_to :cf0925, optional: true, inverse_of: :invoices
+  # belongs_to :cf0925, optional: true, inverse_of: :invoices
+  has_many :invoice_allocations, inverse_of: :invoice, autosave: true
+  has_many :cf0925s, through: :invoice_allocations, autosave: true
+
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validate :validate_check_fy_on_service_dates, on: :complete
@@ -21,6 +24,15 @@ class Invoice < ApplicationRecord
   #-----------------------------------------------------------------------------
 
   # ----- Public Methods -------------------------------------------------------
+  ##
+  # Allocate one or more RTPs to the invoice.
+  def allocate(rtps)
+    cf0925s << rtps
+
+    # rtps = [rtps] unless rtps.respond_to?(:each)
+    # rtps.each { |rtp| rtp.invoices << self }
+  end
+
   def include_in_reports?
     valid?(:complete)
   end

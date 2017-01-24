@@ -260,6 +260,27 @@ class InvoiceTest < ActiveSupport::TestCase
                  invoice.match[1].service_period_string
   end
 
+  test 'allocation two RTPs' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2015-09-30',
+                                   service_end: '2015-09-30',
+                                   service_start: '2015-09-01',
+                                   agency_name: 'A G Ency and Co.',
+                                   service_provider_name: 'A Provider')
+    assert_equal(2, (rtps = invoice.match).size)
+
+    invoice.allocate(rtps)
+    assert_equal(2, invoice.cf0925s.size)
+
+    # The records don't get joined in both directions until they're saved.
+    # rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
+    assert_difference 'InvoiceAllocation.count', 2 do
+      invoice.save
+    end
+    rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
+  end
+
   test 'class match no RTPs' do
     params = { invoice_amount: 200,
                invoice_date: '2016-09-30',

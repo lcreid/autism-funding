@@ -467,8 +467,10 @@ class StatusTest < ActiveSupport::TestCase
 
   def hook_invoice_to_rtp(invoice)
     rtps = invoice.match
-    return(nil) unless rtps && rtps.size == 1
-    rtps.first.invoices << invoice
+    return(nil) unless rtps
+    invoice.cf0925s << rtps
+    invoice.save
+    # rtps.each { |x| x.invoices << invoice }
   end
 
   def set_up_child

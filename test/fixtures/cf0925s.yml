@@ -507,3 +507,30 @@ match_test_rtp_h:
   form: cf0925
   funded_person: invoice_to_rtp_match
   created_at: '2017-09-15 12:00:00'
+
+invoice_with_rtp_matched_a:
+  agency_name: A G Ency and Co.
+  child_dob: "2006-05-22"
+  child_first_name: Invoice
+  child_last_name: With Rtp Jr.
+  child_in_care_of_ministry: false
+  home_phone: 5555551212
+  parent_address: 1 Rtp St
+  parent_city: Rtpville
+  parent_first_name: Invoice
+  parent_last_name: With Rtp
+  parent_postal_code: V7V 7V7
+  service_provider_postal_code: V1V 1V1
+  service_provider_address: 2 Provider St
+  service_provider_city: Providerville
+  service_provider_phone: 2222221212
+  service_provider_service_1: Behaviour Intervention
+  service_provider_service_amount: 2000
+  service_provider_service_end: "2017-05-31"
+  service_provider_service_fee: 120.00
+  service_provider_service_hour: hour
+  service_provider_service_start: "2016-06-01"
+  work_phone: 6666661212
+  form: cf0925
+  funded_person: invoice_with_rtp_matched
+  created_at: '2017-09-15 12:00:00'

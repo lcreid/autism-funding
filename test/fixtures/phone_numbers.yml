@@ -44,3 +44,8 @@ invoice_matcher:
   phone_type: Home
   phone_number: '2345678899'
   user: invoice_matcher
+
+invoice_with_rtp_matched:
+  phone_type: Work
+  phone_number: '2345678899'
+  user: invoice_with_rtp_matched

@@ -81,7 +81,7 @@ class Status
   ##
   # An invoice has an RTP if there is a Cf0925 attached to the invoice.
   def invoice_has_rtp?(invoice)
-    invoice.cf0925.present?
+    invoice.cf0925s.present?
   end
 
   ##

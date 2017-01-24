@@ -108,4 +108,16 @@ class InvoicesTest < PoltergeistTest
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
   end
+
+  test 'get invoice page with one RTP' do
+    fill_in_login(user = users(:invoice_with_rtp_matched))
+    # TODO: Figure out Devise and where to go on login
+    # TODO: The following should be the home page path
+    assert_current_path '/'
+
+    visit edit_invoice_path(invoice = user.funded_people.first.invoices.first)
+    assert_current_path edit_invoice_path(invoice)
+
+    assert_selector 'tr.test-cf0925-invoice-row', count: 1
+  end
 end

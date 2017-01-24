@@ -71,3 +71,10 @@ invoice_matcher:
   province_code: bc
   postal_code: V0V 0V0
   user: invoice_matcher
+
+invoice_with_rtp_matched:
+  address_line_1: 1 Rtp St
+  city: Rtpville
+  province_code: bc
+  postal_code: V7V 7V7
+  user: invoice_with_rtp_matched

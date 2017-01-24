@@ -121,3 +121,9 @@ invoice_matcher:
   encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
   name_first: Invoice
   name_last: Matcher
+
+invoice_with_rtp_matched:
+  email: invoice_with_rtp@autism-funding.com
+  encrypted_password: $2a$11$/3tzqm0i1WSfDZF7JkRTI.vLv1UvwiprOnC6HsESKIyr.GyWmW/Aa
+  name_first: Invoice
+  name_last: With RTP
