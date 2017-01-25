@@ -94,6 +94,84 @@ module TestSessionHelpers
     puts "   Can See My Home?: #{user.can_see_my_home?}"
     puts ' -----------------'
   end
+
+  def show_matching_info (child, delimiter='\n')
+    horiz_line = "---------------------------------------"
+    fys = []
+    puts ""
+    puts horiz_line
+    if ! child.instance_of? FundedPerson
+      puts "  --- This object is not of type FundedPerson --- "
+    else
+      puts "| Matching Information for #{child.my_name}, born #{child.my_dob}"
+      puts horiz_line
+      if child.cf0925s.size < 1
+        puts "|  This child has no CF0925s defined"
+      else
+        child.cf0925s.each do |rtp|
+          fys << child.fiscal_year(rtp.start_date)
+          puts "|  -- rtp -- object_id:  #{rtp.object_id}"
+          puts "| Service Provider Name: #{rtp.service_provider_name}" if rtp.service_provider_name
+          puts "| Agency Name: #{rtp.agency_name}" if rtp.agency_name
+          puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
+          if rtp.printable? then puts "| printable" else puts "| NOT printable" end
+          msg = "| "
+          msg += "  Service Start: #{rtp.service_provider_service_start}" if rtp.service_provider_service_start
+          msg += "  Service End: #{rtp.service_provider_service_end}" if rtp.service_provider_service_end
+          puts msg
+          puts "| Service Provider Amount: #{rtp.service_provider_service_amount}" if rtp.service_provider_service_amount
+          puts "| Item 1 Cost: #{rtp.item_cost_1}" if rtp.item_cost_1
+          puts "| Item 2 Cost: #{rtp.item_cost_2}" if rtp.item_cost_2
+          puts "| Item 3: #{rtp.item_cost_3}" if rtp.item_cost_3
+          if rtp.invoices.size < 1
+            puts "|  NO invoices Matched"
+          else
+            rtp.invoices.each do |inv|
+              puts "|  MATCHED Invoice: #{inv.object_id}"
+            end
+          end
+
+        end
+      end
+      puts horiz_line
+      if child.invoices.size < 1
+        puts "|  This child has no Invoices defined"
+      else
+        child.invoices.each do |inv|
+          puts "|  -- invoice -- object_id:  #{inv.object_id}"
+          puts "| Service Provider Name: #{inv.service_provider_name}" if inv.service_provider_name
+          puts "| Invoice Date: #{inv.invoice_date}" if inv.invoice_date
+          puts "| Amount: #{inv.invoice_amount}" if inv.invoice_amount
+#          puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
+          msg = "| "
+          msg += "  Service Start: #{inv.service_start}" if inv.service_start
+          msg += "  Service End: #{inv.service_end}" if inv.service_end
+          puts msg
+          if inv.valid?(:complete) then puts "| complete" else puts "| !!! NOT complete" end
+          # if inv.cf0925s.size < 1
+          #   puts "NOT matched to any RTPs"
+          # else
+          #   inv.cf0925s.each do |rtp|
+          #     puts "| MATCHED TO rtp: #{rtp.object_id}"
+          #   end
+          # end
+        end
+      end
+      if fys.size > 0
+        puts horiz_line
+        fys.uniq.each do |fy|
+          puts "| --- Status for Fiscal Year: #{fy.to_s}"
+          stat = child.status(fy)
+          puts "|  Committed Funds: #{stat.committed_funds}"
+          puts "|  Spent Funds: #{stat.spent_funds}"
+          puts "|  Remaining Funds: #{stat.remaining_funds}"
+          puts "|  Out Of Pocket: #{stat.spent_out_of_pocket}"
+        end
+      end
+
+    end
+    puts horiz_line
+  end
 end
 
 # Added for Capybara

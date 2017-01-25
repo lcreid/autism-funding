@@ -73,7 +73,7 @@ inv_valtest_02:
   supplier_name:
 
 inv_valtest_03:
-  notes: 'invoice_date Earlier than service_en'
+  notes: 'invoice_date Earlier than service_end'
   invoice_reference: 'validation test'
 
   agency_name:
@@ -87,7 +87,7 @@ inv_valtest_03:
 
 inv_valtest_04:
   notes: 'service_provider_name, but no service_end'
-  invoice_reference: 'validation test'
+  invoice_reference: 'validation test - no longer a valid test'
 
   agency_name:
   funded_person: invoice_validation_test
@@ -100,7 +100,7 @@ inv_valtest_04:
 
 inv_valtest_05:
   notes: 'service_provider_name, but no service_start'
-  invoice_reference: 'validation test'
+  invoice_reference: 'validation test - no longer a valid test'
 
   agency_name:
   funded_person: invoice_validation_test
