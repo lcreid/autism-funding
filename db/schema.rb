@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170119010352) do
+ActiveRecord::Schema.define(version: 20170125212526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,7 +103,8 @@ ActiveRecord::Schema.define(version: 20170119010352) do
   create_table "invoice_allocations", id: false, force: :cascade do |t|
     t.integer "cf0925_id"
     t.integer "invoice_id"
-    t.decimal "amount",     precision: 7, scale: 2
+    t.decimal "amount",      precision: 7, scale: 2
+    t.string  "cf0925_type"
     t.index ["cf0925_id", "invoice_id"], name: "index_invoice_allocations_on_cf0925_id_and_invoice_id", using: :btree
     t.index ["cf0925_id"], name: "index_invoice_allocations_on_cf0925_id", using: :btree
     t.index ["invoice_id", "cf0925_id"], name: "index_invoice_allocations_on_invoice_id_and_cf0925_id", using: :btree
@@ -117,11 +118,12 @@ ActiveRecord::Schema.define(version: 20170119010352) do
     t.string   "notes"
     t.date     "service_end"
     t.date     "service_start"
-    t.string   "supplier_name"
     t.string   "invoice_reference"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.integer  "funded_person_id"
+    t.string   "invoice_from"
+    t.string   "supplier_name"
     t.text     "agency_name"
     t.text     "service_provider_name"
     t.index ["cf0925_id"], name: "index_invoices_on_cf0925_id", using: :btree
