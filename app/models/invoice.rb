@@ -4,7 +4,7 @@ class Invoice < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
-  # belongs_to :cf0925, optional: true, inverse_of: :invoices
+  belongs_to :cf0925, optional: true, inverse_of: :invoices
   has_many :invoice_allocations, inverse_of: :invoice, autosave: true
   has_many :cf0925s, through: :invoice_allocations, autosave: true
 
@@ -16,8 +16,8 @@ class Invoice < ApplicationRecord
   validate :validate_service_start_before_service_end, on: :complete
   validates :invoice_amount, presence: true, on: :complete
   validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
-#  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
-#  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
+  #  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
+  #  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
 
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------
@@ -79,7 +79,7 @@ class Invoice < ApplicationRecord
       service_start = to_date(params[:service_start])
       supplier_name = params[:supplier_name]
 
-#puts "Here is the invoice_date: #{invoice_date}"
+      # puts "Here is the invoice_date: #{invoice_date}"
       result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
         # puts rtp.inspect
         if pay_provider?(rtp, service_provider_name, service_start, service_end) ||
