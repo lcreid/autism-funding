@@ -179,10 +179,11 @@ class InvoiceTest < ActiveSupport::TestCase
       #    This should not be seen unless an unexpected number of errors occur
       unless tc.errors.size == expected
         tc.errors.messages.each do |m|
-          puts "Found error: #{m}"
+          puts "Found error: #{m} for #{tc.notes}"
         end
 
       end
+
       assert_equal expected, tc.errors.size, "04: Test for #{tc.notes}"
 
       # check that include_in_reports? is false

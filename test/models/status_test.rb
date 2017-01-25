@@ -4,6 +4,7 @@ require 'test_helper'
 # here isn't enough.
 
 class StatusTest < ActiveSupport::TestCase
+  include TestSessionHelpers
   test 'status one year' do
     child = funded_people(:two_fiscal_years)
     status_2016 = child.status('2015-2016')
@@ -304,14 +305,17 @@ class StatusTest < ActiveSupport::TestCase
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
                          service_provider_name: 'Pay Me Agency')
+
     child.invoices.build(invoice_amount: 1_000,
                          notes: 'WTF?',
-                         invoice_date: '2016-12-30',
+                         invoice_date: '2016-12-03',
                          service_provider_name: 'Supplier Name')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
     end
+
+#    show_matching_info child
 
     assert 2, child.cf0925s.first.invoices.size
 
