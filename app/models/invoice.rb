@@ -4,7 +4,7 @@ class Invoice < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
-  belongs_to :cf0925, optional: true, inverse_of: :invoices
+  # belongs_to :cf0925, optional: true, inverse_of: :invoices
   has_many :invoice_allocations, inverse_of: :invoice, autosave: true
   has_many :cf0925s, through: :invoice_allocations, autosave: true
 
