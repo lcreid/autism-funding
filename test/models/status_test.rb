@@ -315,7 +315,7 @@ class StatusTest < ActiveSupport::TestCase
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
     end
 
-#    show_matching_info child
+    #    show_matching_info child
 
     assert 2, child.cf0925s.first.invoices.size
 
@@ -471,8 +471,10 @@ class StatusTest < ActiveSupport::TestCase
 
   def hook_invoice_to_rtp(invoice)
     rtps = invoice.match
-    return(nil) unless rtps && rtps.size == 1
-    rtps.first.invoices << invoice
+    return(nil) unless rtps
+    invoice.allocate(rtps)
+    invoice.save
+    # rtps.each { |x| x.invoices << invoice }
   end
 
   def set_up_child

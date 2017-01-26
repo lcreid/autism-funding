@@ -23,7 +23,8 @@ module InvoicesHelper
     rtps = invoice.match
     # puts "RTPs: #{rtps.inspect}"
     # puts "Invoice has RTP: #{invoice.cf0925.inspect}"
-    selected = invoice.cf0925.id if invoice.cf0925
+    # FIXME: Hacking this for now (fake it till you make it)
+    selected = invoice.cf0925s.first.id if invoice.cf0925s.present?
     # puts "First RTP selected: #{selected}"
     selected ||= rtps[0].id if rtps.size == 1
     # puts "Second RTP selected: #{selected}"

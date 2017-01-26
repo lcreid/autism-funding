@@ -5,7 +5,6 @@
 # below each fixture, per the syntax in the comments below
 #
 fiscal_year:
-  cf0925: two_fiscal_years_0
   invoice_amount: 200
   invoice_date: '2016-03-01'
   notes:
@@ -30,7 +29,6 @@ invoice_adds_fiscal_year:
   service_provider_name: service_provider_name
 
 no_invoice_amount:
-  cf0925: two_fiscal_years_0
   invoice_amount:
   invoice_date: '2016-03-01'
   notes:
@@ -164,3 +162,14 @@ inv_valtest_complete:
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
   supplier_name:
+
+invoice_with_rtp_matched:
+  invoice_amount:
+  invoice_date: '2017-03-01'
+  notes:
+  service_end: '2017-02-28'
+  service_start: '2017-02-01'
+  supplier_name:
+  invoice_reference:
+  funded_person: invoice_with_rtp_matched
+  agency_name: A G Ency and Co.

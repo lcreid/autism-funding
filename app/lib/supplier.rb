@@ -16,4 +16,8 @@ module Supplier
   def requested_amount
     item_total
   end
+
+  def cf0925_type
+    'Supplier'
+  end
 end

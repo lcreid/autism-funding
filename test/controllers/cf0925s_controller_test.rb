@@ -126,9 +126,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     # After form creation, the user should have 2 phone numbers and 1 addresses
     @funded_person.reload
-    assert_equal 1, @funded_person.user.addresses.size, "User should have exactly 1 associated address after form creation"
-    assert_equal 2, @funded_person.user.phone_numbers.size, "User should have exactly 2 associated phone numbers after form creation"
-
+    assert_equal 1, @funded_person.user.addresses.size, 'User should have exactly 1 associated address after form creation'
+    assert_equal 2, @funded_person.user.phone_numbers.size, 'User should have exactly 2 associated phone numbers after form creation'
 
     # FundedPerson.all.each { |funded_person| puts "#{funded_person.name_last}: #{funded_person.my_dob}" }
     # Cf0925.all.each { |rtp| puts "#{rtp.funded_person.name_last}: #{rtp.funded_person.my_dob}" }
@@ -148,8 +147,8 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     # After form creation, the user should have 2 phone numbers and 1 addresses
     @funded_person.reload
-    assert_equal 1, @funded_person.user.addresses.size, "User should have exactly 1 associated address after form creation"
-    assert_equal 2, @funded_person.user.phone_numbers.size, "User should have exactly 2 associated phone numbers after form creation"
+    assert_equal 1, @funded_person.user.addresses.size, 'User should have exactly 1 associated address after form creation'
+    assert_equal 2, @funded_person.user.phone_numbers.size, 'User should have exactly 2 associated phone numbers after form creation'
 
     assert_response :redirect
     follow_redirect!
@@ -173,7 +172,6 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
       post funded_person_cf0925s_path(@funded_person),
            params: { cf0925: bad_date_params }
     end
-
 
     # The next assert is like it is because the render in the controller
     # is rendering the new view, but from the create action in the controller,
@@ -318,5 +316,11 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     get edit_cf0925_path(@funded_person.cf0925s.last)
     assert_select '.alert', 'Phone numbers must provide at least one phone number'
+  end
+
+  test 'should get new (compare to invoices_controller_test)' do
+    @funded_person = controller.current_user.funded_people.first
+    get new_funded_person_cf0925_path(@funded_person)
+    assert_response :success
   end
 end

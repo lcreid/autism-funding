@@ -11,7 +11,8 @@ class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
   accepts_nested_attributes_for :funded_person
-  has_many :invoices, inverse_of: :cf0925
+  has_many :invoice_allocations, inverse_of: :cf0925, autosave: true
+  has_many :invoices, through: :invoice_allocations, autosave: true
 
   class << self
     def part_a_required_attributes
@@ -74,8 +75,8 @@ class Cf0925 < ApplicationRecord
     end
 
     with_options if: :filling_in_part_a? do
-      validates *Cf0925.part_a_required_attributes,
-                presence: true
+      validates(*Cf0925.part_a_required_attributes,
+                presence: true)
       validate :start_date_before_end_date
       validate :start_and_end_dates_in_same_fiscal_year
       validates :agency_name,

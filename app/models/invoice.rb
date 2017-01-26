@@ -4,7 +4,10 @@ class Invoice < ApplicationRecord
   # One record for each address
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
-  belongs_to :cf0925, optional: true, inverse_of: :invoices
+  # belongs_to :cf0925, optional: true, inverse_of: :invoices
+  has_many :invoice_allocations, inverse_of: :invoice, autosave: true
+  has_many :cf0925s, through: :invoice_allocations, autosave: true
+
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
   validate :validate_check_fy_on_service_dates, on: :complete
@@ -13,18 +16,31 @@ class Invoice < ApplicationRecord
   validate :validate_service_start_before_service_end, on: :complete
   validates :invoice_amount, presence: true, on: :complete
   validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
-#  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
-#  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
+  #  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
+  #  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
 
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------
   #-----------------------------------------------------------------------------
 
   # ----- Public Methods -------------------------------------------------------
+  ##
+  # Allocate one or more RTPs to the invoice.
+  def allocate(rtps)
+    rtps.map do |rtp|
+      invoice_allocations.build(cf0925: rtp,
+                                cf0925_type: rtp.cf0925_type)
+    end
+    # rtps = [rtps] unless rtps.respond_to?(:each)
+    # rtps.each { |rtp| rtp.invoices << self }
+  end
+
   def include_in_reports?
     valid?(:complete)
   end
 
+  ##
+  # Convert the three old invoice fields to the new unified field.
   def invoice_from
     invoice_from = []
     invoice_from << service_provider_name if service_provider_name.present?
@@ -45,6 +61,13 @@ class Invoice < ApplicationRecord
     Invoice.match(funded_person, attributes)
   end
 
+  ##
+  # Temporarily return a value for out_of_pocket
+  # FIXME: Turn this into an attribute
+  attr_reader :out_of_pocket
+
+  attr_writer :out_of_pocket
+
   class <<self
     # FIXME: I really question whether I needed the class method.
     def match(funded_person, params)
@@ -60,7 +83,7 @@ class Invoice < ApplicationRecord
       service_start = to_date(params[:service_start])
       supplier_name = params[:supplier_name]
 
-#puts "Here is the invoice_date: #{invoice_date}"
+      # puts "Here is the invoice_date: #{invoice_date}"
       result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
         # puts rtp.inspect
         if pay_provider?(rtp, service_provider_name, service_start, service_end) ||
