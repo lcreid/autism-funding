@@ -27,8 +27,10 @@ class Invoice < ApplicationRecord
   ##
   # Allocate one or more RTPs to the invoice.
   def allocate(rtps)
-    cf0925s << rtps
-
+    rtps.map do |rtp|
+      invoice_allocations.build(cf0925: rtp,
+                                cf0925_type: rtp.cf0925_type)
+    end
     # rtps = [rtps] unless rtps.respond_to?(:each)
     # rtps.each { |rtp| rtp.invoices << self }
   end
@@ -37,6 +39,8 @@ class Invoice < ApplicationRecord
     valid?(:complete)
   end
 
+  ##
+  # Convert the three old invoice fields to the new unified field.
   def invoice_from
     invoice_from = []
     invoice_from << service_provider_name if service_provider_name.present?

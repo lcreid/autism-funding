@@ -272,13 +272,14 @@ class InvoiceTest < ActiveSupport::TestCase
     assert_equal(2, (rtps = invoice.match).size)
 
     invoice.allocate(rtps)
-    assert_equal(2, invoice.cf0925s.size)
+    assert_equal(2, invoice.invoice_allocations.size)
 
     # The records don't get joined in both directions until they're saved.
     # rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
     assert_difference 'InvoiceAllocation.count', 2 do
       invoice.save
     end
+    assert_equal(2, invoice.cf0925s.size)
     rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
   end
 

@@ -16,4 +16,8 @@ module ServiceProvider
   def requested_amount
     service_provider_service_amount
   end
+
+  def cf0925_type
+    'ServiceProvider'
+  end
 end
