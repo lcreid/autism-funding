@@ -10,6 +10,9 @@
     <%= number_to_currency(invoice_allocation.cf0925.requested_amount) %>
   </td>
   <td class="text-right">
-    invoice_allocation_form.number_field(:amount, label_hidden: true)
+    <%= invoice_allocation_form.number_field(:amount, hide_label: true) %>
+    <%= invoice_allocation_form.hidden_field(:cf0925_id) %>
+    <%= invoice_allocation_form.hidden_field(:cf0925_type) %>
+    <%= invoice_allocation_form.hidden_field(:invoice_id) %>
   </td>
 </tr>

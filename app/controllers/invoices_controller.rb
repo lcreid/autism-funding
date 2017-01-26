@@ -26,9 +26,11 @@ class InvoicesController < ApplicationController
   end
 
   def update
+    logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     # TODO: add test cases that this works for attaching the RTP to the invoice
     @invoice = Invoice.find(params[:id])
     logger.debug { "******Service Provider:  #{@invoice.service_provider_name}" }
+    logger.debug { "**** invoices_controller update safe params: #{invoice_params.inspect}" }
     @invoice.update(invoice_params)
     @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
     #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
@@ -44,9 +46,10 @@ class InvoicesController < ApplicationController
   end
 
   def create
+    logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
-    logger.debug { "**** invoices_controller safe params: #{invoice_params.inspect}" }
+    logger.debug { "**** invoices_controller create safe params: #{invoice_params.inspect}" }
     if @invoice.update(invoice_params)
       # puts @invoice.inspect
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
