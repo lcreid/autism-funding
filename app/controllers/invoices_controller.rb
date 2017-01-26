@@ -4,7 +4,7 @@ class InvoicesController < ApplicationController
     @invoice.funded_person =
       @funded_person =
         FundedPerson.find(params[:funded_person_id])
-    @url = funded_person_invoices_path params[:funded_person_id]
+    # @url = funded_person_invoices_path params[:funded_person_id]
     #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
     #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
   end
@@ -18,7 +18,7 @@ class InvoicesController < ApplicationController
 
   def edit
     # TODO: add test cases that this works for attaching the RTP to the invoice
-    @url = invoice_path params[:id]
+    # @url = invoice_path params[:id]
 
     @invoice = Invoice.find(params[:id])
     @invoice.valid?(:complete)
