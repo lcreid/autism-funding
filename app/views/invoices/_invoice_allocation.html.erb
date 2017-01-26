@@ -10,6 +10,6 @@
     <%= number_to_currency(invoice_allocation.cf0925.requested_amount) %>
   </td>
   <td class="text-right">
-    <input value="bogus" style="text-align: right"></input>
+    invoice_allocation_form.number_field(:amount, label_hidden: true)
   </td>
 </tr>
