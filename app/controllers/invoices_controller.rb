@@ -1,7 +1,9 @@
 class InvoicesController < ApplicationController
   def new
     @invoice = Invoice.new
-    @invoice.funded_person_id = params[:funded_person_id]
+    @invoice.funded_person =
+      @funded_person =
+        FundedPerson.find(params[:funded_person_id])
     @url = funded_person_invoices_path params[:funded_person_id]
     #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
     #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
@@ -20,7 +22,7 @@ class InvoicesController < ApplicationController
 
     @invoice = Invoice.find(params[:id])
     @invoice.valid?(:complete)
-    @funded_person = @invoice.funded_person
+    # @funded_person = @invoice.funded_person
   end
 
   def update

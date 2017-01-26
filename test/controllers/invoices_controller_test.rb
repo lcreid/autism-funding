@@ -10,7 +10,7 @@ class InvoicesControllerTest < ActionDispatch::IntegrationTest
     # -- Create a new FundedPerson record
     @funded_person = FundedPerson.first
     # puts 'Here i am!!'
-    get new_funded_person_invoice_path(@funded_person.id)
+    get new_funded_person_invoice_path(@funded_person)
     assert_response :success
   end
 
@@ -28,7 +28,7 @@ class InvoicesControllerTest < ActionDispatch::IntegrationTest
 
     # FIXME: The following should probably fail, since we shouldn't get to a
     # funded person who isn't associated with the current user
-    get new_funded_person_invoice_path(@funded_person.id)
+    get new_funded_person_invoice_path(@funded_person)
     puts "The URL: #{@controller.instance_variable_get(:@url)}"
     assert_response :success
     puts "Can I see @url #{@url}"
