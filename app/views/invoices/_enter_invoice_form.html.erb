@@ -105,7 +105,7 @@
             </thead>
             <tbody class="cf0925-list-replace">
               <%= render(partial: 'invoice_allocation_wrapper',
-                         locals: { collection: @invoice.invoice_allocations }) %>
+                         locals: { invoice_form: f }) %>
             </tbody>
             <tfoot>
               <tr>

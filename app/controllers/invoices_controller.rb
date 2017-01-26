@@ -4,7 +4,7 @@ class InvoicesController < ApplicationController
     @invoice.funded_person =
       @funded_person =
         FundedPerson.find(params[:funded_person_id])
-    @url = funded_person_invoices_path params[:funded_person_id]
+    # @url = funded_person_invoices_path params[:funded_person_id]
     #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
     #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
   end
@@ -18,7 +18,7 @@ class InvoicesController < ApplicationController
 
   def edit
     # TODO: add test cases that this works for attaching the RTP to the invoice
-    @url = invoice_path params[:id]
+    # @url = invoice_path params[:id]
 
     @invoice = Invoice.find(params[:id])
     @invoice.valid?(:complete)
@@ -26,9 +26,11 @@ class InvoicesController < ApplicationController
   end
 
   def update
+    logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     # TODO: add test cases that this works for attaching the RTP to the invoice
     @invoice = Invoice.find(params[:id])
     logger.debug { "******Service Provider:  #{@invoice.service_provider_name}" }
+    logger.debug { "**** invoices_controller update safe params: #{invoice_params.inspect}" }
     @invoice.update(invoice_params)
     @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
     #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
@@ -44,8 +46,10 @@ class InvoicesController < ApplicationController
   end
 
   def create
+    logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     @invoice = Invoice.new
     @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
+    logger.debug { "**** invoices_controller create safe params: #{invoice_params.inspect}" }
     if @invoice.update(invoice_params)
       # puts @invoice.inspect
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
@@ -64,19 +68,27 @@ class InvoicesController < ApplicationController
 
     # TODO: Review how this is done. I think I can do better.
 
-    invoice = Invoice.new
-    invoice.assign_attributes(convert_search_params_to_create_params)
+    @invoice = Invoice.new
+    @invoice.assign_attributes(convert_search_params_to_create_params)
     # FIXME: I can craft a URL to get anyone's info.
-    invoice.funded_person = FundedPerson.find(params[:funded_person_id])
+    @invoice.funded_person =
+      @funded_person = FundedPerson.find(params[:funded_person_id])
 
-    # puts "TEMPORARY INVOICE: #{invoice.inspect}"
+    # puts "TEMPORARY INVOICE: #{@invoice.inspect}"
 
-    # puts "PARTIAL: #{render_to_string(partial: 'invoice_allocation_wrapper',
-    #                                   locals: { collection: invoice.allocate(invoice.match) },
-    #                                   layout: !request.xhr?)}"
-    render partial: 'invoice_allocation_wrapper',
-           locals: { collection: invoice.allocate(invoice.match) },
-           layout: !request.xhr?
+    @invoice.allocate(@invoice.match)
+    helpers.bootstrap_form_for([@funded_person, @invoice],
+                               builder: AutismFundingFormBuilder) do |f|
+      # puts "PARTIAL: #{render_to_string(partial: 'invoice_allocation_wrapper',
+      #                                   locals: {
+      #                                     collection: @invoice.allocate(@invoice.match),
+      #                                     invoice_form: f
+      #                                   },
+      #                                   layout: !request.xhr?)}"
+      render partial: 'invoice_allocation_wrapper',
+             locals: { invoice_form: f },
+             layout: !request.xhr?
+    end
   end
 
   private
@@ -91,16 +103,22 @@ class InvoicesController < ApplicationController
                                     :supplier_name,
                                     :invoice_amount,
                                     :invoice_reference,
-                                    :notes)
+                                    :notes,
+                                    invoice_allocations_attributes: [
+                                      :cf0925_id,
+                                      :invoice_id,
+                                      :cf0925_type,
+                                      :amount
+                                    ])
   end
 
   def convert_search_params_to_create_params
     # { invoice: params }.require(:invoice)
     params.permit(:cf0925_id,
-                  :service_provider_name,
+                  :invoice_date,
                   :service_start,
                   :service_end,
-                  :invoice_date,
+                  :service_provider_name,
                   :agency_name,
                   :supplier_name,
                   :funded_person_id)

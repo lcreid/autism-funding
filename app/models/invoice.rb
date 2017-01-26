@@ -5,7 +5,8 @@ class Invoice < ApplicationRecord
   # ----- Associations ---------------------------------------------------------
   belongs_to :funded_person
   # belongs_to :cf0925, optional: true, inverse_of: :invoices
-  has_many :invoice_allocations, inverse_of: :invoice, autosave: true
+  has_many :invoice_allocations, inverse_of: :invoice
+  accepts_nested_attributes_for :invoice_allocations, allow_destroy: true
   has_many :cf0925s, through: :invoice_allocations, autosave: true
 
   #-----------------------------------------------------------------------------
@@ -62,11 +63,11 @@ class Invoice < ApplicationRecord
   end
 
   ##
-  # Temporarily return a value for out_of_pocket
-  # FIXME: Turn this into an attribute
-  attr_reader :out_of_pocket
-
-  attr_writer :out_of_pocket
+  # Calculate out of pocket expenses for this invoice.
+  def out_of_pocket
+    return 0 unless invoice_amount && invoice_allocations
+    [invoice_amount - invoice_allocations.select(&:amount).sum(&:amount), 0].max
+  end
 
   class <<self
     # FIXME: I really question whether I needed the class method.
