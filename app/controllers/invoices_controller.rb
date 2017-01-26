@@ -60,18 +60,20 @@ class InvoicesController < ApplicationController
     # Remember that this could be called from new, so you don't enen have an
     # invoice yet. So make a throw-away invoice.
 
+    # TODO: Review how this is done. I think I can do better.
+
     invoice = Invoice.new
     invoice.assign_attributes(convert_search_params_to_create_params)
+    # FIXME: I can craft a URL to get anyone's info.
     invoice.funded_person = FundedPerson.find(params[:funded_person_id])
 
     # puts "TEMPORARY INVOICE: #{invoice.inspect}"
 
-    # puts "PARTIAL: #{render_to_string(partial: 'rtp_option_list',
-    #                                   locals: { invoice: invoice },
+    # puts "PARTIAL: #{render_to_string(partial: 'invoice_allocation_wrapper',
+    #                                   locals: { collection: invoice.allocate(invoice.match) },
     #                                   layout: !request.xhr?)}"
-
-    render partial: 'rtp_option_list',
-           locals: { invoice: invoice },
+    render partial: 'invoice_allocation_wrapper',
+           locals: { collection: invoice.allocate(invoice.match) },
            layout: !request.xhr?
   end
 
@@ -98,6 +100,7 @@ class InvoicesController < ApplicationController
                   :service_end,
                   :invoice_date,
                   :agency_name,
-                  :supplier_name)
+                  :supplier_name,
+                  :funded_person_id)
   end
 end

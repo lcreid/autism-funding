@@ -1,0 +1,9 @@
+  <%= render(partial: 'invoice_allocation',
+             collection: collection) ||
+             content_tag(:tr,
+                content_tag(:td,
+                  'No RTPs match this invoice, ' \
+                  'or you need to fill in more fields above ' \
+                  'to retrieve RTPs ' \
+                  'that provide funds for this invoice.',
+                  colspan: 5)) %>

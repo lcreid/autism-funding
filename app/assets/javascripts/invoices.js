@@ -67,8 +67,9 @@ $(document).on('turbolinks:load', function() {
       }).done(function(msg) {
         // console.log(msg);
         // this is where I change the HTML
-        $('.cf0925-list-replace option:gt(0)').remove();
-        $(msg).appendTo('.cf0925-list-replace');
+        $('.cf0925-list-replace').empty();
+        // $(msg).appendTo('.cf0925-list-replace');
+        $('.cf0925-list-replace').append(msg);
         // console.log('Finished updating select');
       }).fail(function(xhr, textStatus, errorThrown) {
         if (xhr.status !== 0) {

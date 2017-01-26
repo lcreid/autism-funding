@@ -102,31 +102,23 @@
                 </td>
               </tr>
             </thead>
-            <div class="cf0925-list-replace">
-              <tbody>
-                <%= render(partial: 'invoice_allocation', collection: @invoice.invoice_allocations) ||
-                    content_tag(:tr,
-                                content_tag(:td,
-                                  'No RTPs match this invoice, ' \
-                                  'or you need to fill in more fields above ' \
-                                  'to retrieve RTPs ' \
-                                  'that provide funds for this invoice.',
-                                  colspan: 5)) %>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td>Out of Pocket Bogus</td>
-                  <td class="text-right"></td>
-                  <td class="text-right">
-                    <%= f.number_field :out_of_pocket,
-                                       hide_label: true,
-                                       label: 'Out of Pocket' %>
-                  </td>
-                </tr>
-              </tfoot>
-            </div>
+            <tbody class="cf0925-list-replace">
+              <%= render(partial: 'invoice_allocation_wrapper',
+                         locals: { collection: @invoice.invoice_allocations }) %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Out of Pocket Bogus</td>
+                <td class="text-right"></td>
+                <td class="text-right">
+                  <%= f.number_field :out_of_pocket,
+                                     hide_label: true,
+                                     label: 'Out of Pocket' %>
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
