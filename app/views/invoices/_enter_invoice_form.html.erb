@@ -111,12 +111,12 @@
               <tr>
                 <td></td>
                 <td></td>
-                <td>Out of Pocket Bogus</td>
+                <td>Out of Pocket</td>
                 <td class="text-right"></td>
                 <td class="text-right">
-                  <%= f.number_field :out_of_pocket,
-                                     hide_label: true,
-                                     label: 'Out of Pocket' %>
+                  <%= f.currency_field :out_of_pocket,
+                                       hide_label: true,
+                                       label: 'Out of Pocket' %>
                 </td>
               </tr>
             </tfoot>
