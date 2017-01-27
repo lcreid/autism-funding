@@ -71,6 +71,8 @@ $(document).on('turbolinks:load', function() {
         // $(msg).appendTo('.cf0925-list-replace');
         $('.cf0925-list-replace').append(msg);
         // console.log('Finished updating select');
+        update_out_of_pocket();
+        set_up_triggers();
       }).fail(function(xhr, textStatus, errorThrown) {
         if (xhr.status !== 0) {
           console.log("Error: Status: " + textStatus + " error: " + errorThrown);
@@ -87,4 +89,37 @@ $(document).on('turbolinks:load', function() {
       });
     });
   });
+
+  // Update Out of Pocket
+  out_of_pocket_field = $('#invoice_out_of_pocket');
+
+  function allocation_fields() {
+    a = $('input').filter(function() {
+      return this.id.match(/invoice_allocations_attributes_[0-9]+_amount/);
+    });
+    // console.log(a);
+    return a;
+  }
+
+  function update_out_of_pocket() {
+    allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
+      // console.log('update_out_of_pocket b: ' + b.value);
+      return b.value === undefined? a: a + Number(b.value);
+    }, 0);
+    out_of_pocket =
+      Math.max(0,
+        Number($('#invoice_invoice_amount').val()) - allocated_spending);
+    // console.log('About to set Out of Pocket to ' + out_of_pocket);
+    out_of_pocket_field.val(out_of_pocket);
+  }
+
+  function set_up_triggers() {
+    trigger_fields = $.merge(allocation_fields(), out_of_pocket_field);
+    // console.log('Setting up triggers on ' + trigger_fields);
+    trigger_fields.change(function() {
+      update_out_of_pocket();
+    });
+  }
+
+  set_up_triggers();
 });
