@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170125212407) do
+ActiveRecord::Schema.define(version: 20170127235146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 20170125212407) do
     t.integer  "funded_person_id"
     t.text     "agency_name"
     t.text     "service_provider_name"
+    t.string   "invoice_from"
     t.index ["cf0925_id"], name: "index_invoices_on_cf0925_id", using: :btree
     t.index ["funded_person_id"], name: "index_invoices_on_funded_person_id", using: :btree
   end
