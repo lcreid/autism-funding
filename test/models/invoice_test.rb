@@ -207,7 +207,6 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2016-09-30',
                                    service_end: '2016-09-30',
                                    service_start: '2016-09-01',
-                                   agency_name: 'A G Ency and Co.',
                                    service_provider_name: 'A Provider')
     assert_equal 0, invoice.match.size
   end
@@ -252,7 +251,6 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2015-09-30',
                                    service_end: '2015-09-30',
                                    service_start: '2015-09-01',
-                                   agency_name: 'A G Ency and Co.',
                                    service_provider_name: 'A Provider')
     assert_equal 2, invoice.match.size
     assert_equal '2015-07-01 to 2015-09-30',
@@ -267,7 +265,6 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2015-09-30',
                                    service_end: '2015-09-30',
                                    service_start: '2015-09-01',
-                                   agency_name: 'A G Ency and Co.',
                                    service_provider_name: 'A Provider')
     assert_equal(2, (rtps = invoice.match).size)
 
@@ -288,7 +285,6 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2016-09-30',
                service_end: '2016-09-30',
                service_start: '2016-09-01',
-               agency_name: 'A G Ency and Co.',
                service_provider_name: 'A Provider' }
     assert_equal 0, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
@@ -336,7 +332,6 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2015-09-30',
                service_end: '2015-09-30',
                service_start: '2015-09-01',
-               agency_name: 'A G Ency and Co.',
                service_provider_name: 'A Provider' }
     assert_equal 2, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
