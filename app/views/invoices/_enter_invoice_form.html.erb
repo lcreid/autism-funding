@@ -1,129 +1,131 @@
-<%#= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
+<div id="invoice">
+  <%#= render partial: 'shared/flash_area', locals: { model: @cf0925 } %>
 
-<%#= form_for([@funded_person,@invoice]) do |f| %>
-<%= bootstrap_form_for([@funded_person, @invoice],
-                       builder: AutismFundingFormBuilder) do |f| %>
-  <%= f.hidden_field :funded_person_id %>
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        Service Provider, Invoice Amount, Service Dates
-      </h3>
-    </div>
-    <div class="panel-body" style="margin: 8px;">
-      <div class="row">
-        <% opt_list = prep_options @invoice, ['-- Other Service Provider --'] %>
-        <%= f.select :service_provider_name,
-                     opt_list,
-                     {
-                       label: 'Invoice From',
-                       column_width: 10
-                     } %>
-
-        <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
-        <%= f.currency_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
+  <%#= form_for([@funded_person,@invoice]) do |f| %>
+  <%= bootstrap_form_for([@funded_person, @invoice],
+                         builder: AutismFundingFormBuilder) do |f| %>
+    <%= f.hidden_field :funded_person_id %>
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Service Provider, Invoice Amount, Service Dates
+        </h3>
       </div>
-      <div class="row">
-        <%= f.date_field :service_start, label: 'Service Start', column_width: 3 %>
-        <%= f.date_field :service_end, label: 'Service End', column_width: 3 %>
-        <%= f.date_field :invoice_date, label: 'Invoice Date', column_width: 3 %>
-        <%= f.text_field :invoice_reference, label: 'Invoice Reference', column_width: 3 %>
-      </div>
+      <div class="panel-body" style="margin: 8px;">
+        <div class="row">
+          <% opt_list = prep_options @invoice, ['-- Other Service Provider --'] %>
+          <%= f.select :service_provider_name,
+                       opt_list,
+                       {
+                         label: 'Invoice From',
+                         column_width: 10
+                       } %>
+
+          <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
+          <%= f.currency_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
+        </div>
+        <div class="row">
+          <%= f.date_field :service_start, label: 'Service Start', column_width: 3 %>
+          <%= f.date_field :service_end, label: 'Service End', column_width: 3 %>
+          <%= f.date_field :invoice_date, label: 'Invoice Date', column_width: 3 %>
+          <%= f.text_field :invoice_reference, label: 'Invoice Reference', column_width: 3 %>
+        </div>
 
 
-<% #----- Pattern for checking layout (Diagnostic) ------------------------------- %>
-            <div class="row">
-            <% i = 100 # set i to 1 to show grids %>
-            <% while i < 12 %>
-              <div class="col-sm-1" style="background-color: blue; text-align: center; color: white;">
-                <%= i %>
-                <% i = i + 1 %>
+  <% #----- Pattern for checking layout (Diagnostic) ------------------------------- %>
+              <div class="row">
+              <% i = 100 # set i to 1 to show grids %>
+              <% while i < 12 %>
+                <div class="col-sm-1" style="background-color: blue; text-align: center; color: white;">
+                  <%= i %>
+                  <% i = i + 1 %>
+                </div>
+                <div class="col-sm-1" style="background-color: red; text-align: center; color: white;">
+                  <%= i %>
+                  <% i = i + 1 %>
+                </div>
+              <% end %>
               </div>
-              <div class="col-sm-1" style="background-color: red; text-align: center; color: white;">
-                <%= i %>
-                <% i = i + 1 %>
-              </div>
-            <% end %>
-            </div>
-<% # - end of the check pattern ----------------------------------------------%>
+  <% # - end of the check pattern ----------------------------------------------%>
 
-      <!-- <div class="row">
-        <% opt_list = prep_options @invoice, ['-- Other Agency --'] %>
-        <%= f.select :agency_name,
-                     opt_list,
-                     {
-                       label: 'Agency',
-                       column_width: 6
-                     },
-                     { _width: 6 } %>
+        <!-- <div class="row">
+          <% opt_list = prep_options @invoice, ['-- Other Agency --'] %>
+          <%= f.select :agency_name,
+                       opt_list,
+                       {
+                         label: 'Agency',
+                         column_width: 6
+                       },
+                       { _width: 6 } %>
 
-        <%#=  f.collection_select :agency_name, Cf0925.all, :agency_name, :agency_name,{prompt: 'None Selected', include_blank: '-- Other Agency --'},{class: 'form-control'}  %>
-        <% opt_list = prep_options @invoice, ['-- Other Supplier --'] %>
-        <%= f.select :supplier_name,
-                     opt_list,
-                     {
-                       label: 'Supplier',
-                       column_width: 6
-                     },
-                     { mn_width: 6 } %>
-        <%#= f.collection_select :supplier_name, Cf0925.all, :supplier_name, :supplier_name,{prompt: 'None Selected', include_blank: '-- Other Supplier --'},{class: 'form-control'} %>
-      </div> -->
+          <%#=  f.collection_select :agency_name, Cf0925.all, :agency_name, :agency_name,{prompt: 'None Selected', include_blank: '-- Other Agency --'},{class: 'form-control'}  %>
+          <% opt_list = prep_options @invoice, ['-- Other Supplier --'] %>
+          <%= f.select :supplier_name,
+                       opt_list,
+                       {
+                         label: 'Supplier',
+                         column_width: 6
+                       },
+                       { mn_width: 6 } %>
+          <%#= f.collection_select :supplier_name, Cf0925.all, :supplier_name, :supplier_name,{prompt: 'None Selected', include_blank: '-- Other Supplier --'},{class: 'form-control'} %>
+        </div> -->
 
-      <div class="row">
-        <%= f.text_field :notes, { size: 100, label: 'Notes', column_width: 12 } %>
-      </div>
-    </div>
-  </div>
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">
-        Assign Request to Pay
-      </h3>
-    </div>
-    <div class="panel-body">
-      <div class="col-md-12">
-        <div class="table-responsive">
-          <table class="table table-striped test-cf0925-table">
-            <thead>
-              <tr>
-                <td class="text-right">
-                  Start Date
-                </td>
-                <td class="text-right">
-                  End Date
-                </td>
-                <td>
-                  Payee
-                </td>
-                <td class="text-right">
-                  Amount Available
-                </td>
-                <td class="text-right">
-                  Amount from This Invoice
-                </td>
-              </tr>
-            </thead>
-            <tbody class="cf0925-list-replace">
-              <%= render(partial: 'invoice_allocation_wrapper',
-                         locals: { invoice_form: f }) %>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td></td>
-                <td></td>
-                <td>Out of Pocket</td>
-                <td class="text-right"></td>
-                <td class="text-right">
-                  <%= f.currency_field :out_of_pocket,
-                                       hide_label: true,
-                                       label: 'Out of Pocket' %>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="row">
+          <%= f.text_field :notes, { size: 100, label: 'Notes', column_width: 12 } %>
         </div>
       </div>
     </div>
-  </div>
-  <%= f.submit 'Save' %>
-<% end %>
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          Assign Request to Pay
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <table class="table table-striped test-cf0925-table">
+              <thead>
+                <tr>
+                  <td class="text-right">
+                    Start Date
+                  </td>
+                  <td class="text-right">
+                    End Date
+                  </td>
+                  <td>
+                    Payee
+                  </td>
+                  <td class="text-right">
+                    Amount Available
+                  </td>
+                  <td class="text-right">
+                    Amount from This Invoice
+                  </td>
+                </tr>
+              </thead>
+              <tbody class="cf0925-list-replace">
+                <%= render(partial: 'invoice_allocation_wrapper',
+                           locals: { invoice_form: f }) %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td>Out of Pocket</td>
+                  <td class="text-right"></td>
+                  <td class="text-right">
+                    <%= f.currency_field :out_of_pocket,
+                                         hide_label: true,
+                                         label: 'Out of Pocket' %>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%= f.submit 'Save' %>
+  <% end %>
+</div>
