@@ -17,11 +17,10 @@ class InvoicesTest < PoltergeistTest
 
     select 'Joe 2016', from: 'invoice_invoice_from'
     fill_in 'Amount', with: '200.00'
-    fill_in 'Invoice Date', with: '2017-01-31'
     fill_in 'Service Start', with: '2017-01-01'
     start_request
 
-    fill_in 'Service End', with: '2017-01-30'
+    fill_in 'Service End', with: '2017-01-31'
     wait_for_request
 
     assert_selector '.test-cf0925-table'
@@ -54,7 +53,7 @@ class InvoicesTest < PoltergeistTest
     select 'Joe 2016', from: 'invoice_invoice_from'
     # wait_for_request
     # start_request
-    fill_in 'Amount', with: '201.00'
+    fill_in 'Amount', with: '200.00'
     # wait_for_request
     # start_request
     fill_in 'Service Start', with: '2016-07-01'

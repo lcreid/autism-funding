@@ -120,8 +120,6 @@ class InvoicesController < ApplicationController
                   :service_start,
                   :service_end,
                   :invoice_from,
-                  :agency_name,
-                  :supplier_name,
                   :funded_person_id)
   end
 end
