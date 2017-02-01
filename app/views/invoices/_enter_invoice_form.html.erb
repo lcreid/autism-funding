@@ -13,7 +13,7 @@
     <div class="panel-body" style="margin: 8px;">
       <div class="row">
         <% opt_list = prep_options @invoice, ['-- Other Service Provider --'] %>
-        <%= f.select :service_provider_name,
+        <%= f.select :invoice_from,
                      opt_list,
                      {
                        label: 'Invoice From',
@@ -29,7 +29,6 @@
         <%= f.date_field :invoice_date, label: 'Invoice Date', column_width: 3 %>
         <%= f.text_field :invoice_reference, label: 'Invoice Reference', column_width: 3 %>
       </div>
-
 
 <% #----- Pattern for checking layout (Diagnostic) ------------------------------- %>
             <div class="row">

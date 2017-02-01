@@ -36,7 +36,7 @@ $(document).on('turbolinks:load', function() {
   }
 
   attributes_of_interest = [
-    'service_provider_name',
+    'invoice_from',
     'service_start',
     'service_end',
     'invoice_date',

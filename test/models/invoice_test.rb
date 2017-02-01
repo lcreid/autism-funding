@@ -37,10 +37,10 @@ class InvoiceTest < ActiveSupport::TestCase
 
   #-----------------------------------------------------------------------------
   #  Test 02
-  # => a-h) tests that invoice_from only expected formatted name
+  # => a) tests that invoice_from can be set
   # => i) ensure valid? is true with names set
   # => j) ensure a save is successful if valid? is true
-  testName = '02 Check FundedPerson invoice_from method'
+  testName = '02 Check FundedPerson invoice_from'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
     test_service_provider = 'Services Inc.'
@@ -50,60 +50,9 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv.funded_person = FundedPerson.first
 
     # 02.a .....................................................................
-    the_inv.service_provider_name = nil
-    the_inv.supplier_name = nil
-    the_inv.agency_name = nil
-    expected = 'No Invoicee Defined'
+    the_inv.invoice_from = test_service_provider
+    expected = test_service_provider
     assert_equal expected, the_inv.invoice_from, '02.a: invoice_from did not return expected name'
-
-    # 02.b .....................................................................
-    the_inv.service_provider_name = test_service_provider
-    the_inv.supplier_name = nil
-    the_inv.agency_name = nil
-    expected = test_service_provider.to_s
-    assert_equal expected, the_inv.invoice_from, '02.b: invoice_from did not return expected name'
-
-    # 02.c .....................................................................
-    the_inv.service_provider_name = nil
-    the_inv.supplier_name = test_supplier
-    the_inv.agency_name = nil
-    expected = test_supplier.to_s
-    assert_equal expected, the_inv.invoice_from, '02.c: invoice_from did not return expected name'
-
-    # 02.d .....................................................................
-    the_inv.service_provider_name = test_service_provider
-    the_inv.supplier_name = test_supplier
-    the_inv.agency_name = nil
-    expected = "#{test_service_provider} / #{test_supplier}"
-    assert_equal expected, the_inv.invoice_from, '02.d: invoice_from did not return expected name'
-
-    # 02.e .....................................................................
-    the_inv.service_provider_name = nil
-    the_inv.supplier_name = nil
-    the_inv.agency_name = test_agency
-    expected = test_agency.to_s
-    assert_equal expected, the_inv.invoice_from, '02.e: invoice_from did not return expected name'
-
-    # 02.f .....................................................................
-    the_inv.service_provider_name = test_service_provider
-    the_inv.supplier_name = nil
-    the_inv.agency_name = test_agency
-    expected = "#{test_service_provider} / #{test_agency}"
-    assert_equal expected, the_inv.invoice_from, '02.f: invoice_from did not return expected name'
-
-    # 02.g .....................................................................
-    the_inv.service_provider_name = nil
-    the_inv.supplier_name = test_supplier
-    the_inv.agency_name = test_agency
-    expected = "#{test_agency} / #{test_supplier}"
-    assert_equal expected, the_inv.invoice_from, '02.g: invoice_from did not return expected name'
-
-    # 02.h .....................................................................
-    the_inv.service_provider_name = test_service_provider
-    the_inv.supplier_name = test_supplier
-    the_inv.agency_name = test_agency
-    expected = "#{test_service_provider} / #{test_agency} / #{test_supplier}"
-    assert_equal expected, the_inv.invoice_from, '02.h: invoice_from did not return expected name'
 
     # 02.i .....................................................................
     assert the_inv.valid?, '02.i: Invoice instance should be valid when name added'
@@ -200,15 +149,36 @@ class InvoiceTest < ActiveSupport::TestCase
     invoice = invoices(:fiscal_year)
     assert_equal '2015-2016', invoice.fiscal_year.to_s
   end
+  # Cf0925.yml has the following RTPs for the child :invoice_to_rtp_match
+  # | # | Service Provider |        Agency        |      Supplier     |   Start    |    End     |
+  # | a | A Provider       | A G Ency and Co.     |                   | 2015-07-01 | 2015-09-30 |
+  # | b |                  |                      | Supplies R Us     |            |            |
+  # | c | A Provider       | A G Ency and Co.     |                   | 2015-09-01 | 2015-09-30 |
+  # | d | Not A Provider   | Not A G Ency and Co. |                   | 2015-07-01 | 2015-09-30 |
+  # | e |                  |                      | Not Supplies R Us |            |            |
+  # | f | A Provider       | A G Ency and Co.     |                   | 2014-07-01 | 2014-09-30 |
+  # | g | A Provider       |                      |                   | 2017-07-01 | 2017-09-30 |
+  # | h |                  | A G Ency and Co.     |                   | 2017-10-01 | 2017-12-31 |
 
-  test 'match no RTPs' do
+  test 'match no RTPs on Provider' do
+    # This test invoice should have 0 matches at the dates are not in range
     child = funded_people(:invoice_to_rtp_match)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2016-09-30',
                                    service_end: '2016-09-30',
                                    service_start: '2016-09-01',
-                                   agency_name: 'A G Ency and Co.',
-                                   service_provider_name: 'A Provider')
+                                   invoice_from: 'A Provider')
+    assert_equal 0, invoice.match.size
+  end
+
+  test 'match no RTPs on Agency' do
+    # This test invoice should have 0 matches at the dates are not in range
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2016-09-30',
+                                   service_end: '2016-09-30',
+                                   service_start: '2016-09-01',
+                                   invoice_from: 'A G Ency and Co.')
     assert_equal 0, invoice.match.size
   end
 
@@ -218,7 +188,7 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2015-08-31',
                                    service_end: '2015-08-31',
                                    service_start: '2015-08-01',
-                                   service_provider_name: 'A Provider')
+                                   invoice_from: 'A Provider')
     assert_equal 1, invoice.match.size
     assert_equal '2015-07-01 to 2015-09-30',
                  invoice.match[0].service_period_string
@@ -230,7 +200,7 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2014-08-31',
                                    service_end: '2014-08-31',
                                    service_start: '2014-08-01',
-                                   service_provider_name: 'A G Ency and Co.')
+                                   invoice_from: 'A G Ency and Co.')
     assert_equal 1, invoice.match.size
     assert_equal '2014-07-01 to 2014-09-30',
                  invoice.match[0].service_period_string
@@ -240,20 +210,33 @@ class InvoiceTest < ActiveSupport::TestCase
     child = funded_people(:invoice_to_rtp_match)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2016-03-01',
-                                   service_provider_name: 'Supplies R Us')
+                                   invoice_from: 'Supplies R Us')
     assert_equal 1, invoice.match.size
     assert_equal '2015-06-01 to 2016-05-31',
                  invoice.match[0].service_period_string
   end
 
-  test 'match two RTPs' do
+  test 'match two RTPs on Provider' do
     child = funded_people(:invoice_to_rtp_match)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2015-09-30',
                                    service_end: '2015-09-30',
                                    service_start: '2015-09-01',
-                                   agency_name: 'A G Ency and Co.',
-                                   service_provider_name: 'A Provider')
+                                   invoice_from: 'A Provider')
+    assert_equal 2, invoice.match.size
+    assert_equal '2015-07-01 to 2015-09-30',
+                 invoice.match[0].service_period_string
+    assert_equal '2015-09-01 to 2015-09-30',
+                 invoice.match[1].service_period_string
+  end
+
+  test 'match two RTPs on Agency' do
+    child = funded_people(:invoice_to_rtp_match)
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2015-09-30',
+                                   service_end: '2015-09-30',
+                                   service_start: '2015-09-01',
+                                   invoice_from: 'A G Ency and Co.')
     assert_equal 2, invoice.match.size
     assert_equal '2015-07-01 to 2015-09-30',
                  invoice.match[0].service_period_string
@@ -267,8 +250,7 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_date: '2015-09-30',
                                    service_end: '2015-09-30',
                                    service_start: '2015-09-01',
-                                   agency_name: 'A G Ency and Co.',
-                                   service_provider_name: 'A Provider')
+                                   invoice_from: 'A Provider')
     assert_equal(2, (rtps = invoice.match).size)
 
     invoice.allocate(rtps)
@@ -283,23 +265,33 @@ class InvoiceTest < ActiveSupport::TestCase
     rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
   end
 
-  test 'class match no RTPs' do
+  test 'class match no RTPs on Provider' do
     params = { invoice_amount: 200,
                invoice_date: '2016-09-30',
                service_end: '2016-09-30',
                service_start: '2016-09-01',
-               agency_name: 'A G Ency and Co.',
-               service_provider_name: 'A Provider' }
+               invoice_from: 'A Provider' }
     assert_equal 0, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
   end
+
+  test 'class match no RTPs on Agency' do
+    params = { invoice_amount: 200,
+               invoice_date: '2016-09-30',
+               service_end: '2016-09-30',
+               service_start: '2016-09-01',
+               invoice_from: 'A G Ency and Co.'}
+    assert_equal 0, Invoice.match(funded_people(:invoice_to_rtp_match),
+                                  params).size
+  end
+
 
   test 'class match one RTP on provider' do
     params = { invoice_amount: 200,
                invoice_date: '2015-08-31',
                service_end: '2015-08-31',
                service_start: '2015-08-01',
-               service_provider_name: 'A Provider' }
+               invoice_from: 'A Provider' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2015-07-01 to 2015-09-30',
@@ -312,7 +304,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2014-08-31',
                service_end: '2014-08-31',
                service_start: '2014-08-01',
-               service_provider_name: 'A G Ency and Co.' }
+               invoice_from: 'A G Ency and Co.' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2014-07-01 to 2014-09-30',
@@ -323,7 +315,7 @@ class InvoiceTest < ActiveSupport::TestCase
   test 'class match one RTP on supplier' do
     params = { invoice_amount: 200,
                invoice_date: '2016-03-01',
-               service_provider_name: 'Supplies R Us' }
+               invoice_from: 'Supplies R Us' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2015-06-01 to 2016-05-31',
@@ -336,8 +328,8 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2015-09-30',
                service_end: '2015-09-30',
                service_start: '2015-09-01',
-               agency_name: 'A G Ency and Co.',
-               service_provider_name: 'A Provider' }
+              #  agency_name: 'A G Ency and Co.',
+               invoice_from: 'A Provider' }
     assert_equal 2, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2015-07-01 to 2015-09-30',
@@ -353,7 +345,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2017-08-31',
                service_end: '2017-08-31',
                service_start: '2017-08-01',
-               service_provider_name: 'A Provider' }
+               invoice_from: 'A Provider' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2017-07-01 to 2017-09-30',
@@ -366,7 +358,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2017-11-30',
                service_end: '2017-11-30',
                service_start: '2017-11-01',
-               service_provider_name: 'A G Ency and Co.' }
+               invoice_from: 'A G Ency and Co.' }
     assert_equal 1, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
     assert_equal '2017-10-01 to 2017-12-31',

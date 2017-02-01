@@ -116,7 +116,7 @@ class FundedPerson < ApplicationRecord
     (cf0925s.map(&:service_provider_name) +
     cf0925s.map(&:agency_name) +
     cf0925s.map(&:supplier_name) +
-    invoices.map(&:service_provider_name)).compact.sort.uniq
+    invoices.map(&:invoice_from)).compact.sort.uniq
   end
 
   def selected_fiscal_year

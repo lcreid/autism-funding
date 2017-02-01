@@ -40,16 +40,16 @@ class Invoice < ApplicationRecord
     valid?(:complete)
   end
 
-  ##
-  # Convert the three old invoice fields to the new unified field.
-  def invoice_from
-    invoice_from = []
-    invoice_from << service_provider_name if service_provider_name.present?
-    invoice_from << agency_name if agency_name.present?
-    invoice_from << supplier_name if supplier_name.present?
-    return 'No Invoicee Defined' if invoice_from.empty?
-    invoice_from.join(' / ')
-  end
+  # ##
+  # # Convert the three old invoice fields to the new unified field.
+  # def invoice_from
+  #   invoice_from = []
+  #   invoice_from << service_provider_name if service_provider_name.present?
+  #   invoice_from << agency_name if agency_name.present?
+  #   invoice_from << supplier_name if supplier_name.present?
+  #   return 'No Invoicee Defined' if invoice_from.empty?
+  #   invoice_from.join(' / ')
+  # end
 
   ##
   # Return an array of RTPs that could cover this invoice.
@@ -71,51 +71,60 @@ class Invoice < ApplicationRecord
 
   class <<self
     # FIXME: I really question whether I needed the class method.
+    # TODO make the matching meet criteria laid out in Wiki.  Specifically - if only
+    # an invoice date is provided, or only start/end provided we can still match
     def match(funded_person, params)
       # puts "match child #{funded_person.inspect} params: #{params}"
       return [] unless funded_person.cf0925s
 
       params = ActiveSupport::HashWithIndifferentAccess.new(params)
-
       agency_name = params[:agency_name]
       invoice_date = to_date(params[:invoice_date])
       service_end = to_date(params[:service_end])
-      service_provider_name = params[:service_provider_name]
+      invoice_from = params[:invoice_from]
       service_start = to_date(params[:service_start])
-      supplier_name = params[:supplier_name]
+      # supplier_name = params[:supplier_name]
+
+      # puts "#{__LINE__}: Hi Guys, we're here!!!!"
+      # pp params
 
       # puts "Here is the invoice_date: #{invoice_date}"
       result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
         # puts rtp.inspect
-        if pay_provider?(rtp, service_provider_name, service_start, service_end) ||
-           pay_agency?(rtp, service_provider_name, service_start, service_end)
+        if pay_provider?(rtp, invoice_from, service_start, service_end) ||
+           pay_agency?(rtp, invoice_from, service_start, service_end)
           rtp.extend(ServiceProvider)
-        elsif pay_for_supplier?(rtp, service_provider_name, invoice_date)
+        elsif pay_for_supplier?(rtp, invoice_from, invoice_date)
           rtp.extend(Supplier)
         end
       end.compact.sort
-      # puts result.inspect
+      #  puts result.inspect
       result
     end
 
     ##
     # Determine if the RTP authorizes the invoice when the payee is the agency
-    def pay_agency?(rtp, agency_name, service_start, service_end)
+    def pay_agency?(rtp, invoice_from, service_start, service_end)
+      # puts "#{__LINE__}: Rtp Agency: #{rtp.agency_name} From [#{invoice_from}] include: #{rtp.include?(service_start..service_end)}"
+      # puts "Failed No Agency Name" unless rtp.agency_name
+      # puts "Failed Invoice From" unless invoice_from == rtp.agency_name
+      # puts "Failed Range" unless rtp.include?(service_start..service_end)
+      # puts "Failed Service Start and End" unless service_start && service_end
       service_start && service_end &&
         # (rtp.payment == 'agency' || rtp.service_provider_name.blank?) &&
         rtp.agency_name &&
-        agency_name == rtp.agency_name &&
+        invoice_from == rtp.agency_name &&
         rtp.include?(service_start..service_end)
     end
 
     ##
     # Determine if the RTP authorizes the invoice when the payee is the supplier
     # (actually the parent)
-    def pay_for_supplier?(rtp, supplier_name, invoice_date)
+    def pay_for_supplier?(rtp, invoice_from, invoice_date)
       result = rtp.created_at &&
                invoice_date &&
                rtp.supplier_name &&
-               supplier_name == rtp.supplier_name &&
+               invoice_from == rtp.supplier_name &&
                rtp.funded_person
                   .fiscal_year(invoice_date)
                   .include?(rtp.created_at.to_date)
@@ -134,11 +143,11 @@ class Invoice < ApplicationRecord
 
     ##
     # Determine if the RTP authorizes the invoice when the payee is the provider
-    def pay_provider?(rtp, service_provider_name, service_start, service_end)
+    def pay_provider?(rtp, invoice_from, service_start, service_end)
       service_start && service_end &&
         # (rtp.payment == 'provider' || rtp.agency_name.blank?) &&
         rtp.service_provider_name &&
-        service_provider_name == rtp.service_provider_name &&
+        invoice_from == rtp.service_provider_name &&
         rtp.include?(service_start..service_end)
     end
 
