@@ -1,26 +1,28 @@
-<% title("All Children") %>
-<% unless current_user.can_create_new_rtp? %>
-  <div class="alert alert-warning">
-    <div class="row">
-      <div class="col-md-1"></div>
-      <div class="col-md-10">
-        <span class="glyphicon glyphicon-star-empty"></span>
-        The forms and funding found in this area are only availble to residents of
-        British Columbia.
-        <br>
-        You are no longer a resident of British Columbia so you may not create new Request to Pay forms.
-        However, you may continue to view and edit existing forms as well as create, edit and delete new
-        invoices.
+<div id="home">
+  <% title("All Children") %>
+  <% unless current_user.can_create_new_rtp? %>
+    <div class="alert alert-warning">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <span class="glyphicon glyphicon-star-empty"></span>
+          The forms and funding found in this area are only availble to residents of
+          British Columbia.
+          <br>
+          You are no longer a resident of British Columbia so you may not create new Request to Pay forms.
+          However, you may continue to view and edit existing forms as well as create, edit and delete new
+          invoices.
+        </div>
+        <div class="col-md-1"></div>
       </div>
-      <div class="col-md-1"></div>
     </div>
-  </div>
-<% end %>
-<%= render 'shared/notifications' %>
-<%# The form has to go outside the accordion to get the "one tab open at a time"
-    functionality to work. %>
-<%= form_tag(home_index_path, method: :get, class: "fiscal-year-selector") do %>
-  <div class="panel-group accordion" id="accordion" aria-multiselectable="true">
-    <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
-  </div>
-<% end %>
+  <% end %>
+  <%= render 'shared/notifications' %>
+  <%# The form has to go outside the accordion to get the "one tab open at a time"
+      functionality to work. %>
+  <%= form_tag(home_index_path, method: :get, class: "fiscal-year-selector") do %>
+    <div class="panel-group accordion" id="accordion" aria-multiselectable="true">
+      <%= render partial: "funded_people/show_panel", collection: @funded_people, as: :funded_person %>
+    </div>
+  <% end %>
+</div>

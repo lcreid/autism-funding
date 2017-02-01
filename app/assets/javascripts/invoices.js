@@ -43,53 +43,6 @@ $(document).on('turbolinks:load', function() {
     'funded_person_id'
   ];
 
-  $.map(attributes_of_interest, function(id, key) {
-    $(id_of_interest(id)).change(function() {
-      // console.log('Something changed.');
-      var params = {};
-      attributes_of_interest.forEach(function(x) {
-        // console.log(x + ': ' + value_of_element($(id_of_interest(x))[0]));
-        params[x] = value_of_element($(id_of_interest(x))[0]);
-      });
-
-      // path = window.location.pathname;
-      // url = path.substr(0, path.lastIndexOf('/'));
-      // url = url.substr(0, url.lastIndexOf('/'));
-      // console.log(url);
-
-      // console.log('About to look for RTPs: ' + $.param(params));
-      // TODO: Check that this doesn't return other people's RTPs
-      var request = $.ajax({
-        url: "/invoices/rtps",
-        data: params,
-        method: "GET",
-        dataType: "html"
-      }).done(function(msg) {
-        // console.log(msg);
-        // this is where I change the HTML
-        $('.cf0925-list-replace').empty();
-        // $(msg).appendTo('.cf0925-list-replace');
-        $('.cf0925-list-replace').append(msg);
-        // console.log('Finished updating select');
-        update_out_of_pocket();
-        set_up_triggers();
-      }).fail(function(xhr, textStatus, errorThrown) {
-        if (xhr.status !== 0) {
-          console.log("Error: Status: " + textStatus + " error: " + errorThrown);
-          console.log("Error: XHR responseXML: " + xhr.responseXML);
-          console.log("Error: XHR: " + xhr.status);
-        } else {
-          // This just means that the user aborted the request, e.g. got tired
-          // of waiting and clicked another link before the response came back.
-          console.log('Info: User aborted request before response.');
-        }
-      }).always(function() {
-        $('body.pending').removeClass('pending');
-        // console.log('Removed .pending');
-      });
-    });
-  });
-
   // Update Out of Pocket
   out_of_pocket_field = $('#invoice_out_of_pocket');
 
@@ -107,19 +60,68 @@ $(document).on('turbolinks:load', function() {
       return b.value === undefined? a: a + Number(b.value);
     }, 0);
     out_of_pocket =
-      Math.max(0,
-        Number($('#invoice_invoice_amount').val()) - allocated_spending);
-    // console.log('About to set Out of Pocket to ' + out_of_pocket);
-    out_of_pocket_field.val(out_of_pocket);
-  }
+    Math.max(0,
+      Number($('#invoice_invoice_amount').val()) - allocated_spending);
+      // console.log('About to set Out of Pocket to ' + out_of_pocket);
+      out_of_pocket_field.val(out_of_pocket);
+    }
 
-  function set_up_triggers() {
-    trigger_fields = $.merge(allocation_fields(), out_of_pocket_field);
-    // console.log('Setting up triggers on ' + trigger_fields);
-    trigger_fields.change(function() {
-      update_out_of_pocket();
+    function set_up_triggers() {
+      trigger_fields = $.merge(allocation_fields(), out_of_pocket_field);
+      // console.log('Setting up triggers on ' + trigger_fields);
+      trigger_fields.change(function() {
+        update_out_of_pocket();
+      });
+    }
+
+  if (document.getElementById('invoice')) {
+    $.map(attributes_of_interest, function(id, key) {
+      $(id_of_interest(id)).change(function() {
+        // console.log('Something changed.');
+        var params = {};
+        attributes_of_interest.forEach(function(x) {
+          // console.log(x + ': ' + value_of_element($(id_of_interest(x))[0]));
+          params[x] = value_of_element($(id_of_interest(x))[0]);
+        });
+
+        // path = window.location.pathname;
+        // url = path.substr(0, path.lastIndexOf('/'));
+        // url = url.substr(0, url.lastIndexOf('/'));
+        // console.log(url);
+
+        // console.log('About to look for RTPs: ' + $.param(params));
+        // TODO: Check that this doesn't return other people's RTPs
+        var request = $.ajax({
+          url: "/invoices/rtps",
+          data: params,
+          method: "GET",
+          dataType: "html"
+        }).done(function(msg) {
+          // console.log(msg);
+          // this is where I change the HTML
+          $('.cf0925-list-replace').empty();
+          // $(msg).appendTo('.cf0925-list-replace');
+          $('.cf0925-list-replace').append(msg);
+          // console.log('Finished updating select');
+          update_out_of_pocket();
+          set_up_triggers();
+        }).fail(function(xhr, textStatus, errorThrown) {
+          if (xhr.status !== 0) {
+            console.log("Error: Status: " + textStatus + " error: " + errorThrown);
+            console.log("Error: XHR responseXML: " + xhr.responseXML);
+            console.log("Error: XHR: " + xhr.status);
+          } else {
+            // This just means that the user aborted the request, e.g. got tired
+            // of waiting and clicked another link before the response came back.
+            console.log('Info: User aborted request before response.');
+          }
+        }).always(function() {
+          $('body.pending').removeClass('pending');
+          // console.log('Removed .pending');
+        });
+      });
     });
-  }
 
   set_up_triggers();
+  }
 });
