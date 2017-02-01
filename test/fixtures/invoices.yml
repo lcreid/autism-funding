@@ -15,6 +15,7 @@ fiscal_year:
   funded_person: two_fiscal_years
   agency_name:
   service_provider_name: Joe 2015
+  invoice_from: Joe 2015
 
 invoice_adds_fiscal_year:
   invoice_amount: 200
@@ -26,7 +27,8 @@ invoice_adds_fiscal_year:
   invoice_reference:
   funded_person: invoice_and_form
   agency_name:
-  service_provider_name: service_provider_name
+#  service_provider_name: service_provider_name
+  invoice_from: service_provider_name
 
 no_invoice_amount:
   invoice_amount:
@@ -37,8 +39,9 @@ no_invoice_amount:
   supplier_name:
   invoice_reference:
   funded_person: no_invoice_amount
-  agency_name:
-  service_provider_name: service_provider_name
+#  agency_name:
+#  service_provider_name: service_provider_name
+  invoice_from: service_provider_name
 
 #-- Series of test cases to test valid?(:complete)
 #-- in each test case, only one error is created
@@ -57,7 +60,8 @@ inv_valtest_01:
   service_end: '2016-03-31'
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_02:
   notes: 'Missing Invoice Amount'
@@ -70,7 +74,8 @@ inv_valtest_02:
   service_end: '2016-03-31'
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_03:
   notes: 'invoice_date Earlier than service_end'
@@ -83,7 +88,8 @@ inv_valtest_03:
   service_end: '2016-03-31'
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_04:
   notes: 'service_provider_name, but no service_end'
@@ -96,7 +102,8 @@ inv_valtest_04:
   service_end:
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_05:
   notes: 'service_provider_name, but no service_start'
@@ -109,7 +116,8 @@ inv_valtest_05:
   service_end:  '2016-03-31'
   service_start:
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_06:
   notes: 'Fiscal Year of service start different than service end'
@@ -122,7 +130,8 @@ inv_valtest_06:
   service_end:  '2016-03-31'
   service_start: '2015-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_07:
   notes: 'Service end before service start'
@@ -135,7 +144,8 @@ inv_valtest_07:
   service_end:  '2016-01-31'
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_08:
   notes: 'No Invoicee'
@@ -147,8 +157,9 @@ inv_valtest_08:
   invoice_date: '2016-04-07'
   service_end:  '2016-03-31'
   service_start: '2016-03-01'
-  service_provider_name:
-  supplier_name:
+  # service_provider_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 inv_valtest_complete:
   notes: 'Complete Invoicee'
@@ -161,7 +172,8 @@ inv_valtest_complete:
   service_end:  '2016-03-31'
   service_start: '2016-03-01'
   service_provider_name: service_provider_name
-  supplier_name:
+  # supplier_name:
+  invoice_from: service_provider_name
 
 invoice_with_rtp_matched:
   invoice_amount:
@@ -169,7 +181,8 @@ invoice_with_rtp_matched:
   notes:
   service_end: '2017-02-28'
   service_start: '2017-02-01'
-  supplier_name:
-  invoice_reference:
+  # supplier_name:
+  # invoice_reference:
   funded_person: invoice_with_rtp_matched
-  agency_name: A G Ency and Co.
+  # agency_name: A G Ency and Co.
+  invoice_from: A G Ency and Co.
