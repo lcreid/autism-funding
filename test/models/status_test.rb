@@ -63,19 +63,22 @@ class StatusTest < ActiveSupport::TestCase
                          invoice_date: '2017-01-31',
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
-                         service_provider_name: 'Ferry Man')
+                         service_provider_name: 'Ferry Man',
+                         invoice_from: 'Ferry Man')
 
     child.invoices.build(invoice_amount: 500,
                          invoice_date: '2017-02-28',
                          service_end: '2017-02-28',
                          service_start: '2017-02-01',
-                         service_provider_name: 'Ferry Man')
+                         service_provider_name: 'Ferry Man',
+                         invoice_from: 'Ferry Man')
 
     child.invoices.build(invoice_amount: 1_000,
                          invoice_date: '2017-03-31',
                          service_end: '2017-03-31',
                          service_start: '2017-03-01',
-                         service_provider_name: 'Ferry Man')
+                         service_provider_name: 'Ferry Man',
+                         invoice_from: 'Ferry Man')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
@@ -104,7 +107,7 @@ class StatusTest < ActiveSupport::TestCase
   #                                  invoice_date: '2017-01-31',
   #                                  service_end: '2017-01-31',
   #                                  service_start: '2017-01-01',
-  #                                  service_provider_name: 'Ferry Man')
+  #                                  invoice_from: 'Ferry Man')
   #
   #   hook_invoice_to_rtp(invoice)
   #
@@ -126,7 +129,8 @@ class StatusTest < ActiveSupport::TestCase
                                    invoice_date: '2017-01-31',
                                    service_end: '2017-01-31',
                                    service_start: '2017-01-01',
-                                   service_provider_name: 'Ferry Man')
+                                   service_provider_name: 'Ferry Man',
+                                   invoice_from: 'Ferry Man')
 
     assert hook_invoice_to_rtp(invoice)
 
@@ -146,7 +150,8 @@ class StatusTest < ActiveSupport::TestCase
                                    invoice_date: '2016-11-30',
                                    service_end: '2016-11-30',
                                    service_start: '2016-11-01',
-                                   service_provider_name: 'Ferry Man')
+                                   service_provider_name: 'Ferry Man',
+                                   invoice_from: 'Ferry Man')
 
     hook_invoice_to_rtp(invoice)
 
@@ -233,7 +238,8 @@ class StatusTest < ActiveSupport::TestCase
                                    invoice_date: '2017-01-31',
                                    service_end: '2017-01-31',
                                    service_start: '2017-01-01',
-                                   service_provider_name: 'Pay Me Agency')
+                                   service_provider_name: 'Pay Me Agency',
+                                   invoice_from: 'Pay Me Agency')
 
     assert hook_invoice_to_rtp(invoice)
 
@@ -308,12 +314,14 @@ class StatusTest < ActiveSupport::TestCase
                          invoice_date: '2017-01-31',
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
-                         service_provider_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency',
+                         invoice_from: 'Pay Me Agency')
 
     child.invoices.build(invoice_amount: 1_000,
                          notes: 'WTF?',
                          invoice_date: '2016-12-03',
-                         service_provider_name: 'Supplier Name')
+                         service_provider_name: 'Supplier Name',
+                         invoice_from: 'Supplier Name')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
@@ -342,13 +350,15 @@ class StatusTest < ActiveSupport::TestCase
                          invoice_date: '2017-01-31',
                          service_end: '2017-01-31',
                          service_start: '2017-01-01',
-                         service_provider_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency',
+                         invoice_from: 'Pay Me Agency')
 
     child.invoices.build(invoice_amount: 2_000,
                          invoice_date: '2017-06-30',
                          service_end: '2017-06-30',
                          service_start: '2017-06-01',
-                         service_provider_name: 'Pay Me Agency')
+                         service_provider_name: 'Pay Me Agency',
+                         invoice_from: 'Pay Me Agency')
 
     child.invoices.each do |i|
       assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
@@ -440,7 +450,7 @@ class StatusTest < ActiveSupport::TestCase
     #            invoice_date: '2017-08-31',
     #            service_end: '2017-08-31',
     #            service_start: '2017-08-01',
-    #            service_provider_name: 'A Provider' }
+    #            invoice_from: 'A Provider' }
     # assert_equal 1, Invoice.match(child = funded_people(:invoice_to_rtp_match),
     #                               params).size
 
@@ -455,7 +465,8 @@ class StatusTest < ActiveSupport::TestCase
                                    invoice_date: '2017-08-31',
                                    service_end: '2017-08-31',
                                    service_start: '2017-08-01',
-                                   service_provider_name: 'Ferry Man')
+                                   service_provider_name: 'Ferry Man',
+                                   invoice_from: 'Ferry Man')
     assert(hook_invoice_to_rtp(invoice), "Failed to match #{invoice.inspect}")
     assert_status(child,
                   '2016-2017',

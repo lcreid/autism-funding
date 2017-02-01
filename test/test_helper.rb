@@ -139,6 +139,7 @@ module TestSessionHelpers
       else
         child.invoices.each do |inv|
           puts "|  -- invoice -- object_id:  #{inv.object_id}"
+          puts "| Invoice From: #{inv.invoice_from}" if inv.invoice_from
           puts "| Service Provider Name: #{inv.service_provider_name}" if inv.service_provider_name
           puts "| Invoice Date: #{inv.invoice_date}" if inv.invoice_date
           puts "| Amount: #{inv.invoice_amount}" if inv.invoice_amount

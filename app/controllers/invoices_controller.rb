@@ -98,9 +98,10 @@ class InvoicesController < ApplicationController
                                     :invoice_date,
                                     :service_start,
                                     :service_end,
-                                    :service_provider_name,
-                                    :agency_name,
-                                    :supplier_name,
+                                    :invoice_from,
+                                    # :service_provider_name,
+                                    # :agency_name,
+                                    # :supplier_name,
                                     :invoice_amount,
                                     :invoice_reference,
                                     :notes,
@@ -118,9 +119,7 @@ class InvoicesController < ApplicationController
                   :invoice_date,
                   :service_start,
                   :service_end,
-                  :service_provider_name,
-                  :agency_name,
-                  :supplier_name,
+                  :invoice_from,
                   :funded_person_id)
   end
 end
