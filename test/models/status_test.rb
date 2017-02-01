@@ -450,7 +450,7 @@ class StatusTest < ActiveSupport::TestCase
                                service_provider_service_end: '2017-09-30',
                                service_provider_service_start: '2017-07-01',
                                payment: nil,
-                               service_provider_name: 'A G Ency and Co.')
+                               agency_name: nil)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2017-08-31',
                                    service_end: '2017-08-31',
