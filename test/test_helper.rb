@@ -138,6 +138,7 @@ module TestSessionHelpers
         puts "|  This child has no Invoices defined"
       else
         child.invoices.each do |inv|
+          fys << child.fiscal_year(inv.start_date)
           puts "|  -- invoice -- object_id:  #{inv.object_id}"
           puts "| Invoice From: #{inv.invoice_from}" if inv.invoice_from
           puts "| Service Provider Name: #{inv.service_provider_name}" if inv.service_provider_name
