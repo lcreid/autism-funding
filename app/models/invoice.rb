@@ -13,7 +13,7 @@ class Invoice < ApplicationRecord
   # ----- validations ----------------------------------------------------------
   validate :validate_check_fy_on_service_dates, on: :complete
   validate :validate_invoice_date_after_service_end, on: :complete
-  validate :validate_require_an_invoicee, on: :complete
+  validates :invoice_from, presence: true, on: :complete
   validate :validate_service_start_before_service_end, on: :complete
   validates :invoice_amount, presence: true, on: :complete
   validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
@@ -199,12 +199,6 @@ class Invoice < ApplicationRecord
       service_end > invoice_date
   end #-- validate_invoice_date_after_service_end --
 
-  def validate_require_an_invoicee
-    #-- error if there is not at least one supplier, servicer provider or agency name
-    if service_provider_name.blank? && supplier_name.blank? && agency_name.blank?
-      errors.add(:service_provider_name, 'must provide at least one of service provider, supplier or agency name')
-    end
-  end #-- validate_require_an_invoicee --
 
   #  def validate_service_dates_present_if_service_provider
   #    #-- run validation only if service_provider_name is present

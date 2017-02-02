@@ -5,9 +5,9 @@ class InvoiceTest < ActiveSupport::TestCase
   #  Test 01
   # => a) tests that an Invoice.new will create an object
   # => b) tests that the new Invoice instance is of the class Invoice
-  # => h) tests that an Invoice instance is invalid even when no funded_person is set
-  # => h) tests that an Invoice instance is valid even when no data is set
-  # => j) ensure a save is successful if valid? is true
+  # => c) tests that an Invoice instance is invalid when no funded_person is set
+  # => d) tests that an Invoice instance is valid when no data is set, but funded_person is assigned
+  # => e) ensure a save is successful if valid? is true
   testName = '01 Check Invoice can be created and saved'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
@@ -31,34 +31,32 @@ class InvoiceTest < ActiveSupport::TestCase
     the_inv.funded_person = the_funded_person
     assert the_inv.valid?, '01.d: Invoice instance should be valid with FundedPerson set'
 
-    # 01.d .....................................................................
-    assert the_inv.save, '01.d: Save of an valid instance should succeed'
+    # 01.e .....................................................................
+    assert the_inv.save, '01.e: Save of an valid instance should succeed'
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
   #  Test 02
   # => a) tests that invoice_from can be set
-  # => i) ensure valid? is true with names set
-  # => j) ensure a save is successful if valid? is true
+  # => b) ensure valid? is true with invoice_from set
+  # => c) ensure a save is successful if valid? is true
   testName = '02 Check FundedPerson invoice_from'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
-    test_service_provider = 'Services Inc.'
-    test_supplier = 'Stuff is Us'
-    test_agency = 'CIA'
+    test_invoice_from = 'Services Inc.'
     the_inv = Invoice.new
     the_inv.funded_person = FundedPerson.first
 
     # 02.a .....................................................................
-    the_inv.invoice_from = test_service_provider
-    expected = test_service_provider
-    assert_equal expected, the_inv.invoice_from, '02.a: invoice_from did not return expected name'
+    the_inv.invoice_from = test_invoice_from
+    expected = test_invoice_from
+    assert_equal expected, the_inv.invoice_from, '02.a: invoice_from did not return expected invoice_from'
 
-    # 02.i .....................................................................
-    assert the_inv.valid?, '02.i: Invoice instance should be valid when name added'
+    # 02.b .....................................................................
+    assert the_inv.valid?, '02.b: Invoice instance should be valid when invoice_from_assigned'
 
-    # 02.j .....................................................................
-    assert the_inv.save, '02.j: Save of an valid instance should succeed'
+    # 02.c .....................................................................
+    assert the_inv.save, '02.c: Save of an valid instance should succeed'
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
@@ -82,7 +80,7 @@ class InvoiceTest < ActiveSupport::TestCase
 
     # 03.a .....................................................................
     the_inv.invoice_date = nil
-    the_inv.service_provider_name = test_service_provider
+    the_inv.invoice_from = test_service_provider
 
     the_inv.service_start = nil
     the_inv.service_end = nil
@@ -113,12 +111,13 @@ class InvoiceTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 04
   #    Tests validations on: :complete
-  # This test runs through all records in the fixture where invoice_reference = 'validation test'
+  # This test runs through all records in the fixture where invoice_reference = 'create one validation error'
   #  It expects there to be one error after running valid?(:complete)
   testName = '04 Check Validation'
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
-    the_invs = Invoice.where(invoice_reference: 'validation test')
+    the_invs = Invoice.where(invoice_reference: 'Create 1 :complete Validation Error')
+    puts ""
     puts "We have #{the_invs.size} test cases"
     expected = 1
 
