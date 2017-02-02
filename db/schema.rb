@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170127235146) do
+ActiveRecord::Schema.define(version: 20170202193614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(version: 20170127235146) do
     t.datetime "updated_at",                                              null: false
     t.integer  "form_id"
     t.integer  "funded_person_id"
+    t.string   "part_b_fiscal_year"
     t.index ["form_id"], name: "index_cf0925s_on_form_id", using: :btree
     t.index ["funded_person_id"], name: "index_cf0925s_on_funded_person_id", using: :btree
   end
