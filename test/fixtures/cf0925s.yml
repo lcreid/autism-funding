@@ -26,6 +26,7 @@ one:
   parent_middle_name: parent_middle_name
   parent_postal_code: parent
   payment: Choice1
+  part_b_fiscal_year: '2016-2017'
   service_provider_postal_code: servic
   service_provider_address: service_provider_address
   service_provider_city: service_provider_city
@@ -77,48 +78,49 @@ minimum_printable:
   funded_person: minimum_printable
 
 forms:
-    agency_name: agency_name
-    child_dob: "2013-12-27"
-    child_first_name: child_first_name
-    child_last_name: child_last_name
-    child_middle_name: child_middle_name
-    child_in_care_of_ministry: false
-    home_phone: home_phone
-    item_cost_1: 50
-    item_cost_2: 30
-    item_cost_3: 20
-    item_desp_1: item_desp_1
-    item_desp_2: item_desp_2
-    item_desp_3: item_desp_3
-    parent_address: parent_address
-    parent_city: parent_city
-    parent_first_name: parent_first_name
-    parent_last_name: parent_last_name
-    parent_middle_name: parent_middle_name
-    parent_postal_code: parent
-    payment: Choice1
-    service_provider_postal_code: servic
-    service_provider_address: service_provider_address
-    service_provider_city: service_provider_city
-    service_provider_phone: service_provider_phone
-    service_provider_name: service_provider_name
-    service_provider_service_1: service_provider_service_1
-    service_provider_service_2: service_provider_service_2
-    service_provider_service_3: service_provider_service_3
-    service_provider_service_amount: 3000
-    service_provider_service_end: "2016-12-31"
-    service_provider_service_fee: 120.00
-    service_provider_service_hour: hour
-    service_provider_service_start: "2016-01-01"
-    supplier_address: supplier_address
-    supplier_city: supplier_city
-    supplier_contact_person: supplier_contact_person
-    supplier_name: supplier_name
-    supplier_phone: supplier_phone
-    supplier_postal_code: suppli
-    work_phone: work_phone
-    form: cf0925
-    funded_person: forms
+  agency_name: agency_name
+  child_dob: "2013-12-27"
+  child_first_name: child_first_name
+  child_last_name: child_last_name
+  child_middle_name: child_middle_name
+  child_in_care_of_ministry: false
+  home_phone: home_phone
+  item_cost_1: 50
+  item_cost_2: 30
+  item_cost_3: 20
+  item_desp_1: item_desp_1
+  item_desp_2: item_desp_2
+  item_desp_3: item_desp_3
+  parent_address: parent_address
+  parent_city: parent_city
+  parent_first_name: parent_first_name
+  parent_last_name: parent_last_name
+  parent_middle_name: parent_middle_name
+  parent_postal_code: parent
+  part_b_fiscal_year: '2016'
+  payment: Choice1
+  service_provider_postal_code: servic
+  service_provider_address: service_provider_address
+  service_provider_city: service_provider_city
+  service_provider_phone: service_provider_phone
+  service_provider_name: service_provider_name
+  service_provider_service_1: service_provider_service_1
+  service_provider_service_2: service_provider_service_2
+  service_provider_service_3: service_provider_service_3
+  service_provider_service_amount: 3000
+  service_provider_service_end: "2016-12-31"
+  service_provider_service_fee: 120.00
+  service_provider_service_hour: hour
+  service_provider_service_start: "2016-01-01"
+  supplier_address: supplier_address
+  supplier_city: supplier_city
+  supplier_contact_person: supplier_contact_person
+  supplier_name: supplier_name
+  supplier_phone: supplier_phone
+  supplier_postal_code: suppli
+  work_phone: work_phone
+  form: cf0925
+  funded_person: forms
 
 one_fiscal_year:
   agency_name: agency_name
@@ -330,6 +332,7 @@ match_test_rtp_b:
   parent_first_name: Match
   parent_last_name: Test
   parent_postal_code: V0V 0V0
+  part_b_fiscal_year: '2015-2016'
   supplier_address: 152 Supplier St
   supplier_city: Supplierville
   supplier_contact_person: Joe Supplier
@@ -414,6 +417,7 @@ match_test_rtp_e:
   parent_first_name: Match
   parent_last_name: Test
   parent_postal_code: V0V 0V0
+  part_b_fiscal_year: '2015-2016'
   supplier_address: 152 Supplier St
   supplier_city: Supplierville
   supplier_contact_person: Joe Supplier

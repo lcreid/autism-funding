@@ -513,6 +513,7 @@ class StatusTest < ActiveSupport::TestCase
     item_cost_2: 400,
     item_desp_1: 'Conference',
     item_desp_2: 'Workshop',
+    part_b_fiscal_year: '2016-2017',
     supplier_address: 'Supplier St',
     supplier_city: 'Supplier City',
     supplier_contact_person: 'Supplier Contact',
