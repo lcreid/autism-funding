@@ -40,32 +40,12 @@ no_invoice_amount:
 #-- The attribute :notes describes the test
 #-- Note this invoice is associated with the funded_person record invoice_and_form
 #      with a birthdate of 2003-06-15
-inv_valtest_01:
-  notes: 'Missing Invoice Date'
-  invoice_reference: 'Create 1 :complete Validation Error'
-  funded_person: invoice_validation_test
-  invoice_amount: 200
-  invoice_date:
-  service_end: '2016-03-31'
-  service_start: '2016-03-01'
-  invoice_from: service_provider_name
-
 inv_valtest_02:
   notes: 'Missing Invoice Amount'
   invoice_reference: 'Create 1 :complete Validation Error'
   funded_person: invoice_validation_test
   invoice_amount:
   invoice_date: '2016-04-07'
-  service_end: '2016-03-31'
-  service_start: '2016-03-01'
-  invoice_from: service_provider_name
-
-inv_valtest_03:
-  notes: 'invoice_date Earlier than service_end'
-  invoice_reference: 'Create 1 :complete Validation Error'
-  funded_person: invoice_validation_test
-  invoice_amount: 200
-  invoice_date: '2016-03-30'
   service_end: '2016-03-31'
   service_start: '2016-03-01'
   invoice_from: service_provider_name

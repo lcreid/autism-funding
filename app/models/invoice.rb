@@ -11,12 +11,13 @@ class Invoice < ApplicationRecord
 
   #-----------------------------------------------------------------------------
   # ----- validations ----------------------------------------------------------
-  validate :validate_check_fy_on_service_dates, on: :complete
-  validate :validate_invoice_date_after_service_end, on: :complete
-  validates :invoice_from, presence: true, on: :complete
-  validate :validate_service_start_before_service_end, on: :complete
+  # validate :validate_check_fy_on_service_dates, on: :complete
+  # validate :validate_invoice_date_after_service_end, on: :complete
   validates :invoice_amount, presence: true, on: :complete
-  validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
+  validates :invoice_from, presence: true, on: :complete
+  validate :validate_dates, on: :complete
+  # validate :validate_service_start_before_service_end, on: :complete
+  # validates :invoice_date, presence: { in: true, message: 'Invoice date required' }, on: :complete
   #  validates :service_start, presence: { in: true, message: 'Service provider defined, no service start date' }, on: :complete, unless: 'service_provider_name.blank?'
   #  validates :service_end, presence: { in: true, message: 'Service provider defined, no service end date' }, on: :complete, unless: 'service_provider_name.blank?'
 
@@ -181,7 +182,24 @@ class Invoice < ApplicationRecord
     st
   end #-- start_date --
 
-  def validate_check_fy_on_service_dates
+  def validate_dates
+    if service_start.blank? && invoice_date.blank? && service_end.blank?
+      errors.add(:service_start, 'must supply at least one date')
+      errors.add(:service_end, 'must supply at least one date')
+      errors.add(:invoice_date, 'must supply at least one date')
+    end
+
+    unless service_start.blank? || service_end.blank? || service_end >= service_start
+      errors.add(:service_end, 'service end cannot be earlier than service start')
+    end
+
+    unless service_start.blank? || service_end.blank? || funded_person.fiscal_year(service_start) == funded_person.fiscal_year(service_end)
+      errors.add(:service_end, 'must be in the same fiscal year as service start')
+    end
+
+  end
+
+  def xxvalidate_check_fy_on_service_dates
     #-- run validation only if both dates are present
     return if service_start.blank? || service_end.blank?
 
@@ -190,7 +208,7 @@ class Invoice < ApplicationRecord
     errors.add(:service_end, 'must be in the same fiscal year as service start') unless res == 0
   end #-- validate_check_fy_on_service_dates --
 
-  def validate_invoice_date_after_service_end
+  def xxvalidate_invoice_date_after_service_end
     #-- run validation only if both dates are present
     return if invoice_date.blank? || service_end.blank?
 
@@ -209,7 +227,7 @@ class Invoice < ApplicationRecord
   #      service_end < invoice_date
   #  end
 
-  def validate_service_start_before_service_end
+  def xxvalidate_service_start_before_service_end
     #-- run validation only if both dates are present
     return if service_start.blank? || service_end.blank?
 
