@@ -280,11 +280,10 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2016-09-30',
                service_end: '2016-09-30',
                service_start: '2016-09-01',
-               invoice_from: 'A G Ency and Co.'}
+               invoice_from: 'A G Ency and Co.' }
     assert_equal 0, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size
   end
-
 
   test 'class match one RTP on provider' do
     params = { invoice_amount: 200,
@@ -328,7 +327,7 @@ class InvoiceTest < ActiveSupport::TestCase
                invoice_date: '2015-09-30',
                service_end: '2015-09-30',
                service_start: '2015-09-01',
-              #  agency_name: 'A G Ency and Co.',
+               #  agency_name: 'A G Ency and Co.',
                invoice_from: 'A Provider' }
     assert_equal 2, Invoice.match(funded_people(:invoice_to_rtp_match),
                                   params).size

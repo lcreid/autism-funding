@@ -184,5 +184,4 @@ invoice_with_rtp_matched:
   # supplier_name:
   # invoice_reference:
   funded_person: invoice_with_rtp_matched
-  # agency_name: A G Ency and Co.
   invoice_from: A G Ency and Co.
