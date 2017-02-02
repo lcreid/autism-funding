@@ -173,6 +173,21 @@ class Cf0925Test < ActiveSupport::TestCase
     assert rtp.printable?, rtp.errors.full_messages
   end
 
+  test 'Missing fiscal year from Part B' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad')
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ["can't be blank"], rtp.errors[:part_b_fiscal_year]
+  end
+
   test 'Missing one item from Part B' do
     rtp = prep_empty_form
     rtp.update(supplier_address: 'Way St',
@@ -182,10 +197,12 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_phone: '5555551212',
                supplier_postal_code: 'V0V 0V0',
                # item_cost_1: '1,000',
-               item_desp_1: 'iPad')
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2016-2017')
 
     assert !rtp.printable?, 'should be not printable'
     assert_equal ["can't be blank"], rtp.errors[:item_cost_1]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
   end
 
   test 'Missing one item from each section' do
@@ -196,6 +213,7 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_name: 'Supplier',
                supplier_phone: '5555551212',
                #  supplier_postal_code: 'V0V 0V0',
+               part_b_fiscal_year: '2016-2017',
                item_cost_1: '1,000',
                item_desp_1: 'iPad',
                agency_name: 'Disable Clinic',
@@ -229,6 +247,7 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_postal_code: 'V0V 0V0',
                item_cost_1: '1,000',
                item_desp_1: 'iPad',
+               part_b_fiscal_year: '2016-2017',
                agency_name: 'Disable Clinic',
                payment: 'provider',
                service_provider_postal_code: 'V0V 0V0',

@@ -46,9 +46,10 @@ class Cf0925 < ApplicationRecord
         :item_cost_1,
         # :item_cost_2,
         # :item_cost_3,
-        :item_desp_1
+        :item_desp_1,
         # :item_desp_2,
         # :item_desp_3
+        :part_b_fiscal_year
       ]
     end
   end
