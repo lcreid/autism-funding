@@ -154,6 +154,14 @@ module Cf0925sHelper
         'directly on behalf of a parent or guardian.'
 
       a += form_row do
+        # puts "RENDERING: #{f.object.funded_person.valid_fiscal_years.map(&:to_s)}"
+        f.select(:part_b_fiscal_year,
+                 f.object.funded_person.valid_fiscal_years.map(&:to_s),
+                 column_width: 3,
+                 label: 'Fiscal Year')
+      end
+
+      a += form_row do
         f.text_field(:supplier_name,
                      column_width: 4,
                      label: 'Supplier Name') +

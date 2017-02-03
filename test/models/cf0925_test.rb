@@ -173,6 +173,21 @@ class Cf0925Test < ActiveSupport::TestCase
     assert rtp.printable?, rtp.errors.full_messages
   end
 
+  test 'Missing fiscal year from Part B' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad')
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ["can't be blank"], rtp.errors[:part_b_fiscal_year]
+  end
+
   test 'Missing one item from Part B' do
     rtp = prep_empty_form
     rtp.update(supplier_address: 'Way St',
@@ -182,10 +197,78 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_phone: '5555551212',
                supplier_postal_code: 'V0V 0V0',
                # item_cost_1: '1,000',
-               item_desp_1: 'iPad')
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2016-2017')
 
     assert !rtp.printable?, 'should be not printable'
     assert_equal ["can't be blank"], rtp.errors[:item_cost_1]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+  end
+
+  test 'part B fiscal year before child born' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2002-2003')
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ['must be after child is born'], rtp.errors[:part_b_fiscal_year]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
+  end
+
+  test 'part B fiscal year the year child is born' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2003-2004')
+
+    assert rtp.printable?, "should be printable #{rtp.errors.full_messages}"
+    assert_equal 0, rtp.errors.size, rtp.errors.full_messages
+  end
+
+  test 'part B fiscal year child is 17' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2020-2021')
+
+    assert rtp.printable?, "should be printable #{rtp.errors.full_messages}"
+    assert_equal 0, rtp.errors.size, rtp.errors.full_messages
+  end
+
+  test 'part B fiscal year after child turns 18' do
+    rtp = prep_empty_form
+    rtp.update(supplier_address: 'Way St',
+               supplier_city: 'Way Way',
+               supplier_contact_person: 'Supplier Contact',
+               supplier_name: 'Supplier',
+               supplier_phone: '5555551212',
+               supplier_postal_code: 'V0V 0V0',
+               item_cost_1: '1,000',
+               item_desp_1: 'iPad',
+               part_b_fiscal_year: '2021-2022')
+
+    assert !rtp.printable?, 'should be not printable'
+    assert_equal ['must be before child turns 18'], rtp.errors[:part_b_fiscal_year]
+    assert_equal 1, rtp.errors.size, rtp.errors.full_messages
   end
 
   test 'Missing one item from each section' do
@@ -196,6 +279,7 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_name: 'Supplier',
                supplier_phone: '5555551212',
                #  supplier_postal_code: 'V0V 0V0',
+               part_b_fiscal_year: '2016-2017',
                item_cost_1: '1,000',
                item_desp_1: 'iPad',
                agency_name: 'Disable Clinic',
@@ -229,6 +313,7 @@ class Cf0925Test < ActiveSupport::TestCase
                supplier_postal_code: 'V0V 0V0',
                item_cost_1: '1,000',
                item_desp_1: 'iPad',
+               part_b_fiscal_year: '2016-2017',
                agency_name: 'Disable Clinic',
                payment: 'provider',
                service_provider_postal_code: 'V0V 0V0',
@@ -278,7 +363,7 @@ class Cf0925Test < ActiveSupport::TestCase
     # pp rtp
     rtp.funded_person.user.home_phone_number = '66677788889'
     rtp.service_provider_name = "Hey, here's a name"
-    assert !rtp.save_with_user, 'Save succeded when it should have failed'
+    assert !rtp.save_with_user, 'Save succeeded when it should have failed'
     rtp_from_db = Cf0925.find(rtp.id)
     assert_equal '5555551212', rtp_from_db.funded_person.user.home_phone_number
     assert_not_equal "Hey, here's a name", rtp_from_db.service_provider_name

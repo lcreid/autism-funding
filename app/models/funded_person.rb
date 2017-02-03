@@ -17,6 +17,14 @@ class FundedPerson < ApplicationRecord
   validate :must_define_at_least_one_name
 
   # ----- Public Methods -------------------------------------------------------
+  def after_last_fiscal_year?(fy)
+    last_fiscal_year < fiscal_year(fy)
+  end
+
+  def before_first_fiscal_year?(fy)
+    fiscal_year(fy) < first_fiscal_year
+  end
+
   def cf0925s_in_fiscal_year(fy)
     # pp cf0925s.select { |x| fy.include?(x.fiscal_year) }.map(&:inspect)
     association_in_fiscal_year(cf0925s, fy)
@@ -88,6 +96,10 @@ class FundedPerson < ApplicationRecord
     end
   end
 
+  def first_fiscal_year
+    fiscal_year(birthdate + 1.year)
+  end
+
   ##
   # Return a list of fiscal years for which there is some sort of activity
   # for the FundedPerson. The list is sorted in descending order from the
@@ -101,6 +113,10 @@ class FundedPerson < ApplicationRecord
   # Return true if name, birthdate and in care of ministry fields are all blank
   def is_blank?
     child_in_care_of_ministry.nil? && my_dob == 'undefined' && my_name == 'no name defined'
+  end
+
+  def last_fiscal_year
+    fiscal_year(birthdate + 18.years)
   end
 
   def must_define_at_least_one_name
@@ -163,6 +179,15 @@ class FundedPerson < ApplicationRecord
   def set_child_preference(key, value)
     user.set_preference(id.to_s => { key => value })
     value
+  end
+
+  ##
+  # Array of the fiscal years describing valid fiscal years for the child
+  # (after birth and up to 18th birthday).
+  def valid_fiscal_years
+    # puts "valid_fiscal_years: #{first_fiscal_year} #{last_fiscal_year}" +
+    #      first_fiscal_year.upto(last_fiscal_year).to_a.to_s
+    first_fiscal_year.upto(last_fiscal_year).to_a
   end
 
   def child_preference(key, default)
