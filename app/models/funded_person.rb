@@ -184,11 +184,11 @@ class FundedPerson < ApplicationRecord
   ##
   # Array of the fiscal years describing valid fiscal years for the child
   # (after birth and up to 18th birthday).
-  # def valid_fiscal_years
-  #   first_valid_fiscal_year = date_of_birth + 1.year
-  #   last_valid_fiscal_year = first_valid_fiscal_year + 17.years
-  #   first_valid_fiscal_year.step(last_valid_fiscal_year, 1.year).to_a
-  # end
+  def valid_fiscal_years
+    # puts "valid_fiscal_years: #{first_fiscal_year} #{last_fiscal_year}" +
+    #      first_fiscal_year.upto(last_fiscal_year).to_a.to_s
+    first_fiscal_year.upto(last_fiscal_year).to_a
+  end
 
   def child_preference(key, default)
     # logger.debug { "Child preferences args: #{inspect}, #{key}(#{key.class})" }

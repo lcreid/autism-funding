@@ -74,6 +74,7 @@ class CompleteCf0925Test < CapybaraTest
       item_desp_2: 'Phone',
       item_desp_3: 'Notebook',
       part_b_fiscal_year: '2016-2017',
+      payment_agency: '',
       service_provider_postal_code: 'N1N 1N1',
       service_provider_address: '22222 Main St.',
       service_provider_city: 'Vancouver',
@@ -90,9 +91,8 @@ class CompleteCf0925Test < CapybaraTest
       supplier_phone: '555-555-1234',
       supplier_postal_code: 'N0N 0N0'
     }.each do |k, v|
-      fill_in 'cf0925_' + k.to_s, with: v
+      set_field(k, v)
     end
-    choose 'cf0925_payment_agency'
     select 'Hour', from: 'cf0925_service_provider_service_hour'
 
     assert_no_difference 'Cf0925.count' do
@@ -246,6 +246,17 @@ class CompleteCf0925Test < CapybaraTest
     assert_selector 'div.has-error', count: 10
   end
 
+  test 'create and edit a cf0925 with part B fiscal year' do
+    create_a_part_b_cf0925(part_b_fiscal_year: '2015')
+    edit_last_cf0925
+    set_part_b_fiscal_year '2016'
+    click_button 'Save'
+    edit_last_cf0925
+    assert_selector 'form.edit_cf0925'
+    # There's no errors because part B isn't filled in yet.
+    assert_no_selector 'div.has-error'
+  end
+
   private
 
   def create_a_cf0925
@@ -294,6 +305,20 @@ class CompleteCf0925Test < CapybaraTest
     assert Cf0925.find_by(parent_address: address), 'Address in RTP not updated'
   end
 
+  def create_a_part_b_cf0925(fields = {})
+    fill_in_login(users(:forms))
+    click_link 'New Request to Pay'
+    assert_difference 'Cf0925.count' do
+      assert_no_difference 'User.count' do
+        fields.each do |k, v|
+          set_field(k, v)
+        end
+
+        click_button 'Save'
+      end
+    end
+  end
+
   def edit_last_cf0925
     find('table.form-list tbody tr:first-of-type').click_link('Edit')
   end
@@ -306,6 +331,15 @@ class CompleteCf0925Test < CapybaraTest
     puts e.inspect
     false
   end
+
+  # Don't need this because you can't select an invalid value from a select
+  # def part_b_fiscal_year_has_error?
+  #   find('#cf0925_part_b_fiscal_year + span.help-block')
+  #   true
+  # rescue Capybara::ElementNotFound => e
+  #   puts e.inspect
+  #   false
+  # end
 
   def parent_postal_code_has_error?
     find('#cf0925_funded_person_attributes_user_attributes_postal_code + span.help-block')
@@ -331,7 +365,35 @@ class CompleteCf0925Test < CapybaraTest
     find('div.parent-test').fill_in('Work Phone', with: phone_number)
   end
 
+  def set_part_b_fiscal_year(fiscal_year)
+    select fiscal_year, from: 'cf0925_part_b_fiscal_year'
+  end
+
   def set_parent_postal_code(postal_code)
     find('div.parent-test').fill_in('Postal Code', with: postal_code)
+  end
+
+  def set_field(field, value)
+    field_id = 'cf0925_' + field.to_s
+    element = find('#' + field_id)
+    # puts element.tag_name
+    case element.tag_name
+    when 'input'
+      case element['type']
+      when 'text', 'tel', 'date'
+        # puts "fill_in #{field_id}, with: #{value}"
+        fill_in field_id, with: value
+      when 'radio'
+        # puts "choose #{field_id}"
+        choose field_id
+      else
+        puts "Not implemented: #{element['type']}"
+      end
+    when 'select'
+      # puts "select #{field_id}, #{value}"
+      select value, from: field_id
+    else
+      puts "Not implemented: #{element.tag_name}"
+    end
   end
 end

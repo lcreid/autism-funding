@@ -199,7 +199,9 @@ class Cf0925 < ApplicationRecord
       supplier_name.present? ||
       supplier_phone.present? ||
       supplier_postal_code.present? ||
-      part_b_fiscal_year.present? ||
+      # Don't include part_b_fiscal_year here so we can default it to the
+      # current year.
+      # part_b_fiscal_year.present? ||
       item_cost_1.present? ||
       item_cost_2.present? ||
       item_cost_3.present? ||
