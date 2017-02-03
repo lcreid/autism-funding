@@ -21,7 +21,6 @@
                        column_width: 10
                      } %>
 
-        <%#= f.collection_select :service_provider_name, Cf0925.all, :service_provider_name, :service_provider_name,{prompt: 'None Selected', include_blank: '-- Other Service Provider --'},{class: 'form-control'} %>
         <%= f.currency_field(:invoice_amount, step: '.01', label: 'Amount', column_width: 2) %>
       </div>
       <div class="row">
