@@ -1,6 +1,28 @@
 ##
 # Fiscal year for a child.
 class FiscalYear < Range
+  def <(other)
+    last < other.first
+  end
+
+  def <=(other)
+    last < other.first || self == other
+  end
+
+  def >(other)
+    first > other.last
+  end
+
+  def >=(other)
+    first > other.last || self == other
+  end
+
+  ##
+  # Sort on start date of fiscal year.
+  def <=>(other)
+    first <=> other.first
+  end
+
   ##
   # Convenience to be able to initialize from a Range.
   def initialize(param)
@@ -10,12 +32,6 @@ class FiscalYear < Range
     when Date
       super(param, param.next_year - 1.day)
     end
-  end
-
-  ##
-  # Sort on start date of fiscal year.
-  def <=>(other)
-    first <=> other.first
   end
 
   ##

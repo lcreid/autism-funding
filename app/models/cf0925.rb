@@ -97,6 +97,7 @@ class Cf0925 < ApplicationRecord
 
     with_options if: :filling_in_part_b? do
       validates *Cf0925.part_b_required_attributes, presence: true
+      validate :part_b_fiscal_year_valid_for_child
     end
   end
 
@@ -198,6 +199,7 @@ class Cf0925 < ApplicationRecord
       supplier_name.present? ||
       supplier_phone.present? ||
       supplier_postal_code.present? ||
+      part_b_fiscal_year.present? ||
       item_cost_1.present? ||
       item_cost_2.present? ||
       item_cost_3.present? ||
@@ -320,6 +322,28 @@ class Cf0925 < ApplicationRecord
                     .map(&:invoice_amount)
                     .sum
     [invoice_total - total_amount, 0].max
+  end
+
+  def part_b_fiscal_year_after_child_turns_18?
+    funded_person.after_last_fiscal_year?(part_b_fiscal_year)
+  end
+
+  def part_b_fiscal_year_before_birth?
+    funded_person.before_first_fiscal_year?(part_b_fiscal_year)
+  end
+
+  ##
+  # Make sure fiscal year is after child is born and before it turns 18
+  def part_b_fiscal_year_valid_for_child
+    return if part_b_fiscal_year.blank?
+
+    if part_b_fiscal_year_before_birth?
+      errors.add(:part_b_fiscal_year, 'must be after child is born')
+    end
+
+    if part_b_fiscal_year_after_child_turns_18?
+      errors.add(:part_b_fiscal_year, 'must be before child turns 18')
+    end
   end
 
   def pdf_output_file
