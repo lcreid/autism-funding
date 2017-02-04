@@ -117,7 +117,7 @@ class InvoiceTest < ActiveSupport::TestCase
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
     the_invs = Invoice.where(invoice_reference: 'Create 1 :complete Validation Error')
-    puts ""
+    puts ''
     puts "We have #{the_invs.size} test cases"
     expected = 1
 
@@ -129,7 +129,7 @@ class InvoiceTest < ActiveSupport::TestCase
         pp tc
         puts "Start FY: #{tc.funded_person.fiscal_year(tc.service_start)}"
         puts "End FY: #{tc.funded_person.fiscal_year(tc.service_end)}"
-        puts ""
+        puts ''
         tc.errors.messages.each do |m|
           puts "Found error: #{m} for #{tc.notes}"
         end
@@ -148,17 +148,16 @@ class InvoiceTest < ActiveSupport::TestCase
     assert the_inv.include_in_reports?, "04: include_in_reports? is not true after Test for #{the_inv.notes}"
   end
 
-
   #-----------------------------------------------------------------------------
   #  Set of tests to check Validations and include_in_reports?
   testName = 'Validation Check, Invoice Completed with Invoice Date'
   test testName do
     # puts "-- Test: #{testName} ------------"
     date1 = '2017-01-01'
-    test_case = {invoice_date: date1,
+    test_case = { invoice_date: date1,
                   invoice_from: 'Anin Voicer',
-                  invoice_amount: 150}
-    test_checks = {complete: true, include: true, error_size: 0, start_date: date1}
+                  invoice_amount: 150 }
+    test_checks = { complete: true, include: true, error_size: 0, start_date: date1 }
     assert_status '', test_case, test_checks
   end
 
@@ -166,10 +165,10 @@ class InvoiceTest < ActiveSupport::TestCase
   test testName do
     # puts "-- Test: #{testName} ------------"
     date2 = '2017-01-08'
-    test_case = {service_start: date2,
+    test_case = { service_start: date2,
                   invoice_from: 'Anin Voicer',
-                  invoice_amount: 150}
-    test_checks = {complete: true, include: true, error_size: 0, start_date: date2}
+                  invoice_amount: 150 }
+    test_checks = { complete: true, include: true, error_size: 0, start_date: date2 }
     assert_status '', test_case, test_checks
   end
 
@@ -177,10 +176,10 @@ class InvoiceTest < ActiveSupport::TestCase
   test testName do
     # puts "-- Test: #{testName} ------------"
     date3 = '2017-01-31'
-    test_case = {service_start: date3,
+    test_case = { service_start: date3,
                   invoice_from: 'Anin Voicer',
-                  invoice_amount: 150}
-    test_checks = {complete: true, include: true, error_size: 0, start_date: date3}
+                  invoice_amount: 150 }
+    test_checks = { complete: true, include: true, error_size: 0, start_date: date3 }
     assert_status '', test_case, test_checks
   end
 
@@ -188,10 +187,10 @@ class InvoiceTest < ActiveSupport::TestCase
   test testName do
     # puts "-- Test: #{testName} ------------"
     date1 = '2017-01-01'
-    test_case = {invoice_date: date1,
+    test_case = { invoice_date: date1,
                   invoice_from: 'Anin Voicer'
                   }
-    test_checks = {complete: false, include: false, error_size: 1, errors: {invoice_amount: "can't be blank"}, start_date: date1}
+    test_checks = { complete: false, include: false, error_size: 1, errors: { invoice_amount: "can't be blank" }, start_date: date1 }
     assert_status '', test_case, test_checks
   end
 
@@ -199,23 +198,23 @@ class InvoiceTest < ActiveSupport::TestCase
   test testName do
     # puts "-- Test: #{testName} ------------"
     date1 = '2017-01-01'
-    test_case = {invoice_date: date1,
+    test_case = { invoice_date: date1,
                   invoice_amount: 150
                   }
-    test_checks = {complete: false, include: false, error_size: 1, errors: {invoice_from: "can't be blank"}, start_date: date1}
+    test_checks = { complete: false, include: false, error_size: 1, errors: { invoice_from: "can't be blank" }, start_date: date1 }
     assert_status '', test_case, test_checks
   end
 
   testName = 'Validation Check, No Dates provided'
   test testName do
     # puts "-- Test: #{testName} ------------"
-    test_case = {invoice_from: 'Anin Voicer',
+    test_case = { invoice_from: 'Anin Voicer',
                   invoice_amount: 150
                   }
-    err_hash = {invoice_date: "must supply at least one date",
-                service_start: "must supply at least one date",
-                service_end: "must supply at least one date"}
-    test_checks = {complete: false, include: false, error_size: 3, errors: err_hash}
+    err_hash = { invoice_date: 'must supply at least one date',
+                 service_start: 'must supply at least one date',
+                 service_end: 'must supply at least one date' }
+    test_checks = { complete: false, include: false, error_size: 3, errors: err_hash }
     assert_status '', test_case, test_checks
   end
 
@@ -224,13 +223,13 @@ class InvoiceTest < ActiveSupport::TestCase
     date2 = '2017-01-08'
     date3 = '2017-01-01'
     # puts "-- Test: #{testName} ------------"
-    test_case = {invoice_from: 'Anin Voicer',
+    test_case = { invoice_from: 'Anin Voicer',
                   invoice_amount: 150,
                   service_start: date2,
                   service_end: date3
                   }
-    err_hash = {service_end: "service end cannot be earlier than service start"}
-    test_checks = {complete: false, include: false, error_size: 1, errors: err_hash}
+    err_hash = { service_end: 'service end cannot be earlier than service start' }
+    test_checks = { complete: false, include: false, error_size: 1, errors: err_hash }
     assert_status '', test_case, test_checks
   end
 
@@ -239,13 +238,13 @@ class InvoiceTest < ActiveSupport::TestCase
     date2 = '2017-01-08'
     date3 = '2018-01-09'
     # puts "-- Test: #{testName} ------------"
-    test_case = {invoice_from: 'Anin Voicer',
+    test_case = { invoice_from: 'Anin Voicer',
                   invoice_amount: 150,
                   service_start: date2,
                   service_end: date3
                   }
-    err_hash = {service_end: "must be in the same fiscal year as service start"}
-    test_checks = {complete: false, include: false, error_size: 1, errors: err_hash}
+    err_hash = { service_end: 'must be in the same fiscal year as service start' }
+    test_checks = { complete: false, include: false, error_size: 1, errors: err_hash }
     assert_status '', test_case, test_checks
   end
 
@@ -469,7 +468,27 @@ class InvoiceTest < ActiveSupport::TestCase
                  Invoice.match(funded_people(:invoice_to_rtp_match),
                                params)[0].service_period_string
   end
+
+  test 'invoice has no allocations, allocate one new RTP' do
+    flunk
+  end
+
+  test 'invoice has two existing allocations, ' \
+        'allocate one new, and only one existing RTP' do
+    flunk
+  end
+
+  test 'invoice has allocation of part A RTP, ' \
+        'allocate the same RTP, but matched on part B' do
+    flunk
+  end
+
+  test 'invoice has allocation of part A RTP, ' \
+        'allocate the same RTP, but matched on part A and B' do
+    flunk
+  end
   #--- Private Methods ---------------------------------------------------------
+
   private
 
   def assert_status(msg, cases, chks)
@@ -478,13 +497,13 @@ class InvoiceTest < ActiveSupport::TestCase
     inv.update(cases)
 
     # pp inv
-    #pp chks
+    # pp chks
 
     # Check that the results are as expected
     chks.each do |chk, val|
       case chk
       when :complete
-        assert_equal  val, inv.valid?(:complete), "#{msg}: Invoice object has unexpected valid?(:complete)"
+        assert_equal val, inv.valid?(:complete), "#{msg}: Invoice object has unexpected valid?(:complete)"
       when :error_size
         inv.valid?(:complete)
         show_errors inv unless inv.errors.messages.size == val
@@ -496,7 +515,7 @@ class InvoiceTest < ActiveSupport::TestCase
         val.each do |item, message|
           found = false
           inv.errors.each do |i, m|
-            found = true if (item == i && message == m)
+            found = true if item == i && message == m
           end
           show_errors inv unless found
           assert found, "#{msg}: could not find error message #{message} for #{item} in #{inv.errors.messages.size} errors"
@@ -507,11 +526,10 @@ class InvoiceTest < ActiveSupport::TestCase
     end
   end
 
-  def show_errors obj
+  def show_errors(obj)
     puts "Number of Errors: #{obj.errors.messages.size}"
     obj.errors.messages.each do |m|
       puts "  **Error: #{m}"
     end
-
   end
 end

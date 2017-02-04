@@ -9,6 +9,74 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def set_up_child
+    user = User.new(email: 'a@example.com',
+                    password: 'alsdkfja;s',
+                    name_first: 'a',
+                    name_last: 'b',
+                    address: 'a',
+                    city: 'b',
+                    province_code_id: province_codes(:bc).id,
+                    postal_code: 'V0V 0V0',
+                    home_phone_number: '3334445555')
+    # user.addresses.build(address_line_1: 'a',
+    #                      city: 'b',
+    #                      province_code: province_codes(:bc),
+    #                      postal_code: 'V0V 0V0')
+    # user.phone_numbers.build(phone_type: 'Home', phone_number: '3334445555')
+    user.funded_people.build(name_first: 'a',
+                             name_last: 'b',
+                             child_in_care_of_ministry: false,
+                             birthdate: '2003-11-30')
+  end
+
+  SUPPLIER_ATTRS = {
+    item_cost_1: 600,
+    item_cost_2: 400,
+    item_desp_1: 'Conference',
+    item_desp_2: 'Workshop',
+    part_b_fiscal_year: '2016-2017',
+    supplier_address: 'Supplier St',
+    supplier_city: 'Supplier City',
+    supplier_contact_person: 'Supplier Contact',
+    supplier_name: 'Supplier Name',
+    supplier_phone: '8888888888',
+    supplier_postal_code: 'V0V 0V0'
+  }.freeze
+
+  PROVIDER_AGENCY_ATTRS = {
+    agency_name: 'Pay Me Agency',
+    payment: 'agency',
+    service_provider_postal_code: 'V0V 0V0',
+    service_provider_address: '4400 Hastings St.',
+    service_provider_city: 'Burnaby',
+    service_provider_phone: '7777777777',
+    service_provider_name: 'Ferry Man',
+    service_provider_service_1: 'Behaviour Consultancy',
+    service_provider_service_amount: 2_000,
+    service_provider_service_end: '2017-03-31',
+    service_provider_service_fee: 120.00,
+    service_provider_service_hour: 'Hour',
+    service_provider_service_start: '2016-12-01'
+  }.freeze
+
+  def set_up_provider_agency_rtp(child, attrs = {})
+    set_up_rtp(child, PROVIDER_AGENCY_ATTRS.merge(attrs))
+  end
+
+  def set_up_supplier_rtp(child, attrs = {})
+    set_up_rtp(child, SUPPLIER_ATTRS.merge(attrs))
+  end
+
+  def set_up_rtp(child, attrs)
+    rtp = child.cf0925s.build(attrs)
+    rtp.populate
+    assert rtp.printable?,
+           "RTP should be printable #{rtp.errors.full_messages} "\
+           "User should be printable #{child.user.errors.full_messages}"
+
+    rtp
+  end
 end
 
 module TestSessionHelpers
@@ -95,18 +163,18 @@ module TestSessionHelpers
     puts ' -----------------'
   end
 
-  def show_matching_info (child, delimiter='\n')
-    horiz_line = "---------------------------------------"
+  def show_matching_info(child, _delimiter = '\n')
+    horiz_line = '---------------------------------------'
     fys = []
-    puts ""
+    puts ''
     puts horiz_line
-    if ! child.instance_of? FundedPerson
-      puts "  --- This object is not of type FundedPerson --- "
+    if !child.instance_of? FundedPerson
+      puts '  --- This object is not of type FundedPerson --- '
     else
       puts "| Matching Information for #{child.my_name}, born #{child.my_dob}"
       puts horiz_line
-      if child.cf0925s.size < 1
-        puts "|  This child has no CF0925s defined"
+      if child.cf0925s.empty?
+        puts '|  This child has no CF0925s defined'
       else
         child.cf0925s.each do |rtp|
           fys << child.fiscal_year(rtp.start_date)
@@ -114,8 +182,8 @@ module TestSessionHelpers
           puts "| Service Provider Name: #{rtp.service_provider_name}" if rtp.service_provider_name
           puts "| Agency Name: #{rtp.agency_name}" if rtp.agency_name
           puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
-          if rtp.printable? then puts "| printable" else puts "| NOT printable" end
-          msg = "| "
+          rtp.printable? ? (puts '| printable') : (puts '| NOT printable')
+          msg = '| '
           msg += "  Service Start: #{rtp.service_provider_service_start}" if rtp.service_provider_service_start
           msg += "  Service End: #{rtp.service_provider_service_end}" if rtp.service_provider_service_end
           puts msg
@@ -123,19 +191,18 @@ module TestSessionHelpers
           puts "| Item 1 Cost: #{rtp.item_cost_1}" if rtp.item_cost_1
           puts "| Item 2 Cost: #{rtp.item_cost_2}" if rtp.item_cost_2
           puts "| Item 3: #{rtp.item_cost_3}" if rtp.item_cost_3
-          if rtp.invoices.size < 1
-            puts "|  NO invoices Matched"
+          if rtp.invoices.empty?
+            puts '|  NO invoices Matched'
           else
             rtp.invoices.each do |inv|
               puts "|  MATCHED Invoice: #{inv.object_id}"
             end
           end
-
         end
       end
       puts horiz_line
-      if child.invoices.size < 1
-        puts "|  This child has no Invoices defined"
+      if child.invoices.empty?
+        puts '|  This child has no Invoices defined'
       else
         child.invoices.each do |inv|
           fys << child.fiscal_year(inv.start_date)
@@ -144,12 +211,12 @@ module TestSessionHelpers
           puts "| Service Provider Name: #{inv.service_provider_name}" if inv.service_provider_name
           puts "| Invoice Date: #{inv.invoice_date}" if inv.invoice_date
           puts "| Amount: #{inv.invoice_amount}" if inv.invoice_amount
-#          puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
-          msg = "| "
+          #          puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
+          msg = '| '
           msg += "  Service Start: #{inv.service_start}" if inv.service_start
           msg += "  Service End: #{inv.service_end}" if inv.service_end
           puts msg
-          if inv.valid?(:complete) then puts "| complete" else puts "| !!! NOT complete" end
+          inv.valid?(:complete) ? (puts '| complete') : (puts '| !!! NOT complete')
           # if inv.cf0925s.size < 1
           #   puts "NOT matched to any RTPs"
           # else
@@ -159,10 +226,10 @@ module TestSessionHelpers
           # end
         end
       end
-      if fys.size > 0
+      unless fys.empty?
         puts horiz_line
         fys.uniq.each do |fy|
-          puts "| --- Status for Fiscal Year: #{fy.to_s}"
+          puts "| --- Status for Fiscal Year: #{fy}"
           stat = child.status(fy)
           puts "|  Committed Funds: #{stat.committed_funds}"
           puts "|  Spent Funds: #{stat.spent_funds}"
