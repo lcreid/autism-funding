@@ -326,6 +326,18 @@ class Cf0925 < ApplicationRecord
     [invoice_total - total_amount, 0].max
   end
 
+  def part_b_fiscal_year
+    funded_person.fiscal_year(super)
+  end
+
+  def part_b_fiscal_year=(value)
+    if value.is_a?(FiscalYear)
+      super value.to_s
+    else
+      super
+    end
+  end
+
   def part_b_fiscal_year_after_child_turns_18?
     funded_person.after_last_fiscal_year?(part_b_fiscal_year)
   end
