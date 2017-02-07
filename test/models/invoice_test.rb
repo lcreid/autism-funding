@@ -550,6 +550,25 @@ class InvoiceTest < ActiveSupport::TestCase
                                      part_a_and_b_rtp],
                                     invoice.invoice_allocations.map(&:cf0925)
   end
+
+  test 'get two matches for one pair of invoice and RTP' do
+    puts 'THIS TEST FAILS BECAUSE THE IMPLEMENTATION I CHOSE CANNOT WORK.'
+    child = set_up_child
+    both_parts_rtp = set_up_provider_agency_rtp(child,
+                                                SUPPLIER_ATTRS
+                                                  .merge(supplier_name:
+                                                  'Pay Me Agency'))
+    invoice = child.invoices.build(invoice_amount: 200,
+                                   invoice_date: '2017-02-28',
+                                   service_end: '2017-02-28',
+                                   service_start: '2017-01-01',
+                                   invoice_from: 'Pay Me Agency')
+    matches = invoice.match
+    assert_equal 2, matches.size
+    assert_invoice_allocation_equal [both_parts_rtp, both_parts_rtp], matches
+    invoice.allocate(matches)
+    assert_equal 2, invoice.invoice_allocations.size
+  end
   #--- Private Methods ---------------------------------------------------------
 
   private

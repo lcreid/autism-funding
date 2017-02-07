@@ -109,13 +109,23 @@ class Invoice < ApplicationRecord
       # puts "Here is the invoice_date: #{invoice_date}"
       result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
         # puts rtp.inspect
+        a = []
+
         if pay_provider?(rtp, invoice_from, service_start, service_end) ||
            pay_agency?(rtp, invoice_from, service_start, service_end)
-          rtp.extend(ServiceProvider)
-        elsif pay_for_supplier?(rtp, invoice_from, invoice_date)
-          rtp.extend(Supplier)
+          # puts 'matched provider or agency'
+          a << rtp.extend(ServiceProvider)
         end
-      end.compact.sort
+
+        if pay_for_supplier?(rtp, invoice_from, invoice_date)
+          # puts 'matched supplier'
+          a << rtp.extend(Supplier)
+        end
+
+        # puts "Found two: #{a.inspect}" if 1 < a.size
+
+        a
+      end.flatten.compact.sort
       #  puts result.inspect
       result
     end
@@ -128,6 +138,10 @@ class Invoice < ApplicationRecord
       # puts "Failed Invoice From" unless invoice_from == rtp.agency_name
       # puts "Failed Range" unless rtp.include?(service_start..service_end)
       # puts "Failed Service Start and End" unless service_start && service_end
+      # puts "invoice_from, rtp.agency_name: #{invoice_from},  #{rtp.agency_name}"
+      # puts "invoice_from == rtp.agency_name: #{invoice_from == rtp.agency_name}"
+      # puts "rtp.service_period: #{rtp.service_period}"
+
       service_start && service_end &&
         # (rtp.payment == 'agency' || rtp.service_provider_name.blank?) &&
         rtp.agency_name &&
@@ -141,23 +155,27 @@ class Invoice < ApplicationRecord
     def pay_for_supplier?(rtp, invoice_from, invoice_date)
       # result =
       # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
-      rtp.part_b_fiscal_year.present? &&
-        invoice_date &&
-        rtp.supplier_name &&
-        invoice_from == rtp.supplier_name &&
-        rtp.part_b_fiscal_year.include?(invoice_date)
+      result = rtp.part_b_fiscal_year.present? &&
+               invoice_date &&
+               rtp.supplier_name &&
+               invoice_from == rtp.supplier_name &&
+               rtp.part_b_fiscal_year.include?(invoice_date)
 
       # unless result
-      #   puts "supplier_name == rtp.supplier_name: #{supplier_name == rtp.supplier_name}"
-      #   puts "rtp.funded_person .fiscal_year(invoice_date): #{rtp.funded_person .fiscal_year(invoice_date).inspect}"
-      #   puts "result: #{rtp.funded_person .fiscal_year(invoice_date) .include?(rtp.created_at.to_date)}" if rtp.created_at
+      # puts "invoice_from, rtp.supplier_name: #{invoice_from},  #{rtp.supplier_name}"
+      # puts "invoice_from == rtp.supplier_name: #{invoice_from == rtp.supplier_name}"
+      # puts "rtp.part_b_fiscal_year: #{rtp.part_b_fiscal_year}, invoice_date: #{invoice_date}"
       # end
-      # result
+      result
     end
 
     ##
     # Determine if the RTP authorizes the invoice when the payee is the provider
     def pay_provider?(rtp, invoice_from, service_start, service_end)
+      # puts "invoice_from, rtp.service_provider_name: #{invoice_from},  #{rtp.service_provider_name}"
+      # puts "invoice_from == rtp.service_provider_name: #{invoice_from == rtp.service_provider_name}"
+      # puts "rtp.service_period: #{rtp.service_period}"
+
       service_start && service_end &&
         # (rtp.payment == 'provider' || rtp.agency_name.blank?) &&
         rtp.service_provider_name &&
