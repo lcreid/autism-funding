@@ -28,13 +28,30 @@ class Invoice < ApplicationRecord
   # ----- Public Methods -------------------------------------------------------
   ##
   # Allocate one or more RTPs to the invoice.
+  # FIXME: The whold match/allocate thing is very badly implemented.
   def allocate(rtps)
-    rtps.map do |rtp|
+    rtps = [rtps] unless rtps.respond_to?(:each)
+    # puts "allocate: rtps #{rtps.size}"
+    incoming_set = rtps.to_set
+    old_set = invoice_allocations.map(&:cf0925).to_set
+
+    invoice_allocations.delete_all
+
+    # puts "allocate: old_set #{old_set.map(&:object_id)}"
+    # puts "allocate: incoming_set #{incoming_set.map(&:object_id)}"
+    # puts "allocate: old_set + incoming_set #{(old_set + incoming_set).map(&:object_id)}"
+    # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).map(&:object_id)}"
+
+    new_set = old_set + incoming_set - (old_set - incoming_set)
+    new_set.map do |rtp|
       invoice_allocations.build(cf0925: rtp,
                                 cf0925_type: rtp.cf0925_type)
     end
-    # rtps = [rtps] unless rtps.respond_to?(:each)
-    # rtps.each { |rtp| rtp.invoices << self }
+
+    # puts "allocate: result #{invoice_allocations.map(&:cf0925).map(&:object_id)}"
+    # puts "allocate: result.inspect #{invoice_allocations.inspect}"
+
+    invoice_allocations
   end
 
   def include_in_reports?
@@ -72,7 +89,7 @@ class Invoice < ApplicationRecord
 
   class <<self
     # FIXME: I really question whether I needed the class method.
-    # TODO make the matching meet criteria laid out in Wiki.  Specifically - if only
+    # TODO: make the matching meet criteria laid out in Wiki.  Specifically - if only
     # an invoice date is provided, or only start/end provided we can still match
     def match(funded_person, params)
       # puts "match child #{funded_person.inspect} params: #{params}"
@@ -196,7 +213,6 @@ class Invoice < ApplicationRecord
     unless service_start.blank? || service_end.blank? || funded_person.fiscal_year(service_start) == funded_person.fiscal_year(service_end)
       errors.add(:service_end, 'must be in the same fiscal year as service start')
     end
-
   end
 
   def xxvalidate_check_fy_on_service_dates
@@ -216,7 +232,6 @@ class Invoice < ApplicationRecord
     errors.add(:invoice_date, 'should not be earlier than the service end') if
       service_end > invoice_date
   end #-- validate_invoice_date_after_service_end --
-
 
   #  def validate_service_dates_present_if_service_provider
   #    #-- run validation only if service_provider_name is present

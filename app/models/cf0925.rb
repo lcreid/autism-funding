@@ -149,11 +149,19 @@ class Cf0925 < ApplicationRecord
   end
 
   # So I can use the object as a key in a hash (see status.rb)
-  def ==(other)
-    attributes.each_pair.reduce { |a, e| a && e[1] == other.send(e[0]) }
-  end
-
-  alias eql? ==
+  # The default behaviour of ActiveRecord::Core:== is needed for a number
+  # of test cases. If we override it, we need to at least preserve the default
+  # behaviour for objects without an id defined (i.e. unsaved objects).
+  # def ==(other)
+  #   # puts "== #{respond_to?(cf0925_type) && cf0925_type != other.cf0925_type}"
+  #   # puts "== self #{cf0925_type} other #{other.cf0925_type}" if respond_to?(cf0925_type)
+  #   return false if respond_to?(cf0925_type) && cf0925_type != other.cf0925_type
+  #   (attributes.reject { |k, _v| %w(created_at updated_at).include?(k) })
+  #     .each_pair
+  #     .reduce { |a, e| a && e[1] == other.send(e[0]) }
+  # end
+  #
+  # alias eql? ==
 
   # So I can use the object as a key in a hash (see status.rb)
   def hash

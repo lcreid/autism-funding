@@ -470,26 +470,94 @@ class InvoiceTest < ActiveSupport::TestCase
   end
 
   test 'invoice has no allocations, allocate one new RTP' do
-    flunk
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    rtp.extend(Supplier)
+    invoice = child.invoices.build
+    invoice.allocate(rtp)
+    # puts "invoice: #{invoice.object_id}"
+    # puts "invoice.invoice_allocations: #{invoice.invoice_allocations.inspect}"
+    # puts "object_id: #{invoice.invoice_allocations.first.object_id}"
+    # invoice.save
+    assert_invoice_allocation_equal [rtp],
+                                    invoice.invoice_allocations.map(&:cf0925)
   end
 
   test 'invoice has two existing allocations, ' \
         'allocate one new, and only one existing RTP' do
-    flunk
+    child = set_up_child
+    existing_rtp_that_should_be_saved = set_up_supplier_rtp(child)
+                                        .extend(Supplier)
+    existing_rtp_that_should_be_deleted = set_up_supplier_rtp(child)
+                                          .extend(Supplier)
+    invoice = child.invoices.build
+
+    invoice.allocate([existing_rtp_that_should_be_saved,
+                      existing_rtp_that_should_be_deleted])
+    # invoice.save
+
+    assert_invoice_allocation_equal [existing_rtp_that_should_be_saved,
+                                     existing_rtp_that_should_be_deleted],
+                                    invoice.invoice_allocations.map(&:cf0925)
+
+    new_rtp = set_up_supplier_rtp(child).extend(Supplier)
+    invoice.allocate([existing_rtp_that_should_be_saved, new_rtp])
+    # invoice.save
+
+    assert_invoice_allocation_equal [existing_rtp_that_should_be_saved,
+                                     new_rtp],
+                                    invoice.invoice_allocations.map(&:cf0925)
   end
 
   test 'invoice has allocation of part A RTP, ' \
         'allocate the same RTP, but matched on part B' do
-    flunk
+    child = set_up_child
+    part_a_rtp = set_up_provider_agency_rtp(child).extend(ServiceProvider)
+    invoice = child.invoices.build
+
+    invoice.allocate(part_a_rtp)
+    # puts "part_a_rtp object_id #{part_a_rtp.object_id}"
+    # invoice.save
+    # puts "part_a_rtp object_id #{part_a_rtp.object_id}"
+
+    assert_invoice_allocation_equal [part_a_rtp], invoice.invoice_allocations.map(&:cf0925)
+
+    part_b_rtp = part_a_rtp.extend(Supplier)
+    invoice.allocate(part_b_rtp)
+    # invoice.save
+
+    assert_invoice_allocation_equal [part_b_rtp], invoice.invoice_allocations.map(&:cf0925)
   end
 
   test 'invoice has allocation of part A RTP, ' \
         'allocate the same RTP, but matched on part A and B' do
-    flunk
+    child = set_up_child
+    part_a_rtp = set_up_provider_agency_rtp(child).extend(ServiceProvider)
+    invoice = child.invoices.build
+
+    invoice.allocate(part_a_rtp)
+    # invoice.save
+
+    assert_invoice_allocation_equal [part_a_rtp], invoice.invoice_allocations.map(&:cf0925)
+
+    part_a_rtp.update_attributes(SUPPLIER_ATTRS)
+
+    part_a_and_b_rtp = set_up_provider_agency_rtp(child, SUPPLIER_ATTRS).extend(Supplier)
+    invoice.allocate([part_a_rtp, part_a_and_b_rtp])
+    # invoice.save
+
+    assert_invoice_allocation_equal [part_a_rtp,
+                                     part_a_and_b_rtp],
+                                    invoice.invoice_allocations.map(&:cf0925)
   end
   #--- Private Methods ---------------------------------------------------------
 
   private
+
+  def assert_invoice_allocation_equal(expected, actual, msg = nil)
+    # puts "assert_inv... #{expected.map(&:object_id)}, #{actual.map(&:object_id)}"
+    assert_equal expected.sort_by(&:object_id), actual.sort_by(&:object_id), msg
+  end
 
   def assert_status(msg, cases, chks)
     inv = Invoice.new
