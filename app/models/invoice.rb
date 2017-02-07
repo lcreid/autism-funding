@@ -139,24 +139,20 @@ class Invoice < ApplicationRecord
     # Determine if the RTP authorizes the invoice when the payee is the supplier
     # (actually the parent)
     def pay_for_supplier?(rtp, invoice_from, invoice_date)
-      result = rtp.created_at &&
-               invoice_date &&
-               rtp.supplier_name &&
-               invoice_from == rtp.supplier_name &&
-               rtp.funded_person
-                  .fiscal_year(invoice_date)
-                  .include?(rtp.created_at.to_date)
+      # result =
+      # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
+      rtp.part_b_fiscal_year.present? &&
+        invoice_date &&
+        rtp.supplier_name &&
+        invoice_from == rtp.supplier_name &&
+        rtp.part_b_fiscal_year.include?(invoice_date)
 
       # unless result
       #   puts "supplier_name == rtp.supplier_name: #{supplier_name == rtp.supplier_name}"
       #   puts "rtp.funded_person .fiscal_year(invoice_date): #{rtp.funded_person .fiscal_year(invoice_date).inspect}"
-      #   puts "rtp.created_at: #{rtp.created_at}"
       #   puts "result: #{rtp.funded_person .fiscal_year(invoice_date) .include?(rtp.created_at.to_date)}" if rtp.created_at
       # end
       # result
-      # FIXME: The above needs to be fixed for the real world.
-      # FIXME: It's not clear how to get a validity period for a
-      # FIXME: supplier-only RTP.
     end
 
     ##
