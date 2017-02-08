@@ -101,6 +101,9 @@ class Cf0925 < ApplicationRecord
     end
   end
 
+  ##
+  # TODO: This doesn't give a reliable sort, which might be needed in some
+  # places.
   def <=>(other)
     service_period.begin <=> other.service_period.begin ||
       service_period.end <=> other.service_period.end

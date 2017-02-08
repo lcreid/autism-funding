@@ -355,18 +355,18 @@ class InvoiceTest < ActiveSupport::TestCase
                                    service_end: '2015-09-30',
                                    service_start: '2015-09-01',
                                    invoice_from: 'A Provider')
-    assert_equal(2, (rtps = invoice.match).size)
+    assert_equal(2, (matches = invoice.match).size)
 
-    invoice.allocate(rtps)
+    invoice.allocate(matches)
     assert_equal(2, invoice.invoice_allocations.size)
 
     # The records don't get joined in both directions until they're saved.
-    # rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
+    # matches.map(&:cf0925).each { |rtp| assert_equal(1, rtp.invoices.size) }
     assert_difference 'InvoiceAllocation.count', 2 do
       invoice.save
     end
     assert_equal(2, invoice.cf0925s.size)
-    rtps.each { |rtp| assert_equal(1, rtp.invoices.size) }
+    matches.map(&:cf0925).each { |rtp| assert_equal(1, rtp.invoices.size) }
   end
 
   test 'class match no RTPs on Provider' do
@@ -471,88 +471,92 @@ class InvoiceTest < ActiveSupport::TestCase
 
   test 'invoice has no allocations, allocate one new RTP' do
     child = set_up_child
-    rtp = set_up_supplier_rtp(child)
-    rtp.extend(Supplier)
+    match = Match.new('Supplier', set_up_supplier_rtp(child))
     invoice = child.invoices.build
-    invoice.allocate(rtp)
+    invoice.allocate(match)
     # puts "invoice: #{invoice.object_id}"
     # puts "invoice.invoice_allocations: #{invoice.invoice_allocations.inspect}"
     # puts "object_id: #{invoice.invoice_allocations.first.object_id}"
     # invoice.save
-    assert_invoice_allocation_equal [rtp],
-                                    invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [match], invoice.invoice_allocations
   end
 
   test 'invoice has two existing allocations, ' \
         'allocate one new, and only one existing RTP' do
     child = set_up_child
-    existing_rtp_that_should_be_saved = set_up_supplier_rtp(child)
-                                        .extend(Supplier)
-    existing_rtp_that_should_be_deleted = set_up_supplier_rtp(child)
-                                          .extend(Supplier)
+    existing_match_that_should_be_saved = Match.new('Supplier',
+                                                    set_up_supplier_rtp(child))
+    existing_match_that_should_be_deleted = Match.new('Supplier',
+                                                      set_up_supplier_rtp(child))
     invoice = child.invoices.build
 
-    invoice.allocate([existing_rtp_that_should_be_saved,
-                      existing_rtp_that_should_be_deleted])
+    invoice.allocate([existing_match_that_should_be_saved,
+                      existing_match_that_should_be_deleted])
     # invoice.save
 
-    assert_invoice_allocation_equal [existing_rtp_that_should_be_saved,
-                                     existing_rtp_that_should_be_deleted],
-                                    invoice.invoice_allocations.map(&:cf0925)
+    # puts "invoice.invoice_allocations.size: #{invoice.invoice_allocations.size}"
+    assert_invoice_allocation_equal [existing_match_that_should_be_saved,
+                                     existing_match_that_should_be_deleted],
+                                    invoice.invoice_allocations
 
-    new_rtp = set_up_supplier_rtp(child).extend(Supplier)
-    invoice.allocate([existing_rtp_that_should_be_saved, new_rtp])
+    new_match = Match.new('Supplier', set_up_supplier_rtp(child))
+    invoice.allocate([existing_match_that_should_be_saved, new_match])
     # invoice.save
 
-    assert_invoice_allocation_equal [existing_rtp_that_should_be_saved,
-                                     new_rtp],
-                                    invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [existing_match_that_should_be_saved,
+                                     new_match], invoice.invoice_allocations
   end
 
   test 'invoice has allocation of part A RTP, ' \
         'allocate the same RTP, but matched on part B' do
     child = set_up_child
-    part_a_rtp = set_up_provider_agency_rtp(child).extend(ServiceProvider)
+    part_a_match = Match.new('ServiceProvider',
+                             set_up_provider_agency_rtp(child))
     invoice = child.invoices.build
 
-    invoice.allocate(part_a_rtp)
-    # puts "part_a_rtp object_id #{part_a_rtp.object_id}"
+    invoice.allocate(part_a_match)
+    # puts "part_a_match object_id #{part_a_match.object_id}"
     # invoice.save
-    # puts "part_a_rtp object_id #{part_a_rtp.object_id}"
+    # puts "part_a_match object_id #{part_a_match.object_id}"
 
-    assert_invoice_allocation_equal [part_a_rtp], invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [part_a_match], invoice.invoice_allocations
 
-    part_b_rtp = part_a_rtp.extend(Supplier)
-    invoice.allocate(part_b_rtp)
+    # TODO: Make Match initializer take an existing match
+    part_b_match = Match.new('Supplier', part_a_match.cf0925)
+    invoice.allocate(part_b_match)
     # invoice.save
 
-    assert_invoice_allocation_equal [part_b_rtp], invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [part_b_match], invoice.invoice_allocations
   end
 
   test 'invoice has allocation of part A RTP, ' \
         'allocate the same RTP, but matched on part A and B' do
     child = set_up_child
-    part_a_rtp = set_up_provider_agency_rtp(child).extend(ServiceProvider)
+    part_a_match = Match.new('ServiceProvider',
+                             set_up_provider_agency_rtp(child))
     invoice = child.invoices.build
 
-    invoice.allocate(part_a_rtp)
+    invoice.allocate(part_a_match)
     # invoice.save
 
-    assert_invoice_allocation_equal [part_a_rtp], invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [part_a_match], invoice.invoice_allocations
 
-    part_a_rtp.update_attributes(SUPPLIER_ATTRS)
+    # FIXME: When this was `update_attributes`, the allocation blew up.
+    # It doesn't work when the record already exists???
+    part_a_match.cf0925.assign_attributes(SUPPLIER_ATTRS)
 
-    part_a_and_b_rtp = set_up_provider_agency_rtp(child, SUPPLIER_ATTRS).extend(Supplier)
-    invoice.allocate([part_a_rtp, part_a_and_b_rtp])
+    part_a_and_b_match = Match.new('Supplier',
+                                   set_up_provider_agency_rtp(child,
+                                                              SUPPLIER_ATTRS))
+    invoice.allocate([part_a_match, part_a_and_b_match])
     # invoice.save
 
-    assert_invoice_allocation_equal [part_a_rtp,
-                                     part_a_and_b_rtp],
-                                    invoice.invoice_allocations.map(&:cf0925)
+    assert_invoice_allocation_equal [part_a_match,
+                                     part_a_and_b_match],
+                                    invoice.invoice_allocations
   end
 
   test 'get two matches for one pair of invoice and RTP' do
-    puts 'THIS TEST FAILS BECAUSE THE IMPLEMENTATION I CHOSE CANNOT WORK.'
     child = set_up_child
     both_parts_rtp = set_up_provider_agency_rtp(child,
                                                 SUPPLIER_ATTRS
@@ -565,7 +569,8 @@ class InvoiceTest < ActiveSupport::TestCase
                                    invoice_from: 'Pay Me Agency')
     matches = invoice.match
     assert_equal 2, matches.size
-    assert_invoice_allocation_equal [both_parts_rtp, both_parts_rtp], matches
+    assert_invoice_allocation_equal [both_parts_rtp, both_parts_rtp],
+                                    matches.map(&:cf0925)
     invoice.allocate(matches)
     assert_equal 2, invoice.invoice_allocations.size
   end
@@ -574,8 +579,21 @@ class InvoiceTest < ActiveSupport::TestCase
   private
 
   def assert_invoice_allocation_equal(expected, actual, msg = nil)
-    # puts "assert_inv... #{expected.map(&:object_id)}, #{actual.map(&:object_id)}"
-    assert_equal expected.sort_by(&:object_id), actual.sort_by(&:object_id), msg
+    # puts 'assert_inv... ' \
+    # "#{expected.sort_by(&:object_id).map(&:inspect)}, " \
+    # "#{actual.sort_by(&:object_id).map(&:inspect)}"
+    # if expected.sort_by(&:object_id) != actual.sort_by(&:object_id)
+    #   puts 'Expected'
+    #   expected.each_with_index do |x, i|
+    #     puts "#{i}: x.class.name #{x.class.name} x.cf0925.object_id #{x.cf0925.object_id}"
+    #   end
+    #   puts 'Actual'
+    #   actual.each_with_index do |x, i|
+    #     puts "#{i}: x.class.name #{x.class.name} x.cf0925.object_id #{x.cf0925.object_id}"
+    #   end
+    # end
+
+    assert_equal expected, actual, msg
   end
 
   def assert_status(msg, cases, chks)

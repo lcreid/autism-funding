@@ -29,23 +29,30 @@ class Invoice < ApplicationRecord
   ##
   # Allocate one or more RTPs to the invoice.
   # FIXME: The whold match/allocate thing is very badly implemented.
-  def allocate(rtps)
-    rtps = [rtps] unless rtps.respond_to?(:each)
-    # puts "allocate: rtps #{rtps.size}"
-    incoming_set = rtps.to_set
-    old_set = invoice_allocations.map(&:cf0925).to_set
-
-    invoice_allocations.delete_all
+  def allocate(matches)
+    matches = [matches] unless matches.respond_to?(:each)
+    # puts "allocate: matches #{matches.size}"
+    incoming_set = matches.to_set
+    old_set = invoice_allocations.to_set
+    # old_set = invoice_allocations.map do |ia|
+    #   Match.new(ia)
+    # end.to_set
 
     # puts "allocate: old_set #{old_set.map(&:object_id)}"
     # puts "allocate: incoming_set #{incoming_set.map(&:object_id)}"
     # puts "allocate: old_set + incoming_set #{(old_set + incoming_set).map(&:object_id)}"
     # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).map(&:object_id)}"
+    # puts "allocate: old_set - incoming_set classes #{(old_set - incoming_set).map(&:class)}"
 
-    new_set = old_set + incoming_set - (old_set - incoming_set)
-    new_set.map do |rtp|
-      invoice_allocations.build(cf0925: rtp,
-                                cf0925_type: rtp.cf0925_type)
+    # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).to_a}"
+    invoice_allocations.delete((old_set - incoming_set).to_a)
+    # puts "allocate: invoice_allocations #{invoice_allocations.map(&:object_id)}"
+
+    new_set = incoming_set - old_set
+    # puts "allocate: new_set #{new_set.map(&:object_id)}"
+    new_set.map do |match|
+      invoice_allocations.build(cf0925: match.cf0925,
+                                cf0925_type: match.cf0925_type)
     end
 
     # puts "allocate: result #{invoice_allocations.map(&:cf0925).map(&:object_id)}"
@@ -114,12 +121,12 @@ class Invoice < ApplicationRecord
         if pay_provider?(rtp, invoice_from, service_start, service_end) ||
            pay_agency?(rtp, invoice_from, service_start, service_end)
           # puts 'matched provider or agency'
-          a << rtp.extend(ServiceProvider)
+          a << Match.new('ServiceProvider', rtp)
         end
 
         if pay_for_supplier?(rtp, invoice_from, invoice_date)
           # puts 'matched supplier'
-          a << rtp.extend(Supplier)
+          a << Match.new('Supplier', rtp)
         end
 
         # puts "Found two: #{a.inspect}" if 1 < a.size
