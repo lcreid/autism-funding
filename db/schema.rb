@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170202193614) do
+ActiveRecord::Schema.define(version: 20170208220042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,7 +101,7 @@ ActiveRecord::Schema.define(version: 20170202193614) do
     t.index ["user_id"], name: "index_funded_people_on_user_id", using: :btree
   end
 
-  create_table "invoice_allocations", id: false, force: :cascade do |t|
+  create_table "invoice_allocations", force: :cascade do |t|
     t.integer "cf0925_id"
     t.integer "invoice_id"
     t.decimal "amount",      precision: 7, scale: 2
