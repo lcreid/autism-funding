@@ -29,25 +29,30 @@ class Invoice < ApplicationRecord
   ##
   # Allocate one or more RTPs to the invoice.
   # FIXME: The whold match/allocate thing is very badly implemented.
-  def allocate(rtps)
-    rtps = [rtps] unless rtps.respond_to?(:each)
-    # puts "allocate: rtps #{rtps.size}"
-    # FIXME: This is still broken because it still loses the existing
-    # invoice_allocations.
-    incoming_set = rtps.to_set
-    old_set = invoice_allocations.map(&:cf0925).to_set
-
-    invoice_allocations.delete_all
+  def allocate(matches)
+    matches = [matches] unless matches.respond_to?(:each)
+    # puts "allocate: matches #{matches.size}"
+    incoming_set = matches.to_set
+    old_set = invoice_allocations.to_set
+    # old_set = invoice_allocations.map do |ia|
+    #   Match.new(ia)
+    # end.to_set
 
     # puts "allocate: old_set #{old_set.map(&:object_id)}"
     # puts "allocate: incoming_set #{incoming_set.map(&:object_id)}"
     # puts "allocate: old_set + incoming_set #{(old_set + incoming_set).map(&:object_id)}"
     # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).map(&:object_id)}"
+    # puts "allocate: old_set - incoming_set classes #{(old_set - incoming_set).map(&:class)}"
 
-    new_set = old_set + incoming_set - (old_set - incoming_set)
-    new_set.map do |rtp|
-      invoice_allocations.build(cf0925: rtp,
-                                cf0925_type: rtp.cf0925_type)
+    # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).to_a}"
+    invoice_allocations.delete((old_set - incoming_set).to_a)
+    # puts "allocate: invoice_allocations #{invoice_allocations.map(&:object_id)}"
+
+    new_set = incoming_set - old_set
+    # puts "allocate: new_set #{new_set.map(&:object_id)}"
+    new_set.map do |match|
+      invoice_allocations.build(cf0925: match.cf0925,
+                                cf0925_type: match.cf0925_type)
     end
 
     # puts "allocate: result #{invoice_allocations.map(&:cf0925).map(&:object_id)}"
@@ -111,13 +116,23 @@ class Invoice < ApplicationRecord
       # puts "Here is the invoice_date: #{invoice_date}"
       result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
         # puts rtp.inspect
+        a = []
+
         if pay_provider?(rtp, invoice_from, service_start, service_end) ||
            pay_agency?(rtp, invoice_from, service_start, service_end)
-          rtp.extend(ServiceProvider)
-        elsif pay_for_supplier?(rtp, invoice_from, invoice_date)
-          rtp.extend(Supplier)
+          # puts 'matched provider or agency'
+          a << Match.new('ServiceProvider', rtp)
         end
-      end.compact.sort
+
+        if pay_for_supplier?(rtp, invoice_from, invoice_date)
+          # puts 'matched supplier'
+          a << Match.new('Supplier', rtp)
+        end
+
+        # puts "Found two: #{a.inspect}" if 1 < a.size
+
+        a
+      end.flatten.compact.sort
       #  puts result.inspect
       result
     end
@@ -130,6 +145,10 @@ class Invoice < ApplicationRecord
       # puts "Failed Invoice From" unless invoice_from == rtp.agency_name
       # puts "Failed Range" unless rtp.include?(service_start..service_end)
       # puts "Failed Service Start and End" unless service_start && service_end
+      # puts "invoice_from, rtp.agency_name: #{invoice_from},  #{rtp.agency_name}"
+      # puts "invoice_from == rtp.agency_name: #{invoice_from == rtp.agency_name}"
+      # puts "rtp.service_period: #{rtp.service_period}"
+
       service_start && service_end &&
         # (rtp.payment == 'agency' || rtp.service_provider_name.blank?) &&
         rtp.agency_name &&
@@ -143,23 +162,27 @@ class Invoice < ApplicationRecord
     def pay_for_supplier?(rtp, invoice_from, invoice_date)
       # result =
       # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
-      rtp.part_b_fiscal_year.present? &&
-        invoice_date &&
-        rtp.supplier_name &&
-        invoice_from == rtp.supplier_name &&
-        rtp.part_b_fiscal_year.include?(invoice_date)
+      result = rtp.part_b_fiscal_year.present? &&
+               invoice_date &&
+               rtp.supplier_name &&
+               invoice_from == rtp.supplier_name &&
+               rtp.part_b_fiscal_year.include?(invoice_date)
 
       # unless result
-      #   puts "supplier_name == rtp.supplier_name: #{supplier_name == rtp.supplier_name}"
-      #   puts "rtp.funded_person .fiscal_year(invoice_date): #{rtp.funded_person .fiscal_year(invoice_date).inspect}"
-      #   puts "result: #{rtp.funded_person .fiscal_year(invoice_date) .include?(rtp.created_at.to_date)}" if rtp.created_at
+      # puts "invoice_from, rtp.supplier_name: #{invoice_from},  #{rtp.supplier_name}"
+      # puts "invoice_from == rtp.supplier_name: #{invoice_from == rtp.supplier_name}"
+      # puts "rtp.part_b_fiscal_year: #{rtp.part_b_fiscal_year}, invoice_date: #{invoice_date}"
       # end
-      # result
+      result
     end
 
     ##
     # Determine if the RTP authorizes the invoice when the payee is the provider
     def pay_provider?(rtp, invoice_from, service_start, service_end)
+      # puts "invoice_from, rtp.service_provider_name: #{invoice_from},  #{rtp.service_provider_name}"
+      # puts "invoice_from == rtp.service_provider_name: #{invoice_from == rtp.service_provider_name}"
+      # puts "rtp.service_period: #{rtp.service_period}"
+
       service_start && service_end &&
         # (rtp.payment == 'provider' || rtp.agency_name.blank?) &&
         rtp.service_provider_name &&
