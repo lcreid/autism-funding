@@ -32,6 +32,8 @@ class Invoice < ApplicationRecord
   def allocate(rtps)
     rtps = [rtps] unless rtps.respond_to?(:each)
     # puts "allocate: rtps #{rtps.size}"
+    # FIXME: This is still broken because it still loses the existing
+    # invoice_allocations.
     incoming_set = rtps.to_set
     old_set = invoice_allocations.map(&:cf0925).to_set
 
