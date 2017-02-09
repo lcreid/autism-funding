@@ -572,6 +572,102 @@ class InvoiceTest < ActiveSupport::TestCase
     invoice.allocate(matches)
     assert_equal 2, invoice.invoice_allocations.size
   end
+
+  # PART A MATCHING
+
+  # PART B MATCHING -- Supplier name matches printable RTP with part B completed
+  test 'no dates provided' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name)
+    assert_match_part_b [], invoice
+  end
+
+  test 'invoice date in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   invoice_date: rtp.part_b_fiscal_year.begin)
+    assert_match_part_b [rtp], invoice
+  end
+
+  test 'invoice date not in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   invoice_date: rtp.part_b_fiscal_year.begin - 1.day)
+    assert_match_part_b [], invoice
+  end
+
+  test 'service end is only date and in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_end: rtp.part_b_fiscal_year.begin)
+    assert_match_part_b [rtp], invoice
+  end
+
+  test 'service end is only date and not in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_end: rtp.part_b_fiscal_year.end + 1.day)
+    assert_match_part_b [], invoice
+  end
+
+  test 'service start is only date and in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_start: rtp.part_b_fiscal_year.begin)
+    assert_match_part_b [rtp], invoice
+  end
+
+  test 'service start is only date and not in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_start: rtp.part_b_fiscal_year.begin - 1.day)
+    assert_match_part_b [], invoice
+  end
+
+  test 'no invoice date service start and service end in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_start: rtp.part_b_fiscal_year.begin,
+                                   service_end: rtp.part_b_fiscal_year.end)
+    assert_match_part_b [rtp], invoice
+  end
+
+  test 'no invoice date service start and service end not in part B fiscal year of RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_start: rtp.part_b_fiscal_year.begin,
+                                   service_end: rtp.part_b_fiscal_year.end + 1.day)
+    assert_match_part_b [], invoice
+  end
+
+  # PART B MATCHING -- Other tests
+  test 'supplier name does not match invoice date in printable RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name + 'x',
+                                   service_start: rtp.part_b_fiscal_year.begin,
+                                   service_end: rtp.part_b_fiscal_year.end)
+    assert_match_part_b [], invoice
+  end
+
+  test 'supplier name matches, invoice date in non-printable RTP' do
+    child = set_up_child
+    rtp = set_up_supplier_rtp(child)
+    rtp.supplier_city = nil
+    invoice = child.invoices.build(invoice_from: rtp.supplier_name,
+                                   service_start: rtp.part_b_fiscal_year.begin)
+    assert_match_part_b [], invoice
+  end
+
   #--- Private Methods ---------------------------------------------------------
 
   private
@@ -592,6 +688,15 @@ class InvoiceTest < ActiveSupport::TestCase
     # end
 
     assert_equal expected, actual, msg
+  end
+
+  def assert_match_part_b(expected_rtps, invoice, msg = {})
+    expected_matches = expected_rtps.map { |rtp| Match.new('Supplier', rtp) }
+    # puts 'EXPECTED'
+    # puts expected_matches.each { |x| puts x.object_id }
+    # puts 'ACTUAL'
+    # puts invoice.match.each { |x| puts x.object_id }
+    assert_equal expected_matches, invoice.match, msg
   end
 
   def assert_status(msg, cases, chks)

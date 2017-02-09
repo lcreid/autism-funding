@@ -123,7 +123,11 @@ class Invoice < ApplicationRecord
           a << Match.new('ServiceProvider', rtp)
         end
 
-        if pay_for_supplier?(rtp, invoice_from, invoice_date)
+        if pay_for_supplier?(rtp,
+                             invoice_from,
+                             invoice_date,
+                             service_start,
+                             service_end)
           # puts 'matched supplier'
           a << Match.new('Supplier', rtp)
         end
@@ -158,14 +162,28 @@ class Invoice < ApplicationRecord
     ##
     # Determine if the RTP authorizes the invoice when the payee is the supplier
     # (actually the parent)
-    def pay_for_supplier?(rtp, invoice_from, invoice_date)
+    def pay_for_supplier?(rtp,
+                          invoice_from,
+                          invoice_date = nil,
+                          service_start = nil,
+                          service_end = nil)
       # result =
       # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
-      result = rtp.part_b_fiscal_year.present? &&
-               invoice_date &&
-               rtp.supplier_name &&
+      date_for_comparison = if invoice_date
+                              invoice_date
+                            elsif service_start && service_end
+                              service_start..service_end
+                            elsif service_start.nil?
+                              service_end
+                            else
+                              service_start
+                            end
+
+      result = rtp.supplier_name &&
                invoice_from == rtp.supplier_name &&
-               rtp.part_b_fiscal_year.include?(invoice_date)
+               rtp.part_b_fiscal_year.present? &&
+               date_for_comparison &&
+               rtp.part_b_fiscal_year.include?(date_for_comparison)
 
       # unless result
       # puts "invoice_from, rtp.supplier_name: #{invoice_from},  #{rtp.supplier_name}"

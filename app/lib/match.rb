@@ -19,7 +19,7 @@ class Match
 
   def ==(other)
     case other
-    when InvoiceAllocation
+    when InvoiceAllocation, Match
       cf0925 == other.cf0925 && cf0925_type == other.cf0925_type
     else
       super
