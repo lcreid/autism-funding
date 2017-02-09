@@ -28,7 +28,6 @@ class Invoice < ApplicationRecord
   # ----- Public Methods -------------------------------------------------------
   ##
   # Allocate one or more RTPs to the invoice.
-  # FIXME: The whold match/allocate thing is very badly implemented.
   def allocate(matches)
     matches = [matches] unless matches.respond_to?(:each)
     # puts "allocate: matches #{matches.size}"

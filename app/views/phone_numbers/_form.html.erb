@@ -37,7 +37,6 @@ same HTML ID, which causes grief and doesn't work. _percent_>
   <div class="form-group">
     <%#= f.label :phone_number, f.object.phone_type + " Phone", class: 'control-label' %>
     <%= f.phone_field :phone_number, label: f.object.phone_type + " Phone" %>
-    <%# FIXME: the value: below is redundant, I think %>
     <%= f.hidden_field :phone_type, value: f.object.phone_type %>
   </div>
 </div>

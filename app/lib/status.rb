@@ -57,6 +57,7 @@ class Status
 
     @spent_funds = rtps.map(&:spent_funds).sum
 
+    # FIXME: This should never be more than the allowable_funds_for_year
     @committed_funds = rtps.map(&:total_amount).reduce(0, &:+)
 
     @remaining_funds = [0, @allowable_funds_for_year - @committed_funds].max

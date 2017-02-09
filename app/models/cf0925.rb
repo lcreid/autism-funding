@@ -439,6 +439,7 @@ class Cf0925 < ApplicationRecord
   # How much is spent from this RTP
   def spent_funds
     # puts "Cf0925#spent_funds: #{inspect} invoices(#{invoices.size})"
+    # FIXME: This needs to work from allocated amount. (Priority!)
     invoice_total = invoices
                     .select(&:include_in_reports?)
                     .map(&:invoice_amount)

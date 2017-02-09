@@ -541,8 +541,6 @@ class InvoiceTest < ActiveSupport::TestCase
 
     assert_invoice_allocation_equal [part_a_match], invoice.invoice_allocations
 
-    # FIXME: When this was `update_attributes`, the allocation blew up.
-    # It doesn't work when the record already exists???
     part_a_match.cf0925.assign_attributes(SUPPLIER_ATTRS)
 
     part_a_and_b_match = Match.new('Supplier',
