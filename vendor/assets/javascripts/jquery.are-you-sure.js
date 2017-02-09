@@ -155,7 +155,7 @@
 
     if (!settings.silent && !window.aysUnloadSet) {
       window.aysUnloadSet = true;
-      var leavingCallback = function() {
+      $(window).bind('beforeunload', function() {
         $dirtyForms = $("form").filter('.' + settings.dirtyClass);
         if ($dirtyForms.length == 0) {
           return;
@@ -169,10 +169,7 @@
           window.setTimeout(function() {window.aysHasPrompted = false;}, 900);
         }
         return settings.message;
-      };
-
-      $(window).on('beforeunload', leavingCallback);
-      $(document).on('turbolinks:before-visit', leavingCallback);
+      });
     }
 
     return this.each(function(elem) {
