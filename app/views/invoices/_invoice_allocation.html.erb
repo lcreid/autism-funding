@@ -1,13 +1,13 @@
 <tr class="static-form-record test-cf0925-invoice-row">
   <td class="text-right">
-    <%= invoice_allocation.cf0925.display_start_date.to_formatted_s(:iso8601) %>
+    <%= invoice_allocation.display_start_date.to_formatted_s(:iso8601) %>
   </td>
   <td class="text-right">
-    <%= invoice_allocation.cf0925.display_end_date.to_formatted_s(:iso8601) %>
+    <%= invoice_allocation.display_end_date.to_formatted_s(:iso8601) %>
   </td>
-  <td><%= invoice_allocation.cf0925.payee %></td>
+  <td><%= invoice_allocation.payee %></td>
   <td class="text-right">
-    <%= number_to_currency(invoice_allocation.cf0925.requested_amount) %>
+    <%= number_to_currency(invoice_allocation.requested_amount) %>
   </td>
   <td class="text-right">
     <%= invoice_allocation_form.number_field(:amount, hide_label: true) %>
