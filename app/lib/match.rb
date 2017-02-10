@@ -2,14 +2,14 @@ class Match
   def initialize(cf0925_type, cf0925 = nil)
     case cf0925_type
     when String
-      raise SystemError unless cf0925
+      raise unless cf0925
       @cf0925 = cf0925
       @cf0925_type = cf0925_type
     when InvoiceAllocation
       @cf0925 = cf0925_type.cf0925
       @cf0925_type = cf0925_type.cf0925_type
     else
-      raise SystemError
+      raise
     end
   end
 

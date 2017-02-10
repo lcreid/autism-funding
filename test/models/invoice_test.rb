@@ -573,10 +573,125 @@ class InvoiceTest < ActiveSupport::TestCase
     assert_equal 2, invoice.invoice_allocations.size
   end
 
-  # PART A MATCHING
+  # PART A MATCHING --Agency or provider name matches printable RTP with
+  # part A completed
+  test 'no dates provided part A' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from: rtp.agency_name)
+    assert_match_part_a [], invoice
+  end
+
+  test 'service start and end within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.service_provider_name,
+                                   service_start:
+                                     rtp.service_provider_service_start,
+                                   service_end:
+                                     rtp.service_provider_service_end)
+    assert_match_part_a [rtp], invoice
+  end
+
+  test 'service start and end not within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.agency_name,
+                                   service_start:
+                                     rtp.service_provider_service_start,
+                                   service_end:
+                                     rtp.service_provider_service_end + 1.day)
+    assert_match_part_a [], invoice
+  end
+
+  test 'no service start, service end within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.service_provider_name,
+                                   service_end:
+                                     rtp.service_provider_service_end)
+    assert_match_part_a [rtp], invoice
+  end
+
+  test 'no service start, service end not within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.agency_name,
+                                   service_end:
+                                     rtp.service_provider_service_start - 1.day)
+    assert_match_part_a [], invoice
+  end
+
+  test 'no service end, service start within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.service_provider_name,
+                                   service_start:
+                                     rtp.service_provider_service_end)
+    assert_match_part_a [rtp], invoice
+  end
+
+  test 'no service end, service start not within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.agency_name,
+                                   service_start:
+                                     rtp.service_provider_service_end + 1.day)
+    assert_match_part_a [], invoice
+  end
+
+  test 'no service start or end, invoice date within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.service_provider_name,
+                                   invoice_date:
+                                     rtp.service_provider_service_start)
+    assert_match_part_a [rtp], invoice
+  end
+
+  test 'no service start or end, invoice date not within service period of RTP' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.agency_name,
+                                   invoice_date:
+                                     rtp.service_provider_service_start - 1.day)
+    assert_match_part_a [], invoice
+  end
+
+  # PART A MATCHING -- Other tests
+  test 'neither service provider name nor agency name in printable RTP ' \
+       'match invoice from' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.agency_name + 'x',
+                                   invoice_date:
+                                     rtp.service_provider_service_start)
+    assert_match_part_a [], invoice
+  end
+
+  test 'service provider or agency name matches invoice from ' \
+       'and dates within RTP service period, but RTP not printable' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    rtp.service_provider_address = nil
+    invoice = child.invoices.build(invoice_from:
+                                    rtp.service_provider_name,
+                                   invoice_date:
+                                     rtp.service_provider_service_start)
+    assert_match_part_a [], invoice
+  end
 
   # PART B MATCHING -- Supplier name matches printable RTP with part B completed
-  test 'no dates provided' do
+  test 'no dates provided part B' do
     child = set_up_child
     rtp = set_up_supplier_rtp(child)
     invoice = child.invoices.build(invoice_from: rtp.supplier_name)
@@ -690,8 +805,16 @@ class InvoiceTest < ActiveSupport::TestCase
     assert_equal expected, actual, msg
   end
 
+  def assert_match_part_a(expected_rtps, invoice, msg = {})
+    assert_match 'ServiceProvider', expected_rtps, invoice, msg
+  end
+
   def assert_match_part_b(expected_rtps, invoice, msg = {})
-    expected_matches = expected_rtps.map { |rtp| Match.new('Supplier', rtp) }
+    assert_match 'Supplier', expected_rtps, invoice, msg
+  end
+
+  def assert_match(type, expected_rtps, invoice, msg = {})
+    expected_matches = expected_rtps.map { |rtp| Match.new(type, rtp) }
     # puts 'EXPECTED'
     # puts expected_matches.each { |x| puts x.object_id }
     # puts 'ACTUAL'

@@ -174,13 +174,22 @@ class Invoice < ApplicationRecord
 
     ##
     # Determine if Part A of RTP authorizes the invoice
-    def pay_part_a?(rtp, invoice_from, _invoice_date, service_start, service_end)
+    def pay_part_a?(rtp, invoice_from, invoice_date, service_start, service_end)
+      date_for_comparison = if service_start && service_end
+                              (service_start..service_end)
+                            elsif service_start
+                              service_start..service_start
+                            elsif service_end
+                              service_end..service_end
+                            else
+                              invoice_date
+                            end
+
       (rtp.service_provider_name &&
           invoice_from == rtp.service_provider_name ||
           rtp.agency_name &&
           invoice_from == rtp.agency_name) &&
-        service_start && service_end &&
-        rtp.include?(service_start..service_end)
+        rtp.include?(date_for_comparison)
     end
 
     def to_date(date)
