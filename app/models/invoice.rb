@@ -102,7 +102,6 @@ class Invoice < ApplicationRecord
       return [] unless funded_person.cf0925s
 
       params = ActiveSupport::HashWithIndifferentAccess.new(params)
-      agency_name = params[:agency_name]
       invoice_date = to_date(params[:invoice_date])
       service_end = to_date(params[:service_end])
       invoice_from = params[:invoice_from]
@@ -117,17 +116,16 @@ class Invoice < ApplicationRecord
         # puts rtp.inspect
         a = []
 
-        if pay_provider?(rtp, invoice_from, service_start, service_end) ||
-           pay_agency?(rtp, invoice_from, service_start, service_end)
+        if pay_part_a?(rtp, invoice_from, invoice_date, service_start, service_end)
           # puts 'matched provider or agency'
           a << Match.new('ServiceProvider', rtp)
         end
 
-        if pay_for_supplier?(rtp,
-                             invoice_from,
-                             invoice_date,
-                             service_start,
-                             service_end)
+        if pay_part_b?(rtp,
+                       invoice_from,
+                       invoice_date,
+                       service_start,
+                       service_end)
           # puts 'matched supplier'
           a << Match.new('Supplier', rtp)
         end
@@ -141,32 +139,13 @@ class Invoice < ApplicationRecord
     end
 
     ##
-    # Determine if the RTP authorizes the invoice when the payee is the agency
-    def pay_agency?(rtp, invoice_from, service_start, service_end)
-      # puts "#{__LINE__}: Rtp Agency: #{rtp.agency_name} From [#{invoice_from}] include: #{rtp.include?(service_start..service_end)}"
-      # puts "Failed No Agency Name" unless rtp.agency_name
-      # puts "Failed Invoice From" unless invoice_from == rtp.agency_name
-      # puts "Failed Range" unless rtp.include?(service_start..service_end)
-      # puts "Failed Service Start and End" unless service_start && service_end
-      # puts "invoice_from, rtp.agency_name: #{invoice_from},  #{rtp.agency_name}"
-      # puts "invoice_from == rtp.agency_name: #{invoice_from == rtp.agency_name}"
-      # puts "rtp.service_period: #{rtp.service_period}"
-
-      service_start && service_end &&
-        # (rtp.payment == 'agency' || rtp.service_provider_name.blank?) &&
-        rtp.agency_name &&
-        invoice_from == rtp.agency_name &&
-        rtp.include?(service_start..service_end)
-    end
-
-    ##
     # Determine if the RTP authorizes the invoice when the payee is the supplier
     # (actually the parent)
-    def pay_for_supplier?(rtp,
-                          invoice_from,
-                          invoice_date = nil,
-                          service_start = nil,
-                          service_end = nil)
+    def pay_part_b?(rtp,
+                    invoice_from,
+                    invoice_date,
+                    service_start,
+                    service_end)
       # result =
       # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
       date_for_comparison = if invoice_date
@@ -194,16 +173,13 @@ class Invoice < ApplicationRecord
     end
 
     ##
-    # Determine if the RTP authorizes the invoice when the payee is the provider
-    def pay_provider?(rtp, invoice_from, service_start, service_end)
-      # puts "invoice_from, rtp.service_provider_name: #{invoice_from},  #{rtp.service_provider_name}"
-      # puts "invoice_from == rtp.service_provider_name: #{invoice_from == rtp.service_provider_name}"
-      # puts "rtp.service_period: #{rtp.service_period}"
-
-      service_start && service_end &&
-        # (rtp.payment == 'provider' || rtp.agency_name.blank?) &&
-        rtp.service_provider_name &&
-        invoice_from == rtp.service_provider_name &&
+    # Determine if Part A of RTP authorizes the invoice
+    def pay_part_a?(rtp, invoice_from, _invoice_date, service_start, service_end)
+      (rtp.service_provider_name &&
+          invoice_from == rtp.service_provider_name ||
+          rtp.agency_name &&
+          invoice_from == rtp.agency_name) &&
+        service_start && service_end &&
         rtp.include?(service_start..service_end)
     end
 
