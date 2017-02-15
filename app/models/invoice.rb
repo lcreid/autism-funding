@@ -83,7 +83,7 @@ class Invoice < ApplicationRecord
     # puts "In match child: #{funded_person.inspect}"
     return [] unless funded_person && funded_person.cf0925s
     # puts "ATTRIBUTES: #{attributes}"
-    Invoice.match(funded_person, attributes)
+    funded_person.match(attributes)
   end
 
   ##
@@ -91,15 +91,6 @@ class Invoice < ApplicationRecord
   def out_of_pocket
     return 0 unless invoice_amount && invoice_allocations
     [invoice_amount - invoice_allocations.select(&:amount).sum(&:amount), 0].max
-  end
-
-  class <<self
-    # FIXME: I really question whether I needed the class method.
-    # TODO: make the matching meet criteria laid out in Wiki.  Specifically - if only
-    # an invoice date is provided, or only start/end provided we can still match
-    def match(funded_person, params)
-      funded_person.match(params)
-    end
   end
 
   ##

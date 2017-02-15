@@ -169,60 +169,6 @@ class FundedPerson < ApplicationRecord
   end
 
   ##
-  # Determine if Part A of RTP authorizes the invoice
-  def pay_part_a?(rtp, invoice_from, invoice_date, service_start, service_end)
-    date_for_comparison = if service_start && service_end
-                            (service_start..service_end)
-                          elsif service_start
-                            service_start..service_start
-                          elsif service_end
-                            service_end..service_end
-                          else
-                            invoice_date
-                          end
-
-    (rtp.service_provider_name &&
-        invoice_from == rtp.service_provider_name ||
-        rtp.agency_name &&
-        invoice_from == rtp.agency_name) &&
-      rtp.include?(date_for_comparison)
-  end
-
-  ##
-  # Determine if the RTP authorizes the invoice when the payee is the supplier
-  # (actually the parent)
-  def pay_part_b?(rtp,
-                  invoice_from,
-                  invoice_date,
-                  service_start,
-                  service_end)
-    # result =
-    # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
-    date_for_comparison = if invoice_date
-                            invoice_date
-                          elsif service_start && service_end
-                            service_start..service_end
-                          elsif service_start.nil?
-                            service_end
-                          else
-                            service_start
-                          end
-
-    result = rtp.supplier_name &&
-             invoice_from == rtp.supplier_name &&
-             rtp.part_b_fiscal_year.present? &&
-             date_for_comparison &&
-             rtp.part_b_fiscal_year.include?(date_for_comparison)
-
-    # unless result
-    # puts "invoice_from, rtp.supplier_name: #{invoice_from},  #{rtp.supplier_name}"
-    # puts "invoice_from == rtp.supplier_name: #{invoice_from == rtp.supplier_name}"
-    # puts "rtp.part_b_fiscal_year: #{rtp.part_b_fiscal_year}, invoice_date: #{invoice_date}"
-    # end
-    result
-  end
-
-  ##
   # All the possible payees for the child
   def possible_payees
     (cf0925s.map(&:service_provider_name) +
