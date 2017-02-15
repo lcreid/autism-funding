@@ -119,6 +119,48 @@ class FundedPerson < ApplicationRecord
     fiscal_year(birthdate + 18.years)
   end
 
+  ##
+  # Find RTPs that match certain criteria
+  def match(invoice_params)
+    # puts "match child #{inspect} invoice_params: #{invoice_params}"
+    return [] unless cf0925s
+
+    invoice_params = ActiveSupport::HashWithIndifferentAccess.new(invoice_params)
+    invoice_date = to_date(invoice_params[:invoice_date])
+    service_end = to_date(invoice_params[:service_end])
+    invoice_from = invoice_params[:invoice_from]
+    service_start = to_date(invoice_params[:service_start])
+    # supplier_name = invoice_params[:supplier_name]
+
+    # puts "#{__LINE__}: Hi Guys, we're here!!!!"
+    # pp invoice_params
+
+    # puts "Here is the invoice_date: #{invoice_date}"
+    result = [] + cf0925s.select(&:printable?).map do |rtp|
+      # puts rtp.inspect
+      a = []
+
+      if rtp.pay_part_a?(invoice_from, invoice_date, service_start, service_end)
+        # puts 'matched provider or agency'
+        a << Match.new('ServiceProvider', rtp)
+      end
+
+      if rtp.pay_part_b?(invoice_from,
+                         invoice_date,
+                         service_start,
+                         service_end)
+        # puts 'matched supplier'
+        a << Match.new('Supplier', rtp)
+      end
+
+      # puts "Found two: #{a.inspect}" if 1 < a.size
+
+      a
+    end.flatten.compact.sort
+    #  puts result.inspect
+    result
+  end
+
   def must_define_at_least_one_name
     if my_name == 'no name defined'
       errors.add(:name_last, ' - must define at least one name')
@@ -179,6 +221,17 @@ class FundedPerson < ApplicationRecord
   def set_child_preference(key, value)
     user.set_preference(id.to_s => { key => value })
     value
+  end
+
+  def to_date(date)
+    return nil unless date
+    return date if date.is_a?(Date)
+    begin
+      Date.parse(date)
+    rescue ArgumentError
+      puts 'Rescued date conversion'
+      nil
+    end
   end
 
   ##

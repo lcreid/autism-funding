@@ -83,7 +83,7 @@ class Invoice < ApplicationRecord
     # puts "In match child: #{funded_person.inspect}"
     return [] unless funded_person && funded_person.cf0925s
     # puts "ATTRIBUTES: #{attributes}"
-    Invoice.match(funded_person, attributes)
+    funded_person.match(attributes)
   end
 
   ##
@@ -91,117 +91,6 @@ class Invoice < ApplicationRecord
   def out_of_pocket
     return 0 unless invoice_amount && invoice_allocations
     [invoice_amount - invoice_allocations.select(&:amount).sum(&:amount), 0].max
-  end
-
-  class <<self
-    # FIXME: I really question whether I needed the class method.
-    # TODO: make the matching meet criteria laid out in Wiki.  Specifically - if only
-    # an invoice date is provided, or only start/end provided we can still match
-    def match(funded_person, params)
-      # puts "match child #{funded_person.inspect} params: #{params}"
-      return [] unless funded_person.cf0925s
-
-      params = ActiveSupport::HashWithIndifferentAccess.new(params)
-      invoice_date = to_date(params[:invoice_date])
-      service_end = to_date(params[:service_end])
-      invoice_from = params[:invoice_from]
-      service_start = to_date(params[:service_start])
-      # supplier_name = params[:supplier_name]
-
-      # puts "#{__LINE__}: Hi Guys, we're here!!!!"
-      # pp params
-
-      # puts "Here is the invoice_date: #{invoice_date}"
-      result = [] + funded_person.cf0925s.select(&:printable?).map do |rtp|
-        # puts rtp.inspect
-        a = []
-
-        if pay_part_a?(rtp, invoice_from, invoice_date, service_start, service_end)
-          # puts 'matched provider or agency'
-          a << Match.new('ServiceProvider', rtp)
-        end
-
-        if pay_part_b?(rtp,
-                       invoice_from,
-                       invoice_date,
-                       service_start,
-                       service_end)
-          # puts 'matched supplier'
-          a << Match.new('Supplier', rtp)
-        end
-
-        # puts "Found two: #{a.inspect}" if 1 < a.size
-
-        a
-      end.flatten.compact.sort
-      #  puts result.inspect
-      result
-    end
-
-    ##
-    # Determine if the RTP authorizes the invoice when the payee is the supplier
-    # (actually the parent)
-    def pay_part_b?(rtp,
-                    invoice_from,
-                    invoice_date,
-                    service_start,
-                    service_end)
-      # result =
-      # puts "rtp.part_b_fiscal_year.class #{rtp.part_b_fiscal_year.class}"
-      date_for_comparison = if invoice_date
-                              invoice_date
-                            elsif service_start && service_end
-                              service_start..service_end
-                            elsif service_start.nil?
-                              service_end
-                            else
-                              service_start
-                            end
-
-      result = rtp.supplier_name &&
-               invoice_from == rtp.supplier_name &&
-               rtp.part_b_fiscal_year.present? &&
-               date_for_comparison &&
-               rtp.part_b_fiscal_year.include?(date_for_comparison)
-
-      # unless result
-      # puts "invoice_from, rtp.supplier_name: #{invoice_from},  #{rtp.supplier_name}"
-      # puts "invoice_from == rtp.supplier_name: #{invoice_from == rtp.supplier_name}"
-      # puts "rtp.part_b_fiscal_year: #{rtp.part_b_fiscal_year}, invoice_date: #{invoice_date}"
-      # end
-      result
-    end
-
-    ##
-    # Determine if Part A of RTP authorizes the invoice
-    def pay_part_a?(rtp, invoice_from, invoice_date, service_start, service_end)
-      date_for_comparison = if service_start && service_end
-                              (service_start..service_end)
-                            elsif service_start
-                              service_start..service_start
-                            elsif service_end
-                              service_end..service_end
-                            else
-                              invoice_date
-                            end
-
-      (rtp.service_provider_name &&
-          invoice_from == rtp.service_provider_name ||
-          rtp.agency_name &&
-          invoice_from == rtp.agency_name) &&
-        rtp.include?(date_for_comparison)
-    end
-
-    def to_date(date)
-      return nil unless date
-      return date if date.is_a?(Date)
-      begin
-        Date.parse(date)
-      rescue ArgumentError
-        puts 'Rescued date conversion'
-        nil
-      end
-    end
   end
 
   ##

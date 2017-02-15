@@ -441,7 +441,7 @@ class StatusTest < ActiveSupport::TestCase
     #            service_end: '2017-08-31',
     #            service_start: '2017-08-01',
     #            invoice_from: 'A Provider' }
-    # assert_equal 1, Invoice.match(child = funded_people(:invoice_to_rtp_match),
+    # assert_equal 1, invoice.match(child = funded_people(:invoice_to_rtp_match),
     #                               params).size
 
     child = set_up_child
