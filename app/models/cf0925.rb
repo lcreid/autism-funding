@@ -371,6 +371,56 @@ class Cf0925 < ApplicationRecord
     end
   end
 
+  ##
+  # Determine if Part A of RTP authorizes the invoice
+  def pay_part_a?(invoice_from, invoice_date, service_start, service_end)
+    date_for_comparison = if service_start && service_end
+                            (service_start..service_end)
+                          elsif service_start
+                            service_start..service_start
+                          elsif service_end
+                            service_end..service_end
+                          else
+                            invoice_date
+                          end
+
+    (service_provider_name &&
+        invoice_from == service_provider_name ||
+        agency_name &&
+        invoice_from == agency_name) &&
+      include?(date_for_comparison)
+  end
+
+  ##
+  # Determine if the RTP authorizes the invoice when the payee is the supplier
+  # (actually the parent)
+  def pay_part_b?(invoice_from, invoice_date, service_start, service_end)
+    # result =
+    # puts "part_b_fiscal_year.class #{part_b_fiscal_year.class}"
+    date_for_comparison = if invoice_date
+                            invoice_date
+                          elsif service_start && service_end
+                            service_start..service_end
+                          elsif service_start.nil?
+                            service_end
+                          else
+                            service_start
+                          end
+
+    result = supplier_name &&
+             invoice_from == supplier_name &&
+             part_b_fiscal_year.present? &&
+             date_for_comparison &&
+             part_b_fiscal_year.include?(date_for_comparison)
+
+    # unless result
+    # puts "invoice_from, supplier_name: #{invoice_from},  #{supplier_name}"
+    # puts "invoice_from == supplier_name: #{invoice_from == supplier_name}"
+    # puts "part_b_fiscal_year: #{part_b_fiscal_year}, invoice_date: #{invoice_date}"
+    # end
+    result
+  end
+
   def pdf_output_file
     "/tmp/cf0925_#{id}.pdf"
   end
