@@ -121,19 +121,19 @@ class FundedPerson < ApplicationRecord
 
   ##
   # Find RTPs that match certain criteria
-  def match(params)
-    # puts "match child #{inspect} params: #{params}"
+  def match(invoice_params)
+    # puts "match child #{inspect} invoice_params: #{invoice_params}"
     return [] unless cf0925s
 
-    params = ActiveSupport::HashWithIndifferentAccess.new(params)
-    invoice_date = to_date(params[:invoice_date])
-    service_end = to_date(params[:service_end])
-    invoice_from = params[:invoice_from]
-    service_start = to_date(params[:service_start])
-    # supplier_name = params[:supplier_name]
+    invoice_params = ActiveSupport::HashWithIndifferentAccess.new(invoice_params)
+    invoice_date = to_date(invoice_params[:invoice_date])
+    service_end = to_date(invoice_params[:service_end])
+    invoice_from = invoice_params[:invoice_from]
+    service_start = to_date(invoice_params[:service_start])
+    # supplier_name = invoice_params[:supplier_name]
 
     # puts "#{__LINE__}: Hi Guys, we're here!!!!"
-    # pp params
+    # pp invoice_params
 
     # puts "Here is the invoice_date: #{invoice_date}"
     result = [] + cf0925s.select(&:printable?).map do |rtp|
