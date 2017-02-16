@@ -50,8 +50,8 @@ class Invoice < ApplicationRecord
     new_set = incoming_set - old_set
     # puts "allocate: new_set #{new_set.map(&:object_id)}"
     new_set.map do |match|
-      invoice_allocations.build(cf0925: match.cf0925,
-                                cf0925_type: match.cf0925_type)
+      invoice_allocations <<
+        match.cf0925.invoice_allocations.build(cf0925_type: match.cf0925_type)
     end
 
     # puts "allocate: result #{invoice_allocations.map(&:cf0925).map(&:object_id)}"
