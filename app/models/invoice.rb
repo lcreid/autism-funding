@@ -33,6 +33,7 @@ class Invoice < ApplicationRecord
     # puts "allocate: matches #{matches.size}"
     incoming_set = matches.to_set
     old_set = invoice_allocations.to_set
+    to_be_deleted_set = old_set - incoming_set
     # old_set = invoice_allocations.map do |ia|
     #   Match.new(ia)
     # end.to_set
@@ -40,11 +41,13 @@ class Invoice < ApplicationRecord
     # puts "allocate: old_set #{old_set.map(&:object_id)}"
     # puts "allocate: incoming_set #{incoming_set.map(&:object_id)}"
     # puts "allocate: old_set + incoming_set #{(old_set + incoming_set).map(&:object_id)}"
-    # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).map(&:object_id)}"
-    # puts "allocate: old_set - incoming_set classes #{(old_set - incoming_set).map(&:class)}"
+    # puts "allocate: to_be_deleted_set #{(to_be_deleted_set).map(&:object_id)}"
+    # puts "allocate: to_be_deleted_set classes #{(to_be_deleted_set).map(&:class)}"
 
-    # puts "allocate: old_set - incoming_set #{(old_set - incoming_set).to_a}"
-    invoice_allocations.delete((old_set - incoming_set).to_a)
+    # puts "allocate: to_be_deleted_set #{(to_be_deleted_set).to_a}"
+    invoice_allocations.delete(to_be_deleted_set.to_a).each do |ia|
+      ia.cf0925.invoice_allocations.delete(ia)
+    end
     # puts "allocate: invoice_allocations #{invoice_allocations.map(&:object_id)}"
 
     new_set = incoming_set - old_set
