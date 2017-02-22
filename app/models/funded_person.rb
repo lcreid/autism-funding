@@ -132,13 +132,15 @@ class FundedPerson < ApplicationRecord
     service_start = to_date(invoice_params[:service_start])
     # supplier_name = invoice_params[:supplier_name]
 
-    # puts "#{__LINE__}: Hi Guys, we're here!!!!"
     # pp invoice_params
 
     # puts "Here is the invoice_date: #{invoice_date}"
     result = [] + cf0925s.select(&:printable?).map do |rtp|
       # puts rtp.inspect
       a = []
+
+      puts "rtp start: #{rtp.service_provider_service_start} inv start: #{service_start}"
+
 
       if rtp.pay_part_a?(invoice_from, invoice_date, service_start, service_end)
         # puts 'matched provider or agency'

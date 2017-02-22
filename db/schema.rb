@@ -119,11 +119,11 @@ ActiveRecord::Schema.define(version: 20170208220042) do
     t.string   "notes"
     t.date     "service_end"
     t.date     "service_start"
+    t.string   "supplier_name"
     t.string   "invoice_reference"
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.integer  "funded_person_id"
-    t.string   "supplier_name"
     t.text     "agency_name"
     t.text     "service_provider_name"
     t.string   "invoice_from"

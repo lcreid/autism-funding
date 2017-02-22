@@ -299,6 +299,48 @@ class FundedPersonTest < ActiveSupport::TestCase
                  child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
   end
 
+  test 'rtp allocated invoice a b not invoice c change rtp such that invoice allocated invoice b c not a' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child)
+    invoice_a = child.invoices.build(invoice_amount: 200,
+                                   service_end: rtp.service_provider_service_end,
+                                   service_start: rtp.service_provider_service_start,
+                                   invoice_from: rtp.service_provider_name)
+    invoice_b = child.invoices.build(invoice_amount: 201,
+                                    service_end: rtp.service_provider_service_end,
+                                    service_start: rtp.service_provider_service_start + 1.day,
+                                    invoice_from: rtp.service_provider_name)
+    invoice_c = child.invoices.build(invoice_amount: 203,
+                                    service_end: rtp.service_provider_service_end + 1.day,
+                                    service_start: rtp.service_provider_service_start + 1.day,
+                                    invoice_from: rtp.service_provider_name)
+
+puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{invoice_allocations.size}"
+
+puts ""
+puts "///////// ----- Allocation 1 ----- ///////////"
+puts ""
+puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
+    rtp.allocate
+
+    assert_equal [invoice_a, invoice_b], rtp.invoices.sort_by(&:invoice_amount)
+
+puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+
+    rtp.service_provider_service_start += 1.day
+    rtp.service_provider_service_end += 1.day
+
+puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+puts ""
+puts "///////// ----- Allocation 2 ----- ///////////"
+puts ""
+puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+    rtp.allocate
+rtp.reload
+    assert_equal [invoice_b, invoice_c], rtp.invoices.sort_by(&:invoice_amount)
+
+  end
+
   # The following were for test cases around the autosaving of user from a
   # Cf0925. However, we decided not to do that, so commenting them out.
   # test 'change to invalid postal code and update user' do
