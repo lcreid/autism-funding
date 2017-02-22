@@ -139,7 +139,7 @@ class FundedPerson < ApplicationRecord
       # puts rtp.inspect
       a = []
 
-      puts "rtp start: #{rtp.service_provider_service_start} inv start: #{service_start}"
+      # puts "rtp start: #{rtp.service_provider_service_start} inv start: #{service_start}"
 
 
       if rtp.pay_part_a?(invoice_from, invoice_date, service_start, service_end)

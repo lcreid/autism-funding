@@ -315,29 +315,29 @@ class FundedPersonTest < ActiveSupport::TestCase
                                     service_start: rtp.service_provider_service_start + 1.day,
                                     invoice_from: rtp.service_provider_name)
 
-puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{invoice_allocations.size}"
-
-puts ""
-puts "///////// ----- Allocation 1 ----- ///////////"
-puts ""
-puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
+# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+# puts "test case rtp object id: #{rtp.object_id}"
+# puts ""
+# puts "///////// ----- Allocation 1 ----- ///////////"
+# puts ""
+# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
     rtp.allocate
 
-    assert_equal [invoice_a, invoice_b], rtp.invoices.sort_by(&:invoice_amount)
+    assert_equal [invoice_a, invoice_b], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
 
-puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
 
     rtp.service_provider_service_start += 1.day
     rtp.service_provider_service_end += 1.day
 
-puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
-puts ""
-puts "///////// ----- Allocation 2 ----- ///////////"
-puts ""
-puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+# puts ""
+# puts "///////// ----- Allocation 2 ----- ///////////"
+# puts ""
+# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
     rtp.allocate
-rtp.reload
-    assert_equal [invoice_b, invoice_c], rtp.invoices.sort_by(&:invoice_amount)
+# rtp.reload
+    assert_equal [invoice_b, invoice_c], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
 
   end
 

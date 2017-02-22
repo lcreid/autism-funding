@@ -51,14 +51,14 @@ class Invoice < ApplicationRecord
     # puts "allocate: invoice_allocations #{invoice_allocations.map(&:object_id)}"
 
     new_set = incoming_set - old_set
-    puts "----------------------------"
-    puts "invoice#allocate #{__LINE__}: For Invoice object_id: #{self.object_id} (#{self.invoice_amount})"
-    incoming_set.each {|s| puts " incoming: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id} rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
-    old_set.each {|s| puts " old: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type:  #{s.cf0925_type}"}
-    new_set.each {|s| puts " new: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
-    (old_set - incoming_set).each {|s| puts " old - incoming: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
+    # puts "----------------------------"
+    # puts "invoice#allocate #{__LINE__}: For Invoice object_id: #{self.object_id} (#{self.invoice_amount})"
+    # incoming_set.each {|s| puts " incoming: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id} rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
+    # old_set.each {|s| puts " old: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type:  #{s.cf0925_type}"}
+    # new_set.each {|s| puts " new: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
+    # (old_set - incoming_set).each {|s| puts " old - incoming: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
 #    puts "allocate: incoming_set #{new_set.map(&:object_id)}"
-    puts "----------------------------"
+    # puts "----------------------------"
     new_set.map do |match|
       invoice_allocations <<
         match.cf0925.invoice_allocations.build(cf0925_type: match.cf0925_type)

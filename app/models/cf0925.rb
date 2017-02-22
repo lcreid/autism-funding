@@ -114,20 +114,21 @@ class Cf0925 < ApplicationRecord
 
     funded_person.invoices.each do |inv|
       matches = inv.match
-      puts "cf0925_allocate #{__LINE__}: Matches: #{matches.size} inv object id: #{inv.object_id} inv id: #{inv.id}"
-      matches.each {|m| puts "  match id: #{m.object_id} rtp id: #{m.cf0925.object_id} type #{m.cf0925_type}"}
-      puts "  .........................."
-      puts "cf0925#allocate #{__LINE__}: "
-      InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
+      # puts "cf0925_allocate #{__LINE__}: Matches: #{matches.size} inv object id: #{inv.object_id} inv id: #{inv.id}"
+      # matches.each {|m| puts "  match id: #{m.object_id} rtp id: #{m.cf0925.object_id} type #{m.cf0925_type}"}
+      # puts "  .........................."
+      # puts "cf0925#allocate #{__LINE__}: "
+      # InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
 
 
       inv.allocate(matches)
-      puts "cf0925#allocate #{__LINE__}: "
-      InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
-      puts "cf0925_allocate #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
-      inv.save
-      puts "cf0925_allocate #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
-      puts "cf0925_allocate #{__LINE__}: Invoice allocations #{inv.invoice_allocations.size}"
+
+      # puts "cf0925#allocate #{__LINE__}: "
+      # InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
+      # puts "cf0925_allocate #{__LINE__}:  rtp.invoice_allocations.size #{invoice_allocations.size}"
+      # inv.save
+      # puts "cf0925_allocate #{__LINE__}: Invoice allocations #{inv.invoice_allocations.size}"
+      # puts "cf0925_allocate #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
     end
   end
 
