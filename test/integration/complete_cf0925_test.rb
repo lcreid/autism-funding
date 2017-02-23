@@ -257,6 +257,18 @@ class CompleteCf0925Test < CapybaraTest
     assert_no_selector 'div.has-error'
   end
 
+  test 'add an RTP that matches an existing invoice' do
+    flunk
+  end
+
+  test 'delete an RTP that matched an existing invoice' do
+    flunk
+  end
+
+  test 'change an RTP so that matches invoices A and B, to match invoices B and C' do
+    flunk
+  end
+
   private
 
   def create_a_cf0925
