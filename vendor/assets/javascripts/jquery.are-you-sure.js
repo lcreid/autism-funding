@@ -26,10 +26,10 @@
       }, options);
 
     var getValue = function($field) {
-      if ($field.hasClass('ays-ignore')
-          || $field.hasClass('aysIgnore')
-          || $field.attr('data-ays-ignore')
-          || $field.attr('name') === undefined) {
+      if ($field.hasClass('ays-ignore') ||
+        $field.hasClass('aysIgnore') ||
+        $field.attr('data-ays-ignore') ||
+        $field.attr('name') === undefined) {
         return null;
       }
 
@@ -78,9 +78,9 @@
         return (getValue($field) != origValue);
       };
 
-      var $form = ($(this).is('form'))
-                    ? $(this)
-                    : $(this).parents('form');
+      var $form = ($(this).is('form')) ?
+                    $(this) :
+                    $(this).parents('form');
 
       // Test on the target first as it's the most likely to be dirty
       if (isFieldDirty($(evt.target))) {
@@ -151,13 +151,13 @@
 
     var reinitialize = function() {
       initForm($(this));
-    }
+    };
 
     if (!settings.silent && !window.aysUnloadSet) {
       window.aysUnloadSet = true;
       var leavingCallback = function() {
         $dirtyForms = $("form").filter('.' + settings.dirtyClass);
-        if ($dirtyForms.length == 0) {
+        if ($dirtyForms.length === 0) {
           return;
         }
         // Prevent multiple prompts - seen on Chrome and IE
