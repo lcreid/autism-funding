@@ -27,9 +27,9 @@
 
     var getValue = function($field) {
       if ($field.hasClass('ays-ignore') ||
-        $field.hasClass('aysIgnore') ||
-        $field.attr('data-ays-ignore') ||
-        $field.attr('name') === undefined) {
+          $field.hasClass('aysIgnore') ||
+          $field.attr('data-ays-ignore') ||
+          $field.attr('name') === undefined) {
         return null;
       }
 
@@ -78,9 +78,7 @@
         return (getValue($field) != origValue);
       };
 
-      var $form = ($(this).is('form')) ?
-                    $(this) :
-                    $(this).parents('form');
+      var $form = ($(this).is('form')) ? $(this) : $(this).parents('form');
 
       // Test on the target first as it's the most likely to be dirty
       if (isFieldDirty($(evt.target))) {
@@ -153,26 +151,37 @@
       initForm($(this));
     };
 
-    if (!settings.silent && !window.aysUnloadSet) {
-      window.aysUnloadSet = true;
-      var leavingCallback = function() {
-        $dirtyForms = $("form").filter('.' + settings.dirtyClass);
-        if ($dirtyForms.length === 0) {
+    var openConfirmation = function () {
+      $dirtyForms = $("form").filter('.' + settings.dirtyClass);
+      if ($dirtyForms.length === 0) {
+        return;
+      }
+      // Prevent multiple prompts - seen on Chrome and IE
+      if (navigator.userAgent.toLowerCase().match(/msie|chrome/)) {
+        if (window.aysHasPrompted) {
           return;
         }
-        // Prevent multiple prompts - seen on Chrome and IE
-        if (navigator.userAgent.toLowerCase().match(/msie|chrome/)) {
-          if (window.aysHasPrompted) {
-            return;
-          }
-          window.aysHasPrompted = true;
-          window.setTimeout(function() {window.aysHasPrompted = false;}, 900);
-        }
-        return settings.message;
-      };
+        window.aysHasPrompted = true;
+        window.setTimeout(function() {window.aysHasPrompted = false;}, 900);
+      }
 
-      $(window).on('beforeunload', leavingCallback);
-      $(document).on('turbolinks:before-visit', leavingCallback);
+      return true;
+    };
+
+    if (!settings.silent && !window.aysUnloadSet) {
+      window.aysUnloadSet = true;
+
+      $(window).bind('beforeunload', function() {
+        if(openConfirmation()) {
+          return settings.message;
+        }
+      });
+
+      $(document).bind('turbolinks:before-visit', function() {
+        if(openConfirmation()) {
+          return confirm(settings.message);
+        }
+      });
     }
 
     return this.each(function(elem) {
