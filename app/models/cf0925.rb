@@ -11,7 +11,10 @@ class Cf0925 < ApplicationRecord
   belongs_to :form
   belongs_to :funded_person, inverse_of: :cf0925s
   accepts_nested_attributes_for :funded_person
-  has_many :invoice_allocations, inverse_of: :cf0925, autosave: true
+  has_many :invoice_allocations,
+           inverse_of: :cf0925,
+           autosave: true,
+           dependent: :destroy
   has_many :invoices, through: :invoice_allocations, autosave: true
 
   class << self
@@ -110,26 +113,25 @@ class Cf0925 < ApplicationRecord
   end
 
   def allocate
-#    puts funded_person.invoices.inspect
-
     funded_person.invoices.each do |inv|
+      # puts "inv.include_in_reports?: #{inv.include_in_reports?}"
       matches = inv.match
       # puts "cf0925_allocate #{__LINE__}: Matches: #{matches.size} inv object id: #{inv.object_id} inv id: #{inv.id}"
-      # matches.each {|m| puts "  match id: #{m.object_id} rtp id: #{m.cf0925.object_id} type #{m.cf0925_type}"}
-      # puts "  .........................."
+      # matches.each { |m| puts "  match id: #{m.object_id} rtp id: #{m.cf0925.object_id} type #{m.cf0925_type}" }
+      # puts '  ..........................'
       # puts "cf0925#allocate #{__LINE__}: "
-      # InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
-
+      # InvoiceAllocation.all.each { |ia| puts ia.inspect.to_s }
 
       inv.allocate(matches)
 
       # puts "cf0925#allocate #{__LINE__}: "
-      # InvoiceAllocation.all.each {|ia| puts "#{ia.inspect}"}
+      # InvoiceAllocation.all.each { |ia| puts ia.inspect.to_s }
       # puts "cf0925_allocate #{__LINE__}:  rtp.invoice_allocations.size #{invoice_allocations.size}"
       # inv.save
       # puts "cf0925_allocate #{__LINE__}: Invoice allocations #{inv.invoice_allocations.size}"
       # puts "cf0925_allocate #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
     end
+    self # so we can chain methods.
   end
 
   def client_pdf_file_name

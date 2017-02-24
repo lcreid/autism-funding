@@ -11,9 +11,10 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     ##      age of the Funded Person, so this is not an issue as yet
     ############################################################################
 
-    @funded_person = FundedPerson.create!(birthdate: '2010-06-14',
+    @funded_person = FundedPerson.create!(birthdate: '2010-05-14',
                                           name_first: 'first',
                                           name_last: 'last',
+                                          child_in_care_of_ministry: false,
                                           user: controller.current_user)
 
     @form_field_values = {
@@ -43,6 +44,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
       item_desp_1: 'item_desp_1',
       item_desp_2: 'item_desp_2',
       item_desp_3: 'item_desp_3',
+      part_b_fiscal_year: '2016-2017',
       payment: 'Provider',
       service_provider_postal_code: 'service_provider_postal_code',
       service_provider_address: 'service_provider_address',
@@ -131,7 +133,7 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
 
     # FundedPerson.all.each { |funded_person| puts "#{funded_person.name_last}: #{funded_person.my_dob}" }
     # Cf0925.all.each { |rtp| puts "#{rtp.funded_person.name_last}: #{rtp.funded_person.my_dob}" }
-    assert_not_nil(cf0925 = Cf0925.find_by(child_dob: '2010-06-14'))
+    assert_not_nil(cf0925 = Cf0925.find_by(child_dob: '2010-05-14'))
     assert_redirected_to home_index_path
   end
 
@@ -322,5 +324,57 @@ class Cf0925sControllerTest < ActionDispatch::IntegrationTest
     @funded_person = controller.current_user.funded_people.first
     get new_funded_person_cf0925_path(@funded_person)
     assert_response :success
+  end
+
+  test 'add an RTP that matches an existing invoice' do
+    assert_add_cf0925_and_allocate_invoice
+  end
+
+  test 'delete an RTP that matched an existing invoice' do
+    invoice = assert_add_cf0925_and_allocate_invoice
+    rtp = @funded_person.cf0925s.first
+    assert_difference 'InvoiceAllocation.count', -1 do
+      delete cf0925_path(rtp)
+    end
+    assert_response :redirect
+    assert @funded_person.reload
+    assert @funded_person.cf0925s.empty?
+    assert @funded_person.invoices.all? { |x| x.cf0925s.empty? }
+  end
+
+  test 'change an RTP to no longer match an invoice' do
+    invoice = assert_add_cf0925_and_allocate_invoice
+    rtp = @funded_person.cf0925s.first
+    assert_difference 'InvoiceAllocation.count', -1 do
+      patch cf0925_path(rtp), params: {
+        cf0925: @form_field_values
+          .merge(service_provider_service_start: rtp.service_provider_service_start + 1.day)
+      }
+    end
+  end
+
+  private
+
+  def assert_add_cf0925_and_allocate_invoice
+    assert_equal 0, @funded_person.cf0925s.size
+    invoice = @funded_person
+              .invoices
+              .create(invoice_from: @form_field_values[:agency_name],
+                      invoice_amount: 200,
+                      service_start: @form_field_values[:service_provider_service_start])
+    assert_difference 'InvoiceAllocation.count' do
+      post funded_person_cf0925s_path(@funded_person),
+           params: { cf0925: @form_field_values }
+      assert_response :redirect
+      invoice.reload
+      assert @funded_person.reload
+      assert @funded_person.cf0925s.reload
+      assert_equal 1, @funded_person.cf0925s.size
+      rtp = @funded_person.cf0925s.first
+      assert rtp.printable?, rtp.errors.full_messages
+    end
+    assert_equal [invoice], @funded_person.cf0925s.first.invoices
+
+    invoice
   end
 end

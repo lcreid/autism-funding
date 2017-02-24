@@ -49,20 +49,20 @@ class Cf0925sController < ApplicationController
   def create
     # pp(params.as_json)
     # pp(cf0925_params.as_json)
-    @cf0925 = Cf0925.new(cf0925_params)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @cf0925.funded_person =
-      @funded_person = FundedPerson.find(params[:funded_person_id])
+    @funded_person = FundedPerson.find(params[:funded_person_id])
+    @cf0925 = @funded_person.cf0925s.build(cf0925_params)
+
     user = @cf0925.funded_person.user
-    # puts "User has #{user.phone_numbers.size} phone numbers"
-    # pp(user_params.as_json)
     user.assign_attributes(user_params)
-    # puts "Middle name: #{user.name_middle}"
-    # puts "Address: #{user.addresses.first.as_json}"
     copy_parent_to_form
     copy_child_to_form
+
+    @cf0925.allocate
+    # puts "#{__LINE__}: #{@cf0925.invoice_allocations.inspect}"
+
     # I didn't need to save addresses explicitly here.
-    if @cf0925.save_with_user # && user.save && user.addresses.map(&:save)
+    if @cf0925.save_with_user
       # Get the missing fields, aka help info, for the object
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       # TODO: why can't I just render :edit here?
@@ -84,8 +84,10 @@ class Cf0925sController < ApplicationController
     copy_parent_to_form
     copy_child_to_form
 
+    @cf0925.allocate
+
     # I didn't need to save addresses explicitly here.
-    if @cf0925.save_with_user # && user.save && user.addresses.map(&:save)
+    if @cf0925.save_with_user
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
       redirect_to home_index_path, notice: 'Request updated.'
     else
@@ -100,7 +102,7 @@ class Cf0925sController < ApplicationController
     @cf0925 = Cf0925.find(params[:id])
     @cf0925.destroy
 
-    redirect_to home_index_path
+    redirect_to home_index_path, notice: 'Request deleted.'
   end
 
   private
