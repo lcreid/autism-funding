@@ -18,9 +18,10 @@ module Cf0925sHelper
   # The buttons at the bottom of the form.
   def buttons(f, cf0925)
     # content_tag :div, class: 'form-inline' do
-    f.submit('Save', class: 'btn btn-primary') +
-      print_button(cf0925) +
-      home_button
+    [f.submit('Save', class: 'btn btn-primary'),
+     f.button('Reset', type: 'reset', class: 'btn btn-primary'),
+     print_button(cf0925),
+     home_button].join(' ').html_safe
     # end
   end
 

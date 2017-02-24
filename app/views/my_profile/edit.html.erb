@@ -98,7 +98,10 @@
     <% end %>
 
     <%= form_row do %>
-      <div class="col-md-12 lead"><%= the_form.submit class: 'btn btn-primary' %></div>
+      <div class="col-md-12 lead">
+        <%= the_form.submit class: 'btn btn-primary' %>
+        <%= the_form.button 'Reset', type: 'reset', class: 'btn btn-primary' %>
+      </div>
     <% end %>
   <% end %>
 </div>
