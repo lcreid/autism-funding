@@ -81,7 +81,18 @@ end
 
 module TestSessionHelpers
   def log_in(user =
-             User.create!(email: 'me1@weenhanceit.com', password: 'password'))
+             User.create!(
+               email: 'me1@weenhanceit.com',
+               password: 'password',
+               name_first: 'parent_first_name',
+               name_middle: 'parent_middle_name',
+               name_last: 'parent_last_name',
+               home_phone_number: '6048888887',
+               work_phone_number: '6047777778',
+               address: 'parent_address',
+               city: 'parent_city',
+               postal_code: 'A0A 0A0'
+             ))
     ## If the user's province has not been set - default it to BC
     if user.province_code_id.nil?
       user.province_code_id = province_codes('bc').id

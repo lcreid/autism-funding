@@ -6,7 +6,7 @@ class Invoice < ApplicationRecord
   belongs_to :funded_person
   # belongs_to :cf0925, optional: true, inverse_of: :invoices
   has_many :invoice_allocations, inverse_of: :invoice, dependent: :destroy
-  accepts_nested_attributes_for :invoice_allocations, allow_destroy: true
+  accepts_nested_attributes_for :invoice_allocations
   has_many :cf0925s, through: :invoice_allocations, autosave: true
 
   #-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class Invoice < ApplicationRecord
     # old_set.each {|s| puts " old: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type:  #{s.cf0925_type}"}
     # new_set.each {|s| puts " new: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
     # (old_set - incoming_set).each {|s| puts " old - incoming: object_id: #{s.object_id} rtp id: #{s.cf0925.object_id}  rtp db id: #{s.cf0925.id}  type: #{s.cf0925_type}"}
-#    puts "allocate: incoming_set #{new_set.map(&:object_id)}"
+    #    puts "allocate: incoming_set #{new_set.map(&:object_id)}"
     # puts "----------------------------"
     new_set.map do |match|
       invoice_allocations <<
