@@ -158,16 +158,19 @@ module Cf0925sHelper
         # puts "RENDERING: #{f.object.funded_person.valid_fiscal_years.map(&:to_s)}"
         # puts "SHOULD BE SELECTED: #{f.object.part_b_fiscal_year.to_s}"
         # puts options_for_select(f.object.funded_person.valid_fiscal_years.map(&:to_s), f.object.part_b_fiscal_year.to_s)
+        # puts options_for_select(f
+        #                         .object
+        #                         .funded_person
+        #                         .valid_fiscal_years
+        #                         .collect(&:to_s),
+        #                         f.object.part_b_fiscal_year)
         f.select(:part_b_fiscal_year,
                  options_for_select(f
                                       .object
                                       .funded_person
                                       .valid_fiscal_years
-                                      .map(&:to_s),
-                                    f
-                                      .object
-                                      .part_b_fiscal_year
-                                      .to_s),
+                                      .collect(&:to_s),
+                                    f.object.part_b_fiscal_year),
                  column_width: 3,
                  label: 'Fiscal Year')
       end
