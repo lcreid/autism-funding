@@ -35,6 +35,7 @@ class Cf0925sController < ApplicationController
     # puts "New error count: #{@cf0925.errors.count}"
     @cf0925.printable?
     # puts "New error count after printable?: #{@cf0925.errors.count}"
+    @cf0925.part_b_fiscal_year = @funded_person.fiscal_year(Time.zone.today)
   end
 
   def edit

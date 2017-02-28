@@ -366,6 +366,9 @@ class Cf0925 < ApplicationRecord
     funded_person.fiscal_year(super)
   end
 
+  # TODO: Think about this. Playing games with the value here made the
+  # select box hard to work with. I couldn't just use the defaults, and have
+  # to manually call to_s to make things work.
   def part_b_fiscal_year=(value)
     if value.is_a?(FiscalYear)
       super value.to_s

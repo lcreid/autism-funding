@@ -55,7 +55,7 @@ class CompleteCf0925Test < CapybaraTest
   end
 
   test 'CF_0925 autofill from user and child' do
-    fill_in_login(users(:has_no_rtp))
+    fill_in_login(user = users(:has_no_rtp))
     click_link 'New Request to Pay'
 
     assert_difference 'Cf0925.count' do
@@ -146,6 +146,11 @@ class CompleteCf0925Test < CapybaraTest
     # assert_selector '#parent_first_name', text: 'I'
     # puts find('label[for="cf0925_child_first_name"] + p').text
     assert_selector 'label[for="cf0925_child_first_name"] + p', text: 'Four'
+
+    first_child = user.funded_people.find { |child| child.my_name == 'Four Year Two-Kids' }
+
+    assert_select 'cf0925_part_b_fiscal_year',
+                  selected: first_child.fiscal_year(Time.zone.today).to_s
   end
 
   test 'Change parent info' do
