@@ -3,36 +3,6 @@
   <div class="col-md-12">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h2 class="panel-title">Invoices</h2>
-      </div>
-      <div class="panel-body">
-        <p>
-          When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
-        </p>
-        <div class="row">
-          <div class="col-md-12">
-            <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <%= render partial: "invoices/invoices",
-                       locals: { invoices: funded_person.invoices_in_fiscal_year(funded_person.selected_fiscal_year), message_on_empty_report: 'You have no invoices in this fiscal year' } %>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
         <h2 class="panel-title">Funding Requests</h2>
       </div>
       <div class="panel-body">
@@ -82,6 +52,37 @@
         <div class="row">
           <div class="col-md-12">
             <%= link_to('All Forms', funded_person_filled_in_forms_path(funded_person)) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">Invoices</h2>
+      </div>
+      <div class="panel-body">
+        <p>
+          When you receive an invoice, enter it here. By entering invoices, the system can keep track of what's actually spent, and remind you when it's time to request more funds, or when you'll have to pay out of pocket.
+        </p>
+        <div class="row">
+          <div class="col-md-12">
+            <p><%= link_to('New Invoice', new_funded_person_invoice_path(funded_person), class: 'btn btn-primary btn-block') %></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= render partial: "invoices/invoices",
+                       locals: { invoices: funded_person.invoices_in_fiscal_year(funded_person.selected_fiscal_year), message_on_empty_report: 'You have no invoices in this fiscal year' } %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p><%= link_to('All Invoices', funded_person_invoices_path(funded_person)) %></p>
           </div>
         </div>
       </div>
