@@ -6,7 +6,7 @@ class Invoice < ApplicationRecord
   belongs_to :funded_person
   # belongs_to :cf0925, optional: true, inverse_of: :invoices
   has_many :invoice_allocations, inverse_of: :invoice, dependent: :destroy
-  accepts_nested_attributes_for :invoice_allocations
+  accepts_nested_attributes_for :invoice_allocations, allow_destroy: true
   has_many :cf0925s, through: :invoice_allocations, autosave: true
 
   #-----------------------------------------------------------------------------

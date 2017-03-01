@@ -124,4 +124,24 @@ class InvoicesTest < PoltergeistTest
 
     assert_selector 'tr.test-cf0925-invoice-row', count: 1
   end
+
+  test 'assign invoice allocations and return to edit' do
+    fill_in_login(user = users(:invoice_with_rtp_matched))
+    assert_current_path '/'
+
+    child = user.funded_people.first
+    invoice = child.invoices.first
+
+    visit edit_invoice_path(invoice)
+    assert_selector 'tr.test-cf0925-invoice-row', count: 1
+    find('tr.test-cf0925-invoice-row').fill_in('Amount', with: 200)
+
+    click_link_or_button 'Save'
+
+    visit edit_invoice_path(invoice)
+    assert_selector 'tr.test-cf0925-invoice-row', count: 1
+    within find('tr.test-cf0925-invoice-row') do
+      assert_field('Amount', with: '200.00')
+    end
+  end
 end

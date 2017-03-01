@@ -99,16 +99,14 @@ class InvoicesController < ApplicationController
                                     :service_start,
                                     :service_end,
                                     :invoice_from,
-                                    # :service_provider_name,
-                                    # :agency_name,
-                                    # :supplier_name,
                                     :invoice_amount,
                                     :invoice_reference,
                                     :notes,
                                     invoice_allocations_attributes: [
                                       :cf0925_id,
-                                      :invoice_id,
                                       :cf0925_type,
+                                      :id,
+                                      :invoice_id,
                                       :amount
                                     ])
   end
