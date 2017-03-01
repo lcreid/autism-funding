@@ -1,4 +1,5 @@
 $(document).on('turbolinks:load', function() {
-  $('form').areYouSure();
-  // Does turbolinks do a proper page unload? No!
+  // The following doesn't work IE <= 8
+  // NOTE: Don't check for changes on the login page.
+  $('form:not(.new_user)').areYouSure();
 });
