@@ -45,6 +45,7 @@ $(document).on('turbolinks:load', function() {
 
   // Update Out of Pocket
   out_of_pocket_field = $('#invoice_out_of_pocket');
+  invoice_amount_field = $('#invoice_invoice_amount');
 
   function allocation_fields() {
     a = $('input').filter(function() {
@@ -63,11 +64,13 @@ $(document).on('turbolinks:load', function() {
     Math.max(0,
       Number($('#invoice_invoice_amount').val()) - allocated_spending);
       // console.log('About to set Out of Pocket to ' + out_of_pocket);
-      out_of_pocket_field.val(out_of_pocket);
+      out_of_pocket_field.val(out_of_pocket.toFixed(2));
     }
 
     function set_up_triggers() {
-      trigger_fields = $.merge(allocation_fields(), out_of_pocket_field);
+      trigger_fields = $.merge($.merge(allocation_fields(),
+                                       out_of_pocket_field),
+                               invoice_amount_field);
       // console.log('Setting up triggers on ' + trigger_fields);
       trigger_fields.change(function() {
         update_out_of_pocket();
