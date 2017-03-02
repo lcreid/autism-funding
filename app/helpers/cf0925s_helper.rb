@@ -202,7 +202,7 @@ module Cf0925sHelper
       a + form_row do
         f.text_field(:item_desp_3, column_width: 6, hide_label: true, placeholder: 'Item 3') +
           f.currency_field(:item_cost_3, column_width: 2, hide_label: true, lstrip: 'Supplier') +
-          f.currency_field(:item_total, column_width: 4, label: 'Total')
+          f.currency_field(:item_total, column_width: 4, label: 'Total', disabled: 'disabled')
       end
     end
   end

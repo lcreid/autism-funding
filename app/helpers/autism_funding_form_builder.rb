@@ -8,19 +8,17 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   # Returns a check_box tag
-  def check_box(method,options={},checked_value="1",unchecked_value="0")
+  def check_box(method, options = {}, checked_value = '1', unchecked_value = '0')
     process_width(options) { super }
   end
 
   # provides a set of radio buttons from a provided collection
-  def collection_radio_buttons(method, collection, value_method, text_method, options={}, &block)
+  def collection_radio_buttons(method, collection, value_method, text_method, options = {}, &block)
     process_width(options) { super }
   end
 
-
-
   # Provide a drop-down select from a provided collection
-  def collection_select(method, collection, value_method,text_method, options = {}, html_options = {})
+  def collection_select(method, collection, value_method, text_method, options = {}, html_options = {})
     process_width(options) { super }
   end
 
@@ -62,7 +60,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # I'm just guessing about the arguments to this one, since it's not a Rails
   # helper, but rather a Bootstrap Forms helper.
   # pmc: 20161110 - added default empty hash for options
-  def form_group(method, options={}, &block)
+  def form_group(method, options = {}, &block)
     process_width(options) { super }
   end
 
