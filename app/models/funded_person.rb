@@ -141,7 +141,6 @@ class FundedPerson < ApplicationRecord
 
       # puts "rtp start: #{rtp.service_provider_service_start} inv start: #{service_start}"
 
-
       if rtp.pay_part_a?(invoice_from, invoice_date, service_start, service_end)
         # puts 'matched provider or agency'
         a << Match.new('ServiceProvider', rtp)
@@ -204,7 +203,7 @@ class FundedPerson < ApplicationRecord
     # puts("Setting panel to #{state} for #{id}")
     logger.debug("Setting panel to #{state} for #{id}")
     # puts 'Set a panel to open' if state.to_sym == :open
-    user.set_open_panel(id) if state.to_sym == :open
+    user.set_open_panel(id, state)
     state
   end
 

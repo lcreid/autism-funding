@@ -35,6 +35,7 @@ module FundedPeopleHelper
   end
 
   def panel_state(funded_person)
+    # puts "funded_person.childs_panel_state: #{funded_person.childs_panel_state}"
     funded_person.childs_panel_state
   end
 end

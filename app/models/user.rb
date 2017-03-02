@@ -201,8 +201,8 @@ class User < ApplicationRecord
   end
 
   # Set the child ID of the open panel, since only one can be open
-  def set_open_panel(child_id)
-    set_preference(open_panel_child_id: child_id)
+  def set_open_panel(child_id, state)
+    set_preference(open_panel_child_id: state.to_sym == :open ? child_id : nil)
   end
 
   def set_preference(hash)
@@ -277,5 +277,4 @@ class User < ApplicationRecord
   def phone_record(type)
     phone_numbers.find { |x| x.phone_type == type } || phone_numbers.build(phone_type: type)
   end
-
 end
