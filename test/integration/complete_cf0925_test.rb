@@ -189,7 +189,7 @@ class CompleteCf0925Test < CapybaraTest
     assert_content 'Request to Pay'
     assert_content 'Ready to Print'
     assert_content 'service_provider_name'
-    assert_content '$3,000'
+    assert_content '$3,100'
 
     click_link 'Edit'
     assert_button 'Save'
