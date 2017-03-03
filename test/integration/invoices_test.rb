@@ -107,7 +107,7 @@ class InvoicesTest < PoltergeistTest
     assert_field 'Service Start', with: '2015-07-01'
     assert_field 'Service End', with: '2015-07-31'
     # assert_field '#invoice_out_of_pocket' # , visible: :all, with: 400
-    assert_field 'Out of Pocket', visible: :all, with: '400.00'
+    assert_field 'Out of Pocket', visible: :all, disabled: true, with: '400.00'
 
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
