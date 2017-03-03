@@ -125,8 +125,12 @@ class CompleteCf0925Test < CapybaraTest
     assert_title(Globals.site_name + ' All Children')
 
     child = all('.child .name', count: 2)
-    assert_equal 'Four Year Two-Kids', child[0].text
-    assert_equal 'Sixteen Year Two-Kids', child[1].text
+    assert_equal 'Four Year Two-Kids - ' \
+                 'click to view or hide details on funding/invoices',
+                 child[0].text
+    assert_equal 'Sixteen Year Two-Kids - ' \
+                 'click to view or hide details on funding/invoices',
+                 child[1].text
 
     within '.child:first-of-type' do
       # puts "WTF? WTF? #{find('.name').text}" unless find('.name').text == 'Four Year Two-Kids'
