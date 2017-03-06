@@ -203,7 +203,7 @@ class InvoicesTest < PoltergeistTest
 
     invoice = child.invoices.create(invoice_from: child.cf0925s.first.agency_name,
                          service_start: child.cf0925s.first.service_provider_service_start,
-                         invoice_amount: 2500)
+                         invoice_amount: 2250)
     user.reload
 
     visit edit_invoice_path(invoice)
@@ -220,12 +220,13 @@ class InvoicesTest < PoltergeistTest
                           allocation_row_1 : allocation_row_2
 
     within use_allocation_row do
+      find('.test-amount-available').assert_text number_to_currency(1250)
       fill_in('Amount', with: 2000)
-      assert_field('Amount', with: 750)
+      assert_field('Amount', with: 1250)
       find('.test-amount-available').assert_text number_to_currency(0)
     end
     assert_field('Out of Pocket',
                  disabled: true,
-                 with: '%.2f' % 1750)
+                 with: '%.2f' % 1000)
   end
 end
