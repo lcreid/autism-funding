@@ -58,11 +58,16 @@ $(document).on('turbolinks:load', function() {
   function update_out_of_pocket() {
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
       // console.log('update_out_of_pocket b: ' + b.value);
-      return b.value === undefined? a: a + Number(b.value);
+      return b.value === undefined? a: a + Number(b.value.replace(/[,$]/g, ""));
     }, 0);
+
+    // console.log('allocated_spending: ' + allocated_spending);
+    // console.log('invoice_amount (string): ' + $('#invoice_invoice_amount').val());
+    // console.log('invoice_amount: ' + Number($('#invoice_invoice_amount').val()));
+    // console.log('wtf: ' + Number($('#invoice_invoice_amount').val().replace(/,/g, "")) - allocated_spending);
     out_of_pocket =
-    Math.max(0,
-      Number($('#invoice_invoice_amount').val()) - allocated_spending);
+      Math.max(0,
+        Number($('#invoice_invoice_amount').val().replace(/[,$]/g, "")) - allocated_spending);
     // console.log('About to set Out of Pocket to ' + out_of_pocket);
     out_of_pocket_field.val(out_of_pocket.toFixed(2));
   }

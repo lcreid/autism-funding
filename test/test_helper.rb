@@ -11,7 +11,7 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
   def set_up_child
     user = User.new(email: 'a@example.com',
-                    password: 'alsdkfja;s',
+                    password: 'password',
                     name_first: 'a',
                     name_last: 'b',
                     address: 'a',

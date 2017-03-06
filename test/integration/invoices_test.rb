@@ -2,6 +2,7 @@ require 'test_helper'
 
 class InvoicesTest < PoltergeistTest
   include TestSessionHelpers
+  include ActionView::Helpers::NumberHelper
 
   test 'invoice with one valid RTP' do
     fill_in_login(users(:years))
@@ -107,7 +108,7 @@ class InvoicesTest < PoltergeistTest
     assert_field 'Service Start', with: '2015-07-01'
     assert_field 'Service End', with: '2015-07-31'
     # assert_field '#invoice_out_of_pocket' # , visible: :all, with: 400
-    assert_field 'Out of Pocket', visible: :all, disabled: true, with: '400.00'
+    assert_field 'Out of Pocket', disabled: true, with: '400.00'
 
     click_link_or_button 'Save'
     assert_content 'Invoice saved.'
@@ -143,5 +144,88 @@ class InvoicesTest < PoltergeistTest
     within find('tr.test-cf0925-invoice-row') do
       assert_field('Amount', with: '200.00')
     end
+  end
+
+  test 'javascript validations Issue #65' do
+    child = set_up_child
+    user = child.user
+    rtp_2000 = set_up_provider_agency_rtp(child, service_provider_service_amount: 2000)
+    rtp_3000 = set_up_provider_agency_rtp(child, service_provider_service_amount: 3000)
+    invoice = child.invoices.build(invoice_from: child.cf0925s.first.agency_name,
+                         service_start: child.cf0925s.first.service_provider_service_start,
+                         invoice_amount: 1500)
+    user.save!
+    user.reload
+
+    assert_equal 2, child.cf0925s.size
+    assert_equal 1, child.invoices.size
+    assert_equal 2, child.invoices.first.match.size, 'No match found'
+
+    fill_in_login(user)
+    assert_current_path '/'
+
+    visit edit_invoice_path(invoice)
+    # Filling in something to force a match.
+    fill_in 'Service End',
+            with: child.cf0925s.first.service_provider_service_end
+    assert_selector 'tr.test-cf0925-invoice-row', count: 2
+
+    # Set up some useful variables
+    allocation_row_1 = find('tr.test-cf0925-invoice-row:first-of-type')
+    allocation_row_2 = find('tr.test-cf0925-invoice-row:last-of-type')
+
+    # Test that triggers no corrections
+    within allocation_row_1 do
+      fill_in('Amount', with: invoice.invoice_amount / 2)
+      assert_field('Amount', with: invoice.invoice_amount / 2)
+      find('.test-amount-available').assert_text number_to_currency(child.cf0925s.first.service_provider_service_amount - invoice.invoice_amount / 2)
+    end
+    assert_field('Out of Pocket',
+                 disabled: true,
+                 with: '%.2f' % (invoice.invoice_amount / 2))
+
+    # Amount allocated greater than invoice amount minus other allocation
+    # Depends on above
+    within allocation_row_2 do
+      fill_in('Amount', with: invoice.invoice_amount / 2 + 1)
+      assert_field('Amount', with: (invoice.invoice_amount / 2))
+      find('.test-amount-available').assert_text number_to_currency(child.cf0925s.last.service_provider_service_amount - invoice.invoice_amount / 2)
+    end
+    assert_field('Out of Pocket',
+                 disabled: true,
+                 with: '0.00')
+
+    # Amount allocated greater than amount available after other invoices
+    # Need to make another invoice.
+
+    click_link_or_button 'Save'
+    assert_current_path '/'
+
+    invoice = child.invoices.create(invoice_from: child.cf0925s.first.agency_name,
+                         service_start: child.cf0925s.first.service_provider_service_start,
+                         invoice_amount: 2500)
+    user.reload
+
+    visit edit_invoice_path(invoice)
+    # Filling in something to force a match.
+    fill_in 'Service End',
+            with: child.cf0925s.first.service_provider_service_end
+    assert_selector 'tr.test-cf0925-invoice-row', count: 2
+
+    # Set up some useful variables
+    allocation_row_1 = find('tr.test-cf0925-invoice-row:first-of-type')
+    allocation_row_2 = find('tr.test-cf0925-invoice-row:last-of-type')
+
+    use_allocation_row = allocation_row_1.find('td:nth-of-type(4)').text == "$2,000.00" ?
+                          allocation_row_1 : allocation_row_2
+
+    within use_allocation_row do
+      fill_in('Amount', with: 2000)
+      assert_field('Amount', with: 750)
+      find('.test-amount-available').assert_text number_to_currency(0)
+    end
+    assert_field('Out of Pocket',
+                 disabled: true,
+                 with: '%.2f' % 1750)
   end
 end
