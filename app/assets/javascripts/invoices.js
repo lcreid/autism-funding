@@ -63,19 +63,19 @@ $(document).on('turbolinks:load', function() {
     out_of_pocket =
     Math.max(0,
       Number($('#invoice_invoice_amount').val()) - allocated_spending);
-      // console.log('About to set Out of Pocket to ' + out_of_pocket);
-      out_of_pocket_field.val(out_of_pocket.toFixed(2));
-    }
+    // console.log('About to set Out of Pocket to ' + out_of_pocket);
+    out_of_pocket_field.val(out_of_pocket.toFixed(2));
+  }
 
-    function set_up_triggers() {
-      trigger_fields = $.merge($.merge(allocation_fields(),
-                                       out_of_pocket_field),
-                               invoice_amount_field);
-      // console.log('Setting up triggers on ' + trigger_fields);
-      trigger_fields.change(function() {
-        update_out_of_pocket();
-      });
-    }
+  function set_up_triggers() {
+    trigger_fields = $.merge($.merge(allocation_fields(),
+                                     out_of_pocket_field),
+                             invoice_amount_field);
+    // console.log('Setting up triggers on ' + trigger_fields);
+    trigger_fields.change(function() {
+      update_out_of_pocket();
+    });
+  }
 
   if (document.getElementById('invoice')) {
     $.map(attributes_of_interest, function(id, key) {
