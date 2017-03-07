@@ -58,7 +58,7 @@ $(document).on('turbolinks:load', function() {
   function update_out_of_pocket() {
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
       // console.log('update_out_of_pocket b: ' + b.value);
-      return b.value === undefined? a: a + Number(b.value.replace(/[,$]/g, ""));
+      return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
     }, 0);
 
     // console.log('allocated_spending: ' + allocated_spending);

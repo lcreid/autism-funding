@@ -11,7 +11,7 @@ $(document).on('turbolinks:load', function() {
       // console.log('Updating the item total: ' + $('#cf0925_item_total').val());
       $('#cf0925_item_total').val($(item_ids).toArray().reduce(function(a, b) {
         // console.log('a, b: ', + a + ', ' + b.value);
-        return b.value === undefined? a: a + Number(b.value);
+        return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
       }, 0).toFixed(2));
       // console.log('Updated the item total: ' + $('#cf0925_item_total').val());
     };
