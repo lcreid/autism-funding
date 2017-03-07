@@ -149,11 +149,15 @@ class InvoicesTest < PoltergeistTest
   test 'javascript validations Issue #65' do
     child = set_up_child
     user = child.user
-    rtp_2000 = set_up_provider_agency_rtp(child, service_provider_service_amount: 2000)
-    rtp_3000 = set_up_provider_agency_rtp(child, service_provider_service_amount: 3000)
-    invoice = child.invoices.build(invoice_from: child.cf0925s.first.agency_name,
-                         service_start: child.cf0925s.first.service_provider_service_start,
-                         invoice_amount: 1500)
+    rtp_2000 = set_up_provider_agency_rtp(child,
+                                          service_provider_service_amount: 2000)
+    rtp_3000 = set_up_provider_agency_rtp(child,
+                                          service_provider_service_amount: 3000)
+    invoice = child
+              .invoices
+              .build(invoice_from: rtp_2000.agency_name,
+                     service_start: rtp_2000.service_provider_service_start,
+                     invoice_amount: 1500)
     user.save!
     user.reload
 
@@ -166,30 +170,42 @@ class InvoicesTest < PoltergeistTest
 
     visit edit_invoice_path(invoice)
     # Filling in something to force a match.
+    # This is a hack to make the way we set up the test data work.
     fill_in 'Service End',
-            with: child.cf0925s.first.service_provider_service_end
+            with: rtp_2000.service_provider_service_end
     assert_selector 'tr.test-cf0925-invoice-row', count: 2
 
     # Set up some useful variables
-    allocation_row_1 = find('tr.test-cf0925-invoice-row:first-of-type')
-    allocation_row_2 = find('tr.test-cf0925-invoice-row:last-of-type')
+    (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
     # Test that triggers no corrections
-    within allocation_row_1 do
+    within allocation_2000 do
+      find('.test-amount-available')
+        .assert_text number_to_currency(rtp_2000
+          .service_provider_service_amount, unit: '')
       fill_in('Amount', with: invoice.invoice_amount / 2)
       assert_field('Amount', with: invoice.invoice_amount / 2)
-      find('.test-amount-available').assert_text number_to_currency(child.cf0925s.first.service_provider_service_amount - invoice.invoice_amount / 2)
+      find('.test-amount-available')
+        .assert_text number_to_currency(rtp_2000
+          .service_provider_service_amount - invoice.invoice_amount / 2,
+                                        unit: '')
     end
     assert_field('Out of Pocket',
                  disabled: true,
-                 with: '%.2f' % (invoice.invoice_amount / 2))
+                 with: number_to_currency(invoice.invoice_amount / 2, unit: ''))
 
     # Amount allocated greater than invoice amount minus other allocation
     # Depends on above
-    within allocation_row_2 do
+    within allocation_3000 do
+      find('.test-amount-available')
+        .assert_text number_to_currency(rtp_3000
+          .service_provider_service_amount, unit: '')
       fill_in('Amount', with: invoice.invoice_amount / 2 + 1)
       assert_field('Amount', with: (invoice.invoice_amount / 2))
-      find('.test-amount-available').assert_text number_to_currency(child.cf0925s.last.service_provider_service_amount - invoice.invoice_amount / 2)
+      find('.test-amount-available')
+        .assert_text number_to_currency(rtp_3000
+          .service_provider_service_amount - invoice.invoice_amount / 2,
+                                        unit: '')
     end
     assert_field('Out of Pocket',
                  disabled: true,
@@ -201,25 +217,24 @@ class InvoicesTest < PoltergeistTest
     click_link_or_button 'Save'
     assert_current_path '/'
 
-    invoice = child.invoices.create(invoice_from: child.cf0925s.first.agency_name,
-                         service_start: child.cf0925s.first.service_provider_service_start,
-                         invoice_amount: 2250)
+    invoice = child
+              .invoices
+              .create(invoice_from: rtp_2000.agency_name,
+                      service_start: rtp_2000.service_provider_service_start,
+                      invoice_amount: 2250)
     user.reload
 
     visit edit_invoice_path(invoice)
     # Filling in something to force a match.
     fill_in 'Service End',
-            with: child.cf0925s.first.service_provider_service_end
+            with: rtp_2000.service_provider_service_end
     assert_selector 'tr.test-cf0925-invoice-row', count: 2
 
     # Set up some useful variables
-    allocation_row_1 = find('tr.test-cf0925-invoice-row:first-of-type')
-    allocation_row_2 = find('tr.test-cf0925-invoice-row:last-of-type')
 
-    use_allocation_row = allocation_row_1.find('td:nth-of-type(4)').text == "$2,000.00" ?
-                          allocation_row_1 : allocation_row_2
+    (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
-    within use_allocation_row do
+    within allocation_2000 do
       find('.test-amount-available').assert_text number_to_currency(1250)
       fill_in('Amount', with: 2000)
       assert_field('Amount', with: 1250)
@@ -227,6 +242,18 @@ class InvoicesTest < PoltergeistTest
     end
     assert_field('Out of Pocket',
                  disabled: true,
-                 with: '%.2f' % 1000)
+                 with: number_to_currency(1000, unit: ''))
+  end
+
+  private
+
+  def sort_out_allocation_rows
+    allocation_row_1 = find('tr.test-cf0925-invoice-row:first-of-type')
+    allocation_row_2 = find('tr.test-cf0925-invoice-row:last-of-type')
+    if allocation_row_1.find('td:nth-of-type(4)').text == '$2,000.00'
+      return allocation_row_1, allocation_row_2
+    else
+      return allocation_row_2, allocation_row_1
+    end
   end
 end
