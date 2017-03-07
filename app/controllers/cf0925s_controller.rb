@@ -62,12 +62,14 @@ class Cf0925sController < ApplicationController
     @cf0925.allocate
     # puts "#{__LINE__}: #{@cf0925.invoice_allocations.inspect}"
 
+    notice = 'Request saved.'
+    notice += ' Parent data updated.' if user.changed?
+
     # I didn't need to save addresses explicitly here.
     if @cf0925.save_with_user
       # Get the missing fields, aka help info, for the object
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
-      # TODO: why can't I just render :edit here?
-      redirect_to home_index_path, notice: 'Request saved.'
+      redirect_to home_index_path, notice: notice
     else
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
@@ -87,10 +89,13 @@ class Cf0925sController < ApplicationController
 
     @cf0925.allocate
 
+    notice = 'Request updated.'
+    notice += ' Parent data updated.' if user.changed?
+
     # I didn't need to save addresses explicitly here.
     if @cf0925.save_with_user
       @cf0925.funded_person.selected_fiscal_year = @cf0925.fiscal_year if @cf0925.fiscal_year
-      redirect_to home_index_path, notice: 'Request updated.'
+      redirect_to home_index_path, notice: notice
     else
       # Get the missing fields, aka help info, for the object
       @cf0925.printable?
