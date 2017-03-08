@@ -55,31 +55,51 @@ $(document).on('turbolinks:load', function() {
     return a;
   }
 
-  function update_out_of_pocket() {
+  function update_out_of_pocket(e) {
+    console.log('Trigger fired at 59.');
+    console.log('e: ' + e);
+    console.log('e.target: ' + e.target);
+    console.log('e.target.id: ' + e.target.id);
+    console.log('e.target.value: ' + e.target.value);
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
       // console.log('update_out_of_pocket b: ' + b.value);
       return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
     }, 0);
 
-    // console.log('allocated_spending: ' + allocated_spending);
-    // console.log('invoice_amount (string): ' + $('#invoice_invoice_amount').val());
-    // console.log('invoice_amount: ' + Number($('#invoice_invoice_amount').val()));
-    // console.log('wtf: ' + Number($('#invoice_invoice_amount').val().replace(/,/g, "")) - allocated_spending);
-    out_of_pocket =
-      Math.max(0,
-        Number($('#invoice_invoice_amount').val().replace(/[,$]/g, "")) - allocated_spending);
-    // console.log('About to set Out of Pocket to ' + out_of_pocket);
+    allocation_on_changed_field = e.target.value;
+    invoice_amount = Number($('#invoice_invoice_amount').val().replace(/[,$]/g, ""));
+
+    allocated_spending_other_fields = allocated_spending - allocation_on_changed_field;
+    available_for_this_invoice = invoice_amount - allocated_spending_other_fields;
+
+    if (available_for_this_invoice < allocation_on_changed_field) {
+      e.target.value = available_for_this_invoice.toFixed(2);
+      console.log('Just set the target to: ' + e.target.value);
+      out_of_pocket = 0;
+    } else {
+      out_of_pocket = Math.max(0, invoice_amount - allocated_spending);
+    }
+    console.log('Setting out_of_pocket: ' + out_of_pocket.toFixed(2));
     out_of_pocket_field.val(out_of_pocket.toFixed(2));
   }
 
+  function update_out_of_pocket_for_invoice_amount_change() {
+    console.log('into update_out_of_pocket_for_invoice_amount_change');
+    allocation_fields().change();
+    console.log('out of update_out_of_pocket_for_invoice_amount_change');
+  }
+
   function set_up_triggers() {
-    trigger_fields = $.merge($.merge(allocation_fields(),
-                                     out_of_pocket_field),
-                             invoice_amount_field);
+    // trigger_fields = $.merge($.merge(allocation_fields(),
+    //                                  out_of_pocket_field));
     // console.log('Setting up triggers on ' + trigger_fields);
-    trigger_fields.change(function() {
-      update_out_of_pocket();
+    allocation_fields().change(function(e) {
+      console.log('Trigger fired at 91ish.');
+      console.log(e.target);
+      update_out_of_pocket(e);
     });
+
+    invoice_amount_field.change(update_out_of_pocket_for_invoice_amount_change);
   }
 
   if (document.getElementById('invoice')) {
@@ -111,7 +131,7 @@ $(document).on('turbolinks:load', function() {
           // $(msg).appendTo('.cf0925-list-replace');
           $('.cf0925-list-replace').append(msg);
           // console.log('Finished updating select');
-          update_out_of_pocket();
+          update_out_of_pocket_for_invoice_amount_change();
           set_up_triggers();
         }).fail(function(xhr, textStatus, errorThrown) {
           if (xhr.status !== 0) {
