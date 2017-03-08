@@ -30,6 +30,18 @@ class InvoiceAllocation < ApplicationRecord
 
   alias eql? ==
 
+  ##
+  # Amount available on the RTP for this instance. In other words, the amount
+  # requested for this type of allocation, minus all the allocations. Has to
+  # take into account the type of allocation.
+  def amount_available
+    requested_amount / 2
+    requested_amount - cf0925
+                       .invoice_allocations
+                       .select { |ia| ia.cf0925_type == cf0925_type && amount }
+                       .sum(&:amount)
+  end
+
   def cf0925_type=(other)
     super
     extend_by_type

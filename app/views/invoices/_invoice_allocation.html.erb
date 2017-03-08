@@ -10,8 +10,7 @@
     <%= number_to_currency(invoice_allocation.requested_amount) %>
   </td>
   <td class="text-right test-amount-available">
-    <%#= number_to_currency(???.amount_available) %>
-    <%= number_to_currency(invoice_allocation.requested_amount / 2) %>
+    <%= number_to_currency(invoice_allocation.amount_available) %>
   </td>
   <td class="text-right">
     <%= invoice_allocation_form.currency_field(:amount, hide_label: true) %>
