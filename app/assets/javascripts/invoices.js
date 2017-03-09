@@ -57,12 +57,14 @@ $(document).on('turbolinks:load', function() {
 
   function update_invoice_allocation_amount(e) {
     // console.log('Trigger fired at 59.');
-    // console.log('e: ' + e);
-    // console.log('e.target: ' + e.target);
-    // console.log('e.target.id: ' + e.target.id);
-    // console.log('e.target.value: ' + e.target.value);
+    console.log('e: ' + e);
+    console.log('e.target: ' + e.target);
+    console.log('e.target.id: ' + e.target.id);
+    console.log('e.target.value: ' + e.target.value);
+    console.log('$(e.target).parent(): ' + $(e.target).parent());
     // TODO: Refactor allocated_spending to a function
-    
+
+    // Limit allocation to the invoice amount.
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
       // console.log('update_out_of_pocket b: ' + b.value);
       return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
@@ -74,10 +76,21 @@ $(document).on('turbolinks:load', function() {
     allocated_spending_other_fields = allocated_spending - allocation_on_changed_field;
     available_for_this_invoice = invoice_amount - allocated_spending_other_fields;
 
+    // Limit allocation to the available from RTP.
+    console.log("$(e.target).parent().find('.requested-minus-other-invoices')" + $(e.target).parent().find('.requested-minus-other-invoices'));
+    console.log("$(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'): " +
+                $(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'));
+    requested_minus_other_invoices = Number($(e.target).parent().find('.requested-minus-other-invoices').val().replace(/[,$]/g, ""));
+    available_for_this_invoice = Math.min(available_for_this_invoice, requested_minus_other_invoices);
+    // Set value.
     if (available_for_this_invoice < allocation_on_changed_field) {
       e.target.value = available_for_this_invoice.toFixed(2);
       console.log('Just set the target to: ' + e.target.value);
     }
+
+    // Set amount available
+    $(e.target).parent().find('.amount_available').text(requested_minus_other_invoices - e.target.value);
+    console.log('Just set amount available of target to: ' + requested_minus_other_invoices - e.target.value);
   }
 
   function update_out_of_pocket() {
