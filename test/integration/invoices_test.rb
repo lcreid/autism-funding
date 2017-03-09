@@ -187,14 +187,13 @@ class InvoicesTest < PoltergeistTest
     # Test that triggers no corrections
     within allocation_2000 do
       find('.amount-available')
-        .assert_text number_to_currency(rtp_2000
-          .service_provider_service_amount, unit: '')
+        .assert_text '%.2f' % (rtp_2000
+          .service_provider_service_amount)
       fill_in('Amount', with: invoice.invoice_amount / 2)
       assert_field('Amount', with: invoice.invoice_amount / 2)
       find('.amount-available')
-        .assert_text number_to_currency(rtp_2000
-          .service_provider_service_amount - invoice.invoice_amount / 2,
-                                        unit: '')
+        .assert_text '%.2f' % (rtp_2000
+          .service_provider_service_amount - invoice.invoice_amount / 2)
     end
     assert_field('Out of Pocket',
                  disabled: true,
@@ -204,14 +203,13 @@ class InvoicesTest < PoltergeistTest
     # Depends on above
     within allocation_3000 do
       find('.amount-available')
-        .assert_text number_to_currency(rtp_3000
-          .service_provider_service_amount, unit: '')
+        .assert_text '%.2f' % (rtp_3000
+          .service_provider_service_amount)
       fill_in('Amount', with: invoice.invoice_amount / 2 + 1)
       assert_field('Amount', with: number_to_currency(invoice.invoice_amount / 2, unit: ''))
       find('.amount-available')
-        .assert_text number_to_currency(rtp_3000
-          .service_provider_service_amount - invoice.invoice_amount / 2,
-                                        unit: '')
+        .assert_text '%.2f' % (rtp_3000
+          .service_provider_service_amount - invoice.invoice_amount / 2)
     end
     assert_field('Out of Pocket',
                  disabled: true,
@@ -226,11 +224,15 @@ class InvoicesTest < PoltergeistTest
     invoice = child
               .invoices
               .create(invoice_from: rtp_2000.agency_name,
-                      service_start: rtp_2000.service_provider_service_start,
+  #                    service_start: rtp_2000.service_provider_service_start,
                       invoice_amount: 2250)
     user.reload
+    puts "rtp_2000.invoice_allocations.first.amount_available: #{rtp_2000.invoice_allocations.first.amount_available}"
+    puts "rtp_2000.invoice_allocations.last.amount_available: #{rtp_2000.invoice_allocations.last.amount_available}"
+puts "invoice.match.size: #{invoice.match.size}"
 
     visit edit_invoice_path(invoice)
+
     # Filling in something to force a match.
     fill_in 'Service End',
             with: rtp_2000.service_provider_service_end
@@ -241,10 +243,10 @@ class InvoicesTest < PoltergeistTest
     (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
     within allocation_2000 do
-      find('.amount-available').assert_text number_to_currency(1250)
+      find('.amount-available').assert_text '%.2f' % (1250)
       fill_in('Amount', with: 2000)
       assert_field('Amount', with: 1250)
-      find('.amount-available').assert_text number_to_currency(0)
+      find('.amount-available').assert_text '%.2f' % (0)
     end
     assert_field('Out of Pocket',
                  disabled: true,

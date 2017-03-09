@@ -55,14 +55,35 @@ $(document).on('turbolinks:load', function() {
     return a;
   }
 
+  function get_cf0925_invoice_row(e) {
+    wdt = 100;
+    invoice_row = $(e.target);
+    while (wdt > 0 && ! invoice_row.hasClass('test-cf0925-invoice-row') )
+      {
+      invoice_row = invoice_row.parent();
+      wdt--;
+      }
+    console.log(invoice_row.hasClass('test-cf0925-invoice-row'));
+    return(invoice_row);
+
+  }
+
   function update_invoice_allocation_amount(e) {
     // console.log('Trigger fired at 59.');
     console.log('e: ' + e);
     console.log('e.target: ' + e.target);
     console.log('e.target.id: ' + e.target.id);
     console.log('e.target.value: ' + e.target.value);
-    console.log('$(e.target).parent(): ' + $(e.target).parent());
+    console.log('$(e.target).parent(): ' + $(e.target).parent().html());
     // TODO: Refactor allocated_spending to a function
+
+    // Get the cf0925-invoice_row JQuery object
+    invoice_row = get_cf0925_invoice_row(e);
+    console.log('Got back from get it ..' + invoice_row.length);
+    console.log('invoice_row.find(.amount-available).text()' + invoice_row.find('.amount-available').text());
+    amount_available = Number(invoice_row.find('.amount-available').text().replace(/[,$]/g, ""));
+    requested_minus_other_invoices = Number(invoice_row.find('.requested-minus-other-invoices').val().replace(/[,$]/g, ""));
+    console.log('Amount Available: ' + amount_available + ' .. requested minus: ' + requested_minus_other_invoices)
 
     // Limit allocation to the invoice amount.
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
@@ -75,12 +96,12 @@ $(document).on('turbolinks:load', function() {
 
     allocated_spending_other_fields = allocated_spending - allocation_on_changed_field;
     available_for_this_invoice = invoice_amount - allocated_spending_other_fields;
-
+console.log('allocation_on_changed_field: ' + allocation_on_changed_field);
     // Limit allocation to the available from RTP.
-    console.log("$(e.target).parent().find('.requested-minus-other-invoices')" + $(e.target).parent().find('.requested-minus-other-invoices'));
-    console.log("$(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'): " +
-                $(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'));
-    requested_minus_other_invoices = Number($(e.target).parent().find('.requested-minus-other-invoices').val().replace(/[,$]/g, ""));
+    // console.log("$(e.target).parent().find('.requested-minus-other-invoices')" + $(e.target).parent().find('.requested-minus-other-invoices'));
+    // console.log("$(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'): " +
+    //             $(e.target).parent().find('.requested-minus-other-invoices').attr('nodeType'));
+    // requested_minus_other_invoices = Number($(e.target).parent().find('.requested-minus-other-invoices').val().replace(/[,$]/g, ""));
     available_for_this_invoice = Math.min(available_for_this_invoice, requested_minus_other_invoices);
     // Set value.
     if (available_for_this_invoice < allocation_on_changed_field) {
@@ -88,9 +109,24 @@ $(document).on('turbolinks:load', function() {
       console.log('Just set the target to: ' + e.target.value);
     }
 
+
+
     // Set amount available
-    $(e.target).parent().find('.amount_available').text(requested_minus_other_invoices - e.target.value);
-    console.log('Just set amount available of target to: ' + requested_minus_other_invoices - e.target.value);
+    // $(e.target).parent().find('.amount_available').text(requested_minus_other_invoices - e.target.value);
+    console.log('requested_minus_other_invoices: ' + requested_minus_other_invoices);
+    console.log('available_for_this_invoice: ' + available_for_this_invoice);
+    amount_available = requested_minus_other_invoices - e.target.value;
+//     amount_available = 234;
+     invoice_row.find('.amount-available').text(amount_available.toFixed(2))
+//     console.log('html 118ish: ' + invoice_row.find('.amount_available').html());
+//     amount_available1 = Number(invoice_row.find('.amount_available').text());
+//     invoice_row.find('.amount_available').text('111.23');
+//     amount_available2 = Number(invoice_row.find('.amount_available').text());
+//     console.log('TEXT 120ish: ' + invoice_row.find('.amount_available').text());
+//     console.log('Available 1: ' + amount_available1)
+//     console.log('Available 2: ' + amount_available2)
+// console.log(invoice_row.html());
+    console.log('Just set amount available of target to: ' + amount_available);
   }
 
   function update_out_of_pocket() {
