@@ -111,7 +111,7 @@ inv_valtest_complete:
   invoice_from: service_provider_name
 
 invoice_with_rtp_matched:
-  invoice_amount:
+  invoice_amount: 200
   invoice_date: '2017-03-01'
   notes:
   service_end: '2017-02-28'

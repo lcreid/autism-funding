@@ -35,7 +35,6 @@ class InvoiceAllocation < ApplicationRecord
   # requested for this type of allocation, minus all the allocations. Has to
   # take into account the type of allocation.
   def amount_available
-    requested_amount / 2
     requested_amount - cf0925
                        .invoice_allocations
                        .select { |ia| ia.cf0925_type == cf0925_type && amount }
@@ -45,6 +44,10 @@ class InvoiceAllocation < ApplicationRecord
   def cf0925_type=(other)
     super
     extend_by_type
+  end
+
+  def requested_minus_other_invoices
+    amount_available - (amount || 0)
   end
 
   private

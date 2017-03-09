@@ -78,7 +78,7 @@ class InvoicesTest < PoltergeistTest
     # TODO: Make sure I've retrieved the right ones.
   end
 
-  test 'invoice with no valid RTPs' do
+  test 'invoice with no matching RTPs' do
     fill_in_login(users(:years))
     child = funded_people(:two_fiscal_years)
 
@@ -108,6 +108,7 @@ class InvoicesTest < PoltergeistTest
     assert_field 'Service Start', with: '2015-07-01'
     assert_field 'Service End', with: '2015-07-31'
     # assert_field '#invoice_out_of_pocket' # , visible: :all, with: 400
+    puts "Out of Pocket: #{find_field('Out of Pocket', disabled: true).value}"
     assert_field 'Out of Pocket', disabled: true, with: '400.00'
 
     click_link_or_button 'Save'
@@ -135,13 +136,16 @@ class InvoicesTest < PoltergeistTest
 
     visit edit_invoice_path(invoice)
     assert_selector 'tr.test-cf0925-invoice-row', count: 1
-    find('tr.test-cf0925-invoice-row').fill_in('Amount', with: 200)
+    within find('tr.test-cf0925-invoice-row') do
+      fill_in('Amount', with: 200)
+    end
 
     click_link_or_button 'Save'
 
     visit edit_invoice_path(invoice)
     assert_selector 'tr.test-cf0925-invoice-row', count: 1
     within find('tr.test-cf0925-invoice-row') do
+      # puts "Invoice allocation amount 149ish: #{find_field('Amount').value}"
       assert_field('Amount', with: '200.00')
     end
   end
@@ -182,15 +186,15 @@ class InvoicesTest < PoltergeistTest
 
     # Test that triggers no corrections
     within allocation_2000 do
-      find('.test-amount-available')
+      find('.amount-available')
         .assert_text number_to_currency(rtp_2000
           .service_provider_service_amount, unit: '')
       fill_in('Amount', with: invoice.invoice_amount / 2)
       assert_field('Amount', with: invoice.invoice_amount / 2)
-      # find('.test-amount-available')
-      #   .assert_text number_to_currency(rtp_2000
-      #     .service_provider_service_amount - invoice.invoice_amount / 2,
-      #                                   unit: '')
+      find('.amount-available')
+        .assert_text number_to_currency(rtp_2000
+          .service_provider_service_amount - invoice.invoice_amount / 2,
+                                        unit: '')
     end
     assert_field('Out of Pocket',
                  disabled: true,
@@ -199,12 +203,12 @@ class InvoicesTest < PoltergeistTest
     # Amount allocated greater than invoice amount minus other allocation
     # Depends on above
     within allocation_3000 do
-      find('.test-amount-available')
+      find('.amount-available')
         .assert_text number_to_currency(rtp_3000
           .service_provider_service_amount, unit: '')
       fill_in('Amount', with: invoice.invoice_amount / 2 + 1)
       assert_field('Amount', with: number_to_currency(invoice.invoice_amount / 2, unit: ''))
-      find('.test-amount-available')
+      find('.amount-available')
         .assert_text number_to_currency(rtp_3000
           .service_provider_service_amount - invoice.invoice_amount / 2,
                                         unit: '')
@@ -237,14 +241,23 @@ class InvoicesTest < PoltergeistTest
     (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
     within allocation_2000 do
-      find('.test-amount-available').assert_text number_to_currency(1250)
+      find('.amount-available').assert_text number_to_currency(1250)
       fill_in('Amount', with: 2000)
       assert_field('Amount', with: 1250)
-      find('.test-amount-available').assert_text number_to_currency(0)
+      find('.amount-available').assert_text number_to_currency(0)
     end
     assert_field('Out of Pocket',
                  disabled: true,
                  with: number_to_currency(1000, unit: ''))
+
+    within allocation_2000 do
+      fill_in('Amount', with: 1249)
+      assert_field('Amount', with: 1249)
+      find('.amount-available').assert_text number_to_currency(1)
+    end
+    assert_field('Out of Pocket',
+                 disabled: true,
+                 with: number_to_currency(1001, unit: ''))
   end
 
   private

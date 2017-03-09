@@ -9,7 +9,7 @@
   <td class="text-right">
     <%= number_to_currency(invoice_allocation.requested_amount) %>
   </td>
-  <td class="text-right test-amount-available">
+  <td class="text-right amount-available">
     <%= number_to_currency(invoice_allocation.amount_available) %>
   </td>
   <td class="text-right">
@@ -18,5 +18,7 @@
     <%= invoice_allocation_form.hidden_field(:cf0925_type) %>
     <%= invoice_allocation_form.hidden_field(:invoice_id) %>
     <%= invoice_allocation_form.hidden_field(:id) %>
+    <%= invoice_allocation_form.hidden_field(:requested_minus_other_invoices,
+                                             class: 'requested-minus-other-invoices') %>
   </td>
 </tr>
