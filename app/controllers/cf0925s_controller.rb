@@ -1,21 +1,22 @@
 class Cf0925sController < ApplicationController
   # default_form_builder AugmentedBootstrapForms
+  around_action :catch_data_not_found
 
   def index
+    # FIXME: This is plain wrong. Need to restrict to current user.
     @cf0925s = Cf0925.all
   end
 
   def show
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
 
     respond_to do |format|
-      format.html
       format.pdf do
         @cf0925.generate_pdf
         send_file @cf0925.pdf_output_file,
                   disposition: :inline,
                   type: :pdf,
-                  filename: @cf0925client_pdf_file_name
+                  filename: @cf0925.client_pdf_file_name
       end
     end
   end
@@ -113,6 +114,12 @@ class Cf0925sController < ApplicationController
 
   private
 
+  def catch_data_not_found
+    yield
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  end
+
   def cf0925_params
     params
       .require(:cf0925)
@@ -120,6 +127,7 @@ class Cf0925sController < ApplicationController
   end
 
   def user_params
+    # puts "PARAMS: #{params.inspect}"
     params[:cf0925][:funded_person_attributes]
       .require(:user_attributes)
       .permit(

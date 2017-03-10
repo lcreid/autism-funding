@@ -32,6 +32,8 @@ class User < ApplicationRecord
                                   attributes[:phone_number].blank?
                                 }
 
+  has_many :cf0925s, through: :funded_people
+
   validate :validate_phone_numbers
 
   validate :validate_at_least_one_phone_number, on: :printable
