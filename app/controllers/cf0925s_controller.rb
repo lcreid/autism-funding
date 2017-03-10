@@ -1,6 +1,6 @@
 class Cf0925sController < ApplicationController
   # default_form_builder AugmentedBootstrapForms
-  around_action :catch_data_not_found
+  # around_action :catch_data_not_found
 
   def index
     # FIXME: This is plain wrong. Need to restrict to current user.
@@ -29,7 +29,7 @@ class Cf0925sController < ApplicationController
     @cf0925 = Cf0925.new
     @cf0925.funded_person =
       @funded_person =
-        FundedPerson.find(params[:funded_person_id])
+        current_user.funded_people.find(params[:funded_person_id])
 
     copy_parent_to_form
     copy_child_to_form
@@ -40,7 +40,7 @@ class Cf0925sController < ApplicationController
   end
 
   def edit
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     # puts @cf0925.funded_person.inspect
     # Get the missing fields, aka help info, for the object
     @cf0925.printable?
@@ -52,7 +52,7 @@ class Cf0925sController < ApplicationController
     # pp(params.as_json)
     # pp(cf0925_params.as_json)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @funded_person = FundedPerson.find(params[:funded_person_id])
+    @funded_person = current_user.funded_people.find(params[:funded_person_id])
     @cf0925 = @funded_person.cf0925s.build(cf0925_params)
 
     user = @cf0925.funded_person.user
@@ -81,7 +81,7 @@ class Cf0925sController < ApplicationController
   def update
     # pp(params.as_json)
     # pp(cf0925_params.as_json)
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.update(cf0925_params)
     user = @cf0925.funded_person.user
     user.assign_attributes(user_params)
@@ -106,7 +106,7 @@ class Cf0925sController < ApplicationController
 
   def destroy
     # FIXME: Check that the user owns the record to be deleted.
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.destroy
 
     redirect_to home_index_path, notice: 'Request deleted.'

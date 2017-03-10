@@ -54,26 +54,27 @@ class SpoofedUrls < ActionDispatch::IntegrationTest
   end
 
   test "user can't update other users' RTPs" do
-    put cf0925_path(@other_rtp),
-        params: {
-          cf0925: @other_rtp.attributes.merge(
-            funded_person_attributes:
-             @other_child.attributes.merge(
-               user_attributes:
-                 @logged_in_user.attributes))
-        }
-    # Say :bad_request instead of leaking that it's an authorization problem.
-    assert_response :bad_request
+    assert_raises ActiveRecord::RecordNotFound do
+      put cf0925_path(@other_rtp),
+          params: {
+            cf0925: @other_rtp.attributes.merge(
+              funded_person_attributes:
+               @other_child.attributes.merge(
+                 user_attributes:
+                   @logged_in_user.attributes))
+          }
+    end
   end
 
   test "user can't create RTPs for others' children" do
-    get new_funded_person_cf0925_path(@other_child)
-    # Say :bad_request instead of leaking that it's an authorization problem.
-    assert_response :bad_request
+    assert_raises ActiveRecord::RecordNotFound do
+      get new_funded_person_cf0925_path(@other_child)
+    end
   end
 
   test "user can't delete other users' RTPs" do
-    delete cf0925_path(@other_rtp)
-    assert_response :bad_request
+    assert_raises ActiveRecord::RecordNotFound do
+      delete cf0925_path(@other_rtp)
+    end
   end
 end
