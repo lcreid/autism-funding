@@ -35,12 +35,47 @@ class InvoiceAllocation < ApplicationRecord
   # requested for this type of allocation, minus all the allocations. Has to
   # take into account the type of allocation.
   def amount_available
+    # puts "------------ A boo at InvoiceAllocations -------------------------"
+    # InvoiceAllocation.all.each { |ia|
+    #   puts "id: #{ia.id}  cf0925_id: #{ia.cf0925_id}  invoice_id: #{ia.invoice_id} cf0925_type: #{ia.cf0925_type} amount: #{ia.amount}"
+    #
+    # }
+    # puts "-------------------------------------------------------------------"
     res = requested_amount - cf0925
                        .invoice_allocations
-                       .select { |ia| ia.cf0925_type == cf0925_type && amount }
+                       .select { |ia| ia.cf0925_type == cf0925_type && ia.amount }
                        .sum(&:amount)
-    puts "!!!!!invoice_allocation.rb:#{__LINE__} - amount_available: #{res} cf0925.id #{cf0925.id} amount: #{amount}"
-    puts "invoice_allocation.id: #{id}"
+    # puts "!!!!!invoice_allocation.rb:#{__LINE__} - amount_available: #{res} cf0925.id #{cf0925.id} amount: #{amount}"
+    # puts "invoice_allocation.id: #{id}"
+    # puts "-------------------------------------------------------------------"
+    # puts "This: id: #{id}  cf0925_id: #{cf0925_id}  invoice_id: #{invoice_id} cf0925_type: #{cf0925_type} amount: #{amount}"
+    # puts "-------------------------------------------------------------------"
+    # puts cf0925.invoice_allocations.inspect
+    # puts "-------------------------------------------------------------------"
+    # partb = cf0925
+    #           .invoice_allocations
+    #           .select { |ia| ia.cf0925_type == cf0925_type && ia.amount }
+    #           .sum(&:amount)
+    #
+    # puts "requested_amount: #{requested_amount} partb: #{partb}"
+    # puts "-------------------------------------------------------------------"
+    # cf0925.invoice_allocations.each { |ia|
+    #   yeah = false
+    #   if (ia.cf0925_type == cf0925_type && amount)
+    #       yeah = true
+    #   end
+    #   yeah1 = false
+    #   if (ia.cf0925_type == cf0925_type)
+    #       yeah1 = true
+    #   end
+    #   yeah2 = false
+    #   if (amount)
+    #       yeah2 = true
+    #   end
+    #   puts "Line #{__LINE__}: amount: #{ia.amount}  cf0925_type #{cf0925_type} true?: #{yeah} part1?: #{yeah1}  part2?: #{yeah2} class: #{amount.class}"
+    #
+    # }
+    # puts "-------------------------------------------------------------------"
     res
   end
 
@@ -50,7 +85,7 @@ class InvoiceAllocation < ApplicationRecord
   end
 
   def requested_minus_other_invoices
-    amount_available - (amount || 0)
+    amount_available + (amount || 0)
   end
 
   private
