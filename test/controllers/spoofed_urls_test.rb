@@ -98,4 +98,48 @@ class SpoofedUrlsTest < ActionDispatch::IntegrationTest
       delete cf0925_path(@other_rtp)
     end
   end
+
+  test "user can't get other users' invoice list" do
+    # In dev and test, we get the exception here.
+    # In production, this exception will cause the 404 page to be displayed.
+    assert_raises ActiveRecord::RecordNotFound do
+      get funded_person_invoices_path(@other_child)
+    end
+  end
+
+  test "user can't bring up new invoice form with another child" do
+    assert_raises ActiveRecord::RecordNotFound do
+      get new_funded_person_invoice_path(@other_child)
+    end
+  end
+
+  test "user can't edit other users' invoices" do
+    assert_raises ActiveRecord::RecordNotFound do
+      get edit_invoice_path(@other_invoice)
+    end
+  end
+
+  test "user can't create invoices for others' children" do
+    assert_raises ActiveRecord::RecordNotFound do
+      post funded_person_invoices_path(@other_child),
+           params: {
+             invoice: @other_invoice.attributes
+           }
+    end
+  end
+
+  test "user can't update other users' invoices" do
+    assert_raises ActiveRecord::RecordNotFound do
+      put invoice_path(@other_invoice),
+          params: {
+            invoice: @other_invoice.attributes
+          }
+    end
+  end
+
+  test "user can't delete other users' invoices" do
+    assert_raises ActiveRecord::RecordNotFound do
+      delete invoice_path(@other_invoice)
+    end
+  end
 end
