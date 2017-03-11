@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SpoofedUrls < ActionDispatch::IntegrationTest
+class SpoofedUrlsTest < ActionDispatch::IntegrationTest
   include TestSessionHelpers
 
   def setup
@@ -39,7 +39,15 @@ class SpoofedUrls < ActionDispatch::IntegrationTest
     log_in(@logged_in_user)
   end
 
-  test "user can't get other users' RTPs" do
+  test "user can't get other users' RTP list" do
+    # In dev and test, we get the exception here.
+    # In production, this exception will cause the 404 page to be displayed.
+    assert_raises ActiveRecord::RecordNotFound do
+      get funded_person_cf0925s_path(@other_child)
+    end
+  end
+
+  test "user can't get other users' RTPs (PDF)" do
     # In dev and test, we get the exception here.
     # In production, this exception will cause the 404 page to be displayed.
     assert_raises ActiveRecord::RecordNotFound do
@@ -47,9 +55,28 @@ class SpoofedUrls < ActionDispatch::IntegrationTest
     end
   end
 
+  test "user can't bring up new Cf0925 form with another child" do
+    assert_raises ActiveRecord::RecordNotFound do
+      get new_funded_person_cf0925_path(@other_child)
+    end
+  end
+
   test "user can't edit other users' RTPs" do
     assert_raises ActiveRecord::RecordNotFound do
       get edit_cf0925_path(@other_rtp)
+    end
+  end
+
+  test "user can't create RTPs for others' children" do
+    assert_raises ActiveRecord::RecordNotFound do
+      post funded_person_cf0925s_path(@other_child),
+           params: {
+             cf0925: @other_rtp.attributes.merge(
+               funded_person_attributes:
+                @other_child.attributes.merge(
+                  user_attributes:
+                    @logged_in_user.attributes))
+           }
     end
   end
 
@@ -63,12 +90,6 @@ class SpoofedUrls < ActionDispatch::IntegrationTest
                  user_attributes:
                    @logged_in_user.attributes))
           }
-    end
-  end
-
-  test "user can't create RTPs for others' children" do
-    assert_raises ActiveRecord::RecordNotFound do
-      get new_funded_person_cf0925_path(@other_child)
     end
   end
 

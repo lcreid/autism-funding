@@ -3,8 +3,10 @@ class Cf0925sController < ApplicationController
   # around_action :catch_data_not_found
 
   def index
-    # FIXME: This is plain wrong. Need to restrict to current user.
-    @cf0925s = Cf0925.all
+    @cf0925s = current_user
+               .funded_people
+               .find(params[:funded_person_id])
+               .cf0925s
   end
 
   def show
