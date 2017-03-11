@@ -30,7 +30,7 @@ class Invoice < ApplicationRecord
   # Allocate one or more RTPs to the invoice.
   def allocate(matches)
     matches = [matches] unless matches.respond_to?(:each)
-    # puts "allocate: matches #{matches.size}"
+    #  puts "allocate: matches #{matches.size}"
     incoming_set = matches.to_set
     old_set = invoice_allocations.to_set
     to_be_deleted_set = old_set - incoming_set
