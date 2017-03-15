@@ -196,7 +196,7 @@ $(document).on('turbolinks:load', function() {
         // console.log('Something changed.');
         // console.log ('The Invoice id: ' + $('#invoice_id').val());
         var params = {};
-        params['id'] = value_of_element($('#invoice_id')[0]);
+        params.id = value_of_element($('#invoice_id')[0]);
 
         attributes_of_interest.forEach(function(x) {
           // console.log(x + ': ' + value_of_element($(id_of_interest(x))[0]));
