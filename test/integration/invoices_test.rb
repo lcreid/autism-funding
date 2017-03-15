@@ -1,11 +1,9 @@
 require 'test_helper'
 require 'helpers/invoices_test_helper.rb'
 
-
-
 class InvoicesTest < PoltergeistTest
   include TestSessionHelpers
-#  include TestInvoiceAllocationHelpers
+  #  include TestInvoiceAllocationHelpers
   include ActionView::Helpers::NumberHelper
 
   test 'invoice with one valid RTP' do
@@ -154,90 +152,92 @@ class InvoicesTest < PoltergeistTest
     end
   end
 
-test 'check invoice allocations after change of matching' do
-  child = set_up_child
-  user = child.user
-  rtp_2000 = set_up_provider_agency_rtp(child,
-                                        service_provider_service_amount: 2000)
+  test 'check invoice allocations after change of matching' do
+    child = set_up_child
+    user = child.user
+    rtp_2000 = set_up_provider_agency_rtp(child,
+                                          service_provider_service_amount: 2000)
 
-  chk_rtp_2000 = MyProfileTestHelper::CheckRTP.new
+    chk_rtp_2000 = MyProfileTestHelper::CheckRTP.new
 
-  user.save
-  fill_in_login(user)
+    user.save
+    fill_in_login(user)
 
-  # Create New Invoice and Initialize
-  assert_current_path '/'
-  click_link child.my_name
-  # It looks like you need to check that the tab actually opened, to give
-  # the Javascript time to execute.
-  expect has_selector?("#collapse-#{child.id}.in")
-  click_link_or_button 'New Invoice'
-  assert_current_path new_funded_person_invoice_path(child)
+    # Create New Invoice and Initialize
+    assert_current_path '/'
+    click_link child.my_name
+    # It looks like you need to check that the tab actually opened, to give
+    # the Javascript time to execute.
+    expect has_selector?("#collapse-#{child.id}.in")
+    click_link_or_button 'New Invoice'
+    assert_current_path new_funded_person_invoice_path(child)
 
-  chk_rtp_2000.amount_requested = rtp_2000.service_provider_service_amount
-  fill_in 'invoice_invoice_amount', with: 2222
-  chk_rtp_2000.set_invoice_fields_to_match_rtp rtp_2000
+    chk_rtp_2000.amount_requested = rtp_2000.service_provider_service_amount
+    fill_in 'invoice_invoice_amount', with: 2222
+    chk_rtp_2000.set_invoice_fields_to_match_rtp rtp_2000
 
-  #-----------------------------------------------------------------------------
-  chk_rtp_2000.set_amount_from_this_invoice 45.56
-  chk_rtp_2000.set_expected_amount 45.56
-  chk_rtp_2000.set_expected_amount_available (rtp_2000.service_provider_service_amount - 45.56)
-  chk_rtp_2000.set_expected_out_of_pocket  2176.44
-  # -- Check results
-  assert_check_invoice_allocations  [chk_rtp_2000]
+    #-----------------------------------------------------------------------------
+    chk_rtp_2000.set_amount_from_this_invoice 45.56
+    chk_rtp_2000.set_expected_amount 45.56
+    chk_rtp_2000.set_expected_amount_available (rtp_2000.service_provider_service_amount - 45.56)
+    chk_rtp_2000.set_expected_out_of_pocket 2176.44
+    # -- Check results
+    assert_check_invoice_allocations [chk_rtp_2000]
 
-  #-----------------------------------------------------------------------------
-  # We will save this, which will cause the allocations to be saved
-  # We come back to the page, unmatch the RTP and then Match RTP, then save
-  # When we come back to the page we expect to see our RTP
-  click_link_or_button 'Save'
-  assert_current_path '/'
-  # Now Go Back and edit
-  user.reload
-  visit edit_invoice_path(child.invoices.first)
+    #-----------------------------------------------------------------------------
+    # We will save this, which will cause the allocations to be saved
+    # We come back to the page, unmatch the RTP and then Match RTP, then save
+    # When we come back to the page we expect to see our RTP
+    click_link_or_button 'Save'
+    assert_current_path '/'
+    # Now Go Back and edit
+    user.reload
+    visit edit_invoice_path(child.invoices.first)
 
-  # TODO Need to look at the who formats what on the edit page.  I needed to
-  # reset the values merely so they will be formatted consistently
+    # TODO: Need to look at the who formats what on the edit page.  I needed to
+    # reset the values merely so they will be formatted consistently
 
-  chk_rtp_2000.set_amount_from_this_invoice 45.56
-  chk_rtp_2000.set_expected_amount 45.56
-  chk_rtp_2000.set_expected_amount_available (rtp_2000.service_provider_service_amount - 45.56)
-  chk_rtp_2000.set_expected_out_of_pocket 2176.44
+    chk_rtp_2000.set_amount_from_this_invoice 45.56
+    chk_rtp_2000.set_expected_amount 45.56
+    chk_rtp_2000.set_expected_amount_available (rtp_2000.service_provider_service_amount - 45.56)
+    chk_rtp_2000.set_expected_out_of_pocket 2176.44
 
-  assert_check_invoice_allocations  [chk_rtp_2000]
+    assert_check_invoice_allocations [chk_rtp_2000]
 
-  # unmatch the invoice
-  start_request
-  chk_rtp_2000.set_invoice_fields_to_not_match_rtp rtp_2000
-  wait_for_request
+    # unmatch the invoice
+    start_request
+    chk_rtp_2000.set_invoice_fields_to_not_match_rtp rtp_2000
+    wait_for_request
 
-  #we now expect no allocations
-  assert_check_invoice_allocations
+    # we now expect no allocations
+    assert_check_invoice_allocations
 
-  # Rematch the invoice
-  start_request
-  chk_rtp_2000.set_invoice_fields_to_match_rtp rtp_2000
-  wait_for_request
+    # Rematch the invoice
+    start_request
+    chk_rtp_2000.set_invoice_fields_to_match_rtp rtp_2000
+    wait_for_request
 
-  # Save
-  click_link_or_button 'Save'
-  assert_current_path '/'
+    # Save
+    click_link_or_button 'Save'
+    assert_current_path '/'
 
-  # Now Go Back and edit
-  user.reload
-  visit edit_invoice_path(child.invoices.first)
+    # Now Go Back and edit
+    user.reload
+    visit edit_invoice_path(child.invoices.first)
 
-  #--- Check that there is only one invoice
-  chk_rtp_2000.set_expected_amount ''
-  chk_rtp_2000.set_expected_amount_available "$2,000", ''
-  chk_rtp_2000.set_expected_out_of_pocket  2222
+    #--- Check that there is only one invoice
+    chk_rtp_2000.set_expected_amount '0.00'
+    chk_rtp_2000.set_expected_amount_available '$2,000', ''
+    chk_rtp_2000.set_expected_out_of_pocket '2,222.00', ''
 
-  # puts "HERE [#{chk_rtp_2000.expected_amount}]"
-  # puts "HERE [#{chk_rtp_2000.expected_amount_available}]"
-  # puts "HERE [#{chk_rtp_2000.expected_out_of_pocket}]"
+    # puts "HERE [#{chk_rtp_2000.expected_amount}]"
+    # puts "HERE [#{chk_rtp_2000.expected_amount_available}]"
+    # puts "HERE [#{chk_rtp_2000.expected_out_of_pocket}]"
 
-  assert_check_invoice_allocations  [chk_rtp_2000]
-end
+    # puts "OUT OF POCKET: #{find_field('Out of Pocket', disabled: true).value}"
+    # puts "chk_rtp_2000.expected_amount: #{chk_rtp_2000.expected_amount}"
+    assert_check_invoice_allocations [chk_rtp_2000]
+  end
 
   test 'javascript validations Issue #65' do
     child = set_up_child
@@ -274,13 +274,13 @@ end
     (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
     # Test that triggers no corrections
-    test_amount = invoice.invoice_amount / 2;
+    test_amount = invoice.invoice_amount / 2
     within allocation_2000 do
       find('.amount-available')
-        .assert_text '%.2f' % (rtp_2000
-          .service_provider_service_amount)
+        .assert_text '%.2f' % rtp_2000
+                              .service_provider_service_amount
       fill_in('Amount', with:  test_amount)
-      assert_field('Amount', with: test_amount)
+      assert_field('Amount', with: '%.2f' % test_amount)
       find('.amount-available')
         .assert_text '%.2f' % (rtp_2000
           .service_provider_service_amount - test_amount)
@@ -288,7 +288,6 @@ end
     assert_field('Out of Pocket',
                  disabled: true,
                  with: number_to_currency((invoice.invoice_amount - test_amount), unit: ''))
-
 
     #
     # Test that changing amount causes requiste change in out-of-pocket and amount available
@@ -298,30 +297,27 @@ end
           .service_provider_service_amount - test_amount)
 
       # Change test_amount
-      test_amount = test_amount - 2;
+      test_amount -= 2
       fill_in('Amount', with:  test_amount)
-      assert_field('Amount', with: test_amount)
+      assert_field('Amount', with: '%.2f' % test_amount)
       find('.amount-available')
         .assert_text '%.2f' % (rtp_2000
           .service_provider_service_amount - test_amount)
 
-      #put test amount back, or rest of tests will fail
-      test_amount = test_amount + 2;
+      # put test amount back, or rest of tests will fail
+      test_amount += 2
       fill_in('Amount', with:  test_amount)
-
     end
     assert_field('Out of Pocket',
                  disabled: true,
                  with: number_to_currency((invoice.invoice_amount - test_amount), unit: ''))
 
-
-
     # Amount allocated greater than invoice amount minus other allocation
     # Depends on above
     within allocation_3000 do
       find('.amount-available')
-        .assert_text '%.2f' % (rtp_3000
-          .service_provider_service_amount)
+        .assert_text '%.2f' % rtp_3000
+                              .service_provider_service_amount
       fill_in('Amount', with: invoice.invoice_amount / 2 + 1)
       assert_field('Amount', with: number_to_currency(invoice.invoice_amount / 2, unit: ''))
       find('.amount-available')
@@ -341,7 +337,7 @@ end
     invoice = child
               .invoices
               .create(invoice_from: rtp_2000.agency_name,
-  #                    service_start: rtp_2000.service_provider_service_start,
+                      #                    service_start: rtp_2000.service_provider_service_start,
                       invoice_amount: 2250)
     user.reload
     # puts "rtp_2000.invoice_allocations.first.amount_available: #{rtp_2000.invoice_allocations.first.amount_available}"
@@ -357,43 +353,37 @@ end
 
     # Set up some useful variables
 
-
     (allocation_2000, allocation_3000) = sort_out_allocation_rows
 
     # Test that changing amount by a small amount correctly recalulates amount available
     within allocation_2000 do
-      find('.amount-available').assert_text '%.2f' % (1250)
+      find('.amount-available').assert_text '%.2f' % 1250
       fill_in('Amount', with: 2)
-      assert_field('Amount', with: 2)
-      find('.amount-available').assert_text '%.2f' % (1248)
+      assert_field('Amount', with: '%.2f' % 2)
+      find('.amount-available').assert_text '%.2f' % 1248
     end
     assert_field('Out of Pocket',
                  disabled: true,
-                 with: '%.2f' % (2248))
-
-
-
+                 with: '%.2f' % 2248)
 
     within allocation_2000 do
-      find('.amount-available').assert_text '%.2f' % (1248)
+      find('.amount-available').assert_text '%.2f' % 1248
       fill_in('Amount', with: 2000)
       assert_field('Amount', with: '%.2f' % 1250)
-      find('.amount-available').assert_text '%.2f' % (0)
+      find('.amount-available').assert_text '%.2f' % 0
     end
     assert_field('Out of Pocket',
                  disabled: true,
                  with: '%.2f' % 1000)
 
-
-
     within allocation_2000 do
       fill_in('Amount', with: 1249)
-      assert_field('Amount', with: 1249)
-      find('.amount-available').assert_text '%.2f' % (1)
+      assert_field('Amount', with: '%.2f' % 1249)
+      find('.amount-available').assert_text '%.2f' % 1
     end
     assert_field('Out of Pocket',
                  disabled: true,
-                 with: '%.2f' % (1001) )
+                 with: '%.2f' % 1001)
   end
 
   private
@@ -408,23 +398,24 @@ end
     end
   end
 
-  def assert_check_invoice_allocations ary = []
+  def assert_check_invoice_allocations(ary = [])
     # Check we are on the Edit or New invoice page
     assert_content 'Assign Request to Pay'
     # Check we have the expected number of matched RTPs
     assert_selector 'tr.test-cf0925-invoice-row', count: ary.size
 
     ary.each do |allocation_row|
-        within allocation_row.allocation_row do
-          find('.amount-available')
-            .assert_text allocation_row.expected_amount_available #, "Unexpected Amount Available"
-            # puts "#{__LINE__}: expected amount: #{allocation_row.expected_amount}"
-          assert_field('Amount', with: allocation_row.expected_amount)
-        end
-        #puts "#{__LINE__}: expected out of pocket: #{allocation_row.expected_out_of_pocket}"
-        assert_field('Out of Pocket',
-             disabled: true,
-             with: allocation_row.expected_out_of_pocket)
+      within allocation_row.allocation_row do
+        find('.amount-available')
+          .assert_text allocation_row.expected_amount_available # , "Unexpected Amount Available"
+        # puts "#{__LINE__}: expected amount: #{allocation_row.expected_amount}"
+        # puts "#{__LINE__}: amount: #{find_field('Amount').value}"
+        assert_field('Amount', with: allocation_row.expected_amount)
       end
+      # puts "#{__LINE__}: expected out of pocket: #{allocation_row.expected_out_of_pocket}"
+      assert_field('Out of Pocket',
+                   disabled: true,
+                   with: allocation_row.expected_out_of_pocket)
+    end
   end
 end

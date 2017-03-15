@@ -86,20 +86,21 @@ $(document).on('turbolinks:load', function() {
 
     // This is the RTP Changed Amount Requested less Amounts allocated to other invoices
     // This value is used in calcuations but will not be changed
-    requested_minus_other_invoices = Number(invoice_row.find('.requested-minus-other-invoices').val().replace(/[,$]/g, ""));
+    requested_minus_other_invoices = unformat_number(invoice_row.find('.requested-minus-other-invoices').val());
     diag += '\n  requested_minus_other_invoices: ' + requested_minus_other_invoices;
 
     // This is the new value the user has entered as Amount From This Invoice
     // This value may need to be updated if the user has allocated more than available
     // The updated value (updated_amount_from_this_invoice) is used throughout the calucations
     // At the end of this, if updated is different from changed, then text box is updated
-    changed_amount_from_this_invoice = e.target.value;
+    changed_amount_from_this_invoice = unformat_number(e.target.value);
+    e.target.value = format_number(changed_amount_from_this_invoice);
     updated_amount_from_this_invoice = changed_amount_from_this_invoice;
     diag += '\n  changed_amount_from_this_invoice: ' + changed_amount_from_this_invoice;
 
     // Amount available is RTP Changed Requested Amount less requested_minus_other_invoices less changed_amount_from_this_invoice
     // This value is not needed for calculations, but will be recalulated and updated
-    amount_available = Number(invoice_row.find('.amount-available').text().replace(/[,$]/g, ""));
+    amount_available = unformat_number(invoice_row.find('.amount-available').text());
     diag += '\n  amount_available (before): ' + amount_available;
 
     // allocated_spending is the total of all Amount from the Invoice - before any changes or calculations
@@ -107,13 +108,13 @@ $(document).on('turbolinks:load', function() {
     // TODO: Refactor allocated_spending to a function
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
       // console.log('update_out_of_pocket b: ' + b.value);
-      return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
+      return a + unformat_number(b.value);
     }, 0);
     diag += '\n  allocated_spending: ' + allocated_spending;
 
     // Invoice amount is the total invoice amount
     // This value is used in calucations but is not changed or updated
-    invoice_amount = Number($('#invoice_invoice_amount').val().replace(/[,$]/g, ""));
+    invoice_amount = unformat_number($('#invoice_invoice_amount').val());
     diag += '\n  invoice_amount: ' + invoice_amount;
 
 
@@ -141,36 +142,40 @@ $(document).on('turbolinks:load', function() {
 
     // 3 - Recalculate Amount Available & set it
     amount_available = requested_minus_other_invoices - updated_amount_from_this_invoice;
-    invoice_row.find('.amount-available').text(amount_available.toFixed(2));
+    invoice_row.find('.amount-available').text(format_number(amount_available));
     diag += '\n   ---  (3) updated amount_available: ' + amount_available;
 
     // If the amount_from_this_invoice has been changed by these calculations, update it
     if (changed_amount_from_this_invoice != updated_amount_from_this_invoice ) {
-        e.target.value =updated_amount_from_this_invoice.toFixed(2);
+        e.target.value = format_number(updated_amount_from_this_invoice);
         diag += '\n   ---  updated amount from this invoice from : ' + changed_amount_from_this_invoice + ' to ' + updated_amount_from_this_invoice;
     }
 
-    diag += '\n';
+    // diag += '\n';
     // console.log(diag);
   }
 
   function update_out_of_pocket() {
     // TODO: Refactor allocated_spending to a function
     allocated_spending = allocation_fields().toArray().reduce(function(a, b) {
-      // console.log('update_out_of_pocket b: ' + b.value);
-      return $.isNumeric(b.value)? a + Number(b.value.replace(/[,$]/g, "")): a;
+      // console.log('update_out_of_pocket b: ' + unformat_number(b.value));
+      return a + unformat_number(b.value);
     }, 0);
 
-    invoice_amount = Number($('#invoice_invoice_amount').val().replace(/[,$]/g, ""));
+    invoice_amount = unformat_number($('#invoice_invoice_amount').val());
+    // console.log('invoice_amount: ' + invoice_amount);
+    // console.log('allocated_spending: ' + allocated_spending);
 
     out_of_pocket = Math.max(0, invoice_amount - allocated_spending);
-    // console.log('Setting out_of_pocket: ' + out_of_pocket.toFixed(2));
-    out_of_pocket_field.val(out_of_pocket.toFixed(2));
+    // console.log('Setting out_of_pocket: ' + format_number(out_of_pocket));
+    out_of_pocket_field.val(format_number(out_of_pocket));
   }
 
   function update_out_of_pocket_for_invoice_amount_change() {
     // console.log('into update_out_of_pocket_for_invoice_amount_change');
     // console.log('Calling triggers on ' + allocation_fields().size() + ' fields');
+    invoice_amount_field = $('#invoice_invoice_amount');
+    invoice_amount_field.val(format_number(unformat_number(invoice_amount_field.val())));
     allocation_fields().change();
     update_out_of_pocket();
     // console.log('out of update_out_of_pocket_for_invoice_amount_change');

@@ -1,8 +1,9 @@
 // Produce the weit standard number format with two decimal.
 function format_number(n) {
-  return Number(n).toLocaleString('en-CA', {
-    minimumFractionDigits: 2, maximumFractionDigits: 2
-  });
+  return n.toFixed(2);
+  // return Number(n).toLocaleString('en-CA', {
+  //   minimumFractionDigits: 2, maximumFractionDigits: 2
+  // });
 }
 
 // Convert a human-readable number in a string to a number,
