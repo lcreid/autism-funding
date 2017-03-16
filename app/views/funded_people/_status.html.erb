@@ -27,19 +27,19 @@
           <tbody>
             <tr>
               <td class="test-allowable-funds-for-year text-center">
-                <%= number_to_currency(status.allowable_funds_for_year) %>
+                <%= number_to_currency(status.allowable_funds_for_year, units: '') %>
               </td>
               <td class="test-committed-funds text-center">
-                <%= number_to_currency(status.committed_funds) %>
+                <%= number_to_currency(status.committed_funds, units: '') %>
               </td>
               <td class="test-remaining-funds text-center">
-                <%= number_to_currency(status.remaining_funds) %>
+                <%= number_to_currency(status.remaining_funds, units: '') %>
               </td>
               <td class="test-spent-funds text-center">
-                <%= number_to_currency(status.spent_funds) %>
+                <%= number_to_currency(status.spent_funds, units: '') %>
               </td>
               <td class="test-spent-out-of-pocket text-center">
-                <%= number_to_currency(status.spent_out_of_pocket) %>
+                <%= number_to_currency(status.spent_out_of_pocket, units: '') %>
               </td>
             </tr>
           </tbody>

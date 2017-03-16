@@ -23,7 +23,7 @@
             <%= i.invoice_from %>
           </td>
           <td class="text-right">
-            <%= number_to_currency(i.invoice_amount) %>
+            <%= number_to_currency(i.invoice_amount, units: '') %>
           </td>
           <td class="text-center">
             <% if i.include_in_reports? %>

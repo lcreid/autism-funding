@@ -7,10 +7,10 @@
   </td>
   <td><%= invoice_allocation.payee %></td>
   <td class="text-right">
-    <%= number_to_currency(invoice_allocation.requested_amount) %>
+    <%= number_to_currency(invoice_allocation.requested_amount, units: '') %>
   </td>
   <td class="text-right amount-available">
-    <%= number_to_currency(invoice_allocation.amount_available) %>
+    <%= number_to_currency(invoice_allocation.amount_available, units: '') %>
   </td>
   <td class="text-right">
     <%= invoice_allocation_form.currency_field(:amount, hide_label: true) %>
