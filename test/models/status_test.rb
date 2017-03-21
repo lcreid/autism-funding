@@ -278,9 +278,7 @@ class StatusTest < ActiveSupport::TestCase
 
   test 'both service provider and supplier on one RTP' do
     child = set_up_child
-    rtp = set_up_provider_agency_rtp(child,
-                                     SUPPLIER_ATTRS
-                                     .merge(created_at: Date.new(2016, 12, 31)))
+    rtp = set_up_provider_agency_rtp(child, SUPPLIER_ATTRS)
 
     child.save!
     i = child.invoices.create(invoice_amount: 500,
@@ -303,6 +301,29 @@ class StatusTest < ActiveSupport::TestCase
                   '2016-2017',
                   spent_out_of_pocket: 0,
                   spent_funds: 1_500,
+                  committed_funds: 3_000,
+                  remaining_funds: 3_000)
+  end
+
+  test 'RTP has parts A and B. One invoice matches both. Issue #68' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child,
+                                     SUPPLIER_ATTRS
+                                      .merge(supplier_name: 'Pay Me Agency'))
+
+    child.save!
+    i = child.invoices.create(invoice_amount: 500,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
+    i.connect(rtp, 'ServiceProvider', 500)
+    i.connect(rtp, 'Supplier')
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 0,
+                  spent_funds: 500,
                   committed_funds: 3_000,
                   remaining_funds: 3_000)
   end
@@ -432,9 +453,7 @@ class StatusTest < ActiveSupport::TestCase
     'Invoice for A is more than requested ' \
     'Invoice for B is less than requested' do
     child = set_up_child
-    rtp = set_up_provider_agency_rtp(child,
-                                     SUPPLIER_ATTRS
-                                     .merge(created_at: Date.new(2016, 12, 31)))
+    rtp = set_up_provider_agency_rtp(child, SUPPLIER_ATTRS)
 
     child.save!
     i = child.invoices.create(invoice_amount: 2_500,
