@@ -1,6 +1,6 @@
 require 'test_helper'
 
-# FIXME: Need to do a better job of ensuring adequate test coverage. What's
+# TODO: Need to do a better job of ensuring adequate test coverage. What's
 # here isn't enough.
 
 class StatusTest < ActiveSupport::TestCase
@@ -55,35 +55,32 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'big spender spent more than requested' do
-    # skip 'Code to pass this test not implemented yet.'
     child = set_up_child
     rtp = set_up_provider_agency_rtp(child, payment: 'provider')
 
-    i = child.invoices.build(invoice_amount: 1_000,
-                             invoice_date: '2017-01-31',
-                             service_end: '2017-01-31',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Ferry Man')
+    child.save!
+    i = child.invoices.create(invoice_amount: 1_000,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Ferry Man')
     # We have to explicitly save the invoice because we don't have
     # autosave: true from InvoiceAllocation to Invoice.
     i.connect(rtp, 'ServiceProvider', 1_000)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 500,
-                             invoice_date: '2017-02-28',
-                             service_end: '2017-02-28',
-                             service_start: '2017-02-01',
-                             invoice_from: 'Ferry Man')
+    i = child.invoices.create(invoice_amount: 500,
+                              invoice_date: '2017-02-28',
+                              service_end: '2017-02-28',
+                              service_start: '2017-02-01',
+                              invoice_from: 'Ferry Man')
     i.connect(rtp, 'ServiceProvider', 500)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 1_000,
-                             invoice_date: '2017-03-31',
-                             service_end: '2017-03-31',
-                             service_start: '2017-03-01',
-                             invoice_from: 'Ferry Man')
+    i = child.invoices.create(invoice_amount: 1_000,
+                              invoice_date: '2017-03-31',
+                              service_end: '2017-03-31',
+                              service_start: '2017-03-01',
+                              invoice_from: 'Ferry Man')
     i.connect(rtp, 'ServiceProvider', 500)
-    i.save!
 
     assert_status(child,
                   '2016-2017',
@@ -126,14 +123,14 @@ class StatusTest < ActiveSupport::TestCase
 
     assert_equal 1, child.cf0925s.size
 
-    invoice = child.invoices.build(invoice_amount: 500,
-                                   invoice_date: '2017-01-31',
-                                   service_end: '2017-01-31',
-                                   service_start: '2017-01-01',
-                                   invoice_from: 'Ferry Man')
+    child.save!
+    invoice = child.invoices.create(invoice_amount: 500,
+                                    invoice_date: '2017-01-31',
+                                    service_end: '2017-01-31',
+                                    service_start: '2017-01-01',
+                                    invoice_from: 'Ferry Man')
 
     invoice.connect(rtp, 'ServiceProvider', 500)
-    invoice.save!
 
     assert_status(child,
                   '2016-2017',
@@ -173,13 +170,13 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'invoice from supplier' do
-    skip 'Need a date for supplier-only RTPs.'
     child = set_up_child
     set_up_supplier_rtp(child)
 
-    invoice = child.invoices.build(invoice_amount: 1_000,
-                                   invoice_date: '2016-12-30',
-                                   supplier_name: 'Supplier Name')
+    child.save!
+    invoice = child.invoices.create(invoice_amount: 1_000,
+                                    invoice_date: '2016-12-30',
+                                    invoice_from: 'Supplier Name')
 
     hook_invoice_to_rtp(invoice)
 
@@ -210,14 +207,13 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'invoice from supplier when invoice date not in fiscal year' do
-    # FIXME: we should be using the part_b_fiscal_year now.
-    skip 'Need a date for supplier-only RTPs.'
     child = set_up_child
     set_up_supplier_rtp(child)
 
-    invoice = child.invoices.build(invoice_amount: 1_000,
-                                   invoice_date: '2016-11-30',
-                                   supplier_name: 'Supplier Name')
+    child.save!
+    invoice = child.invoices.create(invoice_amount: 1_000,
+                                    invoice_date: '2016-11-30',
+                                    invoice_from: 'Supplier Name')
 
     hook_invoice_to_rtp(invoice)
 
@@ -249,32 +245,6 @@ class StatusTest < ActiveSupport::TestCase
                   '2016-2017',
                   spent_out_of_pocket: 0,
                   spent_funds: 500,
-                  committed_funds: 2_000,
-                  remaining_funds: 4_000)
-  end
-
-  test 'invoice from agency when pay provider' do
-    skip 'Matching no longer takes into account the payment attribute of the RTP'
-    child = set_up_child
-    rtp = set_up_provider_agency_rtp(child,
-                                     service_provider_name: 'Pay Me Consultant',
-                                     payment: 'provider')
-
-    invoice = child.invoices.build(invoice_amount: 500,
-                                   invoice_date: '2017-01-31',
-                                   service_end: '2017-01-31',
-                                   service_start: '2017-01-01',
-                                   invoice_from: 'Pay Me Agency')
-
-    hook_invoice_to_rtp(invoice)
-    assert_equal 0, invoice.cf0925s.size
-    assert_equal 0, rtp.invoices.size
-    # byebug # rubocop:disable Lint/Debugger
-
-    assert_status(child,
-                  '2016-2017',
-                  spent_out_of_pocket: 500,
-                  spent_funds: 0,
                   committed_funds: 2_000,
                   remaining_funds: 4_000)
   end
@@ -312,19 +282,18 @@ class StatusTest < ActiveSupport::TestCase
                                      SUPPLIER_ATTRS
                                      .merge(created_at: Date.new(2016, 12, 31)))
 
-    i = child.invoices.build(invoice_amount: 500,
-                             invoice_date: '2017-01-31',
-                             service_end: '2017-01-31',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 500,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp, 'ServiceProvider', 500)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 1_000,
-                             invoice_date: '2016-12-03',
-                             invoice_from: 'Supplier Name')
+    i = child.invoices.create(invoice_amount: 1_000,
+                              invoice_date: '2016-12-03',
+                              invoice_from: 'Supplier Name')
     i.connect(rtp, 'Supplier', 1_000)
-    i.save!
 
     #    show_matching_info child
 
@@ -345,21 +314,20 @@ class StatusTest < ActiveSupport::TestCase
                                        service_provider_service_end: '2017-06-30',
                                        service_provider_service_start: '2017-05-01')
 
-    i = child.invoices.build(invoice_amount: 700,
-                             invoice_date: '2017-01-31',
-                             service_end: '2017-01-31',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 700,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 500)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 2_000,
-                             invoice_date: '2017-06-30',
-                             service_end: '2017-06-30',
-                             service_start: '2017-06-01',
-                             invoice_from: 'Pay Me Agency')
+    i = child.invoices.create(invoice_amount: 2_000,
+                              invoice_date: '2017-06-30',
+                              service_end: '2017-06-30',
+                              service_start: '2017-06-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_b, 'ServiceProvider', 2_000)
-    i.save!
 
     assert_status(child,
                   '2016-2017',
@@ -377,14 +345,14 @@ class StatusTest < ActiveSupport::TestCase
                                        service_provider_service_end: '2017-04-30',
                                        service_provider_service_start: '2017-04-01')
 
-    i = child.invoices.build(invoice_amount: 1_100,
-                             invoice_date: '2017-05-01',
-                             service_end: '2017-04-30',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 1_100,
+                              invoice_date: '2017-05-01',
+                              service_end: '2017-04-30',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 500)
     i.connect(rtp_b, 'ServiceProvider', 500)
-    i.save!
 
     assert_status(child, '2016-2017',
                   spent_out_of_pocket: 100,
@@ -401,29 +369,27 @@ class StatusTest < ActiveSupport::TestCase
                                        service_provider_service_end: '2017-02-28',
                                        service_provider_service_start: '2017-01-01')
 
-    i = child.invoices.build(invoice_amount: 400,
-                             invoice_date: '2016-12-31',
-                             service_end: '2016-12-31',
-                             service_start: '2016-12-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 400,
+                              invoice_date: '2016-12-31',
+                              service_end: '2016-12-31',
+                              service_start: '2016-12-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 400)
-    i.save!
-    i = child.invoices.build(invoice_amount: 500,
-                             invoice_date: '2017-05-01',
-                             service_end: '2017-02-28',
-                             service_start: '2017-02-01',
-                             invoice_from: 'Pay Me Agency')
+    i = child.invoices.create(invoice_amount: 500,
+                              invoice_date: '2017-05-01',
+                              service_end: '2017-02-28',
+                              service_start: '2017-02-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 100)
     i.connect(rtp_b, 'ServiceProvider', 400)
-    i.save!
     assert i.include_in_reports?
-    i = child.invoices.build(invoice_amount: 300,
-                             invoice_date: '2017-03-31',
-                             service_end: '2017-03-31',
-                             service_start: '2017-03-01',
-                             invoice_from: 'Pay Me Agency')
+    i = child.invoices.create(invoice_amount: 300,
+                              invoice_date: '2017-03-31',
+                              service_end: '2017-03-31',
+                              service_start: '2017-03-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp_b, 'ServiceProvider', 100)
-    i.save!
     child.invoices.create(invoice_amount: 1_300,
                           invoice_date: '2017-08-31',
                           service_end: '2017-08-31',
@@ -448,13 +414,13 @@ class StatusTest < ActiveSupport::TestCase
                                      service_provider_service_start: '2017-07-01',
                                      payment: nil,
                                      agency_name: nil)
-    invoice = child.invoices.build(invoice_amount: 200,
-                                   invoice_date: '2017-08-31',
-                                   service_end: '2017-08-31',
-                                   service_start: '2017-08-01',
-                                   invoice_from: 'Ferry Man')
+    child.save!
+    invoice = child.invoices.create(invoice_amount: 200,
+                                    invoice_date: '2017-08-31',
+                                    service_end: '2017-08-31',
+                                    service_start: '2017-08-01',
+                                    invoice_from: 'Ferry Man')
     invoice.connect(rtp, 'ServiceProvider')
-    invoice.save!
     assert_status(child,
                   '2016-2017',
                   spent_out_of_pocket: 200,
@@ -470,23 +436,20 @@ class StatusTest < ActiveSupport::TestCase
                                      SUPPLIER_ATTRS
                                      .merge(created_at: Date.new(2016, 12, 31)))
 
-    i = child.invoices.build(invoice_amount: 2_500,
-                             invoice_date: '2017-01-31',
-                             service_end: '2017-01-31',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 2_500,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp, 'ServiceProvider', 2_000)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 500,
-                             invoice_date: '2016-12-03',
-                             invoice_from: 'Supplier Name')
+    i = child.invoices.create(invoice_amount: 500,
+                              invoice_date: '2016-12-03',
+                              invoice_from: 'Supplier Name')
     i.connect(rtp, 'Supplier', 500)
-    i.save!
 
-    #    show_matching_info child
-
-    assert 2, child.cf0925s.first.invoices.size
+    assert 2, rtp.invoices.size
 
     assert_status(child,
                   '2016-2017',
@@ -504,22 +467,18 @@ class StatusTest < ActiveSupport::TestCase
                                      SUPPLIER_ATTRS
                                      .merge(created_at: Date.new(2016, 12, 31)))
 
-    i = child.invoices.build(invoice_amount: 1_500,
-                             invoice_date: '2017-01-31',
-                             service_end: '2017-01-31',
-                             service_start: '2017-01-01',
-                             invoice_from: 'Pay Me Agency')
+    child.save!
+    i = child.invoices.create(invoice_amount: 1_500,
+                              invoice_date: '2017-01-31',
+                              service_end: '2017-01-31',
+                              service_start: '2017-01-01',
+                              invoice_from: 'Pay Me Agency')
     i.connect(rtp, 'ServiceProvider', 1_500)
-    i.save!
 
-    i = child.invoices.build(invoice_amount: 1_400,
-                             invoice_date: '2016-12-03',
-                             invoice_from: 'Supplier Name')
+    i = child.invoices.create(invoice_amount: 1_400,
+                              invoice_date: '2016-12-03',
+                              invoice_from: 'Supplier Name')
     i.connect(rtp, 'Supplier', 1_000)
-    # FIXME: Make the `build` into `create` and maybe we don't need the save!
-    i.save!
-
-    #    show_matching_info child
 
     assert 2, rtp.invoice_allocations.size
 
