@@ -107,6 +107,10 @@ class Invoice < ApplicationRecord
   # Calculate out of pocket expenses for this invoice.
   def out_of_pocket
     return 0 unless invoice_amount && invoice_allocations
+    # puts "out_of_pocket invoice_amount: #{invoice_amount}"
+    # invoice_allocations
+    #   .select(&:amount)
+    #   .each { |ia| puts "out_of_pocket: #{ia.cf0925}, #{ia.invoice}, #{ia.cf0925_type}, #{ia.amount}" }
     [invoice_amount - invoice_allocations.select(&:amount).sum(&:amount), 0].max
   end
 

@@ -47,21 +47,13 @@ class Status
     #   puts "#{k}: #{v}"
     # end
 
-    # puts "RTPs(#{rtps.size}): #{rtps.inspect}"
-    # FIXME: This is probably wrong.
-    @spent_out_of_pocket = invoices
-                           .select { |x| !invoice_has_rtp?(x) }
-                           .map(&:invoice_amount)
-                           .sum
-
-    @spent_out_of_pocket += rtps.map(&:out_of_pocket).sum
-
-    @spent_funds = rtps.map(&:spent_funds).sum
-
-    # FIXME: This should never be more than the allowable_funds_for_year
-    # FIXME: This is probably wrong.
-    @committed_funds = rtps.map(&:total_amount).reduce(0, &:+)
-
+    # puts "status funded_person.invoices.size: #{funded_person.invoices.size}"
+    # puts "status invoices.size: #{invoices.size}"
+    @spent_out_of_pocket = invoices.sum(&:out_of_pocket)
+    @spent_funds = invoices.map(&:invoice_allocations).flatten.sum(&:amount)
+    # TODO: This should never be more than the allowable_funds_for_year,
+    # but that check should probably be done elsewhere.
+    @committed_funds = rtps.sum(&:total_amount)
     @remaining_funds = [0, @allowable_funds_for_year - @committed_funds].max
   end
 
@@ -76,69 +68,12 @@ class Status
   private
 
   ##
-  # Allocate invoices to RTPs
-  def allocate_invoices
-    # The invoices should have been allocated to RTPs when they were entered.
-  end
-
-  ##
-  # An invoice has an RTP if there is a Cf0925 attached to the invoice.
-  def invoice_has_rtp?(invoice)
-    invoice.cf0925s.present?
-  end
-
-  ##
   # List of invoices that apply in this fiscal year
   def invoices
-    @invoices ||= @funded_person
+    @invoices ||= funded_person
                   .invoices_in_fiscal_year(fiscal_year)
                   .select(&:include_in_reports?)
-    # .sort_by(&:fiscal_year)
   end
-
-  ##
-  # Partition invoices into the RTPs that could pay for them.
-  # Returns hash where key is RTP and value is array of invoices.
-  # def partition_invoices
-  #   a = {}
-  #   rtps.each do |rtp|
-  #     a[rtp] = invoices.select { |x| rtp_has_invoice?(rtp, x) }
-  #   end
-  #   a
-  # end
-
-  # ##
-  # # Determine if the RTP authorizes the invoice when the payee is agency
-  # def pay_agency?(invoice, rtp)
-  #   rtp.payment == 'agency' &&
-  #     (invoice.agency_name || rtp.agency_name) &&
-  #     invoice.agency_name == rtp.agency_name &&
-  #     rtp.include?(invoice.service_period)
-  # end
-  #
-  # ##
-  # # Determine if the RTP authorizes the invoice when the payee is the supplier
-  # # (actually the parent)
-  # def pay_for_supplier?(invoice, rtp)
-  #   (invoice.supplier_name || rtp.supplier_name) &&
-  #     invoice.supplier_name == rtp.supplier_name &&
-  #     rtp.fiscal_year.include?(invoice.invoice_date)
-  # end
-  #
-  # ##
-  # # Determine if the RTP authorizes the invoice when the payee is the provider
-  # def pay_provider?(invoice, rtp)
-  #   rtp.payment == 'provider' &&
-  #     (invoice.service_provider_name || rtp.service_provider_name) &&
-  #     invoice.service_provider_name == rtp.service_provider_name &&
-  #     rtp.include?(invoice.service_period)
-  # end
-
-  # def rtp_has_invoice?(rtp, invoice)
-  #   pay_provider?(invoice, rtp) ||
-  #     pay_agency?(invoice, rtp) ||
-  #     pay_for_supplier?(invoice, rtp)
-  # end
 
   ##
   # List of RTPs that apply in this fiscal year

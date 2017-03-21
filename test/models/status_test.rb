@@ -381,7 +381,7 @@ class StatusTest < ActiveSupport::TestCase
                              invoice_date: '2017-05-01',
                              service_end: '2017-04-30',
                              service_start: '2017-01-01',
-                             service_provider_name: 'Pay Me Agency')
+                             invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 500)
     i.connect(rtp_b, 'ServiceProvider', 500)
     i.save!
@@ -405,30 +405,33 @@ class StatusTest < ActiveSupport::TestCase
                              invoice_date: '2016-12-31',
                              service_end: '2016-12-31',
                              service_start: '2016-12-01',
-                             service_provider_name: 'Pay Me Agency')
+                             invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 400)
     i.save!
     i = child.invoices.build(invoice_amount: 500,
                              invoice_date: '2017-05-01',
                              service_end: '2017-02-28',
                              service_start: '2017-02-01',
-                             service_provider_name: 'Pay Me Agency')
+                             invoice_from: 'Pay Me Agency')
     i.connect(rtp_a, 'ServiceProvider', 100)
     i.connect(rtp_b, 'ServiceProvider', 400)
     i.save!
+    assert i.include_in_reports?
     i = child.invoices.build(invoice_amount: 300,
                              invoice_date: '2017-03-31',
                              service_end: '2017-03-31',
                              service_start: '2017-03-01',
-                             service_provider_name: 'Pay Me Agency')
+                             invoice_from: 'Pay Me Agency')
     i.connect(rtp_b, 'ServiceProvider', 100)
     i.save!
-    child.invoices.build(invoice_amount: 1_300,
-                         invoice_date: '2017-08-31',
-                         service_end: '2017-08-31',
-                         service_start: '2017-08-01',
-                         service_provider_name: 'Pay Me Agency')
+    child.invoices.create(invoice_amount: 1_300,
+                          invoice_date: '2017-08-31',
+                          service_end: '2017-08-31',
+                          service_start: '2017-08-01',
+                          invoice_from: 'Pay Me Agency')
 
+    assert_equal 2, child.cf0925s.size
+    assert_equal 4, child.invoices.size
     assert_status(child,
                   '2016-2017',
                   spent_out_of_pocket: 1_500,
@@ -472,7 +475,7 @@ class StatusTest < ActiveSupport::TestCase
                              service_end: '2017-01-31',
                              service_start: '2017-01-01',
                              invoice_from: 'Pay Me Agency')
-    i.connect(rtp, 'ServiceProvider', 2_500)
+    i.connect(rtp, 'ServiceProvider', 2_000)
     i.save!
 
     i = child.invoices.build(invoice_amount: 500,
@@ -512,17 +515,18 @@ class StatusTest < ActiveSupport::TestCase
     i = child.invoices.build(invoice_amount: 1_400,
                              invoice_date: '2016-12-03',
                              invoice_from: 'Supplier Name')
-    i.connect(rtp, 'Supplier', 1_400)
+    i.connect(rtp, 'Supplier', 1_000)
+    # FIXME: Make the `build` into `create` and maybe we don't need the save!
     i.save!
 
     #    show_matching_info child
 
-    assert 2, child.cf0925s.first.invoices.size
+    assert 2, rtp.invoice_allocations.size
 
     assert_status(child,
                   '2016-2017',
                   spent_out_of_pocket: 400,
-                  spent_funds: 2_900,
+                  spent_funds: 2_500,
                   committed_funds: 3_000,
                   remaining_funds: 3_000)
   end
