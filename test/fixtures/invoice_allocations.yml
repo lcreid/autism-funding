@@ -2,11 +2,13 @@ invoice_with_rtp_matched:
   invoice: invoice_with_rtp_matched
   cf0925: invoice_with_rtp_matched_a
   cf0925_type: ServiceProvider
+  amount: 200
 
 fiscal_year:
   invoice: fiscal_year
   cf0925: two_fiscal_years_0
   cf0925_type: ServiceProvider
+  amount: 200
 
 no_invoice_amount:
   invoice: no_invoice_amount

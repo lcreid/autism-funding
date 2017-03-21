@@ -57,29 +57,33 @@ class StatusTest < ActiveSupport::TestCase
   test 'big spender spent more than requested' do
     # skip 'Code to pass this test not implemented yet.'
     child = set_up_child
-    set_up_provider_agency_rtp(child, payment: 'provider')
+    rtp = set_up_provider_agency_rtp(child, payment: 'provider')
 
-    child.invoices.build(invoice_amount: 1_000,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         invoice_from: 'Ferry Man')
+    i = child.invoices.build(invoice_amount: 1_000,
+                             invoice_date: '2017-01-31',
+                             service_end: '2017-01-31',
+                             service_start: '2017-01-01',
+                             invoice_from: 'Ferry Man')
+    # We have to explicitly save the invoice because we don't have
+    # autosave: true from InvoiceAllocation to Invoice.
+    i.connect(rtp, 'ServiceProvider', 1_000)
+    i.save!
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-02-28',
-                         service_end: '2017-02-28',
-                         service_start: '2017-02-01',
-                         invoice_from: 'Ferry Man')
+    i = child.invoices.build(invoice_amount: 500,
+                             invoice_date: '2017-02-28',
+                             service_end: '2017-02-28',
+                             service_start: '2017-02-01',
+                             invoice_from: 'Ferry Man')
+    i.connect(rtp, 'ServiceProvider', 500)
+    i.save!
 
-    child.invoices.build(invoice_amount: 1_000,
-                         invoice_date: '2017-03-31',
-                         service_end: '2017-03-31',
-                         service_start: '2017-03-01',
-                         invoice_from: 'Ferry Man')
-
-    child.invoices.each do |i|
-      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
-    end
+    i = child.invoices.build(invoice_amount: 1_000,
+                             invoice_date: '2017-03-31',
+                             service_end: '2017-03-31',
+                             service_start: '2017-03-01',
+                             invoice_from: 'Ferry Man')
+    i.connect(rtp, 'ServiceProvider', 500)
+    i.save!
 
     assert_status(child,
                   '2016-2017',
@@ -118,7 +122,7 @@ class StatusTest < ActiveSupport::TestCase
 
   test 'invoice from service provider when pay service provider' do
     child = set_up_child
-    set_up_provider_agency_rtp(child, payment: 'provider')
+    rtp = set_up_provider_agency_rtp(child, payment: 'provider')
 
     assert_equal 1, child.cf0925s.size
 
@@ -128,7 +132,8 @@ class StatusTest < ActiveSupport::TestCase
                                    service_start: '2017-01-01',
                                    invoice_from: 'Ferry Man')
 
-    assert hook_invoice_to_rtp(invoice)
+    invoice.connect(rtp, 'ServiceProvider', 500)
+    invoice.save!
 
     assert_status(child,
                   '2016-2017',
@@ -148,7 +153,9 @@ class StatusTest < ActiveSupport::TestCase
                                    service_start: '2016-11-01',
                                    invoice_from: 'Ferry Man')
 
-    hook_invoice_to_rtp(invoice)
+    assert_no_difference 'InvoiceAllocation.count' do
+      hook_invoice_to_rtp(invoice)
+    end
 
     assert_status(child,
                   '2016-2017',
@@ -203,6 +210,7 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'invoice from supplier when invoice date not in fiscal year' do
+    # FIXME: we should be using the part_b_fiscal_year now.
     skip 'Need a date for supplier-only RTPs.'
     child = set_up_child
     set_up_supplier_rtp(child)
@@ -300,24 +308,23 @@ class StatusTest < ActiveSupport::TestCase
 
   test 'both service provider and supplier on one RTP' do
     child = set_up_child
-    set_up_provider_agency_rtp(child,
-                               SUPPLIER_ATTRS
-                               .merge(created_at: Date.new(2016, 12, 31)))
+    rtp = set_up_provider_agency_rtp(child,
+                                     SUPPLIER_ATTRS
+                                     .merge(created_at: Date.new(2016, 12, 31)))
 
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         invoice_from: 'Pay Me Agency')
+    i = child.invoices.build(invoice_amount: 500,
+                             invoice_date: '2017-01-31',
+                             service_end: '2017-01-31',
+                             service_start: '2017-01-01',
+                             invoice_from: 'Pay Me Agency')
+    i.connect(rtp, 'ServiceProvider', 500)
+    i.save!
 
-    child.invoices.build(invoice_amount: 1_000,
-                         notes: 'WTF?',
-                         invoice_date: '2016-12-03',
-                         invoice_from: 'Supplier Name')
-
-    child.invoices.each do |i|
-      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
-    end
+    i = child.invoices.build(invoice_amount: 1_000,
+                             invoice_date: '2016-12-03',
+                             invoice_from: 'Supplier Name')
+    i.connect(rtp, 'Supplier', 1_000)
+    i.save!
 
     #    show_matching_info child
 
@@ -333,26 +340,26 @@ class StatusTest < ActiveSupport::TestCase
 
   test 'multiple RTPs, multiple invoices' do
     child = set_up_child
-    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
-    set_up_provider_agency_rtp(child,
-                               service_provider_service_end: '2017-06-30',
-                               service_provider_service_start: '2017-05-01')
+    rtp_a = set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    rtp_b = set_up_provider_agency_rtp(child,
+                                       service_provider_service_end: '2017-06-30',
+                                       service_provider_service_start: '2017-05-01')
 
-    child.invoices.build(invoice_amount: 700,
-                         invoice_date: '2017-01-31',
-                         service_end: '2017-01-31',
-                         service_start: '2017-01-01',
-                         invoice_from: 'Pay Me Agency')
+    i = child.invoices.build(invoice_amount: 700,
+                             invoice_date: '2017-01-31',
+                             service_end: '2017-01-31',
+                             service_start: '2017-01-01',
+                             invoice_from: 'Pay Me Agency')
+    i.connect(rtp_a, 'ServiceProvider', 500)
+    i.save!
 
-    child.invoices.build(invoice_amount: 2_000,
-                         invoice_date: '2017-06-30',
-                         service_end: '2017-06-30',
-                         service_start: '2017-06-01',
-                         invoice_from: 'Pay Me Agency')
-
-    child.invoices.each do |i|
-      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
-    end
+    i = child.invoices.build(invoice_amount: 2_000,
+                             invoice_date: '2017-06-30',
+                             service_end: '2017-06-30',
+                             service_start: '2017-06-01',
+                             invoice_from: 'Pay Me Agency')
+    i.connect(rtp_b, 'ServiceProvider', 2_000)
+    i.save!
 
     assert_status(child,
                   '2016-2017',
@@ -363,20 +370,23 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'need more than one RTP to cover an invoice' do
-    # TODO: Shold be able to use this test case now.
-    skip "This case isn't supported with the current approach."
+    puts 'Remove the skip at 374'
+    skip
     child = set_up_child
-    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
-    set_up_provider_agency_rtp(child,
-                               service_provider_service_amount: 500,
-                               service_provider_service_end: '2017-04-30',
-                               service_provider_service_start: '2017-04-01')
+    rtp_a = set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    rtp_b = set_up_provider_agency_rtp(child,
+                                       service_provider_service_amount: 500,
+                                       service_provider_service_end: '2017-04-30',
+                                       service_provider_service_start: '2017-04-01')
 
-    child.invoices.build(invoice_amount: 1_100,
-                         invoice_date: '2017-05-01',
-                         service_end: '2017-04-30',
-                         service_start: '2017-01-01',
-                         service_provider_name: 'Pay Me Agency')
+    i = child.invoices.build(invoice_amount: 1_100,
+                             invoice_date: '2017-05-01',
+                             service_end: '2017-04-30',
+                             service_start: '2017-01-01',
+                             service_provider_name: 'Pay Me Agency')
+    i.connect(rtp_a, 'ServiceProvider', 500)
+    i.connect(rtp_b, 'ServiceProvider', 500)
+    i.save!
 
     assert_status(child, '2016-2017',
                   spent_out_of_pocket: 100,
@@ -386,41 +396,42 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'overlapping RTPs' do
-    # FIXME: This case was about the automatic calculation of the optimal
-    # way to assign charges to RTPs.
+    puts 'Remove the skip at 400'
     skip "The test case doesn't work with the current model of assigned RTPs."
     child = set_up_child
-    set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
-    set_up_provider_agency_rtp(child,
-                               service_provider_service_amount: 500,
-                               service_provider_service_end: '2017-02-28',
-                               service_provider_service_start: '2017-01-01')
+    rtp_a = set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
+    rtp_b = set_up_provider_agency_rtp(child,
+                                       service_provider_service_amount: 500,
+                                       service_provider_service_end: '2017-02-28',
+                                       service_provider_service_start: '2017-01-01')
 
-    child.invoices.build(invoice_amount: 400,
-                         invoice_date: '2016-12-31',
-                         service_end: '2016-12-31',
-                         service_start: '2016-12-01',
-                         service_provider_name: 'Pay Me Agency')
-    child.invoices.build(invoice_amount: 500,
-                         invoice_date: '2017-05-01',
-                         service_end: '2017-02-28',
-                         service_start: '2017-02-01',
-                         service_provider_name: 'Pay Me Agency')
-    child.invoices.build(invoice_amount: 300,
-                         invoice_date: '2017-04-30',
-                         service_end: '2017-04-30',
-                         service_start: '2017-04-01',
-                         service_provider_name: 'Pay Me Agency')
+    i = child.invoices.build(invoice_amount: 400,
+                             invoice_date: '2016-12-31',
+                             service_end: '2016-12-31',
+                             service_start: '2016-12-01',
+                             service_provider_name: 'Pay Me Agency')
+    i.connect(rtp_a, 'ServiceProvider', 400)
+    i.save!
+    i = child.invoices.build(invoice_amount: 500,
+                             invoice_date: '2017-05-01',
+                             service_end: '2017-02-28',
+                             service_start: '2017-02-01',
+                             service_provider_name: 'Pay Me Agency')
+    i.connect(rtp_a, 'ServiceProvider', 100)
+    i.connect(rtp_b, 'ServiceProvider', 400)
+    i.save!
+    i = child.invoices.build(invoice_amount: 300,
+                             invoice_date: '2017-03-31',
+                             service_end: '2017-03-31',
+                             service_start: '2017-03-01',
+                             service_provider_name: 'Pay Me Agency')
+    i.connect(rtp_b, 'ServiceProvider', 100)
+    i.save!
     child.invoices.build(invoice_amount: 1_300,
                          invoice_date: '2017-08-31',
                          service_end: '2017-08-31',
                          service_start: '2017-08-01',
                          service_provider_name: 'Pay Me Agency')
-
-    # FIXME: The answers won't be right here for the real case.
-    child.invoices.each do |i|
-      assert(hook_invoice_to_rtp(i), "Failed to match #{i.inspect}")
-    end
 
     assert_status(child,
                   '2016-2017',
@@ -430,38 +441,27 @@ class StatusTest < ActiveSupport::TestCase
                   remaining_funds: 5_000)
   end
 
-  # This case was added to test Issue #38
-  # I found that I had two different implementations for the same thing.
-  # Before I fix it, I want a test to show the failure.
-  # The first part of this test comes from
-  # test_class_match_RTP_with_provider_only_and_no_payment_specified
-  # in test/model/invoice_test.rb.
   test 'invoice and RTP match but invoice paid out of pocket' do
-    # params = { invoice_amount: 200,
-    #            invoice_date: '2017-08-31',
-    #            service_end: '2017-08-31',
-    #            service_start: '2017-08-01',
-    #            invoice_from: 'A Provider' }
-    # assert_equal 1, invoice.match(child = funded_people(:invoice_to_rtp_match),
-    #                               params).size
-
+    puts 'Remove skip at 446'
+    skip
     child = set_up_child
-    set_up_provider_agency_rtp(child,
-                               service_provider_service_amount: 2_000,
-                               service_provider_service_end: '2017-09-30',
-                               service_provider_service_start: '2017-07-01',
-                               payment: nil,
-                               agency_name: nil)
+    rtp = set_up_provider_agency_rtp(child,
+                                     service_provider_service_amount: 2_000,
+                                     service_provider_service_end: '2017-09-30',
+                                     service_provider_service_start: '2017-07-01',
+                                     payment: nil,
+                                     agency_name: nil)
     invoice = child.invoices.build(invoice_amount: 200,
                                    invoice_date: '2017-08-31',
                                    service_end: '2017-08-31',
                                    service_start: '2017-08-01',
                                    invoice_from: 'Ferry Man')
-    assert(hook_invoice_to_rtp(invoice), "Failed to match #{invoice.inspect}")
+    invoice.connect(rtp, 'ServiceProvider')
+    invoice.save!
     assert_status(child,
                   '2016-2017',
-                  spent_out_of_pocket: 0,
-                  spent_funds: 200,
+                  spent_out_of_pocket: 200,
+                  spent_funds: 0,
                   committed_funds: 2_000)
   end
 
@@ -474,10 +474,15 @@ class StatusTest < ActiveSupport::TestCase
     end
   end
 
+  # Assumes you're setting up raw data, so it can bypass the full allocation
+  # logic and just connect the invoice to the RTPs. It breaks on cases where
+  # more than one RTP matches.
   def hook_invoice_to_rtp(invoice)
     rtps = invoice.match
     return(nil) unless rtps
-    invoice.allocate(rtps)
+    rtps.each do |match|
+      invoice.connect(match.cf0925, match.cf0925_type, invoice.invoice_amount)
+    end
     invoice.save
     # rtps.each { |x| x.invoices << invoice }
   end
