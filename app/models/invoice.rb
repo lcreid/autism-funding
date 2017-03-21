@@ -60,14 +60,21 @@ class Invoice < ApplicationRecord
     #    puts "allocate: incoming_set #{new_set.map(&:object_id)}"
     # puts "----------------------------"
     new_set.map do |match|
-      invoice_allocations <<
-        match.cf0925.invoice_allocations.build(cf0925_type: match.cf0925_type)
+      connect(match.cf0925, match.cf0925_type)
     end
 
     # puts "allocate: result #{invoice_allocations.map(&:cf0925).map(&:object_id)}"
     # puts "allocate: result.inspect #{invoice_allocations.inspect}"
 
     invoice_allocations
+  end
+
+  ##
+  # Put an invoice allocation between a cf0925 and an invoice.
+  # Public so it can be used to set up test data.
+  def connect(cf0925, type, amount = 0)
+    invoice_allocations <<
+      cf0925.invoice_allocations.build(cf0925_type: type, amount: amount)
   end
 
   def include_in_reports?

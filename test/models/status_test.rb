@@ -363,6 +363,7 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'need more than one RTP to cover an invoice' do
+    # TODO: Shold be able to use this test case now.
     skip "This case isn't supported with the current approach."
     child = set_up_child
     set_up_provider_agency_rtp(child, service_provider_service_amount: 500)

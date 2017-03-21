@@ -48,6 +48,7 @@ class Status
     # end
 
     # puts "RTPs(#{rtps.size}): #{rtps.inspect}"
+    # FIXME: This is probably wrong.
     @spent_out_of_pocket = invoices
                            .select { |x| !invoice_has_rtp?(x) }
                            .map(&:invoice_amount)
@@ -58,6 +59,7 @@ class Status
     @spent_funds = rtps.map(&:spent_funds).sum
 
     # FIXME: This should never be more than the allowable_funds_for_year
+    # FIXME: This is probably wrong.
     @committed_funds = rtps.map(&:total_amount).reduce(0, &:+)
 
     @remaining_funds = [0, @allowable_funds_for_year - @committed_funds].max
@@ -97,13 +99,13 @@ class Status
   ##
   # Partition invoices into the RTPs that could pay for them.
   # Returns hash where key is RTP and value is array of invoices.
-  def partition_invoices
-    a = {}
-    rtps.each do |rtp|
-      a[rtp] = invoices.select { |x| rtp_has_invoice?(rtp, x) }
-    end
-    a
-  end
+  # def partition_invoices
+  #   a = {}
+  #   rtps.each do |rtp|
+  #     a[rtp] = invoices.select { |x| rtp_has_invoice?(rtp, x) }
+  #   end
+  #   a
+  # end
 
   # ##
   # # Determine if the RTP authorizes the invoice when the payee is agency
@@ -132,11 +134,11 @@ class Status
   #     rtp.include?(invoice.service_period)
   # end
 
-  def rtp_has_invoice?(rtp, invoice)
-    pay_provider?(invoice, rtp) ||
-      pay_agency?(invoice, rtp) ||
-      pay_for_supplier?(invoice, rtp)
-  end
+  # def rtp_has_invoice?(rtp, invoice)
+  #   pay_provider?(invoice, rtp) ||
+  #     pay_agency?(invoice, rtp) ||
+  #     pay_for_supplier?(invoice, rtp)
+  # end
 
   ##
   # List of RTPs that apply in this fiscal year
