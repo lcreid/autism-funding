@@ -370,8 +370,6 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'need more than one RTP to cover an invoice' do
-    puts 'Remove the skip at 374'
-    skip
     child = set_up_child
     rtp_a = set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
     rtp_b = set_up_provider_agency_rtp(child,
@@ -396,8 +394,6 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'overlapping RTPs' do
-    puts 'Remove the skip at 400'
-    skip "The test case doesn't work with the current model of assigned RTPs."
     child = set_up_child
     rtp_a = set_up_provider_agency_rtp(child, service_provider_service_amount: 500)
     rtp_b = set_up_provider_agency_rtp(child,
@@ -442,8 +438,6 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   test 'invoice and RTP match but invoice paid out of pocket' do
-    puts 'Remove skip at 446'
-    skip
     child = set_up_child
     rtp = set_up_provider_agency_rtp(child,
                                      service_provider_service_amount: 2_000,
@@ -463,6 +457,74 @@ class StatusTest < ActiveSupport::TestCase
                   spent_out_of_pocket: 200,
                   spent_funds: 0,
                   committed_funds: 2_000)
+  end
+
+  test 'RTP has parts A and B ' \
+    'Invoice for A is more than requested ' \
+    'Invoice for B is less than requested' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child,
+                                     SUPPLIER_ATTRS
+                                     .merge(created_at: Date.new(2016, 12, 31)))
+
+    i = child.invoices.build(invoice_amount: 2_500,
+                             invoice_date: '2017-01-31',
+                             service_end: '2017-01-31',
+                             service_start: '2017-01-01',
+                             invoice_from: 'Pay Me Agency')
+    i.connect(rtp, 'ServiceProvider', 2_500)
+    i.save!
+
+    i = child.invoices.build(invoice_amount: 500,
+                             invoice_date: '2016-12-03',
+                             invoice_from: 'Supplier Name')
+    i.connect(rtp, 'Supplier', 500)
+    i.save!
+
+    #    show_matching_info child
+
+    assert 2, child.cf0925s.first.invoices.size
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 500,
+                  spent_funds: 2_500,
+                  committed_funds: 3_000,
+                  remaining_funds: 3_000)
+  end
+
+  test 'RTP has parts A and B ' \
+    'Invoice for A is less than requested ' \
+    'Invoice for B is more than requested' do
+    child = set_up_child
+    rtp = set_up_provider_agency_rtp(child,
+                                     SUPPLIER_ATTRS
+                                     .merge(created_at: Date.new(2016, 12, 31)))
+
+    i = child.invoices.build(invoice_amount: 1_500,
+                             invoice_date: '2017-01-31',
+                             service_end: '2017-01-31',
+                             service_start: '2017-01-01',
+                             invoice_from: 'Pay Me Agency')
+    i.connect(rtp, 'ServiceProvider', 1_500)
+    i.save!
+
+    i = child.invoices.build(invoice_amount: 1_400,
+                             invoice_date: '2016-12-03',
+                             invoice_from: 'Supplier Name')
+    i.connect(rtp, 'Supplier', 1_400)
+    i.save!
+
+    #    show_matching_info child
+
+    assert 2, child.cf0925s.first.invoices.size
+
+    assert_status(child,
+                  '2016-2017',
+                  spent_out_of_pocket: 400,
+                  spent_funds: 2_900,
+                  committed_funds: 3_000,
+                  remaining_funds: 3_000)
   end
 
   private
