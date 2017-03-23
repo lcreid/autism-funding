@@ -1,10 +1,13 @@
 require 'test_helper'
+require 'helpers/status_test_helpers'
 
 # TODO: Need to do a better job of ensuring adequate test coverage. What's
 # here isn't enough.
 
 class StatusTest < ActiveSupport::TestCase
   include TestSessionHelpers
+  include StatusTestHelpers
+
   test 'status one year' do
     child = funded_people(:two_fiscal_years)
     status_2016 = child.status('2015-2016')
@@ -510,13 +513,6 @@ class StatusTest < ActiveSupport::TestCase
   end
 
   private
-
-  def assert_status(child, fy, statuses)
-    status = child.status(fy)
-    statuses.each_pair do |k, v|
-      assert_equal v, status.send(k), "#{k} failed"
-    end
-  end
 
   # Assumes you're setting up raw data, so it can bypass the full allocation
   # logic and just connect the invoice to the RTPs. It breaks on cases where
