@@ -9,25 +9,31 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
-  def set_up_child
-    user = User.new(email: 'a@example.com',
-                    password: 'password',
-                    name_first: 'a',
-                    name_last: 'b',
-                    address: 'a',
-                    city: 'b',
-                    province_code_id: province_codes(:bc).id,
-                    postal_code: 'V0V 0V0',
-                    home_phone_number: '3334445555')
+  def set_up_child(user_params = {}, child_params = {})
+    default_user_params = {
+      email: 'a@example.com',
+      password: 'password',
+      name_first: 'a',
+      name_last: 'b',
+      address: 'a',
+      city: 'b',
+      province_code_id: province_codes(:bc).id,
+      postal_code: 'V0V 0V0',
+      home_phone_number: '3334445555'
+    }
+    user = User.new(default_user_params.merge(user_params))
     # user.addresses.build(address_line_1: 'a',
     #                      city: 'b',
     #                      province_code: province_codes(:bc),
     #                      postal_code: 'V0V 0V0')
     # user.phone_numbers.build(phone_type: 'Home', phone_number: '3334445555')
-    user.funded_people.build(name_first: 'a',
-                             name_last: 'b',
-                             child_in_care_of_ministry: false,
-                             birthdate: '2003-11-30')
+    default_child_params = {
+      name_first: 'a',
+      name_last: 'b',
+      child_in_care_of_ministry: false,
+      birthdate: '2003-11-30'
+    }
+    user.funded_people.build(default_child_params.merge(child_params))
   end
 
   SUPPLIER_ATTRS = {
@@ -46,6 +52,7 @@ class ActiveSupport::TestCase
 
   PROVIDER_AGENCY_ATTRS = {
     agency_name: 'Pay Me Agency',
+    part_b_fiscal_year: '2016-2017',
     payment: 'agency',
     service_provider_postal_code: 'V0V 0V0',
     service_provider_address: '4400 Hastings St.',

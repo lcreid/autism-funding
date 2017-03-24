@@ -1,21 +1,24 @@
 class Cf0925sController < ApplicationController
   # default_form_builder AugmentedBootstrapForms
+  # around_action :catch_data_not_found
 
   def index
-    @cf0925s = Cf0925.all
+    @cf0925s = current_user
+               .funded_people
+               .find(params[:funded_person_id])
+               .cf0925s
   end
 
   def show
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
 
     respond_to do |format|
-      format.html
       format.pdf do
         @cf0925.generate_pdf
         send_file @cf0925.pdf_output_file,
                   disposition: :inline,
                   type: :pdf,
-                  filename: @cf0925client_pdf_file_name
+                  filename: @cf0925.client_pdf_file_name
       end
     end
   end
@@ -28,7 +31,7 @@ class Cf0925sController < ApplicationController
     @cf0925 = Cf0925.new
     @cf0925.funded_person =
       @funded_person =
-        FundedPerson.find(params[:funded_person_id])
+        current_user.funded_people.find(params[:funded_person_id])
 
     copy_parent_to_form
     copy_child_to_form
@@ -39,7 +42,7 @@ class Cf0925sController < ApplicationController
   end
 
   def edit
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     # puts @cf0925.funded_person.inspect
     # Get the missing fields, aka help info, for the object
     @cf0925.printable?
@@ -51,7 +54,7 @@ class Cf0925sController < ApplicationController
     # pp(params.as_json)
     # pp(cf0925_params.as_json)
     # https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2010-3933
-    @funded_person = FundedPerson.find(params[:funded_person_id])
+    @funded_person = current_user.funded_people.find(params[:funded_person_id])
     @cf0925 = @funded_person.cf0925s.build(cf0925_params)
 
     user = @cf0925.funded_person.user
@@ -80,7 +83,7 @@ class Cf0925sController < ApplicationController
   def update
     # pp(params.as_json)
     # pp(cf0925_params.as_json)
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.update(cf0925_params)
     user = @cf0925.funded_person.user
     user.assign_attributes(user_params)
@@ -105,13 +108,19 @@ class Cf0925sController < ApplicationController
 
   def destroy
     # FIXME: Check that the user owns the record to be deleted.
-    @cf0925 = Cf0925.find(params[:id])
+    @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.destroy
 
     redirect_to home_index_path, notice: 'Request deleted.'
   end
 
   private
+
+  def catch_data_not_found
+    yield
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  end
 
   def cf0925_params
     params
@@ -120,6 +129,7 @@ class Cf0925sController < ApplicationController
   end
 
   def user_params
+    # puts "PARAMS: #{params.inspect}"
     params[:cf0925][:funded_person_attributes]
       .require(:user_attributes)
       .permit(

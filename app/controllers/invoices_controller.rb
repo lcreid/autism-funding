@@ -1,16 +1,18 @@
 class InvoicesController < ApplicationController
   def new
+    # FIXME: Make this consistent with how Cf0925Controller does it.
     @invoice = Invoice.new
     @invoice.funded_person =
       @funded_person =
-        FundedPerson.find(params[:funded_person_id])
+        current_user.funded_people.find(params[:funded_person_id])
     # @url = funded_person_invoices_path params[:funded_person_id]
     #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
     #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
   end
 
   def index
-    @funded_person = FundedPerson.find(params[:funded_person_id])
+    @funded_person = current_user.funded_people.find(params[:funded_person_id])
+    # TODO: Make this more Railsy
     @invoices = Invoice.where("funded_person_id = #{@funded_person.id}")
     @title = "Invoices for #{@funded_person.my_name}"
     @subtitle = "#{@invoices.size} Invoices"
@@ -20,7 +22,7 @@ class InvoicesController < ApplicationController
     # TODO: add test cases that this works for attaching the RTP to the invoice
     # @url = invoice_path params[:id]
 
-    @invoice = Invoice.find(params[:id])
+    @invoice = current_user.invoices.find(params[:id])
     @invoice.valid?(:complete)
     # @funded_person = @invoice.funded_person
   end
@@ -28,7 +30,7 @@ class InvoicesController < ApplicationController
   def update
     logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     # TODO: add test cases that this works for attaching the RTP to the invoice
-    @invoice = Invoice.find(params[:id])
+    @invoice = current_user.invoices.find(params[:id])
     logger.debug { "******Service Provider:  #{@invoice.service_provider_name}" }
     logger.debug { "**** invoices_controller update safe params: #{invoice_params.inspect}" }
     @invoice.update(invoice_params)
@@ -38,7 +40,7 @@ class InvoicesController < ApplicationController
   end
 
   def destroy
-    @invoice = Invoice.find(params[:id])
+    @invoice = current_user.invoices.find(params[:id])
     @funded_person = @invoice.funded_person
     @invoice.destroy
     # redirect_to funded_person_invoices_path(@funded_person.id)
@@ -48,7 +50,9 @@ class InvoicesController < ApplicationController
   def create
     logger.debug { "**** invoices_controller raw params #{params.inspect}" }
     @invoice = Invoice.new
-    @invoice.funded_person = FundedPerson.find(params[:funded_person_id])
+    @invoice.funded_person = current_user
+                             .funded_people
+                             .find(params[:funded_person_id])
     logger.debug { "**** invoices_controller create safe params: #{invoice_params.inspect}" }
     if @invoice.update(invoice_params)
       # puts @invoice.inspect
