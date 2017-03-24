@@ -107,7 +107,6 @@ class Cf0925sController < ApplicationController
   end
 
   def destroy
-    # FIXME: Check that the user owns the record to be deleted.
     @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.destroy
 

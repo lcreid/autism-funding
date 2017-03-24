@@ -35,11 +35,11 @@ class PreferencesTest < PoltergeistTest
     expect has_no_selector?("#collapse-#{first_child.id}.in")
 
     # Ugh. Not supposed to do this, but what choice do I have?
-    # FIXME: Taking this one out leads to a broken test case.
+    # TODO: Taking this one out leads to a broken test case.
     sleep(1)
     click_link(first_child.my_name)
     Rails.logger.debug { 'Just clicked link to show panel.' }
-    # FIXME: The next line is just to make sure we're synched up before looking
+    # TODO: The next line is just to make sure we're synched up before looking
     # for the expanded panel.
     assert_content 'Four Year Two-Kids'
     expect has_selector?("#collapse-#{first_child.id}.in")

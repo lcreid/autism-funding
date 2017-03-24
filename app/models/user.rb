@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
-  # FIXME: the next line has to change every time we add another form.
+  # TODO: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms,
            -> { order(created_at: :desc) },

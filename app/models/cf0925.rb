@@ -370,17 +370,6 @@ class Cf0925 < ApplicationRecord
       (item_cost_3 || 0)
   end
 
-  ##
-  # Spent out of pocket from this RTP.
-  # FIXME: Should be smarter about remainders.
-  def out_of_pocket
-    invoice_total = invoices
-                    .select(&:include_in_reports?)
-                    .map(&:invoice_amount)
-                    .sum
-    [invoice_total - total_amount, 0].max
-  end
-
   def part_b_fiscal_year
     funded_person.fiscal_year(super)
   end
@@ -388,7 +377,7 @@ class Cf0925 < ApplicationRecord
   # TODO: Think about this. Playing games with the value here made the
   # select box hard to work with. I couldn't just use the defaults, and have
   # to manually call to_s to make things work.
-  # FIXME: I should be able to define this as an attribute of type FiscalYear
+  # TODO: I should be able to define this as an attribute of type FiscalYear
   def part_b_fiscal_year=(value)
     if value.is_a?(FiscalYear)
       super value.to_s
@@ -531,23 +520,6 @@ class Cf0925 < ApplicationRecord
 
   def set_form
     form || self.form = Form.find_by!(class_name: 'Cf0925')
-  end
-
-  ##
-  # How much is spent from this RTP
-  def spent_funds
-    # puts "Cf0925#spent_funds: #{inspect} invoices(#{invoices.size})"
-    # FIXME: This needs to work from allocated amount. (Priority!)
-    # FIXME: I think this can be removed.
-    invoice_total = invoices
-                    .select(&:include_in_reports?)
-                    .map(&:invoice_amount)
-                    .sum
-    # puts "invoice_total: #{invoice_total} total_amount: #{total_amount}"
-    [invoice_total, total_amount].min
-    # FIXME: The above has to distinguish supplier from service provider
-    # [spent_on_provider_agency, rtp.service_provider_service_amount].min +
-    #   [spent_on_supplier, rtp.item_total].min
   end
 
   def start_date
