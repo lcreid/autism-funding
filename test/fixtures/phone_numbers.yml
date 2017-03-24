@@ -1,15 +1,51 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #### Test Data for phone_numbers table
 ph_1_of_1:
- phone_number_type: home
+ phone_type: Home
  phone_number: '2224567532'
  user: has_one_phone
 
 ph_1_of_2:
- phone_number_type: home
+ phone_type: Home
  phone_number: '3214560987'
  user: has_two_phone
 
 ph_2_of_2:
- phone_number_type: work
+ phone_type: Work
  phone_number: '4561970032'
  user: has_two_phone
+
+minimum_printable:
+  phone_type: Home
+  phone_number: '2345678899'
+  user: minimum_printable
+
+forms:
+  phone_type: Home
+  phone_number: '4445556666'
+  user: forms
+
+no_invoice_amount:
+  phone_type: Home
+  phone_number: '4445556666'
+  user: no_invoice_amount
+
+years:
+  phone_type: Home
+  phone_number: '5556667777'
+  user: years
+
+has_no_rtp:
+  phone_type: Home
+  phone_number: '2345678899'
+  user: has_no_rtp
+
+invoice_matcher:
+  phone_type: Home
+  phone_number: '2345678899'
+  user: invoice_matcher
+
+invoice_with_rtp_matched:
+  phone_type: Work
+  phone_number: '2345678899'
+  user: invoice_with_rtp_matched

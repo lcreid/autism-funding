@@ -1,0 +1,107 @@
+<div class="container">
+  <h1>Edit My Data</h1>
+  <br>
+  <% if current_user.missing_key_info? %>
+    <div class="alert alert-warning">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <span class="glyphicon glyphicon-star-empty"></span>
+          To begin taking advantage of the functionality of this site you must
+          enter the province of your address as well as at least one funded child
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  <% end %>
+  <% unless current_user.bc_resident? %>
+    <div class="alert alert-warning">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <span class="glyphicon glyphicon-star-empty"></span>
+          The forms and funding found in this area are only availble to residents of
+          British Columbia.
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  <% end %>
+
+  <% unless @warning.nil? %>
+    <div class="alert alert-danger">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <%= @warning.html_safe %>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= bootstrap_form_for current_user, builder: AutismFundingFormBuilder, url: my_profile_update_path do |the_form| %>
+
+    <%= panel the_form, "Edit User Information" do |p| %>
+      <%= form_row do %>
+        <%= the_form.text_field(:name_first, column_width: 3, label: 'First') %>
+        <%= the_form.text_field(:name_middle, column_width: 3, label: 'Middle') %>
+        <%= the_form.text_field(:name_last, column_width: 3, label: 'Last') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.text_field(:address, column_width: 6, label: 'Address') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.text_field(:city, column_width: 6, label: 'City') %>
+        <%= the_form.collection_select :province_code_id, ProvinceCode.all, :id, :province_name, {column_width: 3, label: 'Province', prompt: true} %>
+        <%= the_form.postal_code_field(:postal_code, column_width: 3, label: 'Postal Code') %>
+      <% end %>
+      <%= form_row do %>
+        <%= the_form.phone_field :home_phone_number, column_width: 3, label: 'Home Phone' %>
+        <%= the_form.phone_field :work_phone_number, column_width: 3, label: 'Work Phone' %>
+        <%= the_form.text_field :work_phone_extension, column_width: 2, label: 'Extension' %>
+      <% end %>
+    <% end %>
+    <%= panel the_form, "Funded Children" do |p| %>
+      <%= the_form.fields_for :funded_people do |fp| %>
+        <% if fp.object.id.nil? %>
+          <%= form_row do %>
+            <div class="col-md-12 text-center mark">
+              Add a new funded child by entering data below
+            </div>
+          <% end %>
+        <% end %>
+        <%= form_row do %>
+          <%= fp.text_field(:name_first, column_width: 3, label: 'First Name') %>
+          <%= fp.text_field(:name_middle, column_width: 3, label: 'Middle') %>
+          <%= fp.text_field(:name_last, column_width: 3, label: 'Last') %>
+          <%= fp.date_field(:birthdate, column_width: 2, label: 'Birthdate') %>
+          <% unless fp.object.id.nil? %>
+            <%= fp.check_box :_destroy, column_width: 1, label: 'Delete?' %>
+          <% end %>
+          <br><br>
+        <% end %>
+        <%= form_row do %>
+          <div class="col-md-1">
+          </div>
+          <%= fp.form_group :child_in_care_of_ministry,  {label: {text: 'Is this child in the care of the ministry ?'}, column_width: 4, inline: true}  do %>
+            <%= fp.radio_button(:child_in_care_of_ministry, 'true', label: "Yes", inline: true) %>
+            <%= fp.radio_button(:child_in_care_of_ministry, 'false', label: "No", inline: true) %>
+          <% end %>
+          <div class="col-md-3">
+            <%# coll = Array[{text: 'Yes', val: true },{text: 'No', val: false }] %>
+            <%#= fp.collection_radio_buttons(:child_in_care_of_ministry, coll, :val, :text, label: 'Child in Care of Ministry?') %>
+          </div>
+        <% end %>
+        <br><br>
+      <% end %>
+    <% end %>
+
+    <%= form_row do %>
+      <div class="col-md-12 lead">
+        <%= the_form.submit class: 'btn btn-primary' %>
+        <%= the_form.button 'Reset', type: 'reset', class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,6 @@
+<h3><%= @title %></h3>
+<div style="font-size: 8pt"><%= @subtitle %></div>
+<div class="col-md-1"></div>
+<div class="col-md-10">
+  <%= render partial: 'invoices', locals: { invoices: @invoices,  message_on_empty_report: 'You have not entered any invoices' } %>
+<div class="col-md-1"></div>

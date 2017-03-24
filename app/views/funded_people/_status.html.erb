@@ -1,0 +1,64 @@
+<div class="row">
+  <% if funded_person.fiscal_years.present? %>
+    <div class="col-md-10">
+      <% status = Status.new(funded_person, funded_person.selected_fiscal_year) %>
+      <%# FIXME: Make this a grid, not a table. %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="test-allowable-funds-for-year text-center">
+                Total Funding for Year
+              </th>
+              <th class="test-committed-funds text-center">
+                Funding Approved
+              </th>
+              <th class="test-remaining-funds text-center">
+                Funding Remaining this Year
+              </th>
+              <th class="test-spent-funds text-center">
+                Funding Spent
+              </th>
+              <th class="test-spent-out-of-pocket text-center">
+                Out of Pocket
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="test-allowable-funds-for-year text-center">
+                <%= number_to_currency(status.allowable_funds_for_year, units: '') %>
+              </td>
+              <td class="test-committed-funds text-center">
+                <%= number_to_currency(status.committed_funds, units: '') %>
+              </td>
+              <td class="test-remaining-funds text-center">
+                <%= number_to_currency(status.remaining_funds, units: '') %>
+              </td>
+              <td class="test-spent-funds text-center">
+                <%= number_to_currency(status.spent_funds, units: '') %>
+              </td>
+              <td class="test-spent-out-of-pocket text-center">
+                <%= number_to_currency(status.spent_out_of_pocket, units: '') %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="col-md-10">
+      <p class="text-center">No data available for this period.</p>
+    </div>
+  <% end %>
+  <div class="col-md-2">
+    <% if (fiscal_year_list = funded_person.fiscal_years).present? %>
+      <%= select_tag "year[#{funded_person.id}]",
+                     options_from_collection_for_select(fiscal_year_list,
+                                                        :to_s,
+                                                        :to_s,
+                                                        funded_person.selected_fiscal_year.to_s),
+                                                        class: "pull-right fiscal-year-selector" %>
+     <% end %>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<%#
+********************************************************************************
+The partial this form is no longer in use.  This is dead code that has been kept
+for its learning value
+********************************************************************************
+The partial was invoked from _parent_info.html.erb.  The code from that file has
+been copied below.  Please note this code references methods in user that are no
+long in use.  my_home_phone and my_work_phone returned an instance of a Phone
+model object.  Note as well that the % character has been replaced by _percent_.
+--- Begin from _parent_info.html.erb -------------------------------------------
+<_percent_# OK. I think the below works. What is the learning? By putting in the method name,
+you cause the form builder to use it in the element id and name, so you get unique IDs.
+But the form builder must look only at attributes, rather than all methods,
+when looking for the value, so you also have to explicitly provide the object.
+I couldn't get nested attributes to work out of the box. So an approach that uses
+the collection ordered by the way you want them to be, while hacky, works more smoothly.
+You can do two different rows explicitly, but then you have multiple elements with the
+same HTML ID, which causes grief and doesn't work. _percent_>
+<_percent_= parent.fields_for :phone_numbers, [
+          @cf0925.funded_person.user.my_home_phone,
+          @cf0925.funded_person.user.my_work_phone
+        ] do |phone_form| _percent_>
+    <_percent_#= "parent object: " + parent.object.inspect _percent_>
+    <_percent_#= "phone_form object: " + phone_form.object.inspect _percent_>
+    <_percent_= render partial: 'phone_numbers/form',
+                     locals: {
+                       f: phone_form
+                     } _percent_>
+  <_percent_ end _percent_>
+--- End from _parent_info.html.erb ---------------------------------------------
+%>
+
+<div class="col-md-2">
+  <%# puts f.inspect %>
+  <%# puts f.object.inspect %>
+  <%= f.hidden_field :user_id %>
+  <div class="form-group">
+    <%#= f.label :phone_number, f.object.phone_type + " Phone", class: 'control-label' %>
+    <%= f.phone_field :phone_number, label: f.object.phone_type + " Phone" %>
+    <%= f.hidden_field :phone_type, value: f.object.phone_type %>
+  </div>
+</div>
+<div class="col-md-1">
+  <% if f.object.phone_type == "Work" %>
+    <div class="form-group">
+      <%#= f.label "Ext:", class: 'control-label' %>
+      <%= f.text_field :phone_extension, label: "Ext." %>
+    </div>
+  <% end %>
+</div>

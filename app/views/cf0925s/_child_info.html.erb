@@ -1,0 +1,32 @@
+<%= form_row do %>
+  <%= f.static_control(:child_last_name, column_width: 2, label: 'Last Name') %>
+  <%= f.static_control(:child_first_name, column_width: 2, label: 'First') %>
+  <%= f.static_control(:child_middle_name, column_width: 2, label: 'Middle') %>
+  <%= f.static_control(:child_dob, column_width: 2, label: 'Date of Birth') %>
+  <%= f.form_group(:child_in_care_of_ministry,
+                       column_width: 4,
+                       label: {
+                         text: "Is this child in the care of the ministry?"
+                         }) do %>
+    <%# http://stackoverflow.com/questions/1953017/why-cant-radio-buttons-be-readonly %>
+    <%= f.radio_button_static(:child_in_care_of_ministry,
+                              'true',
+                              label: 'Yes',
+                              inline: true) %>
+    <%= f.radio_button_static(:child_in_care_of_ministry,
+                              'false',
+                              label: 'No',
+                              inline: true) %>
+  <% end %>
+<% end %>
+
+<%= form_row do %>
+  <div class="col-md-12">
+    <p>
+      If you need to change the child information,
+      you have to go to your
+      <%= link_to 'profile page', my_profile_edit_path(@cf0925.funded_person.user) %>
+      and change it there.
+    </p>
+  </div>
+<% end %>

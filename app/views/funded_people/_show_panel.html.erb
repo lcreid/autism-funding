@@ -1,0 +1,18 @@
+<div class="child panel panel-default">
+  <div class="panel-heading" id="heading-<%= funded_person.id %>">
+    <h4 class="panel-title">
+      <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<%= funded_person.id %>" aria-expanded="true" aria-controls="collapse-<%= funded_person.id %>">
+        <%= glyphicon_for_panel(funded_person) %>
+        <span class="name">
+          <%# The object name in the partial is named after the partial,
+                        not the singular of the object for the collection. %>
+          <%= funded_person.my_name %>
+          <span class="small">
+             - click to view or hide details on funding/invoices
+          </span>
+        </span>
+      </a>
+    </h4>
+  </div>
+  <%= collapsible_panel(funded_person) %>
+</div>

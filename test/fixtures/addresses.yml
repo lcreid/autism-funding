@@ -1,0 +1,80 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# -- Test data for addresses
+ad_1_of_1:
+  address_line_1: "ad_1_of_1"
+  city: 'Anytown'
+  province_code: ont
+  user: has_one_address
+
+minimum_printable:
+  address_line_1: Minimum Printable St
+  city: Min Print Ville
+  postal_code: S0S 0S0
+  province_code: bc
+  user: minimum_printable
+
+forms:
+  address_line_1: Forms
+  city: Formsville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: forms
+
+no_invoice_amount:
+  address_line_1: No
+  city: Noville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: no_invoice_amount
+
+years:
+  address_line_1: 123 Year St
+  city: Yearville
+  postal_code: F0F 0F0
+  province_code: bc
+  user: years
+
+dual_child_parent:
+  address_line_1: 123 Dual St
+  city: Dualtown
+  postal_code: D0D 0D0
+  province_code: bc
+  user: dual_child_parent
+
+has_no_rtp:
+  address_line_1: No RTP St
+  city: No RTP Ville
+  postal_code: S0S 0S0
+  province_code: bc
+  user: has_no_rtp
+
+has_no_prov:
+  address_line_1: Provinceless St
+  city: Orphanville
+  postal_code: S0S 0S1
+
+has_supported_prov:
+  address_line_1: Provinceless St
+  city: Happyville
+  province_code: bc
+  postal_code: V0S 0S1
+
+has_unsupported_prov:
+  address_line_1: Provinceless St
+  city: Sadville
+  province_code: sk
+  postal_code: S0S 0S1
+
+invoice_matcher:
+  address_line_1: 1 Match St
+  city: Matchville
+  province_code: bc
+  postal_code: V0V 0V0
+  user: invoice_matcher
+
+invoice_with_rtp_matched:
+  address_line_1: 1 Rtp St
+  city: Rtpville
+  province_code: bc
+  postal_code: V7V 7V7
+  user: invoice_with_rtp_matched

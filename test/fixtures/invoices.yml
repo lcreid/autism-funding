@@ -1,0 +1,120 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+fiscal_year:
+  invoice_amount: 200
+  invoice_date: '2016-03-01'
+  notes:
+  service_end: '2016-02-29'
+  service_start: '2016-02-01'
+  invoice_reference:
+  funded_person: two_fiscal_years
+  invoice_from: Joe 2015
+
+invoice_adds_fiscal_year:
+  invoice_amount: 200
+  invoice_date: '2017-03-01'
+  notes:
+  service_end: '2017-02-28'
+  service_start: '2017-02-01'
+  invoice_reference:
+  funded_person: invoice_and_form
+  invoice_from: service_provider_name
+
+no_invoice_amount:
+  invoice_amount:
+  invoice_date: '2016-03-01'
+  notes:
+  service_end: '2016-02-29'
+  service_start: '2016-02-01'
+  invoice_reference:
+  funded_person: no_invoice_amount
+  invoice_from: service_provider_name
+
+#-- Series of test cases to test valid?(:complete)
+#-- in each test case, only one error is created
+#-- The attribute :invoice_reference is always 'Create 1 :complete Validation Error'
+#-- The attribute :notes describes the test
+#-- Note this invoice is associated with the funded_person record invoice_and_form
+#      with a birthdate of 2003-06-15
+inv_valtest_02:
+  notes: 'Missing Invoice Amount'
+  invoice_reference: 'Create 1 :complete Validation Error'
+  funded_person: invoice_validation_test
+  invoice_amount:
+  invoice_date: '2016-04-07'
+  service_end: '2016-03-31'
+  service_start: '2016-03-01'
+  invoice_from: service_provider_name
+
+inv_valtest_04:
+  notes: 'service_provider_name, but no service_end'
+  invoice_reference: 'Create 1 :complete Validation Error - no longer a valid test'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-03-30'
+  service_end:
+  service_start: '2016-03-01'
+  invoice_from: service_provider_name
+
+inv_valtest_05:
+  notes: 'service_provider_name, but no service_start'
+  invoice_reference: 'Create 1 :complete Validation Error - no longer a valid test'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-04-07'
+  service_end:  '2016-03-31'
+  service_start:
+  invoice_from: service_provider_name
+
+inv_valtest_06:
+  notes: 'Fiscal Year of service start different than service end'
+  invoice_reference: 'Create 1 :complete Validation Error'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-04-07'
+  service_end:  '2016-03-31'
+  service_start: '2015-03-01'
+  invoice_from: service_provider_name
+
+inv_valtest_07:
+  notes: 'Service end before service start'
+  invoice_reference: 'Create 1 :complete Validation Error'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-04-07'
+  service_end:  '2016-01-31'
+  service_start: '2016-03-01'
+  invoice_from: service_provider_name
+
+inv_valtest_08:
+  notes: 'No Invoicee'
+  invoice_reference: 'Create 1 :complete Validation Error'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-04-07'
+  service_end:  '2016-03-31'
+  service_start: '2016-03-01'
+  # invoice_from: service_provider_name
+
+inv_valtest_complete:
+  notes: 'Complete Invoicee'
+  invoice_reference: 'complete test'
+  funded_person: invoice_validation_test
+  invoice_amount: 200
+  invoice_date: '2016-04-07'
+  service_end:  '2016-03-31'
+  service_start: '2016-03-01'
+  invoice_from: service_provider_name
+
+invoice_with_rtp_matched:
+  invoice_amount: 200
+  invoice_date: '2017-03-01'
+  notes:
+  service_end: '2017-02-28'
+  service_start: '2017-02-01'
+  funded_person: invoice_with_rtp_matched
+  invoice_from: A G Ency and Co.

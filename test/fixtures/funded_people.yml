@@ -1,4 +1,5 @@
-# -- Test date for funded_people
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# -- Test data for funded_people
 one_of_one:
  birthdate: '19720101'
  name_first: "Ima"
@@ -16,3 +17,129 @@ two_of_two:
  name_first: "Imatwo"
  name_last: "Oftwo"
  user: has_two_fp
+
+cf0925:
+  birthdate: '2002-04-01'
+  name_first: cf
+  name_last: '0925'
+  user: cf0925
+
+minimum_printable:
+  birthdate: '2005-11-11'
+  name_first: Minimum
+  name_last: Printable
+  user: minimum_printable
+
+forms:
+  birthdate: '2013-12-27'
+  name_first: Junior
+  name_last: Forms
+  child_in_care_of_ministry: true
+  user: forms
+
+sixteen_year_old:
+  birthdate: '2000-05-11'
+  name_first: Sixteen
+  name_middle: Year
+  name_last: Two-Kids
+  user: dual_child_parent
+
+four_year_old:
+  birthdate: '2012-02-12'
+  name_first: Four
+  name_middle: Year
+  name_last: Two-Kids
+  user: dual_child_parent
+
+beginning_of_year:
+  birthdate: '2009-01-01'
+  name_first: Beginning
+  name_last: Year
+
+end_of_year:
+  birthdate: '2011-12-31'
+  name_first: End
+  name_last: Year
+
+beginning_of_month:
+  birthdate: '2007-04-01'
+  name_first: Beginning
+  name_last: Month
+
+end_of_month:
+  birthdate: '2008-04-30'
+  name_first: End
+  name_last: Month
+
+leap_day:
+  birthdate: '2004-02-29'
+  name_first: Leap
+  name_last: Day
+
+no_fiscal_years:
+  birthdate: '2007-10-31'
+  name_first: No
+  name_last: Years
+  child_in_care_of_ministry: false
+  user: years
+
+one_fiscal_year:
+  birthdate: '2009-12-01'
+  name_first: One
+  name_last: Year
+  child_in_care_of_ministry: false
+  user: years
+
+two_fiscal_years:
+  birthdate: '2003-06-15'
+  name_first: Two
+  name_last: Years
+  child_in_care_of_ministry: false
+  user: years
+
+invoice_and_form:
+  birthdate: '2003-06-15'
+  name_first: Invoice
+  name_last: Form
+
+invoice_validation_test:
+  birthdate: '2003-06-15'
+  name_first: Invoice
+  name_middle: Validation
+  name_last: Test
+
+no_invoice_amount:
+  birthdate: '2003-12-01'
+  name_first: No
+  name_last: Invoice
+  user: no_invoice_amount
+
+dob_2003_01_01:
+  birthdate: '2003-01-01'
+  name_first: Date
+  name_last: Validation
+  user: dob_2003_01_01
+
+has_no_rtp:
+  birthdate: '2005-11-11'
+  name_first: No
+  name_last: Rtp
+  child_in_care_of_ministry: false
+  user: has_no_rtp
+
+is_a_blank:
+  name_first: Blank
+
+invoice_to_rtp_match:
+  birthdate: '2006-05-22'
+  name_first: Invoice
+  name_last: Matcher
+  child_in_care_of_ministry: false
+  user: invoice_matcher
+
+invoice_with_rtp_matched:
+  birthdate: '2006-05-22'
+  name_first: Invoice
+  name_last: With Rtp Jr.
+  child_in_care_of_ministry: false
+  user: invoice_with_rtp_matched

@@ -1,0 +1,16 @@
+<% if invoice_form.object.invoice_allocations.empty? %>
+  <%= content_tag(:tr,
+        content_tag(:td,
+                    'No RTPs match this invoice, ' \
+                    'or you need to fill in more fields above ' \
+                    'to retrieve RTPs ' \
+                    'that provide funds for this invoice.',
+                    colspan: 5)) %>
+<% else %>
+  <%= invoice_form.fields_for :invoice_allocations do |invoice_allocation| %>
+    <%#= content_tag(:tr, content_tag(:td, "IA: #{invoice_allocation.object.inspect}")) %>
+    <%= render(partial: 'invoice_allocation',
+               object: invoice_allocation.object,
+               locals: { invoice_allocation_form: invoice_allocation }) %>
+  <% end %>
+<% end %>

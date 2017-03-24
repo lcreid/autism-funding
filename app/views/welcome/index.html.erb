@@ -11,9 +11,8 @@
       and how much you've spent.
     </p>
     <p>
-      We're just getting started,
-      so nothing is here yet.
-      The first milestone is to support parents
+      We're just getting started.
+      Our first goal is to support parents
       and care-givers
       in the province of British Columbia.
       We hope to support other provinces in the future.
@@ -22,7 +21,7 @@
 </div>
 <div class="container">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
       <h2>For Parents and Care Givers</h2>
       <p>
         Keep track of how much of your funding
@@ -35,35 +34,37 @@
       </p>
       <p>
         <%= link_to "Sign Up", new_user_registration_path %>
-        now to receive news
-        about when this site will be ready to print completed forms.
+        now to start using the site, or
+        <%= link_to "Log in", new_user_session_path %>
+        if you are already a registered user of our site.
+      </p>
+      <p>
+        <%= link_to "Contact Us", static_contact_us_path %>
+        with your questions, ideas, and feedback on this site.
       </p>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <h2>For Service Providers</h2>
       <p>
-        See how much funding you're approved for,
+        Right now, our application is targeted at helping families and care
+        givers, but, if demand drives us, we'd like to extend our application
+        so that we can help Service Providers.  This application could allow you
+        to see how much funding you're approved for,
         so you can help your families stay up-to-date
         with their funding applications,
         meaning fewer delays in paying your invoices.
       </p>
       <p>
         <%= link_to "Sign Up", new_user_registration_path %>
-        now to receive news
-        about when this site will be ready
-        to help you and your families
-        manage their funding.
+        if you'd like to explore the capabilites of this
+        site.
       </p>
-    </div>
-    <div class="col-md-4">
-      <h2>For Governments</h2>
       <p>
-        There's nothing here yet,
-        but we're hoping that with the support of parents
-        and care-givers,
-        we can convince governments to join with us,
-        and provide a site the makes managing funding
-        less of a burden for parents and care-givers.
+        <%= link_to "Contact Us", static_contact_us_path %>
+        with your thoughts and suggestions as to how we could
+        extend our application to help Service Providers as well
+        as families.
+      </p>
     </div>
   </div>
 </div>

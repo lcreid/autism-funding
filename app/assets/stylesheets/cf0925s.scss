@@ -1,3 +1,16 @@
 // Place all the styles related to the Cf0925s controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.hide-label {
+  display: none;
+}
+
+.new_cf0925, .edit_cf0925 {
+  & input[type=text] {
+      width: 100%;
+    }
+}
+
+div.field_with_errors {
+  display: inline;
+}

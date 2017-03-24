@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.0.0.rc1', '< 5.1'
+gem 'rails', '>= 5.0.0', '< 5.1'
 # Use postgres as the database for Active Record
 gem 'pg'
 # Use Puma as the app server
@@ -34,10 +34,15 @@ gem 'devise'
 # Manipulate PDFs https://github.com/jkraemer/pdf-forms
 gem 'pdf-forms'
 
+gem 'bootstrap_form'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
-  gem 'capybara'
+  gem 'capybara', '< 2.9' # Pin to before 2.9 until a new release of minitest-rails
+  gem 'minitest-rails-capybara'
+  gem 'poltergeist'
+  gem 'database_cleaner'
 end
 
 group :development do

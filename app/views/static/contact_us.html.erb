@@ -1,0 +1,45 @@
+<div class="jumbotron">
+  <div class="container">
+    <h1 class="text-center">Contact Us</h1>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Tell Us What You Think</h2>
+      <p>
+        We'd love to hear what you think of this site.
+        <%= mail_to 'mailto:contactus@autism-funding.com?',
+                    'E-mail',
+                    subject: 'Feedback from Autism Funding' %>
+        us if you have:
+      </p>
+      <ul>
+        <li>Problems with this site.</li>
+        <li>Suggestions for improvement.</li>
+        <li>Suggestions for new features.</li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h2>Spread the Word</h2>
+      <p>
+        Tell other families about this site.
+        Send them
+        <%= mail_to '',
+                    'an invitation',
+                    subject: 'An Invitation to Try the Autism Funding Site',
+                    body: 'I invite you to try out the Autism Funding site. ' \
+                          'Just click ' +
+                          welcome_index_url +
+                          ' for more information, or click ' +
+                          new_user_registration_url +
+                          ' to sign up. ' +
+                          "If the links don't work, " \
+                          'right click on the link, copy the shortcut, ' \
+                          "and paste it into your browser's address bar." %>
+        to sign up
+        and try it out.
+      </p>
+    </div>
+  </div>
+</div>

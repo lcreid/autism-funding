@@ -1,0 +1,2 @@
+class FundedPeopleController < ApplicationController
+end

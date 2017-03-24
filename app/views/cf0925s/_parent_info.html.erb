@@ -1,0 +1,18 @@
+<div class="parent-test">
+  <%= form_row do %>
+    <%= parent.text_field(:name_last, column_width: 2, label: 'Last Name') %>
+    <%= parent.text_field(:name_first, column_width: 2, label: 'First') %>
+    <%= parent.text_field(:name_middle, column_width: 2, label: 'Middle') %>
+    <%= parent.phone_field(:home_phone_number, column_width: 2, label: 'Home Phone') %>
+    <%= parent.phone_field(:work_phone_number, column_width: 2, label: 'Work Phone') %>
+    <%= parent.text_field(:work_phone_extension, column_width: 2, label: 'Ext.') %>
+    <%= parent.error_message_for(:phone_numbers) %>
+  <% end %>
+  <%= form_row do %>
+    <div class="parent-address-fields" %>
+      <%= parent.text_field(:address, column_width: 6, label: 'Address') %>
+      <%= parent.text_field(:city, column_width: 4, label: 'City') %>
+      <%= parent.postal_code_field(:postal_code, column_width: 2, label: 'Postal Code') %>
+    </div>
+  <% end %>
+</div>

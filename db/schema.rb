@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160716142356) do
+ActiveRecord::Schema.define(version: 20170208220042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,7 +72,10 @@ ActiveRecord::Schema.define(version: 20160716142356) do
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
     t.integer  "form_id"
+    t.integer  "funded_person_id"
+    t.string   "part_b_fiscal_year"
     t.index ["form_id"], name: "index_cf0925s_on_form_id", using: :btree
+    t.index ["funded_person_id"], name: "index_cf0925s_on_funded_person_id", using: :btree
   end
 
   create_table "forms", force: :cascade do |t|
@@ -82,6 +85,7 @@ ActiveRecord::Schema.define(version: 20160716142356) do
     t.text     "form_name",        null: false
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.string   "class_name"
     t.index ["province_code_id"], name: "index_forms_on_province_code_id", using: :btree
   end
 
@@ -91,25 +95,49 @@ ActiveRecord::Schema.define(version: 20160716142356) do
     t.text     "name_first"
     t.text     "name_last"
     t.text     "name_middle"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.boolean  "child_in_care_of_ministry"
     t.index ["user_id"], name: "index_funded_people_on_user_id", using: :btree
   end
 
-  create_table "phone_number_types", force: :cascade do |t|
-    t.text     "phone_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "invoice_allocations", force: :cascade do |t|
+    t.integer "cf0925_id"
+    t.integer "invoice_id"
+    t.decimal "amount",      precision: 7, scale: 2
+    t.string  "cf0925_type"
+    t.index ["cf0925_id", "invoice_id"], name: "index_invoice_allocations_on_cf0925_id_and_invoice_id", using: :btree
+    t.index ["cf0925_id"], name: "index_invoice_allocations_on_cf0925_id", using: :btree
+    t.index ["invoice_id", "cf0925_id"], name: "index_invoice_allocations_on_invoice_id_and_cf0925_id", using: :btree
+    t.index ["invoice_id"], name: "index_invoice_allocations_on_invoice_id", using: :btree
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.integer  "cf0925_id"
+    t.decimal  "invoice_amount",        precision: 7, scale: 2
+    t.date     "invoice_date"
+    t.string   "notes"
+    t.date     "service_end"
+    t.date     "service_start"
+    t.string   "supplier_name"
+    t.string   "invoice_reference"
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.integer  "funded_person_id"
+    t.text     "agency_name"
+    t.text     "service_provider_name"
+    t.string   "invoice_from"
+    t.index ["cf0925_id"], name: "index_invoices_on_cf0925_id", using: :btree
+    t.index ["funded_person_id"], name: "index_invoices_on_funded_person_id", using: :btree
   end
 
   create_table "phone_numbers", force: :cascade do |t|
-    t.integer  "phone_number_type_id"
     t.integer  "user_id"
     t.text     "phone_extension"
     t.text     "phone_number"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.index ["phone_number_type_id"], name: "index_phone_numbers_on_phone_number_type_id", using: :btree
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.text     "phone_type"
     t.index ["user_id"], name: "index_phone_numbers_on_user_id", using: :btree
   end
 
@@ -138,6 +166,7 @@ ActiveRecord::Schema.define(version: 20160716142356) do
     t.text     "name_last"
     t.text     "name_middle"
     t.text     "role"
+    t.text     "preferences"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
@@ -145,8 +174,10 @@ ActiveRecord::Schema.define(version: 20160716142356) do
   add_foreign_key "addresses", "province_codes"
   add_foreign_key "addresses", "users"
   add_foreign_key "cf0925s", "forms"
+  add_foreign_key "cf0925s", "funded_people"
   add_foreign_key "forms", "province_codes"
   add_foreign_key "funded_people", "users"
-  add_foreign_key "phone_numbers", "phone_number_types"
+  add_foreign_key "invoices", "cf0925s"
+  add_foreign_key "invoices", "funded_people"
   add_foreign_key "phone_numbers", "users"
 end
