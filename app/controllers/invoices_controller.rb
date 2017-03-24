@@ -1,6 +1,6 @@
 class InvoicesController < ApplicationController
   def new
-    # FIXME: Make this consistent with how Cf0925Controller does it.
+    # TODO: Make this consistent with how Cf0925Controller does it.
     @invoice = Invoice.new
     @invoice.funded_person =
       @funded_person =
