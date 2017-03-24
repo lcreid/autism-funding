@@ -10,7 +10,12 @@
 # matching `Cf0925`s for the invoice.
 class InvoiceAllocation < ApplicationRecord
   belongs_to :cf0925, inverse_of: :invoice_allocations
-  # delegate *Cf0925.column_names, to: :cf0925, prefix: true
+  delegate :invoice_amount,
+           :invoice_date,
+           :service_start,
+           :service_end,
+           to: :invoice,
+           prefix: true
   belongs_to :invoice, inverse_of: :invoice_allocations
 
   validates :cf0925_type,
@@ -50,9 +55,9 @@ class InvoiceAllocation < ApplicationRecord
     # }
     # puts "-------------------------------------------------------------------"
     res = requested_amount - cf0925
-                       .invoice_allocations
-                       .select { |ia| ia.cf0925_type == cf0925_type && ia.amount }
-                       .sum(&:amount)
+          .invoice_allocations
+          .select { |ia| ia.cf0925_type == cf0925_type && ia.amount }
+          .sum(&:amount)
     # puts "!!!!!invoice_allocation.rb:#{__LINE__} - amount_available: #{res} cf0925.id #{cf0925.id} amount: #{amount}"
     # puts "invoice_allocation.id: #{id}"
     # puts "-------------------------------------------------------------------"

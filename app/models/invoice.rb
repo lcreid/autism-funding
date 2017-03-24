@@ -74,7 +74,8 @@ class Invoice < ApplicationRecord
   # Public so it can be used to set up test data.
   def connect(cf0925, type, amount = 0)
     invoice_allocations <<
-      cf0925.invoice_allocations.build(cf0925_type: type, amount: amount)
+      (ia = cf0925.invoice_allocations.build(cf0925_type: type, amount: amount))
+    ia
   end
 
   def include_in_reports?

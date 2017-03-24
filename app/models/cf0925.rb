@@ -59,6 +59,8 @@ class Cf0925 < ApplicationRecord
 
   before_validation :set_form, :copy_child_to_form, :copy_parent_to_form
 
+  validate :adjust_all_invoice_allocations
+
   with_options on: :printable do
     validates :child_dob,
               :child_first_name,
@@ -110,6 +112,23 @@ class Cf0925 < ApplicationRecord
   def <=>(other)
     service_period.begin <=> other.service_period.begin ||
       service_period.end <=> other.service_period.end
+  end
+
+  ##
+  # If the value of part a or part b changes, check all the invoice allocations
+  # to make sure they don't exceed the authorized value on the RTP.
+  def adjust_all_invoice_allocations
+    if changed_attributes[:service_provider_service_amount]
+      # puts "CHANGED: invoice_allocations.size: #{invoice_allocations.size}"
+      adjust_invoice_allocations('ServiceProvider')
+    end
+
+    if changed_attributes[:item_cost_1] ||
+       changed_attributes[:item_cost_2] ||
+       changed_attributes[:item_cost_3]
+      # puts "CHANGED: invoice_allocations.size: #{invoice_allocations.size}"
+      adjust_invoice_allocations('Supplier')
+    end
   end
 
   def allocate
@@ -519,6 +538,7 @@ class Cf0925 < ApplicationRecord
   def spent_funds
     # puts "Cf0925#spent_funds: #{inspect} invoices(#{invoices.size})"
     # FIXME: This needs to work from allocated amount. (Priority!)
+    # FIXME: I think this can be removed.
     invoice_total = invoices
                     .select(&:include_in_reports?)
                     .map(&:invoice_amount)
@@ -587,6 +607,32 @@ class Cf0925 < ApplicationRecord
   end
 
   private
+
+  def adjust_invoice_allocations(type)
+    invoice_allocations
+      .select { |ia| ia.cf0925_type == type }
+      .sort { |a, b| compare_invoice_allocations(a, b) }
+      .reverse_each do |ia|
+      # puts "ia.inspect: #{ia.inspect} " \
+      #   "ia.invoice_invoice_amount: #{ia.invoice_invoice_amount}"
+      # TODO: This implementation, with that of
+      # InvoiceAllocation#amount_available, is not the most performant
+      if ia.amount_available < 0
+        # puts "ia.amount_available #{ia.amount_available}"
+        ia.amount -= [ia.amount, -ia.amount_available].min
+      end
+    end
+  end
+
+  def compare_invoice_allocations(a, b)
+    result = a.invoice_invoice_date <=> b.invoice_invoice_date if
+              a.invoice_invoice_date && b.invoice_invoice_date
+    result = a.invoice_service_end <=> b.invoice_service_end if
+              result == 0 && a.invoice_service_end && b.invoice_service_end
+    result = a.invoice_service_start <=> b.invoice_service_start if
+              result == 0 && a.invoice_service_start && b.invoice_service_start
+    result
+  end
 
   def formatted_area_code(match)
     match[:area_code] if match
