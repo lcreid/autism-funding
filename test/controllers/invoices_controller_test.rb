@@ -28,7 +28,7 @@ class InvoicesControllerTest < ActionDispatch::IntegrationTest
     assert users(:int_user1).my_name, controller.current_user.my_name
     assert users(:int_user1).email, controller.current_user.email
 
-    # FIXME: The following should probably fail, since we shouldn't get to a
+    # TODO: The following should probably fail, since we shouldn't get to a
     # funded person who isn't associated with the current user
     get new_funded_person_invoice_path(@funded_person)
     puts "The URL: #{@controller.instance_variable_get(:@url)}"
