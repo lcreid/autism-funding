@@ -20,7 +20,8 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
-  database: autism_funding_prod
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: weit-rds-a.cwfow80ezu1x.ca-central-1.rds.amazonaws.com
+  database: autism_funding_prod
   username: <%= ENV['DATABASE_USERNAME'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
