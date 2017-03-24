@@ -66,23 +66,20 @@ class InvoicesController < ApplicationController
   end
 
   def rtps
-    # puts 'IN RTPS'
+    # puts "IN RTPS PARAMS: #{params.inspect}"
     # Remember that this could be called from new, so you don't enen have an
     # invoice yet. So make a throw-away invoice.
     # TODO: Review how this is done. I think I can do better.
-    # FIXME: I can craft a URL to get anyone's info.
 
     if params[:id].present?
-      @invoice = Invoice.find(params[:id])
-
+      @invoice = current_user.invoices.find(params[:id])
     else
       @invoice = Invoice.new
       @invoice.funded_person =
-        @funded_person = FundedPerson.find(params[:funded_person_id])
+        @funded_person = current_user.funded_people.find(params[:funded_person_id])
     end
 
     @invoice.assign_attributes(convert_search_params_to_create_params)
-
 
     #  puts "TEMPORARY INVOICE: #{@invoice.inspect}"
 

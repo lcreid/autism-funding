@@ -142,4 +142,17 @@ class SpoofedUrlsTest < ActionDispatch::IntegrationTest
       delete invoice_path(@other_invoice)
     end
   end
+
+  test "user can't retrieve other users' RTPs with existing invoice" do
+    assert_raises ActiveRecord::RecordNotFound do
+      get invoices_rtps_path,
+          params: @other_invoice.attributes.except('id'), xhr: true
+    end
+  end
+
+  test "user can't retrieve other users' RTPs with no existing invoice" do
+    assert_raises ActiveRecord::RecordNotFound do
+      get invoices_rtps_path, params: @other_invoice.attributes, xhr: true
+    end
+  end
 end
