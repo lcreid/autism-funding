@@ -76,9 +76,9 @@ class InvoiceAllocationTest < ActiveSupport::TestCase
     assert(i1 = invoice.connect(rtp, 'ServiceProvider', 750))
 
     invoice = child.invoices.create(invoice_amount: 500,
-                                    invoice_date: '2017-01-31',
-                                    service_end: '2017-01-31',
-                                    service_start: '2017-01-01',
+                                    invoice_date: '2016-12-31',
+                                    service_end: '2016-12-31',
+                                    service_start: '2016-12-01',
                                     invoice_from: 'Pay Me Agency')
     assert(i2 = invoice.connect(rtp, 'ServiceProvider', 500))
 
@@ -90,8 +90,8 @@ class InvoiceAllocationTest < ActiveSupport::TestCase
     rtp.service_provider_service_amount = 500
     rtp.save!
 
-    assert_equal 0, i2.reload.amount
-    assert_equal 500, i1.reload.amount
+    assert_equal 0, i1.reload.amount
+    assert_equal 500, i2.reload.amount
 
     assert_status(child,
                   '2016-2017',

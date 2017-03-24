@@ -611,6 +611,7 @@ class Cf0925 < ApplicationRecord
   def adjust_invoice_allocations(type)
     invoice_allocations
       .select { |ia| ia.cf0925_type == type }
+      .sort { |a, b| compare_invoice_allocations(a, b) }
       .reverse_each do |ia|
       # puts "ia.inspect: #{ia.inspect} " \
       #   "ia.invoice_invoice_amount: #{ia.invoice_invoice_amount}"
@@ -621,6 +622,16 @@ class Cf0925 < ApplicationRecord
         ia.amount -= [ia.amount, -ia.amount_available].min
       end
     end
+  end
+
+  def compare_invoice_allocations(a, b)
+    result = a.invoice_invoice_date <=> b.invoice_invoice_date if
+              a.invoice_invoice_date && b.invoice_invoice_date
+    result = a.invoice_service_end <=> b.invoice_service_end if
+              result == 0 && a.invoice_service_end && b.invoice_service_end
+    result = a.invoice_service_start <=> b.invoice_service_start if
+              result == 0 && a.invoice_service_start && b.invoice_service_start
+    result
   end
 
   def formatted_area_code(match)

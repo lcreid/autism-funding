@@ -10,7 +10,12 @@
 # matching `Cf0925`s for the invoice.
 class InvoiceAllocation < ApplicationRecord
   belongs_to :cf0925, inverse_of: :invoice_allocations
-  delegate :invoice_amount, to: :invoice, prefix: true
+  delegate :invoice_amount,
+           :invoice_date,
+           :service_start,
+           :service_end,
+           to: :invoice,
+           prefix: true
   belongs_to :invoice, inverse_of: :invoice_allocations
 
   validates :cf0925_type,
