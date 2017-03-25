@@ -189,7 +189,7 @@ class InvoicesTest < PoltergeistTest
     # We come back to the page, unmatch the RTP and then Match RTP, then save
     # When we come back to the page we expect to see our RTP
     click_link_or_button "Save"
-    assert_current_path "/"
+    assert_current_path home_index_path
     # Now Go Back and edit
     user.reload
     visit edit_invoice_path(child.invoices.first)

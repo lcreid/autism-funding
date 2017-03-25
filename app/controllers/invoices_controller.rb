@@ -1,6 +1,5 @@
 class InvoicesController < ApplicationController
   def new
-    # TODO: Make this consistent with how Cf0925Controller does it.
     @invoice = Invoice.new
     @invoice.funded_person =
       @funded_person =
@@ -49,16 +48,14 @@ class InvoicesController < ApplicationController
 
   def create
     logger.debug { "**** invoices_controller raw params #{params.inspect}" }
-    @invoice = Invoice.new
-    @invoice.funded_person = current_user
-                             .funded_people
-                             .find(params[:funded_person_id])
+    @funded_person = current_user.funded_people.find(params[:funded_person_id])
+
     logger.debug { "**** invoices_controller create safe params: #{invoice_params.inspect}" }
-    if @invoice.update(invoice_params)
+    if @invoice = @funded_person.invoices.create(invoice_params)
       # puts @invoice.inspect
-      @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
+      @funded_person.selected_fiscal_year = @funded_person.fiscal_year(@invoice.start_date)
       #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-      redirect_to root_path, notice: "Invoice saved."
+      redirect_to home_index_path, notice: 'Invoice saved.'
     else
       render "new"
     end
