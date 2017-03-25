@@ -2,7 +2,7 @@
   <% if funded_person.fiscal_years.present? %>
     <div class="col-md-10">
       <% status = Status.new(funded_person, funded_person.selected_fiscal_year) %>
-      <%# FIXME: Make this a grid, not a table. %>
+      <%# TODO: Make this a grid, not a table. %>
       <div class="table-responsive">
         <table class="table">
           <thead>

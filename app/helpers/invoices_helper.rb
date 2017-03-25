@@ -15,25 +15,4 @@ module InvoicesHelper
 
     ary
   end
-
-  ##
-  # Return an option list for the selection of RTP corresponding to invoice.
-  def rtp_option_list_for_select(invoice)
-    options = options_for_select([['Out of Pocket', '']])
-    rtps = invoice.match
-    # puts "RTPs: #{rtps.inspect}"
-    # puts "Invoice has RTP: #{invoice.cf0925.inspect}"
-    # FIXME: Hacking this for now (fake it till you make it)
-    selected = invoice.cf0925s.first.id if invoice.cf0925s.present?
-    # puts "First RTP selected: #{selected}"
-    selected ||= rtps[0].id if rtps.size == 1
-    # puts "Second RTP selected: #{selected}"
-    # puts "Option list match: #{rtps}"
-    options += options_from_collection_for_select(rtps,
-                                                  :id,
-                                                  :to_s,
-                                                  selected)
-    # puts "OPTIONS: #{options}"
-    options
-  end
 end
