@@ -1,9 +1,8 @@
 class InvoicesController < ApplicationController
   def new
-    @invoice = Invoice.new
-    @invoice.funded_person =
-      @funded_person =
-        current_user.funded_people.find(params[:funded_person_id])
+    @funded_person =
+      current_user.funded_people.find(params[:funded_person_id])
+    @invoice = @funded_person.invoices.build
     # @url = funded_person_invoices_path params[:funded_person_id]
     #    @invoice.funded_person = @funded_person =FundedPerson.find(params[:funded_person_id])
     #  @invoice.cf0925 = @cf0925 = Cf0925.find(params[:cf0925_id])
