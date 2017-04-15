@@ -23,6 +23,12 @@ permissions:
     mode: 770
     type:
       - directory
+  - object: /var/www/autism-funding.com/html/bin
+    owner: ubuntu
+    group: www-data
+    mode: 750
+    type:
+      - file
 hooks:
   ApplicationStop:
     - location: scripts/ApplicationStop.sh
