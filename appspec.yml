@@ -6,12 +6,14 @@ files:
     destination: /var/www/autism-funding.com/html
 permissions:
   - object: /var/www/autism-funding.com/html
+    except: [ /var/www/autism-funding.com/html/bin/ ]
     owner: ubuntu
     group: www-data
     mode: 640
     type:
       - file
   - object: /var/www/autism-funding.com/html
+    except: [ /var/www/autism-funding.com/html/log ]
     owner: ubuntu
     group: www-data
     mode: 750
