@@ -6,7 +6,15 @@ files:
     destination: /var/www/autism-funding.com/html
 permissions:
   - object: /var/www/autism-funding.com/html
-    except: [ /var/www/autism-funding.com/html/bin/* ]
+    pattern: "**"
+    except: [
+              /var/www/autism-funding.com/html/bin/bundle,
+              /var/www/autism-funding.com/html/bin/rails,
+              /var/www/autism-funding.com/html/bin/rake,
+              /var/www/autism-funding.com/html/bin/setup,
+              /var/www/autism-funding.com/html/bin/spring,
+              /var/www/autism-funding.com/html/bin/update
+            ]
     owner: ubuntu
     group: www-data
     mode: 640
