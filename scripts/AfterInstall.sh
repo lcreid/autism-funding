@@ -5,7 +5,7 @@ export RAILS_ENV=production
 cd /var/www/autism-funding.com/html
 # need to set up the database (the user)
 # need rails db:create the first time
-bundle install # --path vendor/bundle
-rails db:migrate
-rails assets:clobber
-rails assets:precompile
+bin/bundle install # --path vendor/bundle
+bin/rails db:migrate
+bin/rails assets:clobber
+bin/rails assets:precompile
