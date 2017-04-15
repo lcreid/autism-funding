@@ -6,15 +6,6 @@ files:
     destination: /var/www/autism-funding.com/html
 permissions:
   - object: /var/www/autism-funding.com/html
-    pattern: "**"
-    except: [
-              /var/www/autism-funding.com/html/bin/bundle,
-              /var/www/autism-funding.com/html/bin/rails,
-              /var/www/autism-funding.com/html/bin/rake,
-              /var/www/autism-funding.com/html/bin/setup,
-              /var/www/autism-funding.com/html/bin/spring,
-              /var/www/autism-funding.com/html/bin/update
-            ]
     owner: ubuntu
     group: www-data
     mode: 640
@@ -33,19 +24,13 @@ permissions:
     mode: 770
     type:
       - directory
-  - object: /var/www/autism-funding.com/html/bin
-    owner: ubuntu
-    group: www-data
-    mode: 750
-    type:
-      - file
 hooks:
   ApplicationStop:
     - location: scripts/ApplicationStop.sh
       runas: root
   AfterInstall:
     - location: scripts/AfterInstall.sh
-      runas: root
+      runas: ubuntu
   ApplicationStart:
     - location: scripts/ApplicationStart.sh
       runas: root

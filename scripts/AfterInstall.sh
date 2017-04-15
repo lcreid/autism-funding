@@ -3,6 +3,7 @@
 
 export RAILS_ENV=production
 cd /var/www/autism-funding.com/html
+sudo chmod 750 bin/*
 # need to set up the database (the user)
 # need rails db:create the first time
 bin/bundle install # --path vendor/bundle
