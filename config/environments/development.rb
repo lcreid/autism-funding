@@ -27,15 +27,29 @@ Rails.application.configure do
   end
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  ## Required by devise set uo ################################################
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  ## Required by devise set up ################################################
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+  address:                ENV["EMAIL_SMTP_ADDRESS"],
+    # address:                'smtp.fastmail.com',
+    # address:              'smtp.rchrd.phub.net.cable.rogers.com',
+  port:                   465,
+  # domain:               ENV["EMAIL_DOMAIN"],
+  user_name:              ENV["EMAIL_USERNAME"],
+  password:               ENV["EMAIL_PASSWORD"],
+  authentication:         'plain',
+  default_mailer_options: {from: 'noreply@autism-funding.com'},
+  enable_starttls_auto:   true
+  }
   ##############################################################################
 
   # Raise an error on page load if there are pending migrations.

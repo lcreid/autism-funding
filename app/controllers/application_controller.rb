@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
     # I wanted to go to the welcome page if the user isn't logged in.
     # If the user is logged in, they should go to their home page.
     # The Devise `authenticate_user!` method goes to its login page.
-    unless ['devise/sessions', 'devise/registrations'].include?(params[:controller])
+    unless ['devise/sessions', 'devise/registrations', 'devise/passwords'].include?(params[:controller])
       redirect_to welcome_index_path unless user_signed_in?
     end
   end
