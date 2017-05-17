@@ -39,18 +39,16 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-  address:                ENV["EMAIL_SMTP_ADDRESS"],
-    # address:                'smtp.fastmail.com',
-    # address:              'smtp.rchrd.phub.net.cable.rogers.com',
-  port:                   465,
-  # domain:               ENV["EMAIL_DOMAIN"],
-  user_name:              ENV["EMAIL_USERNAME"],
-  password:               ENV["EMAIL_PASSWORD"],
-  authentication:         :plain,
-  default_mailer_options: {from: 'noreply@autism-funding.com'},
-  enable_starttls_auto:   true,
-  tls:                    true,
-  ssl:                    true
+    address:                ENV["EMAIL_SMTP_ADDRESS"] || 'smtp.fastmail.com',
+    port:                   465,
+    # domain:               ENV["EMAIL_DOMAIN"],
+    user_name:              ENV["EMAIL_USERNAME"] || 'phil@autism-funding.com',
+    password:               ENV["EMAIL_PASSWORD"],
+    authentication:         :plain,
+    default_mailer_options: { from: 'noreply@autism-funding.com' },
+    enable_starttls_auto:   false,
+    tls:                    true,
+    ssl:                    true
   }
   ##############################################################################
 
