@@ -46,9 +46,11 @@ Rails.application.configure do
   # domain:               ENV["EMAIL_DOMAIN"],
   user_name:              ENV["EMAIL_USERNAME"],
   password:               ENV["EMAIL_PASSWORD"],
-  authentication:         'plain',
+  authentication:         :plain,
   default_mailer_options: {from: 'noreply@autism-funding.com'},
-  enable_starttls_auto:   true
+  enable_starttls_auto:   true,
+  tls:                    true,
+  ssl:                    true
   }
   ##############################################################################
 
