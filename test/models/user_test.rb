@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-    include TestSessionHelpers
+  include TestSessionHelpers
   #-----------------------------------------------------------------------------
   #  Test 01
   # => a) tests that a User.new will create an object
@@ -252,40 +252,40 @@ class UserTest < ActiveSupport::TestCase
     test_phone_type = 'Home'
     # 06.a .....................................................................
     the_user = User.new
-    assert_nil the_user.home_phone_number, "06.a: New User should have a nil home_phone_number"
+    assert_nil the_user.home_phone_number, '06.a: New User should have a nil home_phone_number'
 
     # 06.b .....................................................................
-    assert_nil the_user.work_phone_number, "06.b: New User should have a nil work_phone_number"
+    assert_nil the_user.work_phone_number, '06.b: New User should have a nil work_phone_number'
 
     # 06.c .....................................................................
-    assert_nil the_user.work_phone_extension, "06.c: New User should have a nil work_phone_extension"
+    assert_nil the_user.work_phone_extension, '06.c: New User should have a nil work_phone_extension'
 
     # 06.d .....................................................................
     test_number = '6045678234'
     the_user.home_phone_number = test_number
     the_user.work_phone_number = nil
     the_user.work_phone_extension = nil
-    assert_equal test_number, the_user.home_phone_number, "06.d: could not set home_phone_number"
+    assert_equal test_number, the_user.home_phone_number, '06.d: could not set home_phone_number'
 
     # 06.e .....................................................................
     test_number = '6045678004'
     the_user.work_phone_number = test_number
     the_user.home_phone_number = nil
     the_user.work_phone_extension = nil
-    assert_equal test_number, the_user.work_phone_number, "06.e: could not set work_phone_number"
+    assert_equal test_number, the_user.work_phone_number, '06.e: could not set work_phone_number'
 
     # 06.f .....................................................................
     test_ext = '60'
     the_user.work_phone_extension = test_ext
     the_user.home_phone_number = nil
     the_user.work_phone_number = nil
-    assert_equal test_ext, the_user.work_phone_extension, "06.f: could not set work_phone_extension"
+    assert_equal test_ext, the_user.work_phone_extension, '06.f: could not set work_phone_extension'
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
   #  Test 07 tested my work phone, this test (and method) re,pved from the project
 
-## TODO - add a test to ensure missing_key_info? is false when there is more than one funded_child
+  ## TODO - add a test to ensure missing_key_info? is false when there is more than one funded_child
   #-----------------------------------------------------------------------------
   #  Test 08
   # => a) tests that missing_key_info? is true when new instance of User is created
@@ -299,44 +299,44 @@ class UserTest < ActiveSupport::TestCase
   test testName do
     # 08.a .....................................................................
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
-    assert the_user.missing_key_info?, "08.a: missing_key_info? should be true for new instance of User"
+    assert the_user.missing_key_info?, '08.a: missing_key_info? should be true for new instance of User'
 
     # 08.b .....................................................................
     # Ensure all basic info there and the funded person is valid
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('mb').id
     a = ProvinceCode.find the_user.province_code_id
-    child = the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-04'})
+    child = the_user.funded_people.build(name_first: 'Fred', birthdate: '2014-02-04')
     # puts "child is blank #{child.is_blank?}; child is valid #{child.valid?}"
     # puts child.errors.full_messages
-    assert_not the_user.missing_key_info?, "08.b: missing_key_info? should be false when there is a funded_person and address with province"
+    assert_not the_user.missing_key_info?, '08.b: missing_key_info? should be false when there is a funded_person and address with province'
 
     # 08.c .....................................................................
     # Ensure all basic info there and the funded person is INVALID (no birthdate)
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('mb').id
     a = ProvinceCode.find the_user.province_code_id
-    the_user.funded_people.build({name_first: 'Fred'})
-    assert the_user.missing_key_info?, "08.c: missing_key_info? should be true when there is 1 invalid funded_person and address with province"
+    the_user.funded_people.build(name_first: 'Fred')
+    assert the_user.missing_key_info?, '08.c: missing_key_info? should be true when there is 1 invalid funded_person and address with province'
 
     # 08.d .....................................................................
     # Funded Person Defined, no address
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.funded_people.build
-    assert the_user.missing_key_info?, "08.d: missing_key_info? should be true when there is a funded_person and no address"
+    assert the_user.missing_key_info?, '08.d: missing_key_info? should be true when there is a funded_person and no address'
 
     # 08.e .....................................................................
     # Funded Person Defined, Address added, but no province
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.address = ''
     the_user.funded_people.build
-    assert the_user.missing_key_info?, "08.e: missing_key_info? should be true when there is a funded_person and an address with no province code"
+    assert the_user.missing_key_info?, '08.e: missing_key_info? should be true when there is a funded_person and an address with no province code'
 
     # 08.f .....................................................................
     # Funded Person Defined, Address added, but no province
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('mb').id
-    assert the_user.missing_key_info?, "08.f: missing_key_info? should be true when there is no funded_person and an address with a province code"
+    assert the_user.missing_key_info?, '08.f: missing_key_info? should be true when there is no funded_person and an address with a province code'
   end ## -- end test08 --
 
   #-----------------------------------------------------------------------------
@@ -392,7 +392,6 @@ class UserTest < ActiveSupport::TestCase
     the_user.province_code_id = province_codes('bc').id
     the_user.funded_people.build
     assert the_user.can_create_new_rtp?, '10.c: can_create_new_rtp? should be true when User has a province of BC and have one funded child'
-
   end ## -- end test 10 --
 
   #-----------------------------------------------------------------------------
@@ -426,31 +425,29 @@ class UserTest < ActiveSupport::TestCase
     # 11.d .....................................................................
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('bc').id
-    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    the_user.funded_people.build(name_first: 'Fred', birthdate: '2014-02-02')
     assert the_user.can_see_my_home?, '11.d: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and no invoices'
 
     # 11.e .....................................................................
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('bc').id
-    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    the_user.funded_people.build(name_first: 'Fred', birthdate: '2014-02-02')
     the_user.funded_people[0].invoices.build
     assert the_user.can_see_my_home?, '11.e: can_see_my_home? should be true when User has an address defined with a province code of BC, with 1 funded child and 1 invoice'
 
     # 11.f .....................................................................
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('ont').id
-    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    the_user.funded_people.build(name_first: 'Fred', birthdate: '2014-02-02')
     assert_not the_user.can_see_my_home?, '11.f: can_see_my_home? should be false when User is has an address defined with a province code of ON, with 1 funded child and 0 invoices'
 
     # 11.g .....................................................................
     the_user = User.new(email: 'me@weenhanceit.com', password: 'secret')
     the_user.province_code_id = province_codes('ont').id
-    the_user.funded_people.build({name_first: 'Fred', birthdate: '2014-02-02'})
+    the_user.funded_people.build(name_first: 'Fred', birthdate: '2014-02-02')
     the_user.funded_people[0].invoices.build
     assert the_user.can_see_my_home?, '11.g: can_see_my_home? should be true when User is has an address defined with a province code of ON, with 1 funded child and 1 invoices'
-
   end ## -- end test 11 --
-
 
   test 'edit and save one user' do
     #--------------------------------------------------------------------
@@ -481,15 +478,15 @@ class UserTest < ActiveSupport::TestCase
     # }
     #--------------------------------------------------------------------
     user_hash = {
-       name_first: '1',
-       name_last: '2',
-       address: '123456789 Street St',
-       city: 'Some City',
-       province_code_id: province_codes(:bc).id,
-       postal_code: 'S0S 0S0',
-       home_phone_number: '5555555555',
-       work_phone_number: '6666666666'
-     }
+      name_first: '1',
+      name_last: '2',
+      address: '123456789 Street St',
+      city: 'Some City',
+      province_code_id: province_codes(:bc).id,
+      postal_code: 'S0S 0S0',
+      home_phone_number: '5555555555',
+      work_phone_number: '6666666666'
+    }
 
     user = User.new(email: email = 'me@weenhanceit.com',
                     password: 'password')

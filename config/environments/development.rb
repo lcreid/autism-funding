@@ -35,15 +35,15 @@ Rails.application.configure do
   config.active_support.deprecation = :log
 
   ## Required by devise set up ################################################
-    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:                ENV["EMAIL_SMTP_ADDRESS"] || 'smtp.fastmail.com',
+    address:                ENV['EMAIL_SMTP_ADDRESS'] || 'smtp.fastmail.com',
     port:                   465,
     # domain:               ENV["EMAIL_DOMAIN"],
-    user_name:              ENV["EMAIL_USERNAME"] || 'phil@autism-funding.com',
-    password:               ENV["EMAIL_PASSWORD"],
+    user_name:              ENV['EMAIL_USERNAME'] || 'phil@autism-funding.com',
+    password:               ENV['EMAIL_PASSWORD'],
     authentication:         :plain,
     default_mailer_options: { from: 'noreply@autism-funding.com' },
     enable_starttls_auto:   false,

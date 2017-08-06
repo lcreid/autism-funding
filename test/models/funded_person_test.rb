@@ -171,8 +171,8 @@ class FundedPersonTest < ActiveSupport::TestCase
     test_birthdate = '1999-11-15'
     test_child_in_care = false
     the_fp = FundedPerson.new
-#    the_fp.birthdate = test_birthdate
-#    the_fp.user = test_user
+    #    the_fp.birthdate = test_birthdate
+    #    the_fp.user = test_user
 
     # 03.a .....................................................................
     assert the_fp.is_blank?, '03.a: is_blank? should be true with no data set'
@@ -216,8 +216,6 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.birthdate = nil
     the_fp.child_in_care_of_ministry = test_child_in_care
     assert_not the_fp.is_blank?, '03.f: is_blank? should be false with only child_in_care_of_ministry set'
-
-
   end ## -- end test 03 --
 
   test 'Fiscal year beginning of year' do
@@ -303,42 +301,41 @@ class FundedPersonTest < ActiveSupport::TestCase
     child = set_up_child
     rtp = set_up_provider_agency_rtp(child)
     invoice_a = child.invoices.build(invoice_amount: 200,
-                                   service_end: rtp.service_provider_service_end,
-                                   service_start: rtp.service_provider_service_start,
-                                   invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end,
+                                     service_start: rtp.service_provider_service_start,
+                                     invoice_from: rtp.service_provider_name)
     invoice_b = child.invoices.build(invoice_amount: 201,
-                                    service_end: rtp.service_provider_service_end,
-                                    service_start: rtp.service_provider_service_start + 1.day,
-                                    invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end,
+                                     service_start: rtp.service_provider_service_start + 1.day,
+                                     invoice_from: rtp.service_provider_name)
     invoice_c = child.invoices.build(invoice_amount: 203,
-                                    service_end: rtp.service_provider_service_end + 1.day,
-                                    service_start: rtp.service_provider_service_start + 1.day,
-                                    invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end + 1.day,
+                                     service_start: rtp.service_provider_service_start + 1.day,
+                                     invoice_from: rtp.service_provider_name)
 
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
-# puts "test case rtp object id: #{rtp.object_id}"
-# puts ""
-# puts "///////// ----- Allocation 1 ----- ///////////"
-# puts ""
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+    # puts "test case rtp object id: #{rtp.object_id}"
+    # puts ""
+    # puts "///////// ----- Allocation 1 ----- ///////////"
+    # puts ""
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
     rtp.allocate
 
     assert_equal [invoice_a, invoice_b], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
 
-# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+    # puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
 
     rtp.service_provider_service_start += 1.day
     rtp.service_provider_service_end += 1.day
 
-# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
-# puts ""
-# puts "///////// ----- Allocation 2 ----- ///////////"
-# puts ""
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+    # puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+    # puts ""
+    # puts "///////// ----- Allocation 2 ----- ///////////"
+    # puts ""
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
     rtp.allocate
-# rtp.reload
+    # rtp.reload
     assert_equal [invoice_b, invoice_c], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
-
   end
 
   # The following were for test cases around the autosaving of user from a

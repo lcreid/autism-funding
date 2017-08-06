@@ -13,7 +13,6 @@ class Address < ApplicationRecord
   # validates :user_id, presence: true
   # validates :province_code_id, presence: true
 
-
   validates :address_line_1,
             :city,
             :postal_code,
