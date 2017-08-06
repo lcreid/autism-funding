@@ -7,13 +7,13 @@ class ApplicationController < ActionController::Base
 
   private
 
-#  def after_sign_up_path_for(resource)
-#    static_contact_us_path
-#  end
+  #  def after_sign_up_path_for(resource)
+  #    static_contact_us_path
+  #  end
 
-#  def after_sign_in_path_for(resource)
-#    other_resources_index_path
-#  end
+  #  def after_sign_in_path_for(resource)
+  #    other_resources_index_path
+  #  end
 
   def require_login
     # There are a lot of suggestions on the web about how to do this.

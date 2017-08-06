@@ -17,7 +17,7 @@ module ApplicationHelper
       if current_user.can_see_my_home?
         # puts "#{__LINE__} HERE!"
         the_title = '%02d%s' % [iseq, 'My Home']
-         the_hash[the_title] = '/'
+        the_hash[the_title] = '/'
         iseq += 1
       end
       ##== User's profile page
@@ -30,7 +30,6 @@ module ApplicationHelper
     the_title = '%02d%s' % [iseq, 'Help']
     iseq += 1
     the_hash[the_title] = static_bc_instructions_path
-
 
     the_title = '%02d%s' % [iseq, 'Other Resources']
     iseq += 1

@@ -30,5 +30,4 @@ class HomeController < ApplicationController
     head :ok # , content_type: 'text/html'
     # render inline: ''
   end
-
 end
