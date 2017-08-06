@@ -56,14 +56,14 @@ class FundedPerson < ApplicationRecord
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
-    my_name = 'no name defined' if my_name == ''
+    my_name = "no name defined" if my_name == ""
     my_name
   end
 
   #-----------------------------------------------------------------------------
-  def my_dob(frm_str = '%Y-%m-%d')
+  def my_dob(frm_str = "%Y-%m-%d")
     my_dob = if birthdate.nil?
-               'undefined'
+               "undefined"
              else
                birthdate.strftime(frm_str)
              end
@@ -112,7 +112,7 @@ class FundedPerson < ApplicationRecord
 
   # Return true if name, birthdate and in care of ministry fields are all blank
   def is_blank?
-    child_in_care_of_ministry.nil? && my_dob == 'undefined' && my_name == 'no name defined'
+    child_in_care_of_ministry.nil? && my_dob == "undefined" && my_name == "no name defined"
   end
 
   def last_fiscal_year
@@ -143,15 +143,15 @@ class FundedPerson < ApplicationRecord
 
       if rtp.pay_part_a?(invoice_from, invoice_date, service_start, service_end)
         # puts 'matched provider or agency'
-        a << Match.new('ServiceProvider', rtp)
+        a << Match.new("ServiceProvider", rtp)
       end
 
       if rtp.pay_part_b?(invoice_from,
-                         invoice_date,
-                         service_start,
-                         service_end)
+        invoice_date,
+        service_start,
+        service_end)
         # puts 'matched supplier'
-        a << Match.new('Supplier', rtp)
+        a << Match.new("Supplier", rtp)
       end
 
       # puts "Found two: #{a.inspect}" if 1 < a.size
@@ -163,9 +163,9 @@ class FundedPerson < ApplicationRecord
   end
 
   def must_define_at_least_one_name
-    if my_name == 'no name defined'
-      errors.add(:name_last, ' - must define at least one name')
-      errors.add(:name_first, ' - must define at least one name')
+    if my_name == "no name defined"
+      errors.add(:name_last, " - must define at least one name")
+      errors.add(:name_first, " - must define at least one name")
     end
   end
 
@@ -230,7 +230,7 @@ class FundedPerson < ApplicationRecord
     begin
       Date.parse(date)
     rescue ArgumentError
-      puts 'Rescued date conversion'
+      puts "Rescued date conversion"
       nil
     end
   end

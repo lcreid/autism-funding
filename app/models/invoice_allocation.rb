@@ -11,16 +11,16 @@
 class InvoiceAllocation < ApplicationRecord
   belongs_to :cf0925, inverse_of: :invoice_allocations
   delegate :invoice_amount,
-           :invoice_date,
-           :service_start,
-           :service_end,
-           to: :invoice,
-           prefix: true
+    :invoice_date,
+    :service_start,
+    :service_end,
+    to: :invoice,
+    prefix: true
   belongs_to :invoice, inverse_of: :invoice_allocations
 
   validates :cf0925_type,
-            presence: true,
-            inclusion: { in: %w(ServiceProvider Supplier) }
+    presence: true,
+    inclusion: { in: %w(ServiceProvider Supplier) }
 
   after_initialize :extend_by_type
 

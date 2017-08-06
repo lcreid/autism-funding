@@ -4,6 +4,6 @@ module Preferences
   private
 
   def json(s)
-    JSON.parse(s || '{}')
+    JSON.parse(s || "{}")
   end
 end

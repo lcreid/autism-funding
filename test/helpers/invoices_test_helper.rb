@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 module MyProfileTestHelper
   class CheckRTP
     include TestSessionHelpers
@@ -12,9 +12,9 @@ module MyProfileTestHelper
     def initialize
       @amount_requested = 0
       @amount_from_this_invoice = 0
-      @expected_amount_available = '%.2f' % 0
-      @expected_amount = '%.2f' % 0
-      @expected_out_of_pocket = '%.2f' % 0
+      @expected_amount_available = "%.2f" % 0
+      @expected_amount = "%.2f" % 0
+      @expected_out_of_pocket = "%.2f" % 0
     end
 
     attr_reader :amount_from_this_invoice
@@ -25,9 +25,9 @@ module MyProfileTestHelper
 
     def set_amount_from_this_invoice(amt)
       if amt >= 0 && @amount_requested > 0
-        @amount_from_this_invoice = '%.2f' % amt
+        @amount_from_this_invoice = "%.2f" % amt
         within allocation_row do
-          fill_in('Amount', with: @amount_from_this_invoice)
+          fill_in("Amount", with: @amount_from_this_invoice)
         end
       else
         puts "DID NTO SET AMOUNT amt: #{amt} @amount_requested: #{@amount_requested}"
@@ -35,31 +35,31 @@ module MyProfileTestHelper
     end
 
     def set_invoice_fields_to_match_rtp(rtp)
-      fill_in 'Service End', with: rtp.service_provider_service_end
-      select rtp.service_provider_name, from: 'invoice_invoice_from'
+      fill_in "Service End", with: rtp.service_provider_service_end
+      select rtp.service_provider_name, from: "invoice_invoice_from"
     end
 
     def set_invoice_fields_to_not_match_rtp(rtp)
-      fill_in 'Service End', with: rtp.service_provider_service_end + 1.day
-      select rtp.service_provider_name, from: 'invoice_invoice_from'
+      fill_in "Service End", with: rtp.service_provider_service_end + 1.day
+      select rtp.service_provider_name, from: "invoice_invoice_from"
     end
 
-    def set_expected_amount(amt, format = '%.2f')
+    def set_expected_amount(amt, format = "%.2f")
       @expected_amount = format_output amt, format
     end
 
-    def set_expected_amount_available(amt, format = '%.2f')
+    def set_expected_amount_available(amt, format = "%.2f")
       @expected_amount_available = format_output amt, format
     end
 
-    def set_expected_out_of_pocket(amt, format = '%.2f')
+    def set_expected_out_of_pocket(amt, format = "%.2f")
       @expected_out_of_pocket = format_output amt, format
     end
 
     def format_output(val, frm_str)
       # puts "#{__LINE__}: val: [#{val}] frm_str: [#{frm_str}]"
       ret = val
-      unless frm_str == '' || ret == ''
+      unless frm_str == "" || ret == ""
         ret = val.to_s
         ret = ret.to_f
         ret = frm_str % val

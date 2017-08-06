@@ -8,7 +8,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # end
 
   # Returns a check_box tag
-  def check_box(method, options = {}, checked_value = '1', unchecked_value = '0')
+  def check_box(method, options = {}, checked_value = "1", unchecked_value = "0")
     process_width(options) { super }
   end
 
@@ -27,11 +27,11 @@ class AutismFundingFormBuilder < WeitFormBuilder
   # If column_width: n or :col_width: n is given as an option, wrap in a
   # Bootstrap grid column.
   def collection_select(method,
-                        collection,
-                        value_method,
-                        text_method,
-                        options = {},
-                        html_options = {})
+    collection,
+    value_method,
+    text_method,
+    options = {},
+    html_options = {})
     process_options(method, options)
     process_width(options) { super }
   end
@@ -41,7 +41,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   def currency_field(method, options = {})
     options = process_options(method, options)
     options[:value] ||= @template.number_to_currency(object.send(method),
-                                                     unit: '')
+      unit: "")
     process_width(options) { text_field(method, options) }
   end
 
@@ -78,7 +78,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
   def phone_field(method, options = {})
     options = process_options(method, options)
     options[:value] ||= @template.number_to_phone(object.send(method),
-                                                  area_code: true)
+      area_code: true)
     process_width(options) { super }
   end
 
@@ -133,7 +133,7 @@ class AutismFundingFormBuilder < WeitFormBuilder
 
   def format_label(field, options = {})
     label = field.class == String ? field : field.to_s.titlecase
-    label = label.sub(/\A#{options[:lstrip]}\s*/, '') if options[:lstrip]
+    label = label.sub(/\A#{options[:lstrip]}\s*/, "") if options[:lstrip]
     label
   end
 

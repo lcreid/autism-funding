@@ -14,10 +14,10 @@ class Address < ApplicationRecord
   # validates :province_code_id, presence: true
 
   validates :address_line_1,
-            :city,
-            :postal_code,
-            presence: true,
-            on: :printable
+    :city,
+    :postal_code,
+    presence: true,
+    on: :printable
 
   #-----------------------------------------------------------------------------
   # ----- Callbacks ------------------------------------------------------------
@@ -26,11 +26,11 @@ class Address < ApplicationRecord
 
   # ----- Public Methods -------------------------------------------------------
 
-  def get_address(delimiter: ' ')
+  def get_address(delimiter: " ")
     clean_address
     #-- Initialize variables -----------------------------
-    use_delimiter = ''
-    the_address = ''
+    use_delimiter = ""
+    the_address = ""
     #-- Get Address Line 1  -------------------------------
     unless address_line_1.blank?
       the_address = address_line_1
@@ -44,7 +44,7 @@ class Address < ApplicationRecord
     the_address
   end
 
-  def get_full_address(delimiter: ' ', blank_address: ' -- no address -- ')
+  def get_full_address(delimiter: " ", blank_address: " -- no address -- ")
     clean_address
     the_address_part1 = get_address(delimiter: delimiter)
 
@@ -76,16 +76,16 @@ class Address < ApplicationRecord
     the_address
   end
 
-  def get_html_address(style: 'font-family: courier; font-size: 10pt; white-space: pre;', blank_address: ' -- no address -- ')
+  def get_html_address(style: "font-family: courier; font-size: 10pt; white-space: pre;", blank_address: " -- no address -- ")
     "<span style=\"#{style}\">#{get_full_address delimiter: '<br>', blank_address: blank_address}</span>"
   end
 
   def get_postal_code
     clean_address
     ret = if postal_code.blank?
-            ''
+            ""
           elsif postal_code.length != 6
-            '??? ???'
+            "??? ???"
           else
             "#{postal_code[0..2]} #{postal_code[3..5]}"
           end
@@ -93,11 +93,11 @@ class Address < ApplicationRecord
   end
 
   def get_province_code # self.province_code.prov_code
-    (province_code.nil? ? '' : province_code.province_code)
+    (province_code.nil? ? "" : province_code.province_code)
   end
 
   def get_province_name
-    (province_code.nil? ? '' : province_code.province_name)
+    (province_code.nil? ? "" : province_code.province_name)
   end
 
   def printable?
@@ -111,7 +111,7 @@ class Address < ApplicationRecord
   protected
 
   def clean_address
-    self.postal_code = postal_code.delete(' ').upcase unless postal_code.blank?
+    self.postal_code = postal_code.delete(" ").upcase unless postal_code.blank?
     self.address_line_1 = address_line_1.strip unless address_line_1.blank?
     self.address_line_2 = address_line_2.strip unless address_line_2.blank?
     self.city = city.strip unless city.blank?
