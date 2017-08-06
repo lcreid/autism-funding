@@ -1,13 +1,13 @@
-require 'test_helper'
+require "test_helper"
 
 class PreferencesTest < PoltergeistTest
   include TestSessionHelpers
 
-  test 'collapsed and expanded accordion preferences' do
+  test "collapsed and expanded accordion preferences" do
     fill_in_login(user = users(:dual_child_parent))
     assert_current_path root_path
-    assert_content 'Sixteen Year Two-Kids'
-    assert_content 'Four Year Two-Kids'
+    assert_content "Sixteen Year Two-Kids"
+    assert_content "Four Year Two-Kids"
     first_child = user.funded_people.first
     last_child = user.funded_people.last
     Rails.logger.debug { "The last child is #{last_child.inspect}" }
@@ -20,17 +20,17 @@ class PreferencesTest < PoltergeistTest
     expect has_no_selector?("#collapse-#{first_child.id}.in")
 
     # puts "ABOUT TO CLICK TO GO TO MY PROFILE"
-    click_link 'My Profile'
+    click_link "My Profile"
     # puts 'ON MY PROFILE'
-    assert_content 'Edit My Data'
+    assert_content "Edit My Data"
     assert_current_path my_profile_edit_path
     # puts "#{__LINE__}: id: #{user.id}  missing info? #{user.missing_key_info?}  see home? #{user.can_see_my_home?}"
     # puts body
-    click_link 'My Home'
-    assert_no_content 'My Funded Children'
-    assert_content 'Four Year Two-Kids'
+    click_link "My Home"
+    assert_no_content "My Funded Children"
+    assert_content "Four Year Two-Kids"
     assert_current_path root_path
-    Rails.logger.debug { 'Looking for collapsed panel.' }
+    Rails.logger.debug { "Looking for collapsed panel." }
     expect has_selector?("#collapse-#{last_child.id}.in")
     expect has_no_selector?("#collapse-#{first_child.id}.in")
 
@@ -38,26 +38,26 @@ class PreferencesTest < PoltergeistTest
     # TODO: Taking this one out leads to a broken test case.
     sleep(1)
     click_link(first_child.my_name)
-    Rails.logger.debug { 'Just clicked link to show panel.' }
+    Rails.logger.debug { "Just clicked link to show panel." }
     # TODO: The next line is just to make sure we're synched up before looking
     # for the expanded panel.
-    assert_content 'Four Year Two-Kids'
+    assert_content "Four Year Two-Kids"
     expect has_selector?("#collapse-#{first_child.id}.in")
     expect has_no_selector?("#collapse-#{last_child.id}.in")
 
-    click_link 'My Profile'
-    assert_content 'Funded Children'
+    click_link "My Profile"
+    assert_content "Funded Children"
     assert_current_path my_profile_edit_path
 
-    Rails.logger.debug { 'Going back to home.' }
-    click_link 'My Home'
-    assert_content 'Four Year Two-Kids'
+    Rails.logger.debug { "Going back to home." }
+    click_link "My Home"
+    assert_content "Four Year Two-Kids"
     assert_current_path root_path
     expect has_selector?("#collapse-#{first_child.id}.in")
     expect has_no_selector?("#collapse-#{last_child.id}.in")
   end
 
-  test 'fiscal year menu preferences' do
+  test "fiscal year menu preferences" do
     fill_in_login(user = users(:years))
     assert_current_path root_path
 
@@ -69,32 +69,32 @@ class PreferencesTest < PoltergeistTest
     # the Javascript time to execute.
     expect has_selector?("#collapse-#{child.id}.in")
 
-    expect has_select?(two_year_kid, selected: '2016-2017')
-    select '2015-2016', from: two_year_kid
+    expect has_select?(two_year_kid, selected: "2016-2017")
+    select "2015-2016", from: two_year_kid
     # This next line helps Capybara get back in sync with the extra submit
     # that the page does when you select from the fiscal year drop-down.
     # sleep 5
     # puts body
-    expect has_content? 'Joe 2015'
-    expect has_no_select?(two_year_kid, selected: '2016-2017')
-    expect has_select?(two_year_kid, selected: '2015-2016')
+    expect has_content? "Joe 2015"
+    expect has_no_select?(two_year_kid, selected: "2016-2017")
+    expect has_select?(two_year_kid, selected: "2015-2016")
 
     # Rails.logger.debug { 'Going to My Profile' }
     # Rails.logger.debug { page.body }
     # assert_link 'My Profile'
-    click_link 'My Profile'
+    click_link "My Profile"
     # Rails.logger.debug { find("a[href='/my_profile/index']").inspect }
     # find("a[href='/my_profile/index']").click
     # visit my_profile_index_path
-    expect has_content? 'Funded Children'
+    expect has_content? "Funded Children"
     assert_current_path my_profile_edit_path
     # Rails.logger.debug { 'Going back to My Home' }
-    click_link 'My Home'
+    click_link "My Home"
     # visit root_path
     assert_current_path root_path
 
     # Rails.logger.debug { find("##{two_year_kid}").inspect }
-    expect has_select?(two_year_kid, selected: '2015-2016')
+    expect has_select?(two_year_kid, selected: "2015-2016")
   end
   #
   # test 'BC reminder dismissed' do

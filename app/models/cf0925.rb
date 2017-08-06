@@ -12,9 +12,9 @@ class Cf0925 < ApplicationRecord
   belongs_to :funded_person, inverse_of: :cf0925s
   accepts_nested_attributes_for :funded_person
   has_many :invoice_allocations,
-           inverse_of: :cf0925,
-           autosave: true,
-           dependent: :destroy
+    inverse_of: :cf0925,
+    autosave: true,
+    dependent: :destroy
   has_many :invoices, through: :invoice_allocations, autosave: true
 
   class << self
@@ -63,41 +63,41 @@ class Cf0925 < ApplicationRecord
 
   with_options on: :printable do
     validates :child_dob,
-              :child_first_name,
-              :child_last_name,
-              presence: true
+      :child_first_name,
+      :child_last_name,
+      presence: true
     validates :child_in_care_of_ministry,
-              inclusion: { in: [true, false] }
+      inclusion: { in: [true, false] }
 
     validates :work_phone,
-              presence: true,
-              unless: ->(x) { x.home_phone.present? }
+      presence: true,
+      unless: ->(x) { x.home_phone.present? }
     validates :home_phone,
-              presence: true,
-              unless: ->(x) { x.work_phone.present? }
+      presence: true,
+      unless: ->(x) { x.work_phone.present? }
 
     validate unless: ->(rtp) { rtp.filling_in_part_a? || rtp.filling_in_part_b? } do
-      errors.add(:base, 'Fill in Part A or Part B or both.')
+      errors.add(:base, "Fill in Part A or Part B or both.")
     end
 
     with_options if: :filling_in_part_a? do
       validates(*Cf0925.part_a_required_attributes,
-                presence: true)
+        presence: true)
       validate :start_date_before_end_date
       validate :start_and_end_dates_in_same_fiscal_year
       validates :agency_name,
-                presence: true,
-                unless: ->(x) { x.service_provider_name.present? }
+        presence: true,
+        unless: ->(x) { x.service_provider_name.present? }
       validates :service_provider_name,
-                presence: true,
-                unless: ->(x) { x.agency_name.present? }
+        presence: true,
+        unless: ->(x) { x.agency_name.present? }
       validates :payment,
-                presence: {
-                  message: 'please choose either service provider or agency'
-                },
-                unless: lambda { |x|
-                  x.agency_name.blank? || x.service_provider_name.blank?
-                }
+        presence: {
+          message: "please choose either service provider or agency"
+        },
+        unless: lambda { |x|
+          x.agency_name.blank? || x.service_provider_name.blank?
+        }
     end
 
     with_options if: :filling_in_part_b? do
@@ -120,14 +120,14 @@ class Cf0925 < ApplicationRecord
   def adjust_all_invoice_allocations
     if changed_attributes[:service_provider_service_amount]
       # puts "CHANGED: invoice_allocations.size: #{invoice_allocations.size}"
-      adjust_invoice_allocations('ServiceProvider')
+      adjust_invoice_allocations("ServiceProvider")
     end
 
     if changed_attributes[:item_cost_1] ||
        changed_attributes[:item_cost_2] ||
        changed_attributes[:item_cost_3]
       # puts "CHANGED: invoice_allocations.size: #{invoice_allocations.size}"
-      adjust_invoice_allocations('Supplier')
+      adjust_invoice_allocations("Supplier")
     end
   end
 
@@ -154,10 +154,10 @@ class Cf0925 < ApplicationRecord
   end
 
   def client_pdf_file_name
-    child_last_name + '-' +
-      child_first_name + '-' +
+    child_last_name + "-" +
+      child_first_name + "-" +
       id.to_s +
-      '.pdf'
+      ".pdf"
   end
 
   def copy_parent_to_form
@@ -267,7 +267,7 @@ class Cf0925 < ApplicationRecord
 
   def generate_pdf
     # begin
-    pdftk = PdfForms.new('/usr/bin/pdftk')
+    pdftk = PdfForms.new("/usr/bin/pdftk")
     # puts "Home: #{home_phone}"
     # puts "Work: #{work_phone}"
     # puts "Provider: #{service_provider_phone}"
@@ -277,64 +277,64 @@ class Cf0925 < ApplicationRecord
     service_provider_phone_parts = match_phone_number(service_provider_phone)
     supplier_phone_parts = match_phone_number(supplier_phone)
     pdftk.fill_form(form.file_name,
-                    pdf_output_file,
-                    {
-                      parent_lst_name: parent_last_name,
-                      chld_lst_name: child_last_name,
-                      parent_Address: parent_address,
-                      sp_name: service_provider_name,
-                      agency_name: agency_name,
-                      address_SP: service_provider_address,
-                      SP_serv_1: service_provider_service_1,
-                      SP_serv_2: service_provider_service_2,
-                      SP_serv_3: service_provider_service_3,
-                      sup_name: supplier_name,
-                      adrs_sup: supplier_address,
-                      item_desp_1: item_desp_1,
-                      item_cost_1:
-                        formatted_currency(item_cost_1),
-                      item_cost_2:
-                        formatted_currency(item_cost_2),
-                      item_total:
-                        formatted_currency(item_total),
-                      item_cost_3:
-                        formatted_currency(item_cost_3),
-                      item_desp_2: item_desp_2,
-                      item_desp_3: item_desp_3,
-                      cnt_person: supplier_contact_person,
-                      city_sup: supplier_city,
-                      PC_sup: format_postal_code(supplier_postal_code),
-                      city_SP: service_provider_city,
-                      PC_SP: format_postal_code(service_provider_postal_code),
-                      SP_serv_start:
-                        format_date(service_provider_service_start),
-                      SP_serv_fee:
-                        formatted_currency(service_provider_service_fee),
-                      SP_serv_hr: service_provider_service_hour,
-                      SP_serv_amt:
-                        formatted_currency(service_provider_service_amount),
-                      SP_serv_end: format_date(service_provider_service_end),
-                      ph_area_SP:
-                        formatted_area_code(service_provider_phone_parts),
-                      sup_area_ph: formatted_area_code(supplier_phone_parts),
-                      phn_SP:
-                        formatted_phone_number(service_provider_phone_parts),
-                      sup_ph: formatted_phone_number(supplier_phone_parts),
-                      parent_city: parent_city,
-                      parent_PC: format_postal_code(parent_postal_code),
-                      parent_fst_name: parent_first_name,
-                      chld_fst_name: child_first_name,
-                      parent_mid_name: parent_middle_name,
-                      chld_mid_name: child_middle_name,
-                      hm_phn_area: formatted_area_code(home_phone_parts),
-                      hm_phn: formatted_phone_number(home_phone_parts),
-                      chld_DOB: format_date(child_dob),
-                      chld_yn: translate_care_of_ministry_to_pdf_field, # This comes from radio buttons
-                      Payment: translate_payment_to_pdf_field, # This comes from radio buttons
-                      wrk_phn_area: formatted_area_code(work_phone_parts),
-                      wrk_phn: formatted_phone_number(work_phone_parts)
-                    },
-                    flatten: true)
+      pdf_output_file,
+      {
+        parent_lst_name: parent_last_name,
+        chld_lst_name: child_last_name,
+        parent_Address: parent_address,
+        sp_name: service_provider_name,
+        agency_name: agency_name,
+        address_SP: service_provider_address,
+        SP_serv_1: service_provider_service_1,
+        SP_serv_2: service_provider_service_2,
+        SP_serv_3: service_provider_service_3,
+        sup_name: supplier_name,
+        adrs_sup: supplier_address,
+        item_desp_1: item_desp_1,
+        item_cost_1:
+          formatted_currency(item_cost_1),
+        item_cost_2:
+          formatted_currency(item_cost_2),
+        item_total:
+          formatted_currency(item_total),
+        item_cost_3:
+          formatted_currency(item_cost_3),
+        item_desp_2: item_desp_2,
+        item_desp_3: item_desp_3,
+        cnt_person: supplier_contact_person,
+        city_sup: supplier_city,
+        PC_sup: format_postal_code(supplier_postal_code),
+        city_SP: service_provider_city,
+        PC_SP: format_postal_code(service_provider_postal_code),
+        SP_serv_start:
+          format_date(service_provider_service_start),
+        SP_serv_fee:
+          formatted_currency(service_provider_service_fee),
+        SP_serv_hr: service_provider_service_hour,
+        SP_serv_amt:
+          formatted_currency(service_provider_service_amount),
+        SP_serv_end: format_date(service_provider_service_end),
+        ph_area_SP:
+          formatted_area_code(service_provider_phone_parts),
+        sup_area_ph: formatted_area_code(supplier_phone_parts),
+        phn_SP:
+          formatted_phone_number(service_provider_phone_parts),
+        sup_ph: formatted_phone_number(supplier_phone_parts),
+        parent_city: parent_city,
+        parent_PC: format_postal_code(parent_postal_code),
+        parent_fst_name: parent_first_name,
+        chld_fst_name: child_first_name,
+        parent_mid_name: parent_middle_name,
+        chld_mid_name: child_middle_name,
+        hm_phn_area: formatted_area_code(home_phone_parts),
+        hm_phn: formatted_phone_number(home_phone_parts),
+        chld_DOB: format_date(child_dob),
+        chld_yn: translate_care_of_ministry_to_pdf_field, # This comes from radio buttons
+        Payment: translate_payment_to_pdf_field, # This comes from radio buttons
+        wrk_phn_area: formatted_area_code(work_phone_parts),
+        wrk_phn: formatted_phone_number(work_phone_parts)
+      },
+      flatten: true)
     # rescue PdfForms::PdftkError => e
     # puts e.to_s
     # return false
@@ -400,11 +400,11 @@ class Cf0925 < ApplicationRecord
     return if part_b_fiscal_year.blank?
 
     if part_b_fiscal_year_before_birth?
-      errors.add(:part_b_fiscal_year, 'must be after child is born')
+      errors.add(:part_b_fiscal_year, "must be after child is born")
     end
 
     if part_b_fiscal_year_after_child_turns_18?
-      errors.add(:part_b_fiscal_year, 'must be before child turns 18')
+      errors.add(:part_b_fiscal_year, "must be before child turns 18")
     end
   end
 
@@ -495,7 +495,7 @@ class Cf0925 < ApplicationRecord
   # Return the range from start date to end date, or fiscal year the RTP
   # was created, if no start or end date.
   def service_period(start = service_provider_service_start,
-                     finish = service_provider_service_end)
+    finish = service_provider_service_end)
     if start && finish
       start..finish
     else
@@ -507,7 +507,7 @@ class Cf0925 < ApplicationRecord
   ##
   # Return a human-digestable string for the service period.
   def service_period_string
-    [service_period.begin.to_s, service_period.end.to_s].join(' to ')
+    [service_period.begin.to_s, service_period.end.to_s].join(" to ")
   end
 
   def service_provider_service_amount=(value)
@@ -519,7 +519,7 @@ class Cf0925 < ApplicationRecord
   end
 
   def set_form
-    form || self.form = Form.find_by!(class_name: 'Cf0925')
+    form || self.form = Form.find_by!(class_name: "Cf0925")
   end
 
   def start_date
@@ -529,7 +529,7 @@ class Cf0925 < ApplicationRecord
   def start_date_before_end_date
     return if service_provider_service_start.blank? || service_provider_service_end.blank?
 
-    errors.add(:service_provider_service_end, 'must be after start date') if
+    errors.add(:service_provider_service_end, "must be after start date") if
       service_provider_service_end < service_provider_service_start
   end
 
@@ -538,14 +538,14 @@ class Cf0925 < ApplicationRecord
     if funded_person.fiscal_year(service_provider_service_start) !=
        funded_person.fiscal_year(service_provider_service_end)
       errors.add(:service_provider_service_end,
-                 'service end date must be in the same fiscal year ' \
-                 'as service start date')
+        "service end date must be in the same fiscal year " \
+        "as service start date")
     end
   end
 
   def status
-    return 'Ready to Print' if printable?
-    'Not Complete'
+    return "Ready to Print" if printable?
+    "Not Complete"
   end
 
   ##
@@ -555,7 +555,7 @@ class Cf0925 < ApplicationRecord
     [
       (service_provider_name || agency_name || supplier_name),
       service_period_string
-    ].join(' ')
+    ].join(" ")
   end
 
   ##
@@ -567,11 +567,11 @@ class Cf0925 < ApplicationRecord
   end
 
   def translate_care_of_ministry_to_pdf_field
-    child_in_care_of_ministry ? 'Choice1' : 'Choice2'
+    child_in_care_of_ministry ? "Choice1" : "Choice2"
   end
 
   def translate_payment_to_pdf_field
-    payment == 'provider' ? 'Choice1' : 'Choice2'
+    payment == "provider" ? "Choice1" : "Choice2"
   end
 
   def user
@@ -611,16 +611,16 @@ class Cf0925 < ApplicationRecord
   end
 
   def formatted_currency(amount)
-    number_to_currency(amount, unit: '')
+    number_to_currency(amount, unit: "")
   end
 
   def formatted_phone_number(match)
     number_to_phone(match[:exchange] + match[:number],
-                    extension: match[:ext]) if match
+      extension: match[:ext]) if match
   end
 
   def number_clean(value)
     return value unless value.is_a? String
-    value.gsub(/[^\d#{I18n.default_separator}]+/, '')
+    value.gsub(/[^\d#{I18n.default_separator}]+/, "")
   end
 end

@@ -16,9 +16,9 @@ class Cf0925sController < ApplicationController
       format.pdf do
         @cf0925.generate_pdf
         send_file @cf0925.pdf_output_file,
-                  disposition: :inline,
-                  type: :pdf,
-                  filename: @cf0925.client_pdf_file_name
+          disposition: :inline,
+          type: :pdf,
+          filename: @cf0925.client_pdf_file_name
       end
     end
   end
@@ -65,8 +65,8 @@ class Cf0925sController < ApplicationController
     @cf0925.allocate
     # puts "#{__LINE__}: #{@cf0925.invoice_allocations.inspect}"
 
-    notice = 'Request saved.'
-    notice += ' Parent data updated.' if user.changed?
+    notice = "Request saved."
+    notice += " Parent data updated." if user.changed?
 
     # I didn't need to save addresses explicitly here.
     if @cf0925.save_with_user
@@ -92,8 +92,8 @@ class Cf0925sController < ApplicationController
 
     @cf0925.allocate
 
-    notice = 'Request updated.'
-    notice += ' Parent data updated.' if user.changed?
+    notice = "Request updated."
+    notice += " Parent data updated." if user.changed?
 
     # I didn't need to save addresses explicitly here.
     if @cf0925.save_with_user
@@ -110,7 +110,7 @@ class Cf0925sController < ApplicationController
     @cf0925 = current_user.cf0925s.find(params[:id])
     @cf0925.destroy
 
-    redirect_to home_index_path, notice: 'Request deleted.'
+    redirect_to home_index_path, notice: "Request deleted."
   end
 
   private

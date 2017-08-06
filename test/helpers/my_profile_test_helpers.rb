@@ -1,13 +1,13 @@
-require 'test_helper'
+require "test_helper"
 module MyProfileTestHelper
   class MyProfileTestPage < CapybaraTest
     def initialize(arg)
       # Initialize the input elements in the Edit User Information Panel
-      @items = { address: ATextBox.new(id: 'user_address', valid_value: '123 Main St') }
-      @items[:name_first] = ATextBox.new(id: 'user_name_first', valid_value: 'Firsty')
-      @items[:postal_code] = ATextBox.new(id: 'user_postal_code', valid_value: 'V2a5T2', formatted_valid_value: 'V2A 5T2', chk_validator: true, invalid_value: 'V33 2YA', err_message: ' - must be of the format ANA NAN')
-      @items[:work_phone_number] = ATextBox.new(id: 'user_work_phone_number', valid_value: '(604) 765-2134', chk_validator: true, invalid_value: '60476521', formatted_invalid_value: '(6) 047-6521', err_message: ' - must be 10 digit, area code/exchange must not start with 1 or 0')
-      @items[:home_phone_number] = ATextBox.new(id: 'user_home_phone_number', valid_value: '(604) 212-6527', chk_validator: true, invalid_value: '604212', err_message: ' - must be 10 digit, area code/exchange must not start with 1 or 0')
+      @items = { address: ATextBox.new(id: "user_address", valid_value: "123 Main St") }
+      @items[:name_first] = ATextBox.new(id: "user_name_first", valid_value: "Firsty")
+      @items[:postal_code] = ATextBox.new(id: "user_postal_code", valid_value: "V2a5T2", formatted_valid_value: "V2A 5T2", chk_validator: true, invalid_value: "V33 2YA", err_message: " - must be of the format ANA NAN")
+      @items[:work_phone_number] = ATextBox.new(id: "user_work_phone_number", valid_value: "(604) 765-2134", chk_validator: true, invalid_value: "60476521", formatted_invalid_value: "(6) 047-6521", err_message: " - must be 10 digit, area code/exchange must not start with 1 or 0")
+      @items[:home_phone_number] = ATextBox.new(id: "user_home_phone_number", valid_value: "(604) 212-6527", chk_validator: true, invalid_value: "604212", err_message: " - must be 10 digit, area code/exchange must not start with 1 or 0")
 
       # Add a blank funded child
       @funded_children_array = [FundedPersonTest.new(:blank)]
@@ -34,7 +34,7 @@ module MyProfileTestHelper
       @items.each do |key, item|
         # puts ".. checking #{key} #{test}.#{test_cnt}"
         res = item.check_input
-        unless res == ''
+        unless res == ""
           msg = "#{__LINE__} From line: #{line}, Test: #{test}.#{test_cnt} #{key}: - #{res}"
           assert_not msg, msg
           break
@@ -46,7 +46,7 @@ module MyProfileTestHelper
       @funded_children_array.each_with_index do |child, index|
         #  puts "#{__LINE__}: Running through the funded children array Index: #{index} type: #{child.type} name: expected #{child.tb_name_first.expected_value} present: #{child.tb_name_first.expected_value}  .. born: expected #{child.tb_birthdate.expected_value} present: #{child.tb_birthdate.expected_value}"
         res = child.check_the_kid(index)
-        unless res == ''
+        unless res == ""
           msg = "#{__LINE__} From line: #{line}, Test: #{test}.#{test_cnt} Funded Child index #{index}: - #{res}"
           assert_not msg, msg
           break
@@ -58,7 +58,7 @@ module MyProfileTestHelper
     # Checks whether the notifications for the page appear.  Expection for whether
     # the notifications should appear are passed as parameters
     def check_notifications(line, test, not_bc_resident = false, not_enough_info = false)
-      test_content = 'The forms and funding found in this area are only availble to residents of British Columbia.'
+      test_content = "The forms and funding found in this area are only availble to residents of British Columbia."
       if has_text? test_content
         # The notification is present, chack that we expected it
         assert not_bc_resident, "#{__LINE__} From line: #{line}, Test: #{test}.1 notification 'BC residents only' present, but NOT expected"
@@ -67,7 +67,7 @@ module MyProfileTestHelper
         assert_not not_bc_resident, "#{__LINE__} From line: #{line}, Test: #{test}.2 notification of 'BC residents only' NOT present, but expected"
       end
 
-      test_content = 'To begin taking advantage of the functionality of this site you must enter the province of your address as well as at least one funded child'
+      test_content = "To begin taking advantage of the functionality of this site you must enter the province of your address as well as at least one funded child"
       if has_text? test_content
         # The notification is present, chack that we expected it
         assert not_enough_info, "#{__LINE__} From line: #{line}, Test: #{test}.3 notification 'key info missing' present, but NOT expected"
@@ -86,8 +86,8 @@ module MyProfileTestHelper
       end
       ## TODO this hard codes all address to BC addresses
       ## NEED to add a Class to handle drop down boxes
-      province = ProvinceCode.find_by(province_code: 'BC')
-      select province.province_name, from: 'user_province_code_id'
+      province = ProvinceCode.find_by(province_code: "BC")
+      select province.province_name, from: "user_province_code_id"
     end # def fill_in_form_items
 
     # Get the expected value for a particular :item
@@ -150,7 +150,7 @@ module MyProfileTestHelper
         @tb_name_first = ATextBox.new(valid_value: "First_#{base}")
         @tb_name_middle = ATextBox.new(valid_value: "First_#{base}")
         @tb_name_last = ATextBox.new(valid_value: "First_#{base}")
-        @tb_birthdate = ATextBox.new(valid_value: (Date.today - (365 * 10)).strftime('%Y-%m-%d'), chk_validator: true)
+        @tb_birthdate = ATextBox.new(valid_value: (Date.today - (365 * 10)).strftime("%Y-%m-%d"), chk_validator: true)
 
       when :invalid
         @type = :invalid
@@ -158,14 +158,14 @@ module MyProfileTestHelper
         @tb_name_middle = ATextBox.new(valid_value: "Middle_#{base}")
         @tb_name_last = ATextBox.new(valid_value: "Last_#{base}")
         ## TODO Test an invalid child
-        @tb_birthdate = ATextBox.new(invalid_value: (Date.today + (365 * 2)).strftime('%Y-%m-%d'), chk_validator: true, err_message: "- can't be in the future")
+        @tb_birthdate = ATextBox.new(invalid_value: (Date.today + (365 * 2)).strftime("%Y-%m-%d"), chk_validator: true, err_message: "- can't be in the future")
 
       else
         @type = :blank
-        @tb_name_first = ATextBox.new(valid_value: '')
-        @tb_name_middle = ATextBox.new(valid_value: '')
-        @tb_name_last = ATextBox.new(valid_value: '')
-        @tb_birthdate = ATextBox.new(valid_value: '')
+        @tb_name_first = ATextBox.new(valid_value: "")
+        @tb_name_middle = ATextBox.new(valid_value: "")
+        @tb_name_last = ATextBox.new(valid_value: "")
+        @tb_birthdate = ATextBox.new(valid_value: "")
       end
     end # def initialize
 
@@ -180,9 +180,9 @@ module MyProfileTestHelper
     def check_the_kid(frm_index = 0)
       set_ids(frm_index)
       ret = tb_name_first.check_input
-      ret == '' && ret = tb_name_middle.check_input
-      ret == '' && ret = tb_name_last.check_input
-      ret == '' && ret = tb_birthdate.check_input
+      ret == "" && ret = tb_name_middle.check_input
+      ret == "" && ret = tb_name_last.check_input
+      ret == "" && ret = tb_birthdate.check_input
       ret
     end # def check_the_kid
 
@@ -211,14 +211,14 @@ module MyProfileTestHelper
   class ATextBox < ActiveSupport::TestCase
     include Capybara::DSL
     def initialize(init_params)
-      init_params = {} unless init_params.class.to_s == 'Hash'
+      init_params = {} unless init_params.class.to_s == "Hash"
 
-      @id = init_params[:id] || 'default_id'
-      @valid_value = init_params[:valid_value] || 'valid'
-      @invalid_value = init_params[:invalid_value] || 'invalid'
+      @id = init_params[:id] || "default_id"
+      @valid_value = init_params[:valid_value] || "valid"
+      @invalid_value = init_params[:invalid_value] || "invalid"
       @formatted_valid_value = init_params[:formatted_valid_value] || @valid_value
       @formatted_invalid_value = init_params[:formatted_invalid_value] || @invalid_value
-      @err_message = init_params[:err_message] || 'error'
+      @err_message = init_params[:err_message] || "error"
       @is_valid = true
       @chk_validator = init_params[:chk_validator] || false
     end # def initialize
@@ -237,7 +237,7 @@ module MyProfileTestHelper
     # If any errors are detected, an error message is returned.  If no errors are
     # detected, a zero length string is returned.
     def check_input
-      ret = ''
+      ret = ""
       if is_valid
         # Text Box Should be valid
         unless present_value == expected_value
@@ -247,9 +247,9 @@ module MyProfileTestHelper
         # if self.id == 'user_funded_people_attributes_0_birthdate'
         #   show_me __LINE__
         # end
-        if ret == '' && @chk_validator
+        if ret == "" && @chk_validator
           if chk_for_error_message?(id, err_message)
-            ret = 'Error Message, on valid contents'
+            ret = "Error Message, on valid contents"
           end
         end
       else
@@ -258,9 +258,9 @@ module MyProfileTestHelper
           show_me __LINE__
           ret = "Unexpected (InValid) contents expecting: #{expected_value}, was #{present_value}"
         end
-        if ret == '' && @chk_validator
+        if ret == "" && @chk_validator
           unless chk_for_error_message?(id, err_message)
-            ret = 'No Error Message, on valid contents'
+            ret = "No Error Message, on valid contents"
           end
         end
       end
@@ -282,7 +282,7 @@ module MyProfileTestHelper
            else
              @formatted_invalid_value
            end
-      ev = '' if ev.nil?
+      ev = "" if ev.nil?
       ev
     end # expected value
 
@@ -299,7 +299,7 @@ module MyProfileTestHelper
     def present_value
       #      puts "-------#{@id}----------------"
       pv = first("##{@id}").value
-      pv = '' if pv.nil?
+      pv = "" if pv.nil?
       pv
     end # def present_value
 
@@ -307,7 +307,7 @@ module MyProfileTestHelper
       the_line = if the_line > 0
                    the_line.to_s
                  else
-                   ''
+                   ""
                  end
       puts "------------#{the_line}----------------------------------"
       puts "--                        id: #{id}"
@@ -317,7 +317,7 @@ module MyProfileTestHelper
       puts "--   invalid:            val: #{@invalid_value}    formatted: #{@formatted_invalid_value}"
       puts "--  expected:            val: [#{expected_value}] class: #{expected_value.class}"
       puts "--     value:            val: [#{present_value}]  class: #{present_value.class}"
-      puts '----------------------------------------------'
+      puts "----------------------------------------------"
     end # def show_me
   end # end class def ATextBox
 end

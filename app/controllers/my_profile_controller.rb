@@ -8,7 +8,7 @@ class MyProfileController < ApplicationController
     # set_objects
     @warning = nil
     unless current_user.valid?
-      @warning = 'Your information cannot be saved until you have corrected the information highlighted below'
+      @warning = "Your information cannot be saved until you have corrected the information highlighted below"
     end
     # Ensure there is always one new funded person that can be filled in
     # TODO: I didn't realize you could use new this way.
@@ -76,9 +76,9 @@ class MyProfileController < ApplicationController
 
   def xadd_flash(the_group, the_message)
     if flash[:save_errors].nil?
-      flash[:save_errors] = '<u>Please Correct the Following and Re-Save</u><br><br>'
+      flash[:save_errors] = "<u>Please Correct the Following and Re-Save</u><br><br>"
     else
-      flash[:save_errors] += '<br>'
+      flash[:save_errors] += "<br>"
     end
     flash[:save_errors] += "#{the_group}: #{the_message}"
   end

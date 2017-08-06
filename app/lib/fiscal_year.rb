@@ -58,7 +58,7 @@ class FiscalYear < Range
   def to_s
     fy = first.year.to_s
     end_year = last.year
-    fy += '-' + end_year.to_s unless first.year == end_year
+    fy += "-" + end_year.to_s unless first.year == end_year
     fy
   end
 

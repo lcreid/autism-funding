@@ -1,9 +1,9 @@
-require 'test_helper'
+require "test_helper"
 
 class InvoicesControllerTest < ActionDispatch::IntegrationTest
   include TestSessionHelpers
 
-  test 'should get new' do
+  test "should get new" do
     skip "Can't create an invoice for a child that doesn't belong to the current user"
     #    get invoices_new_url
     #-- Log In

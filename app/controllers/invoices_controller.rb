@@ -36,7 +36,7 @@ class InvoicesController < ApplicationController
     @invoice.update(invoice_params)
     @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
     #    redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-    redirect_to root_path, notice: 'Invoice updated.'
+    redirect_to root_path, notice: "Invoice updated."
   end
 
   def destroy
@@ -58,11 +58,11 @@ class InvoicesController < ApplicationController
       # puts @invoice.inspect
       @invoice.funded_person.selected_fiscal_year = @invoice.funded_person.fiscal_year(@invoice.start_date)
       #      redirect_to funded_person_invoices_path(@invoice.funded_person_id)
-      redirect_to root_path, notice: 'Invoice saved.'
+      redirect_to root_path, notice: "Invoice saved."
     else
-      render 'new'
+      render "new"
     end
-    @msg = 'phil'
+    @msg = "phil"
   end
 
   def rtps
@@ -85,14 +85,14 @@ class InvoicesController < ApplicationController
 
     @invoice.allocate(@invoice.match)
     helpers.bootstrap_form_for([@funded_person, @invoice],
-                               builder: AutismFundingFormBuilder) do |f|
+      builder: AutismFundingFormBuilder) do |f|
       # puts "PARTIAL: #{render_to_string(partial: 'invoice_allocation_wrapper',
       #                                   locals: {
       #                                     collection: @invoice.allocate(@invoice.match),
       #                                     invoice_form: f
       #                                   },
       #                                   layout: !request.xhr?)}"
-      render partial: 'invoice_allocation_wrapper',
+      render partial: "invoice_allocation_wrapper",
              locals: { invoice_form: f },
              layout: !request.xhr?
     end
@@ -102,29 +102,29 @@ class InvoicesController < ApplicationController
 
   def invoice_params
     params.require(:invoice).permit(:cf0925_id,
-                                    :invoice_date,
-                                    :service_start,
-                                    :service_end,
-                                    :invoice_from,
-                                    :invoice_amount,
-                                    :invoice_reference,
-                                    :notes,
-                                    invoice_allocations_attributes: [
-                                      :cf0925_id,
-                                      :cf0925_type,
-                                      :id,
-                                      :invoice_id,
-                                      :amount
-                                    ])
+      :invoice_date,
+      :service_start,
+      :service_end,
+      :invoice_from,
+      :invoice_amount,
+      :invoice_reference,
+      :notes,
+      invoice_allocations_attributes: [
+        :cf0925_id,
+        :cf0925_type,
+        :id,
+        :invoice_id,
+        :amount
+      ])
   end
 
   def convert_search_params_to_create_params
     # { invoice: params }.require(:invoice)
     params.permit(:cf0925_id,
-                  :invoice_date,
-                  :service_start,
-                  :service_end,
-                  :invoice_from,
-                  :funded_person_id)
+      :invoice_date,
+      :service_start,
+      :service_end,
+      :invoice_from,
+      :funded_person_id)
   end
 end

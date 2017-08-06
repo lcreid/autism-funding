@@ -10,7 +10,7 @@ module Formatters
     match = match_postal_code(postal_code)
 
     if match
-      match[:fsa].upcase + ' ' + match[:ldu].upcase
+      match[:fsa].upcase + " " + match[:ldu].upcase
     else
       postal_code
     end

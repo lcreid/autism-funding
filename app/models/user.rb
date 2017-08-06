@@ -5,7 +5,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+    :recoverable, :rememberable, :trackable, :validatable
 
   has_many :addresses, inverse_of: :user, dependent: :destroy
   belongs_to :province_code, optional: true
@@ -15,22 +15,22 @@ class User < ApplicationRecord
   # TODO: the next line has to change every time we add another form.
   #   There should be a btter way.
   has_many :forms,
-           -> { order(created_at: :desc) },
-           through: :funded_people,
-           source: :cf0925s
+    -> { order(created_at: :desc) },
+    through: :funded_people,
+    source: :cf0925s
 
   has_many :funded_people,
-           -> { order(:name_first) },
-           inverse_of: :user,
-           dependent: :destroy
+    -> { order(:name_first) },
+    inverse_of: :user,
+    dependent: :destroy
   accepts_nested_attributes_for :funded_people,
-                                allow_destroy: true,
-                                reject_if: :all_blank
+    allow_destroy: true,
+    reject_if: :all_blank
   has_many :phone_numbers, inverse_of: :user, dependent: :destroy
   accepts_nested_attributes_for :phone_numbers,
-                                reject_if: proc { |attributes|
-                                  attributes[:phone_number].blank?
-                                }
+    reject_if: proc { |attributes|
+      attributes[:phone_number].blank?
+    }
 
   has_many :cf0925s, through: :funded_people
   has_many :invoices, through: :funded_people
@@ -40,18 +40,18 @@ class User < ApplicationRecord
   validate :validate_at_least_one_phone_number, on: :printable
 
   validates :address,
-            :city,
-            :postal_code,
-            presence: true,
-            on: :printable
+    :city,
+    :postal_code,
+    presence: true,
+    on: :printable
   # TODO: Validate postal code?
 
   # TODO: We had to move this validates to this location to make tests run green
   # but we don't understand why
   validates :name_first,
-            :name_last,
-            presence: true,
-            on: :printable
+    :name_last,
+    presence: true,
+    on: :printable
 
   #-- Public Methods -------------------------------------------------------------
   #-- pseduo-attribute address -------------------
@@ -67,7 +67,7 @@ class User < ApplicationRecord
 
   # Returns true if the address is in the province of British Columbia
   def bc_resident?
-    address_record.get_province_code == 'BC'
+    address_record.get_province_code == "BC"
   end
 
   # Returns true if the user is able to create a new RTP form
@@ -94,7 +94,7 @@ class User < ApplicationRecord
       ret = all_valid
     end
     # puts "#{__LINE__}: state of ret #{ret}"
-    ret = false if address_record.get_province_code != 'BC' && (cnt_items < 1)
+    ret = false if address_record.get_province_code != "BC" && (cnt_items < 1)
     # puts "#{__LINE__}: state of ret #{ret}"
     ret
     end
@@ -113,12 +113,12 @@ class User < ApplicationRecord
   #-- pseduo-attribute home_phone-number -------------
   # Get Home Phone Number for User
   def home_phone_number
-    phone_record('Home').phone_number
+    phone_record("Home").phone_number
   end
 
   # Set Home Phone Number for User
   def home_phone_number=(val)
-    phone_record('Home').phone_number = val
+    phone_record("Home").phone_number = val
   end
 
   # Returns true if the user has not defined enough information to get access to
@@ -150,7 +150,7 @@ class User < ApplicationRecord
   def my_name
     my_name = "#{name_first} #{name_middle}".strip
     my_name = "#{my_name} #{name_last}".strip
-    my_name = email if my_name == ''
+    my_name = email if my_name == ""
     my_name
   end
 
@@ -218,23 +218,23 @@ class User < ApplicationRecord
   #-- pseduo-attribute work_phone_extension -------------------
   # Get Work Phone Extension for User
   def work_phone_extension
-    phone_record('Work').phone_extension
+    phone_record("Work").phone_extension
   end
 
   # Set Work Phone Number for User
   def work_phone_extension=(val)
-    phone_record('Work').phone_extension = val
+    phone_record("Work").phone_extension = val
   end
 
   #-- pseduo-attribute work_phone_number -------------------
   # Get Work Phone Number for User
   def work_phone_number
-    phone_record('Work').phone_number
+    phone_record("Work").phone_number
   end
 
   # Set Work Phone Number for User
   def work_phone_number=(val)
-    phone_record('Work').phone_number = val
+    phone_record("Work").phone_number = val
   end
 
   # Attach an error message to the symbol :phone_numbers if neither home
@@ -245,7 +245,7 @@ class User < ApplicationRecord
   # previous error messages.
   def validate_at_least_one_phone_number
     if work_phone_number.blank? && home_phone_number.blank?
-      errors.add(:phone_numbers, 'must provide at least one phone number')
+      errors.add(:phone_numbers, "must provide at least one phone number")
     end
   end
 
@@ -253,17 +253,17 @@ class User < ApplicationRecord
   # Phone table.  This will associate errors with the appropriate pseduo-attribute
   def validate_phone_numbers
     # puts 'Validating phone numbers'
-    phone_record('Work').validate
-    phone_record('Work').errors[:phone_number].each do |e|
+    phone_record("Work").validate
+    phone_record("Work").errors[:phone_number].each do |e|
       # puts "Error in work #{e}"
       errors.add(:work_phone_number, e)
     end
-    phone_record('Work').errors[:phone_extension].each do |e|
+    phone_record("Work").errors[:phone_extension].each do |e|
       # puts "Error in extension #{e}"
       errors.add(:work_phone_extension, e)
     end
-    phone_record('Home').validate
-    phone_record('Home').errors[:phone_number].each do |e|
+    phone_record("Home").validate
+    phone_record("Home").errors[:phone_number].each do |e|
       # puts "Error in home #{e}"
       errors.add(:home_phone_number, e)
     end
