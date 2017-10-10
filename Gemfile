@@ -1,3 +1,4 @@
+# rubocop:disable Style/StringLiterals
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -34,6 +35,7 @@ gem 'devise'
 # Manipulate PDFs https://github.com/jkraemer/pdf-forms
 gem 'pdf-forms'
 
+gem 'bootstrap-sass'
 gem 'bootstrap_form', git: "https://github.com/lcreid/rails-bootstrap-forms.git", branch: "rails-5-1"
 
 group :development, :test do

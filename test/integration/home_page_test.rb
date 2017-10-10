@@ -27,18 +27,18 @@ class HomePageTest < PoltergeistTest
     click_link one_year_child.my_name
     assert_selector("#collapse-#{one_year_child.id}.in")
 
-    start_request
+    # start_request
     within "#collapse-#{one_year_child.id}" do
       drop_down = "year_#{one_year_child.id}"
       select "2017", from: drop_down
       expect has_select?(drop_down, selected: "2017")
       # puts "PENDING?: #{pending_request?}"
     end
-    wait_for_request
+    # wait_for_request
 
     # I can't seem to find a way to force Capybara to just wait until the
     # reply from the year select is done.
-    # sleep 1
+    sleep 1
 
     two_year_child = funded_people(:two_fiscal_years)
     click_link two_year_child.my_name
@@ -79,11 +79,11 @@ class HomePageTest < PoltergeistTest
     end
 
     # puts "TRYING jQUERY: #{evaluate_script('$("body")[0].innerHTML;')}"
-    start_request
+    # start_request
     # puts "IN TEST CASE PENDING?: #{pending_request?}"
     select "2015-2016", from: "year_#{two_year_child.id}"
     expect has_select?("year_#{two_year_child.id}", selected: "2015-2016")
-    wait_for_request
+    # wait_for_request
     expect has_selector?("#collapse-#{two_year_child.id}.in")
 
     # I think the problem here is that the selector is set by the action, so

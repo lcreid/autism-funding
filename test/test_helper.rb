@@ -333,7 +333,7 @@ class PoltergeistTest < CapybaraTest
     # puts "capybara found: #{has_css?('span', wait: 10)}"
     # page.assert_selector 'span.pending'
     # puts 'Starting Request'
-    evaluate_script('$("body").addClass("pending");')
+    # evaluate_script('$("body").addClass("pending");')
     # result = evaluate_script('$("body.pending").length;')
     # puts "start_request jQuery found: #{result}"
     # puts "capybara found: #{has_css?('body.pending', wait: 10)}"
@@ -356,7 +356,7 @@ class PoltergeistTest < CapybaraTest
 
   def wait_for_request
     # puts 'Waiting for body.pending to go away.'
-    assert_no_selector "body.pending"
+    # assert_no_selector "body.pending"
   end
 end
 
