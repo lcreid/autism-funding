@@ -20,7 +20,7 @@ class MyProfileTest < MyProfileTestHelper::MyProfileTestPage
     assert_equal "/users/sign_up", current_path, "01.a_iii - Should be on sign_up page"
 
     fill_in "Email", with: test_email
-    fill_in "Password", with: test_password
+    fill_in "user_password", with: test_password
     fill_in "Password confirmation", with: test_password
     assert_difference "User.count", 1, "01.a_iv - Number of Users did not increase by 1" do
       click_button "Sign up"
@@ -37,7 +37,7 @@ class MyProfileTest < MyProfileTestHelper::MyProfileTestPage
     assert_equal "/users/sign_in", current_path, "01.c - Should be on Log In Page"
     fill_in "Email", with: test_email
     fill_in "Password", with: test_password
-    click_button "Log in"
+    click_button "Sign in"
 
     # d) Check that we wind up on my profile, with correct notifications
     assert_equal "/my_profile/edit", current_path, "01.d.i - Brand New Users should be sent to My Profile"

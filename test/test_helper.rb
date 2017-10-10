@@ -126,7 +126,7 @@ module TestSessionHelpers
     expect has_field?("Email")
     fill_in "Email", with: user.email
     fill_in "Password", with: "password"
-    click_button "Log in"
+    click_button "Sign in"
   end
 
   # This one derived from Larry The Rails Guy's log_in
