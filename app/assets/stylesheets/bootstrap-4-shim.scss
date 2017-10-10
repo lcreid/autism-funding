@@ -1,0 +1,5 @@
+// This file provides a shim for some Bootstrap 4 styles back to
+// Bootstrap 3.
+.btn-secondary {
+  @extend .btn-default;
+}
