@@ -12,13 +12,6 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
-  # TODO: the next line has to change every time we add another form.
-  #   There should be a btter way.
-  has_many :forms,
-    -> { order(created_at: :desc) },
-    through: :funded_people,
-    source: :cf0925s
-
   has_many :funded_people,
     -> { order(:name_first) },
     inverse_of: :user,
@@ -31,6 +24,13 @@ class User < ApplicationRecord
     reject_if: proc { |attributes|
       attributes[:phone_number].blank?
     }
+
+  # TODO: the next line has to change every time we add another form.
+  #   There should be a btter way.
+  has_many :forms,
+    -> { order(created_at: :desc) },
+    through: :funded_people,
+    source: :cf0925s
 
   has_many :cf0925s, through: :funded_people
   has_many :invoices, through: :funded_people
