@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render "head" %>
+  </head>
+
+  <body>
+    <%= render "header" %>
+
+    <div class="container">
+        <div class="row">
+          <div class="col col-md-8 col-lg-6 center-block">
+            <%= yield %>
+          </div>
+        </div>
+
+        <%= render "footer" %>
+    </div>
+  </body>
+</html>
