@@ -11,11 +11,12 @@ module Helpers
       # TODO: This should probably give the fiscal year of the record
       # creation date, or Time.new if the record hasn't been saved yet.
       # Then we can fix the Supplier module methods to use fiscal_year.
-      return funded_person.fiscal_year(Time.new) unless start_date
+      return funded_person.fiscal_year(start_date) if start_date
+      puts "funded_person: #{funded_person.inspect} getting fy from now"
+      funded_person.fiscal_year(Time.new)
 
       #-- start_date is defined, the funded_person part will determine the FY
       #    based on the dob and start_date
-      funded_person.fiscal_year(start_date)
     end
 
     def in_fiscal_year?(fy)

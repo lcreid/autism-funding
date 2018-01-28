@@ -4,7 +4,6 @@
 # of training or travel on the details lines. Doesn't say how to give date
 # for a purchase.
 class Cf0925 < ApplicationRecord
-  include Helpers::FiscalYear
   include Formatters
   include ActionView::Helpers::NumberHelper
 
@@ -210,14 +209,14 @@ class Cf0925 < ApplicationRecord
   #
   # alias eql? ==
 
-  # So I can use the object as a key in a hash (see status.rb)
-  def hash
-    attributes.values.reduce { |a, e| a.to_s + e.to_s }.hash
-  end
-
-  def include?(range)
-    Range.new(service_provider_service_start, service_provider_service_end)
-         .include?(range)
+  def fiscal_year
+    if service_provider_service_start
+      funded_person.fiscal_year(service_provider_service_start)
+    elsif service_provider_service_end
+      funded_person.fiscal_year(service_provider_service_end)
+    elsif part_b_fiscal_year
+      part_b_fiscal_year
+    end
   end
 
   def format_date(date)
@@ -340,6 +339,25 @@ class Cf0925 < ApplicationRecord
     # return false
     # end
     true
+  end
+
+  # So I can use the object as a key in a hash (see status.rb)
+  def hash
+    attributes.values.reduce { |a, e| a.to_s + e.to_s }.hash
+  end
+
+  ##
+  # Try all the ways to see if the cf0925 is in a fiscal year.
+  def in_fiscal_year?(fy)
+    fy = FiscalYear.new(fy) unless fy.is_a?(FiscalYear)
+    fy.include?(fiscal_year)
+    # if service_provider_service_start && service_provider_service_end
+    #   fy.include? FiscalYear.new(service_provider_service_start..service_provider_service_end)
+    # elsif part_b_fiscal_year
+    #   fy.include? part_b_fiscal_year
+    # else
+    #   false
+    # end
   end
 
   ##
@@ -488,18 +506,19 @@ class Cf0925 < ApplicationRecord
     end
   rescue => e
     logger.warn "Failed to save #{inspect} #{e}"
+    # FIXME: Re-raise here rather than return, methinks.
     return false
   end
 
   ##
-  # Return the range from start date to end date, or fiscal year the RTP
-  # was created, if no start or end date.
+  # Return the range from start date to end date, or fiscal year of part B.
   def service_period(start = service_provider_service_start,
     finish = service_provider_service_end)
     if start && finish
       start..finish
     else
-      fy = funded_person.fiscal_year(created_at)
+      # fy = funded_person.fiscal_year(created_at)
+      fy = FiscalYear.new(part_b_fiscal_year)
       service_period(fy.begin, fy.end)
     end
   end
