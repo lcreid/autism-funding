@@ -104,10 +104,10 @@ class FundedPerson < ApplicationRecord
   # Return a list of fiscal years for which there is some sort of activity
   # for the FundedPerson. The list is sorted in descending order from the
   # most recent fiscal year.
-  # TODO: Add other sources of paperwork as they become available (Invoice).
   def fiscal_years
     (cf0925s.map(&:fiscal_year) | invoices.map(&:fiscal_year))
       .sort { |x, y| y <=> x }
+      .uniq
   end
 
   # Return true if name, birthdate and in care of ministry fields are all blank
