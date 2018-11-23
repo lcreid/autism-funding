@@ -502,7 +502,6 @@ class Cf0925 < ApplicationRecord
   def save_with_user
     # FIXME: Test cases failed after the upgrade to 5.2 because the id was getting
     # set to nil when the transaction failed.
-    a = id
     ActiveRecord::Base.transaction do
       save!
       user.save!

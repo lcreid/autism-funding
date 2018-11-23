@@ -19,7 +19,7 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :funded_people,
     allow_destroy: true,
     reject_if: :all_blank
-  has_many :phone_numbers, inverse_of: :user, dependent: :destroy
+  has_many :phone_numbers, inverse_of: :user, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :phone_numbers,
     reject_if: proc { |attributes|
       attributes[:phone_number].blank?

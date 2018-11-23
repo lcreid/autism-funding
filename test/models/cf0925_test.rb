@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class Cf0925Test < ActiveSupport::TestCase
   test "generation of a PDF" do
-    unless ENV["TEST_PDF_GENERATION"]
-      skip "Skipping PDF generation. To include: `export TEST_PDF_GENERATION=1`"
-    end
+    skip "Skipping PDF generation. To include: `export TEST_PDF_GENERATION=1`" unless ENV["TEST_PDF_GENERATION"]
     rtp = cf0925s(:one)
     assert rtp.generate_pdf
     assert File.exist?(rtp.pdf_output_file), "File #{rtp.pdf_output_file} not found"
@@ -80,8 +80,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
     assert !rtp.printable?, "should be not printable"
     assert_equal 1, rtp.errors.size, rtp.errors.full_messages
     assert_equal ["can't be blank"], rtp.errors[:service_provider_phone]
@@ -101,8 +100,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
     assert !rtp.printable?, "should be not printable"
     assert_equal 1, rtp.errors.size, rtp.errors.full_messages
     assert_equal ["please choose either service provider or agency"],
@@ -121,8 +119,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
 
     assert rtp.printable?,
       rtp.errors.full_messages + rtp.user.errors.full_messages
@@ -141,8 +138,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
 
     assert rtp.printable?,
       rtp.errors.full_messages + rtp.user.errors.full_messages
@@ -160,8 +156,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
 
     assert !rtp.printable?, "should be not printable"
     assert_equal 2, rtp.errors.size, rtp.errors.full_messages
@@ -294,8 +289,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                #  service_provider_service_fee: '100',
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
 
     assert !rtp.printable?, "should be not printable"
     assert_equal 2, rtp.errors.size, rtp.errors.full_messages
@@ -326,8 +320,7 @@ class Cf0925Test < ActiveSupport::TestCase
                service_provider_service_end: "2017-02-28",
                service_provider_service_fee: "100",
                service_provider_service_hour: "hour",
-               service_provider_service_start: "2016-10-01"
-              )
+               service_provider_service_start: "2016-10-01")
 
     assert !rtp.printable?, "should be not printable"
     assert_equal 1, rtp.errors.size, rtp.errors.full_messages
@@ -388,19 +381,19 @@ class Cf0925Test < ActiveSupport::TestCase
   private
 
   def prep_empty_form
-    user = User.new(email: "empty_form@autism-funding.com",
-                    password: "aslk234jakl",
-                    name_first: "Empty",
-                    name_last: "Form")
-    user.addresses.build(address_line_1: "Empty St",
-                         city: "Sadville",
-                         province_code: province_codes(:bc),
-                         postal_code: "V0V 0V0")
-    user.phone_numbers.build(phone_type: "Home", phone_number: "5555551212")
-    child = user.funded_people.build(name_first: "Empty",
-                                     name_last: "Form",
-                                     birthdate: "2003-09-30",
-                                     child_in_care_of_ministry: false)
-    child.cf0925s.build
+    user = User.create(email: "empty_form@autism-funding.com",
+                       password: "aslk234jakl",
+                       name_first: "Empty",
+                       name_last: "Form",
+                       address: "Empty St",
+                       city: "Sadville",
+                       province_code_id: province_codes(:bc).id,
+                       postal_code: "V0V 0V0",
+                       home_phone_number: "5555551212")
+    child = user.funded_people.create(name_first: "Empty",
+                                      name_last: "Form",
+                                      birthdate: "2003-09-30",
+                                      child_in_care_of_ministry: false)
+    child.cf0925s.create
   end
 end
