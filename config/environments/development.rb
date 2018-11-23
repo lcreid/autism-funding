@@ -47,7 +47,7 @@ Rails.application.configure do
     port:                   465,
     # domain:               ENV["EMAIL_DOMAIN"],
     user_name:              ENV['EMAIL_USERNAME'] || 'phil@autism-funding.com',
-    password:               ENV['EMAIL_PASSWORD'],
+    password:               Rails.application.credentials.email_password,
     authentication:         :plain,
     default_mailer_options: { from: 'noreply@autism-funding.com' },
     enable_starttls_auto:   false,
