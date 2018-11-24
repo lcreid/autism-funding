@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 class FundedPersonTest < ActiveSupport::TestCase
   #-----------------------------------------------------------------------------
   #  Test 01
@@ -12,66 +12,66 @@ class FundedPersonTest < ActiveSupport::TestCase
   # => h) tests that a FundedPerson instance is valid if birthdate is set and in the past, name is set and user set
   # => i) tests that a valide birthdate can be formatted with my_dob method
   # => j) ensure a save is successful if valid? is true
-  testName = '01 Check FundedPerson can be created and saved'
+  testName = "01 Check FundedPerson can be created and saved"
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
     # -- Set up our test variables ---------------------------------------------
-    test_birthdate = Time.new('1999-11-15')
-    invalid_birthdate = (Time.now + 100_000).strftime('%Y-%m-%d')
+    test_birthdate = Time.new("1999-11-15")
+    invalid_birthdate = (Time.now + 100_000).strftime("%Y-%m-%d")
     test_user = users(:basic)
-    test_date_format_str = '%Y - %m - %d'
-    test_last = 'last'
+    test_date_format_str = "%Y - %m - %d"
+    test_last = "last"
 
     # 01.a .....................................................................
     the_fp = FundedPerson.new
-    assert_not_nil the_fp, '01.a: Instance of FundedPerson Should not be nil'
+    assert_not_nil the_fp, "01.a: Instance of FundedPerson Should not be nil"
 
     # 01.b .....................................................................
-    assert_instance_of FundedPerson, the_fp, '01.b: Instance Should be of Class FundedPerson'
+    assert_instance_of FundedPerson, the_fp, "01.b: Instance Should be of Class FundedPerson"
 
     # 01.c .....................................................................
     the_fp.birthdate = nil
     the_fp.user = test_user
     the_fp.name_last = test_last
-    assert_not the_fp.valid?, '01.c: FundedPerson instance should not be valid when birthdate not set'
+    assert_not the_fp.valid?, "01.c: FundedPerson instance should not be valid when birthdate not set"
 
     # 01.d .....................................................................
     the_fp.birthdate = nil
     the_fp.user = test_user
     the_fp.name_last = test_last
-    expected = 'undefined'
+    expected = "undefined"
     assert_equal expected, the_fp.my_dob(test_date_format_str), "01.d: FundedPerson instance my_dob should return #{expected} when birthdate not set"
 
     # 01.e .....................................................................
     the_fp.birthdate = invalid_birthdate
     the_fp.user = test_user
     the_fp.name_last = test_last
-    assert_not the_fp.valid?, '01.e: FundedPerson instance should not be valid when birthdate is invalid'
+    assert_not the_fp.valid?, "01.e: FundedPerson instance should not be valid when birthdate is invalid"
 
     # 01.f .....................................................................
     the_fp.birthdate = test_birthdate
     the_fp.user = nil
     the_fp.name_last = test_last
-    assert_not the_fp.valid?, '01.f: FundedPerson instance should not be valid when user not set'
+    assert_not the_fp.valid?, "01.f: FundedPerson instance should not be valid when user not set"
 
     # 01.g .....................................................................
     the_fp.birthdate = invalid_birthdate
     the_fp.user = test_user
     the_fp.name_last = nil
-    assert_not the_fp.valid?, '01.g: FundedPerson instance should not be valid when no name is set'
+    assert_not the_fp.valid?, "01.g: FundedPerson instance should not be valid when no name is set"
 
     # 01.h .....................................................................
     the_fp.birthdate = test_birthdate
     the_fp.user = test_user
     the_fp.name_last = test_last
-    assert the_fp.valid?, '01.h: FundedPerson instance should be valid when birthdate is valid and a name set'
+    assert the_fp.valid?, "01.h: FundedPerson instance should be valid when birthdate is valid and a name set"
 
     # 01.i .....................................................................
     expected = test_birthdate.strftime(test_date_format_str)
     assert_equal expected, the_fp.my_dob(test_date_format_str), "01.i: FundedPerson instance my_dob should return #{expected} when birthdate not set"
 
     # 01.j .....................................................................
-    assert the_fp.save, '01.j: Save of an valid instance should succeed'
+    assert the_fp.save, "01.j: Save of an valid instance should succeed"
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
@@ -79,13 +79,13 @@ class FundedPersonTest < ActiveSupport::TestCase
   # => a-h) tests that my_name only expected formatted name
   # => i) ensure valid? is true with names set
   # => j) ensure a save is successful if valid? is true
-  testName = '02 Check FundedPerson my_name method'
+  testName = "02 Check FundedPerson my_name method"
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
-    test_first = 'first'
-    test_middle = 'middle'
-    test_last = 'last'
-    test_birthdate = '1999-11-15'
+    test_first = "first"
+    test_middle = "middle"
+    test_last = "last"
+    test_birthdate = "1999-11-15"
     test_user = users(:basic)
     the_fp = FundedPerson.new
     the_fp.birthdate = test_birthdate
@@ -95,63 +95,63 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_first = nil
     the_fp.name_middle = nil
     the_fp.name_last = nil
-    expected = 'no name defined'
-    assert_equal expected, the_fp.my_name, '02.a: my_name did not return expected name'
+    expected = "no name defined"
+    assert_equal expected, the_fp.my_name, "02.a: my_name did not return expected name"
 
     # 02.b .....................................................................
     the_fp.name_first = test_first
     the_fp.name_middle = nil
     the_fp.name_last = nil
     expected = test_first.to_s
-    assert_equal expected, the_fp.my_name, '02.b: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.b: my_name did not return expected name"
 
     # 02.c .....................................................................
     the_fp.name_first = nil
     the_fp.name_middle = test_middle
     the_fp.name_last = nil
     expected = test_middle.to_s
-    assert_equal expected, the_fp.my_name, '02.c: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.c: my_name did not return expected name"
 
     # 02.d .....................................................................
     the_fp.name_first = test_first
     the_fp.name_middle = test_middle
     the_fp.name_last = nil
     expected = "#{test_first} #{test_middle}"
-    assert_equal expected, the_fp.my_name, '02.d: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.d: my_name did not return expected name"
 
     # 02.e .....................................................................
     the_fp.name_first = nil
     the_fp.name_middle = nil
     the_fp.name_last = test_last
     expected = test_last.to_s
-    assert_equal expected, the_fp.my_name, '02.e: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.e: my_name did not return expected name"
 
     # 02.f .....................................................................
     the_fp.name_first = test_first
     the_fp.name_middle = nil
     the_fp.name_last = test_last
     expected = "#{test_first} #{test_last}"
-    assert_equal expected, the_fp.my_name, '02.f: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.f: my_name did not return expected name"
 
     # 02.g .....................................................................
     the_fp.name_first = nil
     the_fp.name_middle = test_middle
     the_fp.name_last = test_last
     expected = "#{test_middle} #{test_last}"
-    assert_equal expected, the_fp.my_name, '02.g: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.g: my_name did not return expected name"
 
     # 02.h .....................................................................
     the_fp.name_first = test_first
     the_fp.name_middle = test_middle
     the_fp.name_last = test_last
     expected = "#{test_first} #{test_middle} #{test_last}"
-    assert_equal expected, the_fp.my_name, '02.h: my_name did not return expected name'
+    assert_equal expected, the_fp.my_name, "02.h: my_name did not return expected name"
 
     # 02.i .....................................................................
-    assert the_fp.valid?, '02.i: FundedPerson instance should be valid when name added'
+    assert the_fp.valid?, "02.i: FundedPerson instance should be valid when name added"
 
     # 02.j .....................................................................
-    assert the_fp.save, '02.j: Save of an valid instance should succeed'
+    assert the_fp.save, "02.j: Save of an valid instance should succeed"
   end ## -- end test --
 
   #-----------------------------------------------------------------------------
@@ -162,20 +162,20 @@ class FundedPersonTest < ActiveSupport::TestCase
   # => d) tests is_blank is false when last_name is not nil, and all else are nil
   # => e) tests is_blank is false when birthdate is not nil, and all else are nil
   # => f) tests is_blank is false when child_in_care_of_ministry is not nil, and all else are nil
-  testName = '03 Check FundedPerson is_blank? method'
+  testName = "03 Check FundedPerson is_blank? method"
   # puts "-- Test: #{testName} -----------------------------------"
   test testName do
-    test_first = 'first'
-    test_middle = 'middle'
-    test_last = 'last'
-    test_birthdate = '1999-11-15'
+    test_first = "first"
+    test_middle = "middle"
+    test_last = "last"
+    test_birthdate = "1999-11-15"
     test_child_in_care = false
     the_fp = FundedPerson.new
-#    the_fp.birthdate = test_birthdate
-#    the_fp.user = test_user
+    #    the_fp.birthdate = test_birthdate
+    #    the_fp.user = test_user
 
     # 03.a .....................................................................
-    assert the_fp.is_blank?, '03.a: is_blank? should be true with no data set'
+    assert the_fp.is_blank?, "03.a: is_blank? should be true with no data set"
 
     # 03.b .....................................................................
     the_fp.name_first = test_first
@@ -183,7 +183,7 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_last = nil
     the_fp.birthdate = nil
     the_fp.child_in_care_of_ministry = nil
-    assert_not the_fp.is_blank?, '03.b: is_blank? should be false with only name_first set'
+    assert_not the_fp.is_blank?, "03.b: is_blank? should be false with only name_first set"
 
     # 03.c .....................................................................
     the_fp.name_first = nil
@@ -191,7 +191,7 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_last = nil
     the_fp.birthdate = nil
     the_fp.child_in_care_of_ministry = nil
-    assert_not the_fp.is_blank?, '03.c: is_blank? should be false with only name_middle set'
+    assert_not the_fp.is_blank?, "03.c: is_blank? should be false with only name_middle set"
 
     # 03.d .....................................................................
     the_fp.name_first = nil
@@ -199,7 +199,7 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_last = test_last
     the_fp.birthdate = nil
     the_fp.child_in_care_of_ministry = nil
-    assert_not the_fp.is_blank?, '03.d: is_blank? should be false with only name_last set'
+    assert_not the_fp.is_blank?, "03.d: is_blank? should be false with only name_last set"
 
     # 03.e .....................................................................
     the_fp.name_first = nil
@@ -207,7 +207,7 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_last = nil
     the_fp.birthdate = test_birthdate
     the_fp.child_in_care_of_ministry = nil
-    assert_not the_fp.is_blank?, '03.e: is_blank? should be false with only birthdate set'
+    assert_not the_fp.is_blank?, "03.e: is_blank? should be false with only birthdate set"
 
     # 03.f .....................................................................
     the_fp.name_first = nil
@@ -215,130 +215,127 @@ class FundedPersonTest < ActiveSupport::TestCase
     the_fp.name_last = nil
     the_fp.birthdate = nil
     the_fp.child_in_care_of_ministry = test_child_in_care
-    assert_not the_fp.is_blank?, '03.f: is_blank? should be false with only child_in_care_of_ministry set'
-
-
+    assert_not the_fp.is_blank?, "03.f: is_blank? should be false with only child_in_care_of_ministry set"
   end ## -- end test 03 --
 
-  test 'Fiscal year beginning of year' do
+  test "Fiscal year beginning of year" do
     child = funded_people(:beginning_of_year)
     assert_equal Time.new(2009, 2, 1).to_date..Time.new(2010, 1, 31).to_date,
-                 child.fiscal_year(Time.new(2010, 1, 1))
+      child.fiscal_year(Time.new(2010, 1, 1))
   end
 
-  test 'Fiscal year end of year' do
+  test "Fiscal year end of year" do
     child = funded_people(:end_of_year)
     assert_equal Time.new(2013, 1, 1).to_date..Time.new(2013, 12, 31).to_date,
-                 child.fiscal_year(Time.new(2013, 1, 1))
+      child.fiscal_year(Time.new(2013, 1, 1))
   end
 
-  test 'Fiscal year beginning of month' do
+  test "Fiscal year beginning of month" do
     child = funded_people(:beginning_of_month)
     assert_equal Time.new(2009, 5, 1).to_date..Time.new(2010, 4, 30).to_date,
-                 child.fiscal_year(Time.new(2010, 1, 1))
+      child.fiscal_year(Time.new(2010, 1, 1))
   end
 
-  test 'Fiscal year end of month' do
+  test "Fiscal year end of month" do
     child = funded_people(:end_of_month)
     assert_equal Time.new(2016, 5, 1).to_date..Time.new(2017, 4, 30).to_date,
-                 child.fiscal_year(Time.new(2016, 12, 31))
+      child.fiscal_year(Time.new(2016, 12, 31))
   end
 
-  test 'Fiscal year end of month on birthday' do
+  test "Fiscal year end of month on birthday" do
     child = funded_people(:end_of_month)
     assert_equal Time.new(2015, 5, 1).to_date..Time.new(2016, 4, 30).to_date,
-                 child.fiscal_year(Time.new(2016, 4, 30))
+      child.fiscal_year(Time.new(2016, 4, 30))
   end
 
-  test 'Leap year on birthday no leap day' do
+  test "Leap year on birthday no leap day" do
     child = funded_people(:leap_day)
     assert_equal Time.new(2008, 3, 1).to_date..Time.new(2009, 2, 28).to_date,
-                 child.fiscal_year(Time.new(2009, 2, 28))
+      child.fiscal_year(Time.new(2009, 2, 28))
   end
 
-  test 'Leap year on birthday leap day' do
+  test "Leap year on birthday leap day" do
     child = funded_people(:leap_day)
     assert_equal Time.new(2007, 3, 1).to_date..Time.new(2008, 2, 29).to_date,
-                 child.fiscal_year(Time.new(2008, 2, 29))
+      child.fiscal_year(Time.new(2008, 2, 29))
   end
 
-  test 'fiscal years list' do
+  test "fiscal years list" do
     child = funded_people(:no_fiscal_years)
     assert_equal 0, child.fiscal_years.count
 
     child = funded_people(:one_fiscal_year)
     assert_equal 1, child.fiscal_years.count
-    assert_equal ['2017'], child.fiscal_years.map(&:to_s)
+    assert_equal ["2017"], child.fiscal_years.map(&:to_s)
 
     child = funded_people(:two_fiscal_years)
     assert_equal %w(2016-2017 2015-2016), child.fiscal_years.map(&:to_s)
     assert_equal 2, child.fiscal_years.count
   end
 
-  test 'fiscal year with form and invoice' do
+  test "fiscal year with form and invoice" do
     child = funded_people(:invoice_and_form)
     assert_equal 2, child.fiscal_years.count
     assert_equal %w(2016-2017 2015-2016), child.fiscal_years.map(&:to_s)
   end
 
-  test 'cf0925s in fiscal year' do
+  test "cf0925s in fiscal year" do
     child = funded_people(:two_fiscal_years)
     assert_equal 3, child.cf0925s.size
     assert_equal 1,
-                 child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
+      child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
     assert_equal 2,
-                 child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
+      child.cf0925s_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
   end
 
-  test 'invoices in fiscal year' do
+  test "invoices in fiscal year" do
     child = funded_people(:two_fiscal_years)
     assert_equal 1, child.invoices.size
     assert_equal 1,
-                 child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
+      child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2016, 1, 1)))).size
     assert_equal 0,
-                 child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
+      child.invoices_in_fiscal_year(FiscalYear.new(child.fiscal_year(Date.new(2017, 1, 1)))).size
   end
 
-  test 'rtp allocated invoice a b not invoice c change rtp such that invoice allocated invoice b c not a' do
+  test "rtp allocated invoice a b not invoice c change rtp such that invoice allocated invoice b c not a" do
     child = set_up_child
     rtp = set_up_provider_agency_rtp(child)
     invoice_a = child.invoices.build(invoice_amount: 200,
-                                   service_end: rtp.service_provider_service_end,
-                                   service_start: rtp.service_provider_service_start,
-                                   invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end,
+                                     service_start: rtp.service_provider_service_start,
+                                     invoice_from: rtp.service_provider_name)
     invoice_b = child.invoices.build(invoice_amount: 201,
-                                    service_end: rtp.service_provider_service_end,
-                                    service_start: rtp.service_provider_service_start + 1.day,
-                                    invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end,
+                                     service_start: rtp.service_provider_service_start + 1.day,
+                                     invoice_from: rtp.service_provider_name)
     invoice_c = child.invoices.build(invoice_amount: 203,
-                                    service_end: rtp.service_provider_service_end + 1.day,
-                                    service_start: rtp.service_provider_service_start + 1.day,
-                                    invoice_from: rtp.service_provider_name)
+                                     service_end: rtp.service_provider_service_end + 1.day,
+                                     service_start: rtp.service_provider_service_start + 1.day,
+                                     invoice_from: rtp.service_provider_name)
 
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
-# puts "test case rtp object id: #{rtp.object_id}"
-# puts ""
-# puts "///////// ----- Allocation 1 ----- ///////////"
-# puts ""
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+    # puts "test case rtp object id: #{rtp.object_id}"
+    # puts ""
+    # puts "///////// ----- Allocation 1 ----- ///////////"
+    # puts ""
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.all.size #{InvoiceAllocation.all.size}"
     rtp.allocate
 
     assert_equal [invoice_a, invoice_b], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
 
-# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+    # puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
 
     rtp.service_provider_service_start += 1.day
     rtp.service_provider_service_end += 1.day
 
-# puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
-# puts ""
-# puts "///////// ----- Allocation 2 ----- ///////////"
-# puts ""
-# puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
+    # puts "#{__LINE__}: start: #{rtp.service_provider_service_start} end: #{rtp.service_provider_service_end}"
+    # puts ""
+    # puts "///////// ----- Allocation 2 ----- ///////////"
+    # puts ""
+    # puts "funded_person_test #{__LINE__}: DBbase InvoiceAllocation.size #{InvoiceAllocation.all.size}"
     rtp.allocate
-# rtp.reload
+    # rtp.reload
     assert_equal [invoice_b, invoice_c], rtp.invoice_allocations.map(&:invoice).sort_by(&:invoice_amount)
-
   end
 
   # The following were for test cases around the autosaving of user from a

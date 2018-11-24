@@ -1,0 +1,29 @@
+<hr>
+<div class="row">
+  <div class="col-md-4">
+    <p class="text-left">
+      <%= Globals::site_name %>
+      - helping parents manage funding for autistic children
+    </p>
+  </div>
+  <div class="col-md-4">
+    <p class="text-center">
+      This site is sponsored by
+      <%= Globals::sponsor_name %>, who are responsible for the development and hosting of this site.
+    </p>
+    <p class="text-center">
+      Please visit
+      <%= link_to Globals::sponsor_url, Globals::sponsor_url  %>
+      to find out how
+      <%= Globals::sponsor_name %>
+      can help you develop your application.
+    </p>
+  </div>
+  <div class="col-md-4">
+    <p class="small-letters text-right">
+      <%= t=Time.new; t.strftime("%A, %d %b %Y %H:%M:%S %Z") %>
+      <br>
+      V00.10
+    </p>
+  </div>
+</div>

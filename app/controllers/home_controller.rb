@@ -13,9 +13,9 @@ class HomeController < ApplicationController
       logger.debug do
         "Child: #{child.my_name} " \
         "Fiscal year: #{fy} " \
-        'Number of CF0925s: ' \
+        "Number of CF0925s: " \
         "#{child.cf0925s_in_selected_fiscal_year.size} " \
-        'Number of invoices: ' \
+        "Number of invoices: " \
         "#{child.invoices_in_selected_fiscal_year.size}"
       end
     end if params[:year]
@@ -30,5 +30,4 @@ class HomeController < ApplicationController
     head :ok # , content_type: 'text/html'
     # render inline: ''
   end
-
 end

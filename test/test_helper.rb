@@ -1,8 +1,8 @@
-ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
-require 'rails/test_help'
-require 'minitest/rails/capybara'
-require 'capybara/poltergeist'
+ENV["RAILS_ENV"] ||= "test"
+require File.expand_path("../../config/environment", __FILE__)
+require "rails/test_help"
+require "minitest/rails/capybara"
+require "capybara/poltergeist"
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -11,15 +11,15 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
   def set_up_child(user_params = {}, child_params = {})
     default_user_params = {
-      email: 'a@example.com',
-      password: 'password',
-      name_first: 'a',
-      name_last: 'b',
-      address: 'a',
-      city: 'b',
+      email: "a@example.com",
+      password: "password",
+      name_first: "a",
+      name_last: "b",
+      address: "a",
+      city: "b",
       province_code_id: province_codes(:bc).id,
-      postal_code: 'V0V 0V0',
-      home_phone_number: '3334445555'
+      postal_code: "V0V 0V0",
+      home_phone_number: "3334445555"
     }
     user = User.new(default_user_params.merge(user_params))
     # user.addresses.build(address_line_1: 'a',
@@ -28,10 +28,10 @@ class ActiveSupport::TestCase
     #                      postal_code: 'V0V 0V0')
     # user.phone_numbers.build(phone_type: 'Home', phone_number: '3334445555')
     default_child_params = {
-      name_first: 'a',
-      name_last: 'b',
+      name_first: "a",
+      name_last: "b",
       child_in_care_of_ministry: false,
-      birthdate: '2003-11-30'
+      birthdate: "2003-11-30"
     }
     user.funded_people.build(default_child_params.merge(child_params))
   end
@@ -39,32 +39,32 @@ class ActiveSupport::TestCase
   SUPPLIER_ATTRS = {
     item_cost_1: 600,
     item_cost_2: 400,
-    item_desp_1: 'Conference',
-    item_desp_2: 'Workshop',
-    part_b_fiscal_year: '2016-2017',
-    supplier_address: 'Supplier St',
-    supplier_city: 'Supplier City',
-    supplier_contact_person: 'Supplier Contact',
-    supplier_name: 'Supplier Name',
-    supplier_phone: '8888888888',
-    supplier_postal_code: 'V0V 0V0'
+    item_desp_1: "Conference",
+    item_desp_2: "Workshop",
+    part_b_fiscal_year: "2016-2017",
+    supplier_address: "Supplier St",
+    supplier_city: "Supplier City",
+    supplier_contact_person: "Supplier Contact",
+    supplier_name: "Supplier Name",
+    supplier_phone: "8888888888",
+    supplier_postal_code: "V0V 0V0"
   }.freeze
 
   PROVIDER_AGENCY_ATTRS = {
-    agency_name: 'Pay Me Agency',
-    part_b_fiscal_year: '2016-2017',
-    payment: 'agency',
-    service_provider_postal_code: 'V0V 0V0',
-    service_provider_address: '4400 Hastings St.',
-    service_provider_city: 'Burnaby',
-    service_provider_phone: '7777777777',
-    service_provider_name: 'Ferry Man',
-    service_provider_service_1: 'Behaviour Consultancy',
+    agency_name: "Pay Me Agency",
+    part_b_fiscal_year: "2016-2017",
+    payment: "agency",
+    service_provider_postal_code: "V0V 0V0",
+    service_provider_address: "4400 Hastings St.",
+    service_provider_city: "Burnaby",
+    service_provider_phone: "7777777777",
+    service_provider_name: "Ferry Man",
+    service_provider_service_1: "Behaviour Consultancy",
     service_provider_service_amount: 2_000,
-    service_provider_service_end: '2017-03-31',
+    service_provider_service_end: "2017-03-31",
     service_provider_service_fee: 120.00,
-    service_provider_service_hour: 'Hour',
-    service_provider_service_start: '2016-12-01'
+    service_provider_service_hour: "Hour",
+    service_provider_service_start: "2016-12-01"
   }.freeze
 
   def set_up_provider_agency_rtp(child, attrs = {})
@@ -79,8 +79,8 @@ class ActiveSupport::TestCase
     rtp = child.cf0925s.build(attrs)
     rtp.populate
     assert rtp.printable?,
-           "RTP should be printable #{rtp.errors.full_messages} "\
-           "User should be printable #{child.user.errors.full_messages}"
+      "RTP should be printable #{rtp.errors.full_messages} "\
+      "User should be printable #{child.user.errors.full_messages}"
 
     rtp
   end
@@ -89,44 +89,44 @@ end
 module TestSessionHelpers
   def log_in(user =
              User.create!(
-               email: 'me1@weenhanceit.com',
-               password: 'password',
-               name_first: 'parent_first_name',
-               name_middle: 'parent_middle_name',
-               name_last: 'parent_last_name',
-               home_phone_number: '6048888887',
-               work_phone_number: '6047777778',
-               address: 'parent_address',
-               city: 'parent_city',
-               postal_code: 'A0A 0A0'
+               email: "me1@weenhanceit.com",
+               password: "password",
+               name_first: "parent_first_name",
+               name_middle: "parent_middle_name",
+               name_last: "parent_last_name",
+               home_phone_number: "6048888887",
+               work_phone_number: "6047777778",
+               address: "parent_address",
+               city: "parent_city",
+               postal_code: "A0A 0A0"
              ))
     ## If the user's province has not been set - default it to BC
     if user.province_code_id.nil?
-      user.province_code_id = province_codes('bc').id
+      user.province_code_id = province_codes("bc").id
       user.save
     end
 
     post new_user_session_path,
-         params: {
-           user: {
-             email: user.email,
-             password: 'password',
-             remember_me: 0
-           },
-           commit: 'Log in'
-         }
+      params: {
+        user: {
+          email: user.email,
+          password: "password",
+          remember_me: 0
+        },
+        commit: "Log in"
+      }
     user
   end
 
   # This one works for Capybara tests. I have no idea why the above doesn't.
   def fill_in_login(user =
-                    User.create!(email: 'me@weenhanceit.com',
-                                 password: 'password'))
+                    User.create!(email: "me@weenhanceit.com",
+                                 password: "password"))
     visit(new_user_session_path)
-    expect has_field?('Email')
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: 'password'
-    click_button 'Log in'
+    expect has_field?("Email")
+    fill_in "Email", with: user.email
+    fill_in "Password", with: "password"
+    click_button "Sign in"
   end
 
   # This one derived from Larry The Rails Guy's log_in
@@ -137,14 +137,14 @@ module TestSessionHelpers
     # Note the encrypted_password in the yml was created using an
     # instance of User in console with a password as below
     post user_session_path,
-         params: {
-           user: {
-             email: user.email,
-             password: 'secret08',
-             remember_me: 0
-           },
-           commit: 'Log in'
-         }
+      params: {
+        user: {
+          email: user.email,
+          password: "secret08",
+          remember_me: 0
+        },
+        commit: "Log in"
+      }
   end
 
   def show_errors(line, obj)
@@ -162,8 +162,8 @@ module TestSessionHelpers
     end
   end
 
-  def show_user_status(line = '', user = controller.current_user)
-    puts ''
+  def show_user_status(line = "", user = controller.current_user)
+    puts ""
     puts " -- User status #{line} --"
     puts "                 id: #{user.id}"
     puts "    addresses[0].id: #{user.addresses[0].id}"
@@ -178,21 +178,21 @@ module TestSessionHelpers
     puts "       BC Resident?: #{user.bc_resident?} "
     puts "Can Create New RTP?: #{user.can_create_new_rtp?}"
     puts "   Can See My Home?: #{user.can_see_my_home?}"
-    puts ' -----------------'
+    puts " -----------------"
   end
 
   def show_matching_info(child, _delimiter = '\n')
-    horiz_line = '---------------------------------------'
+    horiz_line = "---------------------------------------"
     fys = []
-    puts ''
+    puts ""
     puts horiz_line
     if !child.instance_of? FundedPerson
-      puts '  --- This object is not of type FundedPerson --- '
+      puts "  --- This object is not of type FundedPerson --- "
     else
       puts "| Matching Information for #{child.my_name}, born #{child.my_dob}"
       puts horiz_line
       if child.cf0925s.empty?
-        puts '|  This child has no CF0925s defined'
+        puts "|  This child has no CF0925s defined"
       else
         child.cf0925s.each do |rtp|
           fys << child.fiscal_year(rtp.start_date)
@@ -200,8 +200,8 @@ module TestSessionHelpers
           puts "| Service Provider Name: #{rtp.service_provider_name}" if rtp.service_provider_name
           puts "| Agency Name: #{rtp.agency_name}" if rtp.agency_name
           puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
-          rtp.printable? ? (puts '| printable') : (puts '| NOT printable')
-          msg = '| '
+          rtp.printable? ? (puts "| printable") : (puts "| NOT printable")
+          msg = "| "
           msg += "  Service Start: #{rtp.service_provider_service_start}" if rtp.service_provider_service_start
           msg += "  Service End: #{rtp.service_provider_service_end}" if rtp.service_provider_service_end
           puts msg
@@ -210,7 +210,7 @@ module TestSessionHelpers
           puts "| Item 2 Cost: #{rtp.item_cost_2}" if rtp.item_cost_2
           puts "| Item 3: #{rtp.item_cost_3}" if rtp.item_cost_3
           if rtp.invoices.empty?
-            puts '|  NO invoices Matched'
+            puts "|  NO invoices Matched"
           else
             rtp.invoices.each do |inv|
               puts "|  MATCHED Invoice: #{inv.object_id}"
@@ -220,7 +220,7 @@ module TestSessionHelpers
       end
       puts horiz_line
       if child.invoices.empty?
-        puts '|  This child has no Invoices defined'
+        puts "|  This child has no Invoices defined"
       else
         child.invoices.each do |inv|
           fys << child.fiscal_year(inv.start_date)
@@ -230,11 +230,11 @@ module TestSessionHelpers
           puts "| Invoice Date: #{inv.invoice_date}" if inv.invoice_date
           puts "| Amount: #{inv.invoice_amount}" if inv.invoice_amount
           #          puts "| Supplier Name: #{rtp.supplier_name}" if rtp.supplier_name
-          msg = '| '
+          msg = "| "
           msg += "  Service Start: #{inv.service_start}" if inv.service_start
           msg += "  Service End: #{inv.service_end}" if inv.service_end
           puts msg
-          inv.valid?(:complete) ? (puts '| complete') : (puts '| !!! NOT complete')
+          inv.valid?(:complete) ? (puts "| complete") : (puts "| !!! NOT complete")
           # if inv.cf0925s.size < 1
           #   puts "NOT matched to any RTPs"
           # else
@@ -262,10 +262,10 @@ module TestSessionHelpers
 end
 
 # Added for Capybara
-require 'capybara/rails'
-require 'minitest/rails/capybara'
-require 'capybara/poltergeist'
-require 'database_cleaner'
+require "capybara/rails"
+require "minitest/rails/capybara"
+require "capybara/poltergeist"
+require "database_cleaner"
 
 class CapybaraTest < Capybara::Rails::TestCase
   # # Make the Capybara DSL available in all integration tests
@@ -333,7 +333,7 @@ class PoltergeistTest < CapybaraTest
     # puts "capybara found: #{has_css?('span', wait: 10)}"
     # page.assert_selector 'span.pending'
     # puts 'Starting Request'
-    evaluate_script('$("body").addClass("pending");')
+    # evaluate_script('$("body").addClass("pending");')
     # result = evaluate_script('$("body.pending").length;')
     # puts "start_request jQuery found: #{result}"
     # puts "capybara found: #{has_css?('body.pending', wait: 10)}"
@@ -344,8 +344,8 @@ class PoltergeistTest < CapybaraTest
   end
 
   def teardown
-    click_link 'Log out'
-    assert_content 'Signed out successfully.'
+    click_link "Log out"
+    assert_content "Signed out successfully."
     super
     # User.all.each { |u| Rails.logger.debug "In clean: #{u.preferences}" if u.preferences }
     # Rails.logger.debug 'Cleaning database...'
@@ -356,7 +356,7 @@ class PoltergeistTest < CapybaraTest
 
   def wait_for_request
     # puts 'Waiting for body.pending to go away.'
-    assert_no_selector 'body.pending'
+    # assert_no_selector "body.pending"
   end
 end
 

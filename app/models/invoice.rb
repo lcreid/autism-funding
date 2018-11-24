@@ -135,17 +135,17 @@ class Invoice < ApplicationRecord
 
   def validate_dates
     if service_start.blank? && invoice_date.blank? && service_end.blank?
-      errors.add(:service_start, 'must supply at least one date')
-      errors.add(:service_end, 'must supply at least one date')
-      errors.add(:invoice_date, 'must supply at least one date')
+      errors.add(:service_start, "must supply at least one date")
+      errors.add(:service_end, "must supply at least one date")
+      errors.add(:invoice_date, "must supply at least one date")
     end
 
     unless service_start.blank? || service_end.blank? || service_end >= service_start
-      errors.add(:service_end, 'service end cannot be earlier than service start')
+      errors.add(:service_end, "service end cannot be earlier than service start")
     end
 
     unless service_start.blank? || service_end.blank? || funded_person.fiscal_year(service_start) == funded_person.fiscal_year(service_end)
-      errors.add(:service_end, 'must be in the same fiscal year as service start')
+      errors.add(:service_end, "must be in the same fiscal year as service start")
     end
   end
 
@@ -155,7 +155,7 @@ class Invoice < ApplicationRecord
 
     #-- Check that the invoice date is later than the service end date
     res = funded_person.fiscal_year(service_start).<=>funded_person.fiscal_year(service_end)
-    errors.add(:service_end, 'must be in the same fiscal year as service start') unless res == 0
+    errors.add(:service_end, "must be in the same fiscal year as service start") unless res == 0
   end #-- validate_check_fy_on_service_dates --
 
   def xxvalidate_invoice_date_after_service_end
@@ -163,7 +163,7 @@ class Invoice < ApplicationRecord
     return if invoice_date.blank? || service_end.blank?
 
     #-- Check that the invoice date is later than the service end date
-    errors.add(:invoice_date, 'should not be earlier than the service end') if
+    errors.add(:invoice_date, "should not be earlier than the service end") if
       service_end > invoice_date
   end #-- validate_invoice_date_after_service_end --
 
@@ -181,7 +181,7 @@ class Invoice < ApplicationRecord
     return if service_start.blank? || service_end.blank?
 
     #-- Check that the service end date is later than the service start date
-    errors.add(:service_end, 'must be after service start date') if
+    errors.add(:service_end, "must be after service start date") if
       service_end < service_start
   end #-- validate_service_start_before_service_end --
 

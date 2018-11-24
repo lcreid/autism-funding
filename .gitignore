@@ -54,3 +54,6 @@ erd.pdf
 
 # Step Phil from checking in temporary files.
 pip
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
